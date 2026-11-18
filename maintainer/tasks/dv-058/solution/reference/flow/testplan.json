@@ -1,0 +1,186 @@
+{
+  "tests": [
+    {
+      "test_id": "T01",
+      "feature_ids": [
+        "F01"
+      ],
+      "requirement_ids": [
+        "R-dv-058-001"
+      ],
+      "stimulus": "Instantiate the complete top with the above parameters fixed; seeds drive different random RGB histories; interleave all 8 modes with split screen, blanking, and vsync.",
+      "expected": "Native port behavior follows the subsequent requirements; every input cycle is consumed, with no handshake stalls.",
+      "checker": "The native independent model receives the same inputs; the scoreboard compares all defined outputs every cycle and counts actual comparison points. All inputs in this test are driven on the falling edge of clk and held until the next rising edge; four-state sampling occurs 0.2ns after the rising edge, after NBA has settled. The predictor first saves pre-edge state and inputs, computes each stage's next value separately, and compares the defined top-level outputs after that edge, without assuming that data and control have the same latency.",
+      "implementation_id": "V01",
+      "source": "video_pkg.sv:video_monitor.sample and video_scoreboard.write; model/model.sv:dvbench_model"
+    },
+    {
+      "test_id": "T02",
+      "feature_ids": [
+        "F02"
+      ],
+      "requirement_ids": [
+        "R-dv-058-002"
+      ],
+      "stimulus": "Apply low reset for 4 cycles at power-up; after 64 lines of streaming, drive it low on a falling edge, hold it for 4 cycles, and release it, then continue threshold data.",
+      "expected": "All outputs are 0 after two reset edges; between edges, previously registered values are held; state returns to defaults while RAM is not cleared. At 0.2ns after the falling edge before synchronous reset, previously registered outputs must still be held; they become zero only at 0.2ns after the rising edge.",
+      "checker": "The monitor samples both after rising edges and after the falling edge of reset, performing four-state comparisons of actual against a synchronous model driven only by inputs. All inputs in this test are driven on the falling edge of clk and held until the next rising edge; four-state sampling occurs 0.2ns after the rising edge, after NBA has settled. The predictor first saves pre-edge state and inputs, computes each stage's next value separately, and compares the defined top-level outputs after that edge, without assuming that data and control have the same latency.",
+      "implementation_id": "V02",
+      "source": "video_pkg.sv:video_monitor.sample and video_scoreboard.write; model/model.sv:dvbench_model"
+    },
+    {
+      "test_id": "T03",
+      "feature_ids": [
+        "F03"
+      ],
+      "requirement_ids": [
+        "R-dv-058-003"
+      ],
+      "stimulus": "After warm-up, rotate through all 8 paths on each of 64 lines, interleaving random RGB with fixed extrema, and switch split screen by line.",
+      "expected": "The output equals the result of the selected path after text and split-screen processing; the full model continuously updates input history for all 8 paths. In a fixed mode outside the text box: on edge n, original has data=P[n-1],control=H[n]; pixel filters have data=F(P[n-2]),control=H[n-1]; switching edges follow the recurrence using each stage's pre-edge state.",
+      "checker": "Compare independently predicted path results against the outputs, using random channel values distinct from grayscale/negative values to avoid vacuous equality. All inputs in this test are driven on the falling edge of clk and held until the next rising edge; four-state sampling is performed 0.2ns after the rising edge, after NBA settling. The predictor first saves the pre-edge state and inputs, computes the next value of each stage separately, and compares the defined top-level outputs after that edge, without assuming that data and control have the same latency.",
+      "implementation_id": "V03",
+      "source": "video_pkg.sv:video_monitor.sample and video_scoreboard.write; model/model.sv:dvbench_model"
+    },
+    {
+      "test_id": "T04",
+      "feature_ids": [
+        "F04"
+      ],
+      "requirement_ids": [
+        "R-dv-058-004"
+      ],
+      "stimulus": "8 pixel categories include black/white/mid-value/RGB primaries/random; sweep modes 1, 2, and 3; after a natural threshold up, test 132/133/134 and 0/255.",
+      "expected": "Grayscale weights use integer truncation, and the negative is independent per channel; at the threshold boundary, 132 is black, and 133 and 134 are white. For each pixel, compute Y=(77R+150G+29B)/256 rounded down; replicate Y for grayscale, and use 255-c per channel for the negative; compare Y>=threshold using the old threshold.",
+      "checker": "Compute Y and per-channel arithmetic from the inputs, compare data after the native model's historical latency, report errors as UVM_ERROR, and summarize at the end. All inputs in this test are driven on the falling edge of clk and held until the next rising edge; four-state sampling is performed 0.2ns after the rising edge, after NBA settling. The predictor first saves the pre-edge state and inputs, computes the next value of each stage separately, and compares the defined top-level outputs after that edge, without assuming that data and control have the same latency.",
+      "implementation_id": "V04",
+      "source": "video_pkg.sv:video_monitor.sample and video_scoreboard.write; model/model.sv:dvbench_model"
+    },
+    {
+      "test_id": "T05",
+      "feature_ids": [
+        "F05"
+      ],
+      "requirement_ids": [
+        "R-dv-058-005"
+      ],
+      "stimulus": "By default, naturally hold sw3/btn1 for more than 2500001 cycles to obtain 133; extended holds for additional slots to verify that no repeated firing occurs, switches to other modes to naturally release prev, then uses sw3/btn3 to verify increment priority, and uses btn2 after a release slot to verify decrement; saturation uses natural pulses on the instance to reach 255/0 and applies additional pulses. Supplement with btn0 pulses narrower than 2500001 cycles that do not cover a sampling slot, brief releases and re-presses between sampling slots, btn[3:2] switching, and isolated btn1 pulses for Gaussian/Sobel, checking that the threshold or mode does not change.",
+      "expected": "Default 128→133; extended long hold remains 133, simultaneous rising edges→138, decrement→133; saturation has an upper bound of 255 and a lower bound of 0 and remains unchanged on another operation in the same direction. Each 2500001-cycle slot uses the pre-edge count and prev; a long hold produces no new edge; an unsampled release does not establish a new prev=0; data on the threshold-changing edge still uses the old threshold.",
+      "checker": "The independent model samples according to actual cycles without reading DUT state; after stimulus, check observable data using grayscale pixels at threshold±1 at x0 outside the box and by draining the pipeline. All inputs in this test are driven on the falling edge of clk and held until the next rising edge; four-state sampling is performed 0.2ns after the rising edge, after NBA settling. The predictor first saves the pre-edge state and inputs, computes the next value of each stage separately, and compares the defined top-level outputs after that edge, without assuming that data and control have the same latency.",
+      "implementation_id": "V05",
+      "source": "video_pkg.sv:video_sequence.refinement_history,default_history,extended_history,saturation_history; model/model.sv:svf_model.step"
+    },
+    {
+      "test_id": "T06",
+      "feature_ids": [
+        "F06"
+      ],
+      "requirement_ids": [
+        "R-dv-058-006"
+      ],
+      "stimulus": "By default, select sw4 after random warm-up to verify mode 1; extended alternately selects sw4 and sw6 in natural sampling slots, allowing each prev to release naturally, reaching modes 2/0/1 respectively, and inputs 3W+16 random valid pixels each time.",
+      "expected": "Use each mode's independent kernel and integer-division result, with no crosstalk between RGB channels; the mode-update edge uses the old coefficients. The independent kernels (corner,edge,center,divisor) are (1,1,2,10), (1,2,4,16), and (1,3,9,25), respectively; perform integer division after weighting each channel's old window; the same edge that changes the mode still uses the old mode.",
+      "checker": "Predict using input-window history and integer kernels; perform four-state comparisons after the history becomes valid. All inputs in this test are driven on the falling edge of clk and held until the next rising edge; four-state sampling is performed 0.2ns after the rising edge, after NBA settling. The predictor first saves the pre-edge state and inputs, computes the next value of each stage separately, and compares the defined top-level outputs after that edge, without assuming that data and control have the same latency.",
+      "implementation_id": "V06",
+      "source": "video_pkg.sv:video_sequence.window_probe,extended_history; model/model.sv:svf_model.step"
+    },
+    {
+      "test_id": "T07",
+      "feature_ids": [
+        "F07"
+      ],
+      "requirement_ids": [
+        "R-dv-058-007"
+      ],
+      "stimulus": "After native warm-up, select sw5 and interleave black/white, RGB primaries, and random data for more than three lines, including strong edges and stable neighborhoods.",
+      "expected": "All channels use independent signed convolution and saturation, without mixing channels. For each channel, use signed 5*p11-p01-p10-p12-p21 and clamp to 0..255; use the pre-edge window, then pass through the text and output register histories.",
+      "checker": "The model window comes from input history; predict using the mathematical kernel rather than DUT outputs and compare within the valid domain. All inputs in this test are driven on the falling edge of clk and held until the next rising edge; four-state sampling is performed 0.2ns after the rising edge, after NBA settling. The predictor first saves the pre-edge state and inputs, computes the next value of each stage separately, and compares the defined top-level outputs after that edge, without assuming that data and control have the same latency.",
+      "implementation_id": "V07",
+      "source": "video_pkg.sv:video_monitor.sample and video_scoreboard.write; model/model.sv:dvbench_model"
+    },
+    {
+      "test_id": "T08",
+      "feature_ids": [
+        "F08"
+      ],
+      "requirement_ids": [
+        "R-dv-058-008"
+      ],
+      "stimulus": "By default, use sw6 random/extreme-value lines to check mode 0; extended alternates Gaussian/Sobel sampling slots to naturally reach 1/2/0 and feeds 3W+16 valid random pixels after each mode.",
+      "expected": "Predict using the absolute gradients in the corresponding directions; Y and window history are independent of the other filters. Y=floor((77R+150G+29B)/256); Gx=-p00+p02-2p10+2p12-p20+p22, Gy=-p00-2p01-p02+p20+2p21+p22; modes 0/1/2 use abs(Gx)+abs(Gy)/abs(Gx)/abs(Gy), clamp to 255, and then replicate to RGB, using the pre-edge window and old mode.",
+      "checker": "Reconstruct the grayscale window and directional gradients at the input side and compare all valid output points; do not inspect DUT directional intermediate values. All inputs in this test are driven on the falling edge of clk and held until the next rising edge; four-state sampling is performed 0.2ns after the rising edge, after NBA settling. The predictor first saves the pre-edge state and inputs, computes the next value of each stage separately, and compares the defined top-level outputs after that edge, without assuming that data and control have the same latency.",
+      "implementation_id": "V08",
+      "source": "video_pkg.sv:video_sequence.window_probe,extended_history; model/model.sv:svf_model.step"
+    },
+    {
+      "test_id": "T09",
+      "feature_ids": [
+        "F09"
+      ],
+      "requirement_ids": [
+        "R-dv-058-009"
+      ],
+      "stimulus": "After warm-up, input black-and-white, mid-level, single-channel primary-color, and random rows with sw7.",
+      "expected": "Predict using the actual coefficient kernel and signed saturation. Independently compute -2*p00-p01-p10+p11+p12+p21+2*p22+128 and then clamp to 0..255; the output for a constant window q is min(q+128,255), accounting for the register history of each stage.",
+      "checker": "Check using an independent input window and integer formula; sample actual outputs from the ports. All inputs in this test are driven on the falling edge of clk and held until the next rising edge; four-state sampling is performed 0.2ns after the rising edge, after NBA settling. The predictor first saves the pre-edge state and inputs, computes the next value of each stage separately, and compares the defined top-level outputs after that edge, without assuming that data and control have the same latency.",
+      "implementation_id": "V09",
+      "source": "video_pkg.sv:video_monitor.sample and video_scoreboard.write; model/model.sv:dvbench_model"
+    },
+    {
+      "test_id": "T10",
+      "feature_ids": [
+        "F10"
+      ],
+      "requirement_ids": [
+        "R-dv-058-010"
+      ],
+      "stimulus": "Warm up with native 3W+16 continuously valid random pixels, using 384-pixel rows and 4-cycle VDE gaps, then continue all filters across rows; reconstruct valid history after a mid-stream reset.",
+      "expected": "Count history by the number of valid advances; gaps do not consume RAM locations; the window uses the offsets above rather than an ideal same-column 3x3. When VDE is low, pointers, RAM reads/writes, and the window do not advance, but filter outputs are still computed from the old window on every edge; hs/vs do not clear the window; do not treat initially unwritten slots as zero.",
+      "checker": "The four-state model does not initialize memory; the validity guard is determined only by accumulated input VDE and mode history, and control/LED are never masked because RAM is unknown. All inputs in this test are driven on the falling edge of clk and held until the next rising edge; four-state sampling is performed 0.2ns after the rising edge, after NBA settling. The predictor first saves the pre-edge state and inputs, computes the next value of each stage separately, and compares the defined top-level outputs after that edge, without assuming that data and control have the same latency.",
+      "implementation_id": "V10",
+      "source": "video_pkg.sv:video_monitor.sample and video_scoreboard.write; model/model.sv:dvbench_model"
+    },
+    {
+      "test_id": "T11",
+      "feature_ids": [
+        "F11"
+      ],
+      "requirement_ids": [
+        "R-dv-058-011"
+      ],
+      "stimulus": "After vsync goes high then low, naturally scan 64 lines of 384 pixels each, rotating through all names and split-screen settings, covering y=0..63, PAD/character boundaries/box boundaries; no need to force coordinates or font. Additionally, reset y separately for each mode through a falling edge of vsync, then scan 64 lines and separately drive VDE low and perturb hsync; extend the scan across y=64 to verify that this parameter does not truncate y and that blanking can still output the box color.",
+      "expected": "Reconstruct coordinates, names, and bitmaps from input counts; white strokes/black box/pass-through outside the box conform to register history. Text uses pre-edge coordinates and selected data and is registered on every edge, not gated by VDE; the output then uses old text data; hsync does not drive coordinates.",
+      "checker": "The model accumulates coordinates only from native inputs, renders using an independent table, and compares against port data; font bitmap data consists of public behavioral bytes rather than test answers. All inputs in this test are driven on the falling edge of clk and held until the next rising edge; four-state sampling is performed 0.2ns after the rising edge, after NBA settling. The predictor first saves the pre-edge state and inputs, computes the next value of each stage separately, and compares the defined top-level outputs after that edge, without assuming that data and control have the same latency.",
+      "implementation_id": "V11",
+      "source": "video_pkg.sv:video_sequence.refinement_history; video_monitor.sample; video_scoreboard.write; model/model.sv:dvbench_model"
+    },
+    {
+      "test_id": "T12",
+      "feature_ids": [
+        "F12"
+      ],
+      "requirement_ids": [
+        "R-dv-058-012"
+      ],
+      "stimulus": "For 64 rows, enable split-screen every 3 rows, covering x190..194 in each row; vary hs, vs, and VDE separately in original/filtered modes and interleave random pixels.",
+      "expected": "The divider line has priority; the left and right sides each follow their actual paths; raw control has no additional one-cycle delay, while filtered control is delayed by one cycle. When pre-edge x is 191..193, output the white line first; elsewhere in split-screen, the right side with x>=192 takes old text, and the left side takes this edge's input; control registers the pre-edge selected control, with separate predictions and no artificial delay alignment.",
+      "checker": "The same input-history model independently predicts data and control; sample at #0.2 on every edge for four-state comparison, avoiding inference of control from data validity. All inputs in this test are driven on the falling edge of clk and held until the next rising edge; four-state sampling is performed 0.2ns after the rising edge, after NBA settling. The predictor first saves the pre-edge state and inputs, computes the next value of each stage separately, and compares the defined top-level outputs after that edge, without assuming that data and control have the same latency.",
+      "implementation_id": "V12",
+      "source": "video_pkg.sv:video_monitor.sample and video_scoreboard.write; model/model.sv:dvbench_model"
+    },
+    {
+      "test_id": "T13",
+      "feature_ids": [
+        "F13"
+      ],
+      "requirement_ids": [
+        "R-dv-058-013"
+      ],
+      "stimulus": "Across all 64 rows, traverse all modes, split-screen settings, and multiple blink periods; continue checking LED every cycle during the long 2.5M button wait, and resume after reset.",
+      "expected": "Predict one-hot using the independent counter's old phase; all on/off states and category selections are correct. If the pre-edge blink count is >=6, clear it and toggle enable; LED uses old enable; toggles are 7 edges apart, and the on/off period is 14 edges; independently predict one-hot using old enable and current sw[1:0].",
+      "checker": "Compare LED unconditionally even when VDE is low or data is undefined during warm-up; quiet-step still updates blink and scoreboard observations on every edge. All inputs in this test are driven on the falling edge of clk and held until the next rising edge; four-state sampling is performed 0.2ns after the rising edge, after NBA settling. The predictor first saves the pre-edge state and inputs, computes the next value of each stage separately, and compares the defined top-level outputs after that edge, without assuming that data and control have the same latency.",
+      "implementation_id": "V13",
+      "source": "video_pkg.sv:video_monitor.sample and video_scoreboard.write; model/model.sv:dvbench_model"
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "ports": [
+    {
+      "name": "addr",
+      "direction": "In",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "cmd",
+      "direction": "In",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "data",
+      "direction": "In",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "init",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "o_data",
+      "direction": "Out",
+      "width": 16,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 15,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "rd_wr",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "rst_n",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "s_busy",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "s_done",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "scl",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "sda",
+      "direction": "InOut",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "sda_en",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "wr",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {},
+  "parser": "pyslang 12.1.0"
+}

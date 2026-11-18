@@ -1,0 +1,317 @@
+{
+  "task_id": "dv-069",
+  "dut_top": "vmul_top",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "full_adder.v",
+    "wallace_adder_18.v",
+    "booth.v",
+    "mult_32.v",
+    "array_multiplier.v",
+    "vmul.v",
+    "vmul_top.v",
+    "stream_fifo_pipe_true.v",
+    "fifo.v",
+    "define.v"
+  ],
+  "rtl_sources": [
+    "full_adder.v",
+    "wallace_adder_18.v",
+    "booth.v",
+    "mult_32.v",
+    "array_multiplier.v",
+    "vmul.v",
+    "vmul_top.v",
+    "stream_fifo_pipe_true.v",
+    "fifo.v"
+  ],
+  "model_interface": {
+    "ports": [
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "ctrl_alu_fn_i",
+        "direction": "In",
+        "width": 6,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 5,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ctrl_reg_idxw_i",
+        "direction": "In",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ctrl_reverse_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "ctrl_wid_i",
+        "direction": "In",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ctrl_wvd_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "ctrl_wxd_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "in1_i",
+        "direction": "In",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 127,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "in2_i",
+        "direction": "In",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 127,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "in3_i",
+        "direction": "In",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 127,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "in_ready_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "in_valid_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "mask_i",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "outv_ready_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "outv_reg_idxw_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "outv_valid_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "outv_warp_id_o",
+        "direction": "Out",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "outv_wb_wxd_rd_o",
+        "direction": "Out",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 127,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "outv_wvd_mask_o",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "outv_wvd_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "outx_ready_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "outx_reg_idwx_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "outx_valid_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "outx_warp_id_o",
+        "direction": "Out",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "outx_wb_wxd_rd_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "outx_wxd_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "rst_n",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {}
+  },
+  "model_contract_policy": "native-module-v1",
+  "reference_submission": "solution/reference",
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m10"
+  ],
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "full_adder.v",
+    "wallace_adder_18.v",
+    "booth.v",
+    "mult_32.v",
+    "array_multiplier.v",
+    "vmul.v",
+    "vmul_top.v",
+    "stream_fifo_pipe_true.v",
+    "fifo.v"
+  ]
+}

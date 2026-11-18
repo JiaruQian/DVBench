@@ -1,0 +1,130 @@
+{
+  "tests": [
+    {
+      "test_id": "T-001",
+      "feature_ids": [
+        "F-001"
+      ],
+      "requirement_ids": [
+        "R-dv-029-001"
+      ],
+      "stimulus": "All requests low, ack low, saveBGBlock=0; first span 2 effective reset edges.; Change the active-low reset between edges to confirm that state is not cleared immediately, then cross an edge; perform operations after legally writing the cache/colors respectively, and observe Z on the undriven FIFO outputs.",
+      "expected": "Synchronous control reset; do not assume unreset storage is cleared to 0, and do not check its data values before legal establishment.",
+      "checker": "Predict independently from protocol state and input history; compare actual/expected using four-state comparison in legal valid windows; report errors for X/Z valid data, and require both undriven FIFO outputs to be Z. Actual sampling windows for this test: Bus outputs are combinational functions of the current state/inputs and may be sampled before the edge after the inputs have been stable for 1ns; sequential state updates on the gpuClk edge.",
+      "implementation_id": "V-001",
+      "source": "reference_pkg.sv:reference_sequence.body;reference_scoreboard.write;reference_checker.write"
+    },
+    {
+      "test_id": "T-002",
+      "feature_ids": [
+        "F-002"
+      ],
+      "requirement_ids": [
+        "R-dv-029-002"
+      ],
+      "stimulus": "Apply synchronous reset and clear all requests, with ack low.; Assert the four request classes individually and simultaneously; with idle ack high/low, compare the first-beat address, cnt, and direction; hold the command, then clear it.",
+      "expected": "Use independent priority and byte-alignment calculations; do not assume BG write priority or FIFO queuing based on source-code comments.",
+      "checker": "Predict independently from protocol state and input history; compare actual/expected using four-state comparison in legal valid windows; report errors for X/Z valid data, and require both undriven FIFO outputs to be Z. Actual sampling windows for this test: Request selection is a pre-edge combinational value, and the active transaction is latched on the rising edge; subsequent cnt defaults to 0.",
+      "implementation_id": "V-002",
+      "source": "reference_pkg.sv:reference_sequence.body;reference_scoreboard.write;reference_checker.write"
+    },
+    {
+      "test_id": "T-003",
+      "feature_ids": [
+        "F-003"
+      ],
+      "requirement_ids": [
+        "R-dv-029-003"
+      ],
+      "stimulus": "A transaction has been selected on the first beat with ack low, and an edge has been crossed to enter the active state.; Hold ack high for 1/2/8/9 consecutive beats, changing dat_i every beat, then cross an edge with ack low; verify early termination and index wraparound.",
+      "expected": "Count and terminate according to the input ack history; do not construct expectations from DUT req feedback.",
+      "checker": "Predict independently from protocol state and input history; compare actual/expected using four-state comparison in legal valid windows; report errors for X/Z valid data, and require both undriven FIFO outputs to be Z. Actual sampling windows for this test: First stabilize ack during the low phase, check the current beat address before the edge, and check the advanced outputs after the edge; cnt has length meaning only on the first beat.",
+      "implementation_id": "V-003",
+      "source": "reference_pkg.sv:reference_sequence.body;reference_scoreboard.write;reference_checker.write"
+    },
+    {
+      "test_id": "T-004",
+      "feature_ids": [
+        "F-004"
+      ],
+      "requirement_ids": [
+        "R-dv-029-004"
+      ],
+      "stimulus": "Idle with ack low and other requests cleared.; Issue command 1 separately at each mask/pair boundary, and issue fill command 2; change command colors during activity and observe each beat with ack high.",
+      "expected": "Decode colors/masks/byte addresses independently; write data must equal the latched fields.",
+      "checker": "Predict independently from protocol state and input history; compare actual/expected using four-state comparison in legal valid windows; report errors for X/Z valid data, and require both undriven FIFO outputs to be Z. Actual sampling windows for this test: Colors and masks are latched on the initiation edge, and wrt=1 when active with ack high; the first beat still uses the default read direction.",
+      "implementation_id": "V-004",
+      "source": "reference_pkg.sv:reference_sequence.body;reference_scoreboard.write;reference_checker.write"
+    },
+    {
+      "test_id": "T-005",
+      "feature_ids": [
+        "F-005"
+      ],
+      "requirement_ids": [
+        "R-dv-029-005"
+      ],
+      "stimulus": "Clear other requests; after the first beat, hold the address requests until activity ends.; Test L/R/both requests separately, hold ack high for 2 beats with different data on each, then provide a third value on the low termination beat; check completion and writeback in their respective windows.",
+      "expected": "Independently record the initiating side and beat 0; concatenate the current high half with the first-beat low half for termination data.",
+      "checker": "Predict independently from protocol state and input history; compare actual/expected using four-state comparison in legal valid windows; report errors for X/Z valid data, and require both undriven FIFO outputs to be Z. Actual sampling windows for this test: The completion side and TexCacheWrite have different windows; the high half of the data follows dat_i directly and is sampled after 1ns in the termination cycle.",
+      "implementation_id": "V-005",
+      "source": "reference_pkg.sv:reference_sequence.body;reference_scoreboard.write;reference_checker.write"
+    },
+    {
+      "test_id": "T-006",
+      "feature_ids": [
+        "F-006"
+      ],
+      "requirement_ids": [
+        "R-dv-029-006"
+      ],
+      "stimulus": "With no higher-priority requests, issue CLUT while idle with ack low.; Provide 8 distinct dat_i values, sample separately before and after edges, and confirm the pipeline-tail write flag after termination; test early termination after 1 beat.",
+      "expected": "Use an independent beat and one-beat write-index pipeline, with data passing directly from the current input.",
+      "checker": "Predict independently from protocol state and input history; compare actual/expected using four-state comparison in legal valid windows; report errors for X/Z valid data, and require both undriven FIFO outputs to be Z. Actual sampling windows for this test: Check pre-edge address/completion separately from post-edge write flag/index; the data itself has no corresponding register.",
+      "implementation_id": "V-006",
+      "source": "reference_pkg.sv:reference_sequence.body;reference_scoreboard.write;reference_checker.write"
+    },
+    {
+      "test_id": "T-007",
+      "feature_ids": [
+        "F-007"
+      ],
+      "requirement_ids": [
+        "R-dv-029-007"
+      ],
+      "stimulus": "First hold saveBGBlock at 0 across an edge; establish usable data through a complete 8-beat background read.; Test all block/blending combinations separately, checking write masks and active addresses, write termination, and the subsequent read phase; after completion, hold nonzero, then return to 0 to retrigger.",
+      "expected": "Use independent edge history, a block queue, and an 8-word array; do not backfill from actual imported values.",
+      "checker": "Predict independently from protocol state and input history; compare actual/expected using four-state comparison in legal valid windows; report errors for X/Z valid data, and require both undriven FIFO outputs to be Z. Actual sampling windows for this test: The first beat sets busy, and the final termination edge clears busy; the background cache is valid only after a legal read history, and source-side save/load/export remain stable until completion.",
+      "implementation_id": "V-007",
+      "source": "reference_pkg.sv:reference_sequence.body;reference_scoreboard.write;reference_checker.write"
+    },
+    {
+      "test_id": "T-008",
+      "feature_ids": [
+        "F-008"
+      ],
+      "requirement_ids": [
+        "R-dv-029-008"
+      ],
+      "stimulus": "Apply synchronous reset; first perform an 8-beat read command 3 for each bank.; Load both banks word by word with different dat_i values, test mask patterns and clear-other separately, then observe using subsequent command 4.",
+      "expected": "Use independent arrays of 16 halfwords for each of the two banks and pixel masks; the read cache itself has no public direct port and is verified through writeback.",
+      "checker": "Predict independently from protocol state and input history; compare actual/expected using four-state comparison in legal valid windows; report errors for X/Z valid data, and require both undriven FIFO outputs to be Z. Actual sampling windows for this test: The read-bank cache is written through a pipeline of active beats and their indices; use the writeback command only after termination.",
+      "implementation_id": "V-008",
+      "source": "reference_pkg.sv:reference_sequence.body;reference_scoreboard.write;reference_checker.write"
+    },
+    {
+      "test_id": "T-009",
+      "feature_ids": [
+        "F-009"
+      ],
+      "requirement_ids": [
+        "R-dv-029-009"
+      ],
+      "stimulus": "Both banks have been fully read with legal, distinct data, and both masks have been established.; Iterate over VVIndex, bank, and force/check, with stencil alternating and all 0/1; after clearing a bank at termination, issue writeback again to observe mask clearing.",
+      "expected": "Use an independent circular array of 32 16-bit pixels, assembling words using arithmetic indices; use independent Boolean operations for mask and stencil.",
+      "checker": "Predict independently from protocol state and input history; compare actual/expected using four-state comparison in legal valid windows; report errors for X/Z valid data, and require both undriven FIFO outputs to be Z. Actual sampling windows for this test: bank, rotation, stencil, force/check, and bank-clear controls are latched on the first beat; observe each active beat with ack high.",
+      "implementation_id": "V-009",
+      "source": "reference_pkg.sv:reference_sequence.body;reference_scoreboard.write;reference_checker.write"
+    }
+  ]
+}

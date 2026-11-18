@@ -1,0 +1,154 @@
+{
+  "requirement_ids": [
+    "R-dv-015-001",
+    "R-dv-015-002",
+    "R-dv-015-003",
+    "R-dv-015-004",
+    "R-dv-015-005",
+    "R-dv-015-006"
+  ],
+  "atoms": [
+    {
+      "atom_id": "A-1",
+      "requirement_ids": [
+        "R-dv-015-001"
+      ],
+      "description": "Low rst_n resets the state only on a rising edge of clk, sets o_data to 0, and sets s_busy/s_done/sda_en to 0; sda/scl are released in idle. Asserting reset between edges does not immediately clear registered state. With init=0, no automatic start occurs in idle. No queuing; wait for STOP to complete before issuing the next request.",
+      "anchors": {
+        "0": "Omitted or explicitly contradictory to this entry's object/condition/window; support must not be inferred from names or IDs.",
+        "1": "True local behavior, but missing an important boundary or window of this entry.",
+        "2": "Low rst_n resets the state, sets o_data to 0 and s_busy/s_done/sda_en to 0 only on a clk rising edge, and releases sda/scl in idle; asserting reset between edges does not immediately clear the registered state. init=0 does not automatically start a transaction in idle. No queuing; wait for STOP to complete before issuing the next request. Sample stably after assertion between edges and after the rising edge, and check that the bus is released while init is held at 0."
+      },
+      "legal_history": "First reset in idle to establish 0; also establish non-idle states during transmission and reception and a nonzero read result."
+    },
+    {
+      "atom_id": "A-2",
+      "requirement_ids": [
+        "R-dv-015-002"
+      ],
+      "description": "START is generated after init is sampled in idle. The address byte is {addr,rd_wr}, sent MSB first; in the write direction, cmd is sent next, followed by data when wr=1, or termination after cmd when wr=0. Each bit takes 16 clk cycles, and master fields remain stable throughout the frame; tx_data is refreshed internally on every edge, so do not assume that everything is latched at startup.",
+      "anchors": {
+        "0": "Omitted or explicitly contradictory to this entry's object/condition/window; support must not be inferred from names or IDs.",
+        "1": "True local behavior, but missing an important boundary or window of this entry.",
+        "2": "After init is sampled in idle, generate START; the address byte is {addr,rd_wr}, sent MSB first. In the write direction, subsequently send cmd; for wr=1, then send data, and for wr=0, end after cmd. Each bit takes 16 clk cycles, and the master fields are held throughout the frame; tx_data is refreshed internally on every edge, so do not assume everything is latched at startup. Sample transmitted bytes during the stable high phase, compare the driven fields MSB→LSB, and check busy and ACK waiting at byte boundaries."
+      },
+      "legal_history": "Synchronously reset to idle; configure a legal slave to ACK every transmitted byte."
+    },
+    {
+      "atom_id": "A-3",
+      "requirement_ids": [
+        "R-dv-015-003"
+      ],
+      "description": "When rd_wr=1, the read address is sent first, and bytes are received after ACK. If the low two bits of cmd are 00 or 11, two bytes are received: the first byte is written to the high 8 bits of o_data, and after the master ACK, the second byte is written to the low 8 bits, followed by NACK; for 01 or 10, only the first byte is received into the high 8 bits, while the low 8 bits retain their old value. Write frames do not modify o_data. The receiver samples the current bit every clk; the sample in the SCL low phase at the end of the bit, when the divider wraps around, determines the final value of that bit, rather than sampling only on the rising edge of SCL.",
+      "anchors": {
+        "0": "Omitted or explicitly contradictory to this entry's object/condition/window; support must not be inferred from names or IDs.",
+        "1": "True local behavior, but missing an important boundary or window of this entry.",
+        "2": "When rd_wr=1, first send the read address, then receive bytes after ACK. If the low two bits of cmd are 00 or 11, receive two bytes: write the first byte to the high 8 bits of o_data; after the master ACK, write the second byte to the low 8 bits, then NACK. For 01 or 10, receive only the first byte into the high 8 bits and retain the old value of the low 8 bits. Write frames do not modify o_data. The receiver samples the current bit every clk; the SCL low-phase sample at the end of the bit, when the divider wraps around, determines the final value of that bit, rather than sampling only on the SCL rising edge. The result updates on the next clk rising edge after the byte's busy falls; observe the values after each byte and after STOP, assembling them independently from the slave's drive history."
+      },
+      "legal_history": "First use a two-byte read to establish distinct high and low bytes, then perform a one-byte read and a write to verify retention rather than merely a reset value of 0."
+    },
+    {
+      "atom_id": "A-4",
+      "requirement_ids": [
+        "R-dv-015-004"
+      ],
+      "description": "At the end of a transmitted byte, busy becomes 0 and ACK is entered; sampling low during source clk phases 8 through 11 of each ACK bit can set the ACK memory, and advancement occurs only at the end of the 16-cycle divider period and only if ACK has been sampled. Without ACK, waiting continues and the ACK clock repeats; s_done does not occur. A subsequent valid ACK allows continuation; synchronous reset can cancel the wait and restore idle. s_busy is 0 during the ACK gap of every byte and does not indicate completion of the entire frame.",
+      "anchors": {
+        "0": "Omitted or explicitly contradictory to this entry's object/condition/window; support must not be inferred from names or IDs.",
+        "1": "True local behavior, but missing an important boundary or window of this entry.",
+        "2": "At the end of a transmitted byte, busy becomes 0 and ACK is entered; sampling low during source-clk phases 8 through 11 of each ACK bit can set the ACK memory, and advancement occurs only at the end of the 16-cycle divider period and if ACK has been sampled. With no ACK, waiting continues and ACK clocks repeat, and s_done does not occur. A subsequent legal ACK allows continuation; synchronous reset can cancel the wait and restore idle. s_busy is 0 during each byte's ACK gap and does not indicate that the whole frame is complete. Sample the ACK-valid high phase and the end of the divider period separately; wait at least two complete 16-cycle periods, and check recovery after reset."
+      },
+      "legal_history": "Complete START and one transmitted byte, reaching the ACK window."
+    },
+    {
+      "atom_id": "A-5",
+      "requirement_ids": [
+        "R-dv-015-005"
+      ],
+      "description": "SCL is released for high and pulled to 0 for low; when sda_en=0, the DUT only pulls SDA low or releases it during transmit and normal receive data phases. During the first source clk cycle of the ACK gap at the end of a received byte, the response selection is still Z, and digital combinational resolution makes SDA X (even when the slave releases it); this cycle must not be treated as a definite 1. When sda_en=1, ACK=0 or NACK=1 is driven directly (NACK is actively driven high, so operation is not strictly open-drain throughout). During the 16 cycles before START, SCL is high for the first 8 cycles and low for the last 8 cycles, and SDA is pulled low after the count>4; during data/ACK periods, SCL is high at tick4 through 11 and low otherwise. Read ACK/NACK is driven by the sda_en window; it is still disabled on the first clk of the first receive ACK gap and is enabled only on the next clk. ACK drive is retained for the first clk at the start of the second byte, then released.",
+      "anchors": {
+        "0": "Omitted or explicitly contradictory to this entry's object/condition/window; support must not be inferred from names or IDs.",
+        "1": "True local behavior, but missing an important boundary or window of this entry.",
+        "2": "SCL is released for high and pulled to 0 for low; when sda_en=0, the DUT only pulls SDA low or releases it during transmission and normal data reception. During the first source-clk cycle of the ACK gap at the end of a received byte, the acknowledgment selection is still Z, and digital combinational resolution makes SDA X (even when the slave releases it); this cycle must not be treated as a definite 1. When sda_en=1, directly drive ACK=0 or NACK=1 (NACK is actively high, so operation is not strictly open-drain throughout). During the 16 cycles before START, SCL is high for the first 8 cycles and low for the last 8 cycles, and SDA is pulled low after the count is >4; during data/ACK periods, SCL is high at tick4 through 11 and low otherwise. Read ACK/NACK is driven by the sda_en window; it is still not enabled on the first clk of the first receive ACK gap and is enabled only on the next clk; the first clk at the start of the second byte retains the ACK drive, which is then released. Sample stably after each clk and at phase midpoints; four-state bus resolution must not convert X/Z to bit in advance; compare only within the publicly specified legal, contention-free drive domain."
+      },
+      "legal_history": "Release in idle, and configure the master and an external slave that obeys the termination release rules."
+    },
+    {
+      "atom_id": "A-6",
+      "requirement_ids": [
+        "R-dv-015-006"
+      ],
+      "description": "After the final byte ACK, the completion window is entered, with s_done at 1, s_busy at 0, and SCL/SDA low; the completion window spans tick0 through 5, totaling 6 source clk cycles. In the subsequent STOP phase, SCL is high starting at tick6, SDA is released starting at tick9, and idle is re-entered after tick15. s_done is already deasserted before STOP, so a rising edge of done must not be treated as completion of STOP; o_data is retained during idle and subsequent writes.",
+      "anchors": {
+        "0": "Omitted or explicitly contradictory to this entry's object/condition/window; support must not be inferred from names or IDs.",
+        "1": "True local behavior, but missing an important boundary or window of this entry.",
+        "2": "After the last byte ACK, enter the termination window, with s_done at 1, s_busy at 0, and SCL/SDA low; the termination window spans tick0 through 5, a total of 6 source-clk cycles. In the subsequent STOP phase, SCL is high starting at tick6, SDA is released starting at tick9, and idle is resumed after tick15. s_done has already been deasserted before STOP, so a done rising edge must not be treated as indicating that STOP has completed; o_data is retained in idle and during subsequent writes. Count the done width and the STOP ordering in source-clk cycles, rather than merely waiting for busy to fall."
+      },
+      "legal_history": "Initiate a complete write, a single-byte read, and a two-byte read with ACKs, pulsing init only once."
+    }
+  ],
+  "required_interfaces": {
+    "R-dv-015-001": [
+      "clk",
+      "rst_n",
+      "init",
+      "sda",
+      "scl",
+      "o_data",
+      "s_busy",
+      "s_done",
+      "sda_en"
+    ],
+    "R-dv-015-002": [
+      "clk",
+      "init",
+      "addr",
+      "cmd",
+      "data",
+      "rd_wr",
+      "wr",
+      "sda",
+      "scl",
+      "s_busy",
+      "s_done"
+    ],
+    "R-dv-015-003": [
+      "clk",
+      "cmd",
+      "rd_wr",
+      "sda",
+      "scl",
+      "o_data",
+      "sda_en",
+      "s_busy",
+      "s_done"
+    ],
+    "R-dv-015-004": [
+      "clk",
+      "rst_n",
+      "sda",
+      "scl",
+      "s_busy",
+      "s_done"
+    ],
+    "R-dv-015-005": [
+      "clk",
+      "sda",
+      "scl",
+      "sda_en",
+      "rd_wr",
+      "cmd",
+      "init"
+    ],
+    "R-dv-015-006": [
+      "clk",
+      "s_done",
+      "s_busy",
+      "scl",
+      "sda",
+      "o_data",
+      "init"
+    ]
+  },
+  "policy": "fixed denominator, semantic union and deduplication; MD/JSON conflict is one local incorrect claim"
+}

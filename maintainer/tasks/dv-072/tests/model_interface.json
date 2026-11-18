@@ -1,0 +1,72 @@
+{
+  "ports": [
+    {
+      "name": "clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "des_data",
+      "direction": "In",
+      "width": 64,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 63,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "des_decipher_en",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "des_encipher_en",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "des_key_in",
+      "direction": "In",
+      "width": 64,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 63,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "desc_ready",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "desc_result",
+      "direction": "Out",
+      "width": 64,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 63,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "rst_n",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {},
+  "parser": "pyslang 11.0.0"
+}

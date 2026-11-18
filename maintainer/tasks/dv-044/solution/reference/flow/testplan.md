@@ -1,0 +1,109 @@
+# Testplan
+
+## T-001
+
+feature_ids: F-001
+
+requirement_ids: R-MUL-001
+
+stimulus: 先让reset=1被至少一个上升沿采样，再释放；通过原生输入历史准备场景，未ready时保持valid/data/last，不依赖DUT输出构造期望。10个参数实例分别运行；用独立输入历史调度器生成合法AXI流，在未ready时保持有效事务；每次实际比较a_tready/b_tready/p_tvalid，有效时比较p_tdata/p_tlast。
+
+expected: 顶层multiply包含clk、同步高有效reset；两个独立输入流A/B各有tdata、tlast、tvalid和tready，输出P含p_tdata、p_tlast、p_tvalid、p_tready。位宽分别为WIDTH_A、WIDTH_B、WIDTH_P。只要求公开参数表的10个配置，包含LATENCY=0/1/2/3/4、signed/unsigned、8x12/16x16、round、clip及其组合。原生默认WIDTH_P=32、DROP_TOP_P=1会产生超出有效切片的配置，本题不把此默认配置纳入有效运行域；配置0为16x16、P31、DROP1、LAT3、有符号、不舍入不饱和。 观察时刻：全部状态在clk上升沿更新。输入在沿前建立并保持，ready/valid同沿均1时接受；输出在p_tvalid=1时数据和last有效。沿前组合稳定窗口观察本次握手及当前输出，沿后NBA稳定再对应下一状态。
+
+checker: 从输入及其独立历史计算期望，逐次与实际原生输出比较；每拍比较ready/valid，只在独立预期p_tvalid=1时比较data/last；LATENCY=0按当前输入计算数据，其余按配对历史。失配通过UVM_ERROR报告，不能只计覆盖或用actual自证。
+
+## T-002
+
+feature_ids: F-002
+
+requirement_ids: R-MUL-002
+
+stimulus: 先让reset=1被至少一个上升沿采样，再释放；通过原生输入历史准备场景，未ready时保持valid/data/last，不依赖DUT输出构造期望。开始连续4拍采样reset，中途分别在空/有在途数据/背压段采样reset；用新事务恢复并核对无旧事务泄漏。
+
+expected: reset在上升沿采样为1时清空两输入路径、乘积路径和实际启用的round/clip缓冲中的有效事务；释放后不得输出复位前在途事务。ready不被reset组合强制为0；复位之前未初始化的值不作检查依据。复位期间无效p_tdata/p_tlast不规定。完全位于两个上升沿之间的reset脉冲不改变有效事务状态。 观察时刻：reset沿间改变不立即清状态；复位后的状态检查必须等待采样沿及NBA/组合稳定，不能把沿前旧valid当作复位失败。
+
+checker: 从输入及其独立历史计算期望，逐次与实际原生输出比较；每拍比较ready/valid，只在独立预期p_tvalid=1时比较data/last；LATENCY=0按当前输入计算数据，其余按配对历史。失配通过UVM_ERROR报告，不能只计覆盖或用actual自证。
+
+## T-003
+
+feature_ids: F-003
+
+requirement_ids: R-MUL-003
+
+stimulus: 先让reset=1被至少一个上升沿采样，再释放；通过原生输入历史准备场景，未ready时保持valid/data/last，不依赖DUT输出构造期望。施加A独行、B独行、交错到达、双方连续流和随机独立valid；交叉四种last，逐次检查valid/ready和有效P数据/last。
+
+expected: A/B可以独立被接受并缓冲，按各自接受顺序配对，只有双方队首都有效才能产生一项乘积事务；不能仅一方valid就产生有效P。配对的last为a_tlast OR b_tlast，非AND。不要求A、B同沿到达；背压不允许丢失、重复或重排事务。reset会取消此前两侧尚未配对输入。 观察时刻：配对消费条件还要求后续乘积路径可接收。A与B输入ready各受本侧容量、对侧队首有效及下游容量决定。
+
+checker: 从输入及其独立历史计算期望，逐次与实际原生输出比较；每拍比较ready/valid，只在独立预期p_tvalid=1时比较data/last；LATENCY=0按当前输入计算数据，其余按配对历史。失配通过UVM_ERROR报告，不能只计覆盖或用actual自证。
+
+## T-004
+
+feature_ids: F-004
+
+requirement_ids: R-MUL-004
+
+stimulus: 先让reset=1被至少一个上升沿采样，再释放；通过原生输入历史准备场景，未ready时保持valid/data/last，不依赖DUT输出构造期望。各配置施加连续流、气泡、数十拍至百拍背压、随机p_tready及解除后连续接收，独立预测每拍ready/valid并核对有效输出。
+
+expected: 输入侧逻辑级数N在LATENCY=1/2时为1，否则为2；乘积侧逻辑级数M在LATENCY=2/3时为1，否则为2，LATENCY=0也保留N=2、M=2的控制路径。每条路径各级存储一项有效事务；若末级可被下游接收，或本级至末级至少存在一个空位，该级可以前移/捕获上游。输入ready为该路径第一级可推进；输入两路径的末级消费还要求对侧末级有效，乘积路径首级可推进。按上升沿更新，数据/last/valid保持与事务一致。LATENCY参数名称不代表所有配置的实际无阻塞首项延迟等于其值：基础控制需N+M个采样沿，转换额外增加实际启用的注册级。 观察时刻：ready可组合响应输出背压或内部空位；连续full、部分空位及解除背压时均核对每拍ready/valid，按有效域比较P。
+
+checker: 从输入及其独立历史计算期望，逐次与实际原生输出比较；每拍比较ready/valid，只在独立预期p_tvalid=1时比较data/last；LATENCY=0按当前输入计算数据，其余按配对历史。失配通过UVM_ERROR报告，不能只计覆盖或用actual自证。
+
+## T-005
+
+feature_ids: F-005
+
+requirement_ids: R-MUL-005
+
+stimulus: 先让reset=1被至少一个上升沿采样，再释放；通过原生输入历史准备场景，未ready时保持valid/data/last，不依赖DUT输出构造期望。交叉0/1/全一/符号极值/交替位和随机操作数，覆盖所有配置；LATENCY=0在当前输入与控制路径旧事务不同的情况下比较当前数据乘积。
+
+expected: SIGNED=1时将A/B按各自位宽解释为二补码，SIGNED=0时作无符号乘法；完整乘积宽度W=WIDTH_A+WIDTH_B。LATENCY非0时，乘积属于被顺序配对的已缓冲输入。LATENCY=0的固定行为特殊：p的数据源取当前原生a_tdata和b_tdata的组合乘积，但valid/last/ready仍通过N=2、M=2控制路径；不承诺此配置的数据与被配对旧事务一致，也不承诺其有效输出在背压期间保持原数据。此特例必须单独建模，不能套用理想零延迟AXI乘法器。 观察时刻：LATENCY=0在每次稳定观察窗口按当前A/B数据计算；其它配置使用历史接受与配对数据。符号按截取前的完整原生宽度解释。
+
+checker: 从输入及其独立历史计算期望，逐次与实际原生输出比较；每拍比较ready/valid，只在独立预期p_tvalid=1时比较data/last；LATENCY=0按当前输入计算数据，其余按配对历史。失配通过UVM_ERROR报告，不能只计覆盖或用actual自证。
+
+## T-006
+
+feature_ids: F-006
+
+requirement_ids: R-MUL-006
+
+stimulus: 先让reset=1被至少一个上升沿采样，再释放；通过原生输入历史准备场景，未ready时保持valid/data/last，不依赖DUT输出构造期望。在无转换配置检查最高位丢弃及完整输出宽度，包括signed极值、unsigned高位和随机产品。
+
+expected: EN_SATURATE=0且EN_ROUND=0时，从W位完整乘积去掉DROP_TOP_P个最高位，再保留剩余D=W-DROP_TOP_P位中的最高WIDTH_P位；丢弃D-WIDTH_P个低位，不作舍入或饱和。last/valid直接来自基础控制路径，p_tready直接向该路径反馈。 观察时刻：该分支不添加输出寄存级；有效域和LATENCY=0特例遵循前述规则。
+
+checker: 从输入及其独立历史计算期望，逐次与实际原生输出比较；每拍比较ready/valid，只在独立预期p_tvalid=1时比较data/last；LATENCY=0按当前输入计算数据，其余按配对历史。失配通过UVM_ERROR报告，不能只计覆盖或用actual自证。
+
+## T-007
+
+feature_ids: F-007
+
+requirement_ids: R-MUL-007
+
+stimulus: 先让reset=1被至少一个上升沿采样，再释放；通过原生输入历史准备场景，未ready时保持valid/data/last，不依赖DUT输出构造期望。在round-only窄输出和等宽透传配置施加极值矩阵及大量随机乘积，检查校正与非校正、安全上界以及背压握手。
+
+expected: 只有EN_ROUND=1时，先丢DROP_TOP_P个最高位，得到D位值，再把低K=D-WIDTH_P位移除。K=0直接透传且不添加缓冲。K>0时，高WIDTH_P位加第K-1位作为最近舍入校正，半值向正方向；K>1且高位表示最大正数时禁止加1，避免正数绕到负数。其它情形按WIDTH_P模截断。K>0使用一个容量1的注册输出缓冲，ready=空或下游ready；valid/data/last随事务保存。 观察时刻：实际舍入时增加一个注册级；宽度相等透传不增加延迟或容量。
+
+checker: 从输入及其独立历史计算期望，逐次与实际原生输出比较；每拍比较ready/valid，只在独立预期p_tvalid=1时比较data/last；LATENCY=0按当前输入计算数据，其余按配对历史。失配通过UVM_ERROR报告，不能只计覆盖或用actual自证。
+
+## T-008
+
+feature_ids: F-008
+
+requirement_ids: R-MUL-008
+
+stimulus: 先让reset=1被至少一个上升沿采样，再释放；通过原生输入历史准备场景，未ready时保持valid/data/last，不依赖DUT输出构造期望。在clip-only配置施加最小负数平方、正负极值和随机乘积，逐次比较饱和值的高WIDTH_P位、last和握手。
+
+expected: 只有EN_SATURATE=1时，把W位完整乘积按有符号二补码饱和至D=W-DROP_TOP_P位范围[-2^(D-1),2^(D-1)-1]，然后取该D位饱和值的最高WIDTH_P位，不舍入。这里饱和解释按有符号值，即使SIGNED参数决定了前级乘法符号性。D=W时饱和级透传，否则增加容量1的注册缓冲。 观察时刻：真正截位的饱和增加一个注册级，ready为空或下游可接收；输出仅valid时有数据合同。
+
+checker: 从输入及其独立历史计算期望，逐次与实际原生输出比较；每拍比较ready/valid，只在独立预期p_tvalid=1时比较data/last；LATENCY=0按当前输入计算数据，其余按配对历史。失配通过UVM_ERROR报告，不能只计覆盖或用actual自证。
+
+## T-009
+
+feature_ids: F-009
+
+requirement_ids: R-MUL-009
+
+stimulus: 先让reset=1被至少一个上升沿采样，再释放；通过原生输入历史准备场景，未ready时保持valid/data/last，不依赖DUT输出构造期望。运行round+clip两种配置，施加极值和随机乘积、长背压与恢复，检查两级/旁路路径的数据、last、ready/valid及满态恢复。
+
+expected: EN_ROUND=EN_SATURATE=1时，如DROP_TOP_P非0，先把完整乘积按符号扩展1位。中间宽度I=WIDTH_P+DROP_TOP_P+1；DROP_TOP_P=0时I=WIDTH_P且不扩展。若W=WIDTH_P+DROP_TOP_P，舍入阶段直接透传；否则做最近舍入至I位，DROP_TOP_P非0时不启用安全正上界抑制，DROP_TOP_P=0时启用。再按有符号值饱和至WIDTH_P，DROP_TOP_P=0则该饱和阶段透传。每个实际启用阶段用容量2、注册输出的缓冲：占有0或1项时input_ready=1，2项时为0，即使当拍下游取走一项也不会立即允许新输入；可同拍弹出旧项和在未满时接收新项。无组合空队列透传。 观察时刻：每个启用转换阶段至少一个采样沿延迟；容量2的ready不从满态组合追随p_tready。透传阶段不添加缓冲。
+
+checker: 从输入及其独立历史计算期望，逐次与实际原生输出比较；每拍比较ready/valid，只在独立预期p_tvalid=1时比较data/last；LATENCY=0按当前输入计算数据，其余按配对历史。失配通过UVM_ERROR报告，不能只计覆盖或用actual自证。

@@ -1,0 +1,174 @@
+{
+  "ports": [
+    {
+      "name": "address_m",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "address_x",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "clk_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "dflush",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "load_data",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "load_q_m",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "refill_address",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "refill_data",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "refill_ready",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "refill_request",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "refilling",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "restart_request",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "rst_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "stall_a",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "stall_m",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "stall_request",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "stall_x",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "store_byte_select",
+      "direction": "In",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "store_data",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "store_q_m",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {
+    "associativity": "1",
+    "sets": "512",
+    "bytes_per_line": "16",
+    "base_address": "0",
+    "limit": "0"
+  },
+  "parser": "pyslang 11.0.0"
+}

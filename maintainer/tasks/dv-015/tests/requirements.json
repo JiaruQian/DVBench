@@ -1,0 +1,125 @@
+{
+  "requirements": [
+    {
+      "requirement_id": "R-dv-015-001",
+      "obligation": "Low rst_n resets the state only on a rising edge of clk, sets o_data to 0, and sets s_busy/s_done/sda_en to 0; sda/scl are released in idle. Asserting reset between edges does not immediately clear registered state. With init=0, no automatic start occurs in idle. No queuing; wait for STOP to complete before issuing the next request.",
+      "rtl": "rtl/i2c_ctrl.sv:48-56; rtl/i2c_master.sv:52-92,110-125",
+      "legal_preparation": "First reset in idle to establish 0; also establish non-idle states during transmission and reception and a nonzero read result.",
+      "domain": "No parameters; fixed macro DVSR=16 (from backfill/package.svh), with 16 clk cycles per SCL bit period. Two-state host inputs avoid clk rising edges; init is pulsed for one clk cycle only when idle after STOP completes, and addr/cmd/data/rd_wr/wr are held throughout from initiation to STOP. The external slave may only pull sda low or release it, must not drive it high, and must not drive scl; during DUT read termination when sda_en=1, the slave releases the line to avoid strong-drive contention. An external pull-up makes a released line 1. No guarantees for multi-master arbitration, clock stretching, or analog metastability.",
+      "stimulus": "For reset between edges, check that registered outputs hold before the clock arrives, then pass through a rising edge; a long wait in idle, reset during transmission, and a new transaction after recovery.",
+      "observable_ports": [
+        "clk",
+        "rst_n",
+        "init",
+        "sda",
+        "scl",
+        "o_data",
+        "s_busy",
+        "s_done",
+        "sda_en"
+      ],
+      "sampling": "Sample after settling following assertion between edges and following the rising edge; check bus release while init remains 0.",
+      "independent_oracle": "solution/reference/model/model.sv"
+    },
+    {
+      "requirement_id": "R-dv-015-002",
+      "obligation": "START is generated after init is sampled in idle. The address byte is {addr,rd_wr}, sent MSB first; in the write direction, cmd is sent next, followed by data when wr=1, or termination after cmd when wr=0. Each bit takes 16 clk cycles, and master fields remain stable throughout the frame; tx_data is refreshed internally on every edge, so do not assume that everything is latched at startup.",
+      "rtl": "rtl/i2c_ctrl.sv:68-140; rtl/i2c_master.sv:86-89,128-164",
+      "legal_preparation": "Synchronously reset to idle; configure a legal slave to ACK every transmitted byte.",
+      "domain": "No parameters; fixed macro DVSR=16 (from backfill/package.svh), with 16 clk cycles per SCL bit period. Two-state host inputs avoid clk rising edges; init is pulsed for one clk cycle only when idle after STOP completes, and addr/cmd/data/rd_wr/wr are held throughout from initiation to STOP. The external slave may only pull sda low or release it, must not drive it high, and must not drive scl; during DUT read termination when sda_en=1, the slave releases the line to avoid strong-drive contention. An external pull-up makes a released line 1. No guarantees for multi-master arbitration, clock stretching, or analog metastability.",
+      "stimulus": "Use addresses 0/127/random, and cmd/data values 00/FF/AA/55 and random values; write frames with wr=0/1, with an independent slave reconstructing bytes according to the valid SCL window.",
+      "observable_ports": [
+        "clk",
+        "init",
+        "addr",
+        "cmd",
+        "data",
+        "rd_wr",
+        "wr",
+        "sda",
+        "scl",
+        "s_busy",
+        "s_done"
+      ],
+      "sampling": "Sample transmitted bytes during the stable high phase, compare the driven fields MSB→LSB, and check busy and ACK waiting at byte boundaries.",
+      "independent_oracle": "solution/reference/model/model.sv"
+    },
+    {
+      "requirement_id": "R-dv-015-003",
+      "obligation": "When rd_wr=1, the read address is sent first, and bytes are received after ACK. If the low two bits of cmd are 00 or 11, two bytes are received: the first byte is written to the high 8 bits of o_data, and after the master ACK, the second byte is written to the low 8 bits, followed by NACK; for 01 or 10, only the first byte is received into the high 8 bits, while the low 8 bits retain their old value. Write frames do not modify o_data. The receiver samples the current bit every clk; the sample in the SCL low phase at the end of the bit, when the divider wraps around, determines the final value of that bit, rather than sampling only on the rising edge of SCL.",
+      "rtl": "rtl/i2c_ctrl.sv:146-184; rtl/i2c_master.sv:167-191",
+      "legal_preparation": "First use a two-byte read to establish distinct high and low bytes, then perform a one-byte read and a write to verify retention rather than merely a reset value of 0.",
+      "domain": "No parameters; fixed macro DVSR=16 (from backfill/package.svh), with 16 clk cycles per SCL bit period. Two-state host inputs avoid clk rising edges; init is pulsed for one clk cycle only when idle after STOP completes, and addr/cmd/data/rd_wr/wr are held throughout from initiation to STOP. The external slave may only pull sda low or release it, must not drive it high, and must not drive scl; during DUT read termination when sda_en=1, the slave releases the line to avoid strong-drive contention. An external pull-up makes a released line 1. No guarantees for multi-master arbitration, clock stretching, or analog metastability.",
+      "stimulus": "Cover all four low-bit combinations of cmd; the slave provides independent known 00/FF/asymmetric and random data over complete bit windows; change the bit value in the low phase at the end of the bit to differ from the high-phase sample, to verify the actual valid window; retain the low bits across consecutive different frames.",
+      "observable_ports": [
+        "clk",
+        "cmd",
+        "rd_wr",
+        "sda",
+        "scl",
+        "o_data",
+        "sda_en",
+        "s_busy",
+        "s_done"
+      ],
+      "sampling": "The result updates on the next rising edge of clk after byte busy falls; observe the values after each byte and after STOP, assembling them independently from the slave drive history.",
+      "independent_oracle": "solution/reference/model/model.sv"
+    },
+    {
+      "requirement_id": "R-dv-015-004",
+      "obligation": "At the end of a transmitted byte, busy becomes 0 and ACK is entered; sampling low during source clk phases 8 through 11 of each ACK bit can set the ACK memory, and advancement occurs only at the end of the 16-cycle divider period and only if ACK has been sampled. Without ACK, waiting continues and the ACK clock repeats; s_done does not occur. A subsequent valid ACK allows continuation; synchronous reset can cancel the wait and restore idle. s_busy is 0 during the ACK gap of every byte and does not indicate completion of the entire frame.",
+      "rtl": "rtl/i2c_master.sv:146-164; rtl/i2c.sv:86-87",
+      "legal_preparation": "Complete START and one transmitted byte, reaching the ACK window.",
+      "domain": "No parameters; fixed macro DVSR=16 (from backfill/package.svh), with 16 clk cycles per SCL bit period. Two-state host inputs avoid clk rising edges; init is pulsed for one clk cycle only when idle after STOP completes, and addr/cmd/data/rd_wr/wr are held throughout from initiation to STOP. The external slave may only pull sda low or release it, must not drive it high, and must not drive scl; during DUT read termination when sda_en=1, the slave releases the line to avoid strong-drive contention. An external pull-up makes a released line 1. No guarantees for multi-master arbitration, clock stretching, or analog metastability.",
+      "stimulus": "Normal ACK, release throughout the ACK window, pull low after delaying several ACK periods, and reset while waiting; at each byte boundary, check that busy falls while done remains low.",
+      "observable_ports": [
+        "clk",
+        "rst_n",
+        "sda",
+        "scl",
+        "s_busy",
+        "s_done"
+      ],
+      "sampling": "Sample separately during the valid ACK high phase and at the end of the divider period; wait at least two complete 16-cycle periods, and check recovery after reset.",
+      "independent_oracle": "solution/reference/model/model.sv"
+    },
+    {
+      "requirement_id": "R-dv-015-005",
+      "obligation": "SCL is released for high and pulled to 0 for low; when sda_en=0, the DUT only pulls SDA low or releases it during transmit and normal receive data phases. During the first source clk cycle of the ACK gap at the end of a received byte, the response selection is still Z, and digital combinational resolution makes SDA X (even when the slave releases it); this cycle must not be treated as a definite 1. When sda_en=1, ACK=0 or NACK=1 is driven directly (NACK is actively driven high, so operation is not strictly open-drain throughout). During the 16 cycles before START, SCL is high for the first 8 cycles and low for the last 8 cycles, and SDA is pulled low after the count>4; during data/ACK periods, SCL is high at tick4 through 11 and low otherwise. Read ACK/NACK is driven by the sda_en window; it is still disabled on the first clk of the first receive ACK gap and is enabled only on the next clk. ACK drive is retained for the first clk at the start of the second byte, then released.",
+      "rtl": "rtl/i2c.sv:90-93; rtl/i2c_master.sv:49-76,116-191; rtl/i2c_ctrl.sv:158-185",
+      "legal_preparation": "Release in idle, and configure the master and an external slave that obeys the termination release rules.",
+      "domain": "No parameters; fixed macro DVSR=16 (from backfill/package.svh), with 16 clk cycles per SCL bit period. Two-state host inputs avoid clk rising edges; init is pulsed for one clk cycle only when idle after STOP completes, and addr/cmd/data/rd_wr/wr are held throughout from initiation to STOP. The external slave may only pull sda low or release it, must not drive it high, and must not drive scl; during DUT read termination when sda_en=1, the slave releases the line to avoid strong-drive contention. An external pull-up makes a released line 1. No guarantees for multi-master arbitration, clock stretching, or analog metastability.",
+      "stimulus": "START, transmit 0/1, slave ACK, read one/two bytes with master ACK/NACK, and reset; check bus levels and sda_en while the external slave releases the line.",
+      "observable_ports": [
+        "clk",
+        "sda",
+        "scl",
+        "sda_en",
+        "rd_wr",
+        "cmd",
+        "init"
+      ],
+      "sampling": "Sample after settling after each clk and at phase midpoints; four-state bus resolution must not convert X/Z to bit in advance; compare only within the publicly specified legal, contention-free drive domain.",
+      "independent_oracle": "solution/reference/model/model.sv"
+    },
+    {
+      "requirement_id": "R-dv-015-006",
+      "obligation": "After the final byte ACK, the completion window is entered, with s_done at 1, s_busy at 0, and SCL/SDA low; the completion window spans tick0 through 5, totaling 6 source clk cycles. In the subsequent STOP phase, SCL is high starting at tick6, SDA is released starting at tick9, and idle is re-entered after tick15. s_done is already deasserted before STOP, so a rising edge of done must not be treated as completion of STOP; o_data is retained during idle and subsequent writes.",
+      "rtl": "rtl/i2c_master.sv:194-222; rtl/i2c_ctrl.sv:137-184",
+      "legal_preparation": "Initiate a complete write, a single-byte read, and a two-byte read with ACKs, pulsing init only once.",
+      "domain": "No parameters; fixed macro DVSR=16 (from backfill/package.svh), with 16 clk cycles per SCL bit period. Two-state host inputs avoid clk rising edges; init is pulsed for one clk cycle only when idle after STOP completes, and addr/cmd/data/rd_wr/wr are held throughout from initiation to STOP. The external slave may only pull sda low or release it, must not drive it high, and must not drive scl; during DUT read termination when sda_en=1, the slave releases the line to avoid strong-drive contention. An external pull-up makes a released line 1. No guarantees for multi-master arbitration, clock stretching, or analog metastability.",
+      "stimulus": "Record done rising/falling edges and SCL/SDA termination separately; wait for the full STOP before issuing another request; continue observing o_data in idle.",
+      "observable_ports": [
+        "clk",
+        "s_done",
+        "s_busy",
+        "scl",
+        "sda",
+        "o_data",
+        "init"
+      ],
+      "sampling": "Count the done width and the ordering relative to STOP in source clk cycles, rather than merely waiting for busy to fall.",
+      "independent_oracle": "solution/reference/model/model.sv"
+    }
+  ]
+}

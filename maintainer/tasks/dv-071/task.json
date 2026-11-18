@@ -1,0 +1,161 @@
+{
+  "task_id": "dv-071",
+  "dut_top": "IEEE802TX",
+  "rtl_root": "rtl",
+  "mutant_root": "mutants/{variant}",
+  "rtl_files": [
+    "CRC_gen.v",
+    "EthernetTx.v"
+  ],
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "tb_top",
+  "reference_test": "t_main",
+  "reference_sources": [
+    "eth_tx_if.sv",
+    "eth_tx_pkg.sv",
+    "tb_top.sv"
+  ],
+  "mutants": [
+    "m1",
+    "m10",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9"
+  ],
+  "coverage": {
+    "vcs_compile": "-cm line+cond+tgl+branch+fsm -cm_dir build/simv.vdb",
+    "urg": "urg -full64 -dir build/simv.vdb -report build/urg"
+  },
+  "resource_policy": {
+    "agent_tokens": "record raw provider usage",
+    "compile_sim": "GNU time CPU/wall separately",
+    "network_and_urg": "separate phase records",
+    "missing": null
+  },
+  "replay_adapter_id": "dv-071-ethernet-tx",
+  "model_contract_policy": "native-module-v1",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "Addres",
+        "direction": "Out",
+        "width": 9,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 8,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "Clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "Reset",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "clk_en",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "complete",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "diagnostic",
+        "direction": "Out",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "gmii_tx_en",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "gmii_tx_er",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "gmii_txd",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "i8Data",
+        "direction": "In",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "iEmpty",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "oRead",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {},
+    "parser": "pyslang 11.0.0"
+  },
+  "rtl_sources": [
+    "CRC_gen.v",
+    "EthernetTx.v"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "CRC_gen.v",
+    "EthernetTx.v"
+  ]
+}

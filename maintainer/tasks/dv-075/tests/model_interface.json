@@ -1,0 +1,235 @@
+{
+  "top": "dvbench_model",
+  "file": "model/model.sv",
+  "ports": [
+    {
+      "name": "aclk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "aresetn",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "axi_m_araddr",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "axi_m_arburst",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "axi_m_arid",
+      "direction": "Out",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "axi_m_arlen",
+      "direction": "Out",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "axi_m_arready",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "axi_m_arsize",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "axi_m_arvalid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "axi_m_rdata",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "axi_m_rid",
+      "direction": "In",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "axi_m_rlast",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "axi_m_rready",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "axi_m_rresp",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "axi_m_rvalid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "cmd_address",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "cmd_bytes",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "cmd_ready",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "cmd_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "dout_tdata",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "dout_tkeep",
+      "direction": "Out",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "dout_tlast",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "dout_tready",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "dout_tvalid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {
+    "ADDRESS_BITS": "32",
+    "LENGTH_BITS": "32",
+    "MAX_BURST": "256",
+    "STREAM_BIG_ENDIAN": "32'd1414681925",
+    "MEM_BIG_ENDIAN": "32'd1414681925"
+  },
+  "sampling": {
+    "clock": "aclk",
+    "edge": "negedge",
+    "offset_ns": 0
+  },
+  "independence": "Input history only; ordinal queue/pointers, no DUT instance, DUT output or golden trace"
+}

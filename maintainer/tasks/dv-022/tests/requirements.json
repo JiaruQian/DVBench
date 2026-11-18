@@ -1,0 +1,64 @@
+{
+  "requirements": [
+    {
+      "id": "dv-022/R01",
+      "duty": "On a rising edge of CLK, when INT_TAG_VALID and the pre-edge EXT_TAG_VALID are both 1, allocate the external slot indicated by the pre-edge EXT_TAG, mapping all 6 bits of INT_TAG; external slots cycle through 0..31. The first non-reset edge after synchronous reset restores the indication that an empty slot is available; occupied slots must not be allocated again. Up to 32 simultaneously in-flight allocations are allowed; subsequent reuse must wait for the slot to be cleared and for the availability indication.",
+      "legal_history": "Apply synchronous reset and wait for pre-edge EXT_TAG_VALID; allocate 32 slots consecutively, check the full condition and that no further allocation occurs, then complete all packets and wait for slots to become available; repeat for two rounds to map all 64 routes.",
+      "domain_boundary": "The legal domain of the complete public contract; does not inherit the old narrowed contract",
+      "observable": "EXT_TAG and EXT_TAG_VALID.",
+      "sampling": "Sample inputs on the rising edge of CLK and compare after a #1 delay/NBA settling; valid payload is delimited by route/count from independent input history, and the guard is not determined from DUT outputs; reset additionally covers synchronism between edges.",
+      "oracle": "solution/model/model.sv input-history prediction",
+      "source_tb": "See the original report for the source TB audit; the actual location of the new reference is tb/package.sv:dvbench_scoreboard.write"
+    },
+    {
+      "id": "dv-022/R02",
+      "duty": "Input packets only for allocated TAGs. When VALID=1, DATA_EN must consist of 1..4 contiguous low-order lanes, and DATA_EN_COUNT must be the same number of DWs, with 32 bits per lane; beats with the same tag are appended in order, and different tags may be interleaved. Each packet has a total length of 1..128 DWs and terminates exactly once, on the final valid beat with DONE or ERR or both set to 1; when VALID=0 or RST=1, DATA_EN, COUNT, and DONE/ERR must all be set to 0. Do not allocate a new slot and send its payload on the same edge, and do not reuse a slot before completion.",
+      "legal_history": "First allocate legally; input consecutive same-tag beats and interleaved different-tag beats using low-lane count1..4, lengths 1..16 and 128 DW, with known, distinct random values for each DW; cover DONE-only, ERR-only, and simultaneous termination by both, with all idle inputs disabled.",
+      "domain_boundary": "The legal domain of the complete public contract; does not inherit the old narrowed contract",
+      "observable": "Downstream data/count/done/error route outputs after buffering latency.",
+      "sampling": "Sample inputs on the rising edge of CLK and compare after a #1 delay/NBA settling; valid payload is delimited by route/count from independent input history, and the guard is not determined from DUT outputs; reset additionally covers synchronism between edges.",
+      "oracle": "solution/model/model.sv input-history prediction",
+      "source_tb": "See the original report for the source TB audit; the actual location of the new reference is tb/package.sv:dvbench_scoreboard.write"
+    },
+    {
+      "id": "dv-022/R03",
+      "duty": "Output completed packets in allocation order starting from external tag0; a later tag that completes first is still blocked by an incomplete head packet. There is no output backpressure; low-order DWs are output first, with at most 4 DWs per cycle and the remaining 1..4 DWs on the final cycle. The low 4 bits of the mapped route are the channel, and groups 0/1/2 correspond to MAIN/SG_RX/SG_TX respectively; only route0..11, 16..27, and 32..43 map to public count vectors; other 6-bit routes are legal but have no public routing activity. Only the low 32*count bits of ENG_DATA for the corresponding count are defined. If the head packet's final input edge is n, an idle output unit can output no earlier than edge n+10; the first beat of a subsequent completed packet must be no earlier than its own n+10, and no earlier than 2 edges after the preceding packet's final beat (if the preceding packet is no more than 4 DWs) or 1 edge after it (if the preceding packet exceeds 4 DWs); output is continuous on every edge within a packet.",
+      "legal_history": "After consecutively allocating 32 tags, complete them in reverse order 31..0, initially leaving head incomplete to confirm that no out-of-order output occurs; map 0..63 over two rounds, cover packet lengths 1..16 and 128 DW, record every final input edge and packet order, and wait at least 2000 edges to drain.",
+      "domain_boundary": "The legal domain of the complete public contract; does not inherit the old narrowed contract",
+      "observable": "ENG_DATA, the three route data-count buses, DONE/ERR vectors.",
+      "sampling": "Sample inputs on the rising edge of CLK and compare after a #1 delay/NBA settling; valid payload is delimited by route/count from independent input history, and the guard is not determined from DUT outputs; reset additionally covers synchronism between edges.",
+      "oracle": "solution/model/model.sv input-history prediction",
+      "source_tb": "See the original report for the source TB audit; the actual location of the new reference is tb/package.sv:dvbench_scoreboard.write"
+    },
+    {
+      "id": "dv-022/R04",
+      "duty": "On the final beat, DONE for the corresponding route equals the final input DONE or ERR, and ERR equals the final ERR; controls are 0 on non-final beats and inactive cycles. A packet is cleared after ordered output, and a cleared slot can be reallocated when EXT_TAG_VALID permits; all 32 slots can wrap around for multiple rounds. Invisible routes likewise consume and clear their packets and must not block subsequent visible routes.",
+      "legal_history": "Allocate, fill, and terminate 32 slots, and check each packet's final beat using a mix of visible/invisible routes and the three termination combinations; after output and clearing make slots available, allocate all 32 slots again to confirm wraparound and isolation from old data.",
+      "domain_boundary": "The legal domain of the complete public contract; does not inherit the old narrowed contract",
+      "observable": "Per-route DONE/ERR and subsequent EXT_TAG_VALID recovery.",
+      "sampling": "Sample inputs on the rising edge of CLK and compare after a #1 delay/NBA settling; valid payload is delimited by route/count from independent input history, and the guard is not determined from DUT outputs; reset additionally covers synchronism between edges.",
+      "oracle": "solution/model/model.sv input-history prediction",
+      "source_tb": "See the original report for the source TB audit; the actual location of the new reference is tb/package.sv:dvbench_scoreboard.write"
+    },
+    {
+      "id": "dv-022/R05",
+      "duty": "RST is active-high and synchronous; only when it spans a rising edge of CLK does it clear the allocator, occupancy, and finished state, set EXT_TAG and EXT_TAG_VALID to 0, and set output route count/DONE/ERR to 0; RAM data is not cleared. An RST pulse between edges that does not span a rising edge does not immediately clear state. Reset discards previous packets; new payload must be written after reallocation, without relying on old RAM values.",
+      "legal_history": "First establish in-flight allocations/partial payload/completed packets, keep all inputs disabled, then assert RST across a CLK edge and reallocate new packets; also apply an RST pulse that does not span an edge to check synchrony.",
+      "domain_boundary": "The legal domain of the complete public contract; does not inherit the old narrowed contract",
+      "observable": "EXT_TAG, EXT_TAG_VALID and route control/data-count signals.",
+      "sampling": "Sample inputs on the rising edge of CLK and compare after a #1 delay/NBA settling; valid payload is delimited by route/count from independent input history, and the guard is not determined from DUT outputs; reset additionally covers synchronism between edges.",
+      "oracle": "solution/model/model.sv input-history prediction",
+      "source_tb": "See the original report for the source TB audit; the actual location of the new reference is tb/package.sv:dvbench_scoreboard.write"
+    },
+    {
+      "id": "dv-022/R06",
+      "duty": "Post-edge controls after reset are 0, but non-reset idle route count and ENG_DATA before the first output-capable packet may be uninitialized and must not be required to be 0. After the first packet establishes routing, count/DONE/ERR return to 0 on every inactive output edge; on active edges, the public route/count, DONE/ERR, and valid DWs must be checked, and X/Z must not be masked during active windows.",
+      "legal_history": "After synchronous reset, observe the undefined idle fields before the first activity; complete a legal visible-route packet, then observe activity and at least eight idle edges, checking valid fields and subsequent idle controls.",
+      "domain_boundary": "The legal domain of the complete public contract; does not inherit the old narrowed contract",
+      "observable": "Three groups of route count/done/error vectors and ENG_DATA.",
+      "sampling": "Sample inputs on the rising edge of CLK and compare after a #1 delay/NBA settling; valid payload is delimited by route/count from independent input history, and the guard is not determined from DUT outputs; reset additionally covers synchronism between edges.",
+      "oracle": "solution/model/model.sv input-history prediction",
+      "source_tb": "See the original report for the source TB audit; the actual location of the new reference is tb/package.sv:dvbench_scoreboard.write"
+    }
+  ]
+}

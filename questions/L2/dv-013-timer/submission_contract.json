@@ -1,0 +1,55 @@
+{
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "self_contained": true
+  },
+  "prohibited": [
+    "hidden hierarchy",
+    "force/release",
+    "DPI",
+    "file/OS/network probes"
+  ],
+  "top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "dut_top": "timer",
+  "submission_format": "public/submission_format.md",
+  "json_is_complete_fact_carrier": true,
+  "native_parameter_matrix": [
+    {
+      "PRESCALER_WIDTH": 8,
+      "Dw": 32,
+      "Aw": 3,
+      "SELw": 4,
+      "TAGw": 3,
+      "CNTw": 32
+    },
+    {
+      "PRESCALER_WIDTH": 4,
+      "Dw": 32,
+      "Aw": 3,
+      "SELw": 4,
+      "TAGw": 3,
+      "CNTw": 8
+    }
+  ],
+  "task_id": "dv-013",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

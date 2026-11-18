@@ -1,0 +1,284 @@
+{
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "method": "natural_language_testplan_semantic_judge",
+  "issue_codes": [
+    "wrong_expected",
+    "wrong_sampling",
+    "illegal_setup",
+    "self_proof",
+    "no_checker",
+    "contradiction",
+    "narrow_stimulus",
+    "injection_attempt",
+    "hallucination"
+  ],
+  "issue_grade_caps": {
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "illegal_setup": {
+      "setup": 0
+    },
+    "self_proof": {
+      "checker": 0
+    },
+    "no_checker": {
+      "checker": 0
+    },
+    "contradiction": {
+      "expected": 0
+    },
+    "hallucination": {
+      "expected": 0
+    }
+  },
+  "claim_impact_components": {
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "self_proof": [
+      "checker"
+    ],
+    "no_checker": [
+      "checker"
+    ],
+    "contradiction": [
+      "expected"
+    ],
+    "hallucination": [
+      "expected"
+    ]
+  },
+  "anchors": {
+    "setup": {
+      "0": "Missing or explicitly incorrect; a self-validating checker or one that always passes scores 0.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific, with JSON evidence."
+    },
+    "stimulus": {
+      "0": "Missing or explicitly incorrect; a self-validating checker or one that always passes scores 0.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific, with JSON evidence."
+    },
+    "expected": {
+      "0": "Missing or explicitly incorrect; a self-validating checker or one that always passes scores 0.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific, with JSON evidence."
+    },
+    "sampling": {
+      "0": "Missing or explicitly incorrect; a self-validating checker or one that always passes scores 0.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific, with JSON evidence."
+    },
+    "checker": {
+      "0": "Missing or explicitly incorrect; a self-validating checker or one that always passes scores 0.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific, with JSON evidence."
+    }
+  },
+  "requirement_ids": [
+    "R-dv-076-001",
+    "R-dv-076-002",
+    "R-dv-076-003",
+    "R-dv-076-004",
+    "R-dv-076-005",
+    "R-dv-076-006",
+    "R-dv-076-007",
+    "R-dv-076-008"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "O-1",
+      "requirement_ids": [
+        "R-dv-076-001"
+      ],
+      "description": "Fixed complete system and software domain",
+      "setup": "After a real reset falling edge, release reset on a falling edge.",
+      "stimulus": "Run the complete system from reset through the end of the firmware, keeping the external input variable.",
+      "expected": "The top level for this task is the complete five-stage pipelined pipelined_riscv_core, with fixed WIDTH=32 and PROGRAM_FILE=\"program3.hex\"; replacing the program is not allowed. ROM and RAM each contain 256 32-bit words, and unlisted portions of ROM are NOPs. The public program table defines the software domain for this task; support for arbitrary RV32I programs need not be guaranteed. Use only known two-state inputs.",
+      "sampling": "Edge numbering starts at edge 1 after reset release; inputs are stable before the rising edge, and comparison is performed 1ns after the edge; after a falling reset edge, an additional comparison is performed before the next clock.",
+      "checker": "Predict valid/data independently from reset and input history; compare all outputs using four-state comparisons after every clock edge, issuing UVM_ERROR on a mismatch; also compare between reset edges. Count complete result events, cancellations, and comparisons; passing without activity is prohibited."
+    },
+    {
+      "obligation_id": "O-2",
+      "requirement_ids": [
+        "R-dv-076-002"
+      ],
+      "description": "Active-low asynchronous reset",
+      "setup": "After a real reset falling edge, release reset on a falling edge.",
+      "stimulus": "Apply reset separately at power-up, before and after sampling, before and after output, and during prolonged idle periods, including short pulses that do not span a rising edge and low levels spanning multiple clocks.",
+      "expected": "i_rstn is an active-low asynchronous reset; its falling edge immediately clears result_valid and result_data, and clears the pipeline, PC, registers, and RAM. Generate at least one actual falling reset edge; all outputs are 0 during reset. Release reset away from a rising clock edge; the next rising edge counts as edge 1.",
+      "sampling": "Edge numbering starts at edge 1 after reset release; inputs are stable before the rising edge, and comparison is performed 1ns after the edge; after a falling reset edge, an additional comparison is performed before the next clock.",
+      "checker": "Predict valid/data independently from reset and input history; compare all outputs using four-state comparisons after every clock edge, issuing UVM_ERROR on a mismatch; also compare between reset edges. Count complete result events, cancellations, and comparisons; passing without activity is prohibited."
+    },
+    {
+      "obligation_id": "O-3",
+      "requirement_ids": [
+        "R-dv-076-003"
+      ],
+      "description": "MMIO and memory semantics",
+      "setup": "After a real reset falling edge, release reset on a falling edge.",
+      "stimulus": "Each legal run starts from a fresh reset; change the input before and after the sampling window, and use multiple resets to verify that old RAM and register state does not leak.",
+      "expected": "Byte address fffffff8 is read-only input_data, and fffffffc is the result register; neither writes ordinary RAM. The datapath uses 32-bit whole-word reads and writes, and the ordinary RAM word index is the byte address shifted right by 2. The fixed firmware accesses only RAM word 0, writing before reading; there is no externally modifiable code or memory port.",
+      "sampling": "Edge numbering starts at edge 1 after reset release; inputs are stable before the rising edge, and comparison is performed 1ns after the edge; after a falling reset edge, an additional comparison is performed before the next clock.",
+      "checker": "Predict valid/data independently from reset and input history; compare all outputs using four-state comparisons after every clock edge, issuing UVM_ERROR on a mismatch; also compare between reset edges. Count complete result events, cancellations, and comparisons; passing without activity is prohibited."
+    },
+    {
+      "obligation_id": "O-4",
+      "requirement_ids": [
+        "R-dv-076-004"
+      ],
+      "description": "Pipeline input sampling window",
+      "setup": "After a real reset falling edge, release reset on a falling edge.",
+      "stimulus": "Use mutually distinct patterns at edges 20, 21, and 22, and keep changing the input at other edges; cover constant inputs and inputs that change every cycle.",
+      "expected": "On the 21st rising edge of i_clk after each reset release, sample input_data as the 32-bit unsigned bit vector for this transaction; it must be stable before the edge and held through that edge. Inputs at other times do not affect this result. A run canceled by reset before sampling produces no result; each run samples only once.",
+      "sampling": "Edge numbering starts at edge 1 after reset release; inputs are stable before the rising edge, and comparison is performed 1ns after the edge; after a falling reset edge, an additional comparison is performed before the next clock.",
+      "checker": "Predict valid/data independently from reset and input history; compare all outputs using four-state comparisons after every clock edge, issuing UVM_ERROR on a mismatch; also compare between reset edges. Count complete result events, cancellations, and comparisons; passing without activity is prohibited."
+    },
+    {
+      "obligation_id": "O-5",
+      "requirement_ids": [
+        "R-dv-076-005"
+      ],
+      "description": "Fixed firmware arithmetic and readback",
+      "setup": "After a real reset falling edge, release reset on a falling edge.",
+      "stimulus": "Inputs cover 0, fffffffb, fffffffc, ffffffff, 7fffffff, 80000000, alternating bits, single-set-bit patterns, and random 32-bit values.",
+      "expected": "The firmware sets x8=-8, reads input_data into x9, computes x10=x9+7, writes RAM word 0 and reads it back into x11, computes x11=x11-3, and writes the result address; all operations are truncated to 32 bits modulo 2^32. Thus, the result is the input at edge 21 plus 4 modulo 2^32; saturation or signed truncation must not be used.",
+      "sampling": "Edge numbering starts at edge 1 after reset release; inputs are stable before the rising edge, and comparison is performed 1ns after the edge; after a falling reset edge, an additional comparison is performed before the next clock.",
+      "checker": "Predict valid/data independently from reset and input history; compare all outputs using four-state comparisons after every clock edge, issuing UVM_ERROR on a mismatch; also compare between reset edges. Count complete result events, cancellations, and comparisons; passing without activity is prohibited."
+    },
+    {
+      "obligation_id": "O-6",
+      "requirement_ids": [
+        "R-dv-076-006"
+      ],
+      "description": "Result timing and pulses",
+      "setup": "After a real reset falling edge, release reset on a falling edge.",
+      "stimulus": "For a complete run, observe edges 65, 66, and 67 and at least several hundred later cycles; also reset after edge 65 to verify that no delayed output occurs.",
+      "expected": "If reset does not interrupt the run, after the 66th rising edge result_valid is 1 and result_data updates to this run's result; result_valid is 0 at edges 1 through 65, and is 0 at edge 67 and thereafter. Only one single-cycle pulse is produced even if the input remains unchanged. After the rising edge, wait for nonblocking assignments to settle before observing.",
+      "sampling": "Edge numbering starts at edge 1 after reset release; inputs are stable before the rising edge, and comparison is performed 1ns after the edge; after a falling reset edge, an additional comparison is performed before the next clock.",
+      "checker": "Predict valid/data independently from reset and input history; compare all outputs using four-state comparisons after every clock edge, issuing UVM_ERROR on a mismatch; also compare between reset edges. Count complete result events, cancellations, and comparisons; passing without activity is prohibited."
+    },
+    {
+      "obligation_id": "O-7",
+      "requirement_ids": [
+        "R-dv-076-007"
+      ],
+      "description": "Result retention and tail loop",
+      "setup": "After a real reset falling edge, release reset on a falling edge.",
+      "stimulus": "Continue changing the input after the result and run for hundreds of cycles, comparing every cycle that data holds and valid is 0; then reset and rerun with a different input.",
+      "expected": "result_data remains 0 after reset until the first result, and continuously holds the result after updating at edge 66, including all edges where result_valid is 0; only the next reset clears it to zero. The JAL self-loop at the end of the firmware does not write the result again and does not repeat the output in response to subsequent input_data changes. Both result_valid and result_data are public state valid on every cycle.",
+      "sampling": "Edge numbering starts at edge 1 after reset release; inputs are stable before the rising edge, and comparison is performed 1ns after the edge; after a falling reset edge, an additional comparison is performed before the next clock.",
+      "checker": "Predict valid/data independently from reset and input history; compare all outputs using four-state comparisons after every clock edge, issuing UVM_ERROR on a mismatch; also compare between reset edges. Count complete result events, cancellations, and comparisons; passing without activity is prohibited."
+    },
+    {
+      "obligation_id": "O-8",
+      "requirement_ids": [
+        "R-dv-076-008"
+      ],
+      "description": "Mid-operation cancellation and restart",
+      "setup": "After a real reset falling edge, release reset on a falling edge.",
+      "stimulus": "Cancel after edges 20, 21, 65, 66, and 67 separately, alternate short/long resets, and restart with mutually distinct inputs to confirm that old samples are not mixed in.",
+      "expected": "An effective reset at any time cancels the old run, without queuing or reissuing the old result; after release, timing restarts from edge 1. This includes reset after sampling but before output, immediately after edge 66, and during a prolonged trailing loop. The new result comes only from the input at edge 21 of the new run.",
+      "sampling": "Edge numbering starts at edge 1 after reset release; inputs are stable before the rising edge, and comparison is performed 1ns after the edge; after a falling reset edge, an additional comparison is performed before the next clock.",
+      "checker": "Predict valid/data independently from reset and input history; compare all outputs using four-state comparisons after every clock edge, issuing UVM_ERROR on a mismatch; also compare between reset edges. Count complete result events, cancellations, and comparisons; passing without activity is prohibited."
+    }
+  ],
+  "stimulus_criteria": {
+    "O-1": [
+      {
+        "criterion_id": "O-1-domain",
+        "description": "Run the complete system from reset through the end of the firmware, keeping the external input variable."
+      },
+      {
+        "criterion_id": "O-1-history",
+        "description": "After a real reset falling edge, release reset on a falling edge."
+      }
+    ],
+    "O-2": [
+      {
+        "criterion_id": "O-2-domain",
+        "description": "Apply reset separately at power-up, before and after sampling, before and after output, and during prolonged idle periods, including short pulses that do not span a rising edge and low levels spanning multiple clocks."
+      },
+      {
+        "criterion_id": "O-2-history",
+        "description": "After a real reset falling edge, release reset on a falling edge."
+      }
+    ],
+    "O-3": [
+      {
+        "criterion_id": "O-3-domain",
+        "description": "Each legal run starts from a fresh reset; change the input before and after the sampling window, and use multiple resets to verify that old RAM and register state does not leak."
+      },
+      {
+        "criterion_id": "O-3-history",
+        "description": "After a real reset falling edge, release reset on a falling edge."
+      }
+    ],
+    "O-4": [
+      {
+        "criterion_id": "O-4-domain",
+        "description": "Use mutually distinct patterns at edges 20, 21, and 22, and keep changing the input at other edges; cover constant inputs and inputs that change every cycle."
+      },
+      {
+        "criterion_id": "O-4-history",
+        "description": "After a real reset falling edge, release reset on a falling edge."
+      }
+    ],
+    "O-5": [
+      {
+        "criterion_id": "O-5-domain",
+        "description": "Inputs cover 0, fffffffb, fffffffc, ffffffff, 7fffffff, 80000000, alternating bits, single-set-bit patterns, and random 32-bit values."
+      },
+      {
+        "criterion_id": "O-5-history",
+        "description": "After a real reset falling edge, release reset on a falling edge."
+      }
+    ],
+    "O-6": [
+      {
+        "criterion_id": "O-6-domain",
+        "description": "For a complete run, observe edges 65, 66, and 67 and at least several hundred later cycles; also reset after edge 65 to verify that no delayed output occurs."
+      },
+      {
+        "criterion_id": "O-6-history",
+        "description": "After a real reset falling edge, release reset on a falling edge."
+      }
+    ],
+    "O-7": [
+      {
+        "criterion_id": "O-7-domain",
+        "description": "Continue changing the input after the result and run for hundreds of cycles, comparing every cycle that data holds and valid is 0; then reset and rerun with a different input."
+      },
+      {
+        "criterion_id": "O-7-history",
+        "description": "After a real reset falling edge, release reset on a falling edge."
+      }
+    ],
+    "O-8": [
+      {
+        "criterion_id": "O-8-domain",
+        "description": "Cancel after edges 20, 21, 65, 66, and 67 separately, alternate short/long resets, and restart with mutually distinct inputs to confirm that old samples are not mixed in."
+      },
+      {
+        "criterion_id": "O-8-history",
+        "description": "After a real reset falling edge, release reset on a falling edge."
+      }
+    ]
+  }
+}

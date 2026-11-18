@@ -1,0 +1,383 @@
+{
+  "task_id": "dv-010",
+  "dut_top": "HellaPeekingArbiter",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "HellaPeekingArbiter.sv"
+  ],
+  "rtl_sources": [
+    "HellaPeekingArbiter.sv"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m10"
+  ],
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "reference_submission": "solution/reference",
+  "model_contract_policy": "native-module-v1",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "clock",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "io_in_1_bits_corrupt",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "io_in_1_bits_data",
+        "direction": "In",
+        "width": 64,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 63,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "io_in_1_bits_last",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "io_in_1_bits_opcode",
+        "direction": "In",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "io_in_1_bits_param",
+        "direction": "In",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "io_in_1_bits_size",
+        "direction": "In",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "io_in_1_bits_source",
+        "direction": "In",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "io_in_1_bits_union",
+        "direction": "In",
+        "width": 9,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 8,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "io_in_1_ready",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "io_in_1_valid",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "io_in_4_bits_address",
+        "direction": "In",
+        "width": 64,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 63,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "io_in_4_bits_corrupt",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "io_in_4_bits_data",
+        "direction": "In",
+        "width": 64,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 63,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "io_in_4_bits_last",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "io_in_4_bits_opcode",
+        "direction": "In",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "io_in_4_bits_param",
+        "direction": "In",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "io_in_4_bits_size",
+        "direction": "In",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "io_in_4_bits_source",
+        "direction": "In",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "io_in_4_bits_union",
+        "direction": "In",
+        "width": 9,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 8,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "io_in_4_ready",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "io_in_4_valid",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "io_out_bits_address",
+        "direction": "Out",
+        "width": 64,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 63,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "io_out_bits_chanId",
+        "direction": "Out",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "io_out_bits_corrupt",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "io_out_bits_data",
+        "direction": "Out",
+        "width": 64,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 63,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "io_out_bits_last",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "io_out_bits_opcode",
+        "direction": "Out",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "io_out_bits_param",
+        "direction": "Out",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "io_out_bits_size",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "io_out_bits_source",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "io_out_bits_union",
+        "direction": "Out",
+        "width": 9,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 8,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "io_out_ready",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "io_out_valid",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "reset",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {},
+    "parser": "reviewed ANSI continuation declaration parser; cross-checked 35 native RTL ports"
+  },
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "HellaPeekingArbiter.sv"
+  ]
+}

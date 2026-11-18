@@ -1,0 +1,102 @@
+{
+  "tests": [
+    {
+      "test_id": "T1",
+      "feature_ids": [
+        "F1"
+      ],
+      "requirement_ids": [
+        "R-dv-048-01"
+      ],
+      "stimulus": "Assert reset at startup and during the SCN_RESET active-line sequence; hold it across clock edges, release, and continue smooth rows for over sixteen edges. Driver changes inputs through the negedge clocking block and samples on rising edges. Random row generation varies with the simulator seed.",
+      "expected": "After reset and settling, compare continuous center/median output history and all synchronization bits, with reset clearing sync and phase history.",
+      "checker": "Use the self-contained input-history dvbench_model, with expected wires separate from actual output wires. dpc_sb compares both output ports at negedge plus 0.5 ns, after sixteen reset-release samples. Four-state mismatch raises UVM_ERROR; a comparison count below 100 raises VACUOUS. The model never reads actual output.",
+      "implementation_id": "s_f01_reset",
+      "source": "dpc_pkg.sv:s_f01_reset"
+    },
+    {
+      "test_id": "T2",
+      "feature_ids": [
+        "F2"
+      ],
+      "requirement_ids": [
+        "R-dv-048-02"
+      ],
+      "stimulus": "Drive both Bayer formats through several alternating active lines and blank intervals with row-dependent smooth values, random rows and mixed-sign patterns. Driver changes inputs through the negedge clocking block and samples on rising edges. Random row generation varies with the simulator seed.",
+      "expected": "The two exact neighborhood coordinate sets, pre-edge phase choice and phase updates must produce the corresponding scalar reference output.",
+      "checker": "Use the self-contained input-history dvbench_model, with expected wires separate from actual output wires. dpc_sb compares both output ports at negedge plus 0.5 ns, after sixteen reset-release samples. Four-state mismatch raises UVM_ERROR; a comparison count below 100 raises VACUOUS. The model never reads actual output.",
+      "implementation_id": "s_f03_bayer",
+      "source": "dpc_pkg.sv:s_f03_bayer"
+    },
+    {
+      "test_id": "T3",
+      "feature_ids": [
+        "F3"
+      ],
+      "requirement_ids": [
+        "R-dv-048-03"
+      ],
+      "stimulus": "Drive equal values 0x80/0xc0/0xa0, zero/full-scale/alternating values, random 8-bit row values and positive/negative isolated center changes. Driver changes inputs through the negedge clocking block and samples on rising edges. Random row generation varies with the simulator seed.",
+      "expected": "The median counts duplicates and the signed negative magnitude is one less than absolute value; the scalar-history prediction determines each valid result.",
+      "checker": "Use the self-contained input-history dvbench_model, with expected wires separate from actual output wires. dpc_sb compares both output ports at negedge plus 0.5 ns, after sixteen reset-release samples. Four-state mismatch raises UVM_ERROR; a comparison count below 100 raises VACUOUS. The model never reads actual output.",
+      "implementation_id": "s_f05_data",
+      "source": "dpc_pkg.sv:s_f05_data"
+    },
+    {
+      "test_id": "T4",
+      "feature_ids": [
+        "F4"
+      ],
+      "requirement_ids": [
+        "R-dv-048-04"
+      ],
+      "stimulus": "Sweep thresholds 0,1,15,16,127,128,254,255 on separate active lines; place center changes around the current threshold and include positive, negative and mixed-sign data patterns. Driver changes inputs through the negedge clocking block and samples on rising edges. Random row generation varies with the simulator seed.",
+      "expected": "Every magnitude comparison is strict; enable uses only sign 00 or 0f. Compare held differences across gaps as well as refreshed differences.",
+      "checker": "Use the self-contained input-history dvbench_model, with expected wires separate from actual output wires. dpc_sb compares both output ports at negedge plus 0.5 ns, after sixteen reset-release samples. Four-state mismatch raises UVM_ERROR; a comparison count below 100 raises VACUOUS. The model never reads actual output.",
+      "implementation_id": "s_f04_thr",
+      "source": "dpc_pkg.sv:s_f04_thr"
+    },
+    {
+      "test_id": "T5",
+      "feature_ids": [
+        "F5"
+      ],
+      "requirement_ids": [
+        "R-dv-048-05"
+      ],
+      "stimulus": "Drive sparse bright/dark defects and random changing centers continuously, including back-to-back frames and long lines; leave forty clocks to drain. Driver changes inputs through the negedge clocking block and samples on rising edges. Random row generation varies with the simulator seed.",
+      "expected": "Compare the scalar median S(n-6) on enabled decisions and center S(n-7) otherwise; no output-valid gating may hide pass-through checks.",
+      "checker": "Use the self-contained input-history dvbench_model, with expected wires separate from actual output wires. dpc_sb compares both output ports at negedge plus 0.5 ns, after sixteen reset-release samples. Four-state mismatch raises UVM_ERROR; a comparison count below 100 raises VACUOUS. The model never reads actual output.",
+      "implementation_id": "s_f06_defect",
+      "source": "dpc_pkg.sv:s_f06_defect"
+    },
+    {
+      "test_id": "T6",
+      "feature_ids": [
+        "F6"
+      ],
+      "requirement_ids": [
+        "R-dv-048-06"
+      ],
+      "stimulus": "Drive V/D/H transitions, variable line gaps including zero and long vertical blanking. Driver changes inputs through the negedge clocking block and samples on rising edges. Random row generation varies with the simulator seed.",
+      "expected": "Each output sync bit must equal its twelve-stage input history independently of the output pixel path.",
+      "checker": "Use the self-contained input-history dvbench_model, with expected wires separate from actual output wires. dpc_sb compares both output ports at negedge plus 0.5 ns, after sixteen reset-release samples. Four-state mismatch raises UVM_ERROR; a comparison count below 100 raises VACUOUS. The model never reads actual output.",
+      "implementation_id": "s_f02_sync",
+      "source": "dpc_pkg.sv:s_f02_sync"
+    },
+    {
+      "test_id": "T7",
+      "feature_ids": [
+        "F7"
+      ],
+      "requirement_ids": [
+        "R-dv-048-07"
+      ],
+      "stimulus": "Run both selector values with multiple lines and changing pixel parity in the Bayer sequence. Driver changes inputs through the negedge clocking block and samples on rising edges. Random row generation varies with the simulator seed.",
+      "expected": "The selector seeds pixel parity only on delayed line start, with frame-fall priority for line parity; do not assume external RGGB names.",
+      "checker": "Use the self-contained input-history dvbench_model, with expected wires separate from actual output wires. dpc_sb compares both output ports at negedge plus 0.5 ns, after sixteen reset-release samples. Four-state mismatch raises UVM_ERROR; a comparison count below 100 raises VACUOUS. The model never reads actual output.",
+      "implementation_id": "s_f03_bayer",
+      "source": "dpc_pkg.sv:s_f03_bayer"
+    }
+  ]
+}

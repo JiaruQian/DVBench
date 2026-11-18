@@ -1,0 +1,156 @@
+{
+  "submission_root": "submission",
+  "sources": "sources.f",
+  "top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "access": {
+    "candidate_may_read": [
+      "instruction.md",
+      "submission_contract.json",
+      "public",
+      "environment"
+    ],
+    "candidate_may_not_read": [
+      "maintainer",
+      "other questions",
+      "old runs"
+    ],
+    "dut_interaction": "declared native ports only"
+  },
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "self_contained": true,
+    "same_file_in_D_and_scoreboard": true,
+    "interface": {
+      "ports": [
+        {
+          "name": "i_ntt_paddr",
+          "direction": "In",
+          "width": 8,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 7,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "i_ntt_pclk",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "i_ntt_penable",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "i_ntt_presetn",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "i_ntt_psel",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "i_ntt_pstrb",
+          "direction": "In",
+          "width": 4,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 3,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "i_ntt_pwdata",
+          "direction": "In",
+          "width": 32,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 31,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "i_ntt_pwrite",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "o_ntt_irq",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "o_ntt_prdata",
+          "direction": "Out",
+          "width": 32,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 31,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "o_ntt_pready",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "o_ntt_pslverr",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        }
+      ],
+      "parameters": {
+        "C_APB_DATA_WIDTH": "32",
+        "C_APB_ADDR_WIDTH": "8",
+        "N": "256",
+        "Q": "3329",
+        "ROOT": "17",
+        "COEFF_WIDTH": "16",
+        "ADDR_WIDTH": "8"
+      },
+      "parser": "pyslang 11.0.0"
+    },
+    "preflight_policy": "native-module-v1"
+  },
+  "task_id": "dv-094",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

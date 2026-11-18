@@ -1,0 +1,295 @@
+{
+  "task_id": "dv-016",
+  "dut_top": "gbe_rx_filter",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "chksum_calc.v",
+    "gbe_rx_filter.v"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m2_eth_lsb",
+    "m4",
+    "m6",
+    "m8",
+    "m9",
+    "m10",
+    "n1",
+    "n2",
+    "n3",
+    "n4"
+  ],
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "reference_submission": "solution/reference",
+  "model_contract_policy": "native-module-v1",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "filter_ip_addr1",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "filter_ip_addr2",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "filter_ip_addr3",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "filter_ip_addr4",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "filter_ip_addr5",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "filter_ip_addr6",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "filter_ip_addr7",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "filter_ip_addr8",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "gbe_rx_byte_cnt",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "gbe_rx_pkt_cnt",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "is_searching",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "local_ip",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "local_ip2",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "mac_i_data",
+        "direction": "In",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "mac_i_last",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "mac_i_valid",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "pkt_type",
+        "direction": "Out",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "rst",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "table_rd_addr",
+        "direction": "Out",
+        "width": 9,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 8,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "table_rd_data",
+        "direction": "In",
+        "width": 64,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 63,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "udp_filter_index",
+        "direction": "Out",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "U_DLY": "1",
+      "ST_MAC_WIDTH": "8",
+      "ST_MAC_HEAD": "8'd1",
+      "ST_IP_HEAD": "8'd2",
+      "ST_NOT_IP": "8'd4",
+      "ST_UDP_HEAD": "8'd8",
+      "ST_UDP_SEARCH": "8'd16",
+      "ST_NOT_UDP": "8'd32",
+      "ST_CHECKSUM_ERR": "8'd64",
+      "ST_UDP_SEARCH_END": "8'd128"
+    },
+    "parser": "pyslang 12.1.0"
+  },
+  "rtl_sources": [
+    "chksum_calc.v",
+    "gbe_rx_filter.v"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "chksum_calc.v",
+    "gbe_rx_filter.v"
+  ]
+}

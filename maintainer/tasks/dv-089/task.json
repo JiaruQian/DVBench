@@ -1,0 +1,292 @@
+{
+  "task_id": "dv-089",
+  "dut_top": "cpu_core",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "backfill/cpu_pkg.sv",
+    "cpu_alu.sv",
+    "cpu_core.sv",
+    "cpu_csr.sv",
+    "cpu_decode.sv",
+    "cpu_hazard.sv",
+    "cpu_register_file.sv"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "model_contract_policy": "native-module-v1",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "clk_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "d_req_addr_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "d_req_ready_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "d_req_valid_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "d_req_wdata_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "d_req_write_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "d_req_wstrb_o",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "d_rsp_error_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "d_rsp_rdata_i",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "d_rsp_ready_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "d_rsp_valid_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "external_irq_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "halted_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "i_req_addr_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "i_req_ready_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "i_req_valid_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "i_rsp_error_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "i_rsp_rdata_i",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "i_rsp_ready_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "i_rsp_valid_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "retire_instruction_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "retire_pc_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "retire_valid_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "rst_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "timer_irq_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "trap_badaddr_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "trap_cause_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "trap_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {},
+    "parser": "reviewed cpu_core module declaration"
+  },
+  "mutants": [
+    "m10",
+    "m3_ltu_omitted",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "n1",
+    "n2",
+    "n3",
+    "n4"
+  ],
+  "rtl_sources": [
+    "backfill/cpu_pkg.sv",
+    "cpu_alu.sv",
+    "cpu_core.sv",
+    "cpu_csr.sv",
+    "cpu_decode.sv",
+    "cpu_hazard.sv",
+    "cpu_register_file.sv"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "backfill/cpu_pkg.sv",
+    "cpu_alu.sv",
+    "cpu_core.sv",
+    "cpu_csr.sv",
+    "cpu_decode.sv",
+    "cpu_hazard.sv",
+    "cpu_register_file.sv"
+  ]
+}

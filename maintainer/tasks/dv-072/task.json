@@ -1,0 +1,122 @@
+{
+  "task_id": "dv-072",
+  "replay_adapter_id": "dv-072-des",
+  "dut_top": "DES_core",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "DES_Counter.v",
+    "DES_DecipherAndKey_Controller.v",
+    "DES_Encipher_Controller.v",
+    "DES_core.v",
+    "E_Permutation.v",
+    "IP.v",
+    "Inverse_IP.v",
+    "PC1.v",
+    "PC2.v",
+    "P_Permutation.v",
+    "S_Box.v"
+  ],
+  "rtl_compile_files": [
+    "DES_core.v"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m10",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9"
+  ],
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "des_data",
+        "direction": "In",
+        "width": 64,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 63,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "des_decipher_en",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "des_encipher_en",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "des_key_in",
+        "direction": "In",
+        "width": 64,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 63,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "desc_ready",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "desc_result",
+        "direction": "Out",
+        "width": 64,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 63,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "rst_n",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {},
+    "parser": "pyslang 11.0.0"
+  },
+  "model_contract_policy": "native-module-v1",
+  "reference_submission": "solution/reference",
+  "rtl_sources": [
+    "DES_core.v"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800
+}

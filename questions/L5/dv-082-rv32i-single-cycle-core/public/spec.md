@@ -1,0 +1,52 @@
+# Public Behavioral Contract for the Single-Cycle 32-Bit Processor
+
+The fixed native top level is rv32i_single_cycle_core, with no top-level parameters. Instruction encodings use the RV32 fields below; no additional ISA assumptions are made for extensions not listed.
+
+### R-dv-082-001 — Reset and State Updates
+
+One instruction executes on each rising edge of clk. A rising edge with rst_n at 0 clears the PC and all general-purpose registers to zero; reset is synchronous. During reset, the instruction-decoded dmem_re_o and dmem_we_o are still generated combinationally from the current instruction and are not gated by rst_n. External memory does not commit writes on reset edges. Reset deassertion and input updates occur on falling edges and remain stable across the next rising edge.
+
+### R-dv-082-002 — Native Memory Environment
+
+Neither the instruction interface nor the data interface has ready, stall, or response latency. imem_addr_o is the current 32-bit PC, and the environment provides a stable 32-bit instruction before the next execution rising edge; dmem_rdata_i is the read value of the aligned 32-bit word containing the current address. The model and DUT receive the same external input history. All arithmetic is modulo 32 bits. The legal input domain is known 0/1; exceptions, interrupts, and caches are not required.
+
+### R-dv-082-003 — Register Reads and Writes
+
+There are 32 32-bit general-purpose registers. Reads of x0 always return 0, and all destination writes to it are ignored. Source registers are selected by instruction rs1/rs2 and read combinationally; the destination register is written on the execution rising edge, and the pre-write source values are used on that same edge. Sequential instructions can immediately read the preceding instruction's result, and rd may equal rs1/rs2. Register values can be observed through subsequent store operations and instruction-address transfers; no internal access port is provided.
+
+### R-dv-082-004 — Sequential PC and Unknown Opcodes
+
+The default next PC is current PC+4. An opcode not decoded into the categories below performs no register write, memory access, or jump, and still advances sequentially. Its combinational dmem_addr_o value is rs1+rs2. There is no trap output.
+
+### R-dv-082-005 — Register Arithmetic
+
+For opcode 0x33, funct3 values from 0 through 7 are ADD/SUB, SLL, SLT, SLTU, XOR, SRL/SRA, OR, and AND, respectively. For funct3=0, only funct7=0x20 selects SUB; otherwise, ADD is selected. For funct3=5, only funct7=0x20 selects arithmetic right shift; otherwise, logical right shift is selected. The shift amount is the low 5 bits of rs2; SLT uses signed comparison, and SLTU uses unsigned comparison, with a result of 0 or 1. Other funct7 values do not cause exceptions.
+
+### R-dv-082-006 — Immediate Arithmetic
+
+For opcode 0x13, sign-extend bits31:20 as the 12-bit immediate. The funct3 operations, in order, are ADDI, SLLI, SLTI, SLTIU, XORI, SRLI/SRAI, ORI, and ANDI. The shift amount uses only the low 5 bits of the immediate; for the right-shift category, only funct7=0x20 selects arithmetic shift, otherwise logical shift. SLTIU compares the sign-extended 32-bit immediate with the unsigned value of rs1.
+
+### R-dv-082-007 — Upper Immediate
+
+LUI opcode0x37 writes bits31:12 shifted left by 12 bits; AUIPC opcode0x17 writes the current PC plus the same upper immediate. Both may write any rd and obey the x0 rule.
+
+### R-dv-082-008 — Branches
+
+For opcode0x63, the B immediate is sign-extended from {bit31,bit7,bits30:25,bits11:8,0}. funct3=0/1/4/5/6/7 corresponds to BEQ, BNE, BLT, BGE, BLTU, and BGEU, respectively; if the relation holds, next PC=current PC+offset, otherwise +4. funct3=2/3 does not branch. Branches do not write registers or access memory; combinational dmem_addr_o still provides rs1-rs2.
+
+### R-dv-082-009 — Jumps and Links
+
+The J immediate of JAL opcode0x6f is sign-extended from {bit31,bits19:12,bit20,bits30:21,0}, and next PC=current PC+offset; for JALR opcode0x67, next PC=(rs1+sign-extended I immediate)&0xfffffffe, with all funct3 values interpreted this way. Both write old PC+4 to rd, allowing rd to equal a source register; clearing bit1 is not enforced. dmem_addr_o is the JAL target addition result and the JALR addition result before clearing bit0, respectively.
+
+### R-dv-082-010 — Memory Reads
+
+opcode0x03 asserts dmem_re_o, sets dmem_we_o to 0, and uses address=rs1+sign-extended I immediate. funct3=0/4 selects LB/LBU, selecting a byte within the word using the low 2 address bits and sign-/zero-extending it; 1/5 selects LH/LHU, using only address bit1 to select the low/high halfword, ignoring bit0, and sign-/zero-extending it; 2 and other reserved funct3 values select full-word LW. The result is written to rd on the execution rising edge.
+
+### R-dv-082-011 — Memory Writes
+
+opcode0x23 asserts dmem_we_o and sets dmem_re_o to 0. The S immediate is formed by concatenating bits31:25 and 11:7 and sign-extending. Address=rs1+immediate. funct3=0 selects SB: the low 8 bits of rs2 are shifted into the byte selected by the low 2 address bits, other wdata bits are 0, and be is the corresponding single bit; funct3=1 selects SH: only address bit1 selects the low/high halfword, the low 16 bits of rs2 are shifted into that halfword, other bits are 0, and be is 0011 or 1100; 2 and other reserved funct3 values select SW, with wdata=rs2 and be=1111.
+
+### R-dv-082-012 — Combinational Outputs and Comparison Windows
+
+dmem_addr_o is always the arithmetic result of the current operation: the arithmetic result for R/I, the upper immediate for LUI, PC plus the upper immediate for AUIPC, rs1-rs2 for branches, as described above for jumps, and rs1+rs2 for others. For non-store operations, dmem_wdata_o=rs2, dmem_be_o=1111. All native outputs are observable before the edge with stable inputs and in the combinationally stable window after the edge; unknown state before the first synchronous reset is not compared. Inputs are updated on falling edges; wait at least 1ns after the edge before sampling.
+

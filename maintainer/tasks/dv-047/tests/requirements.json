@@ -1,0 +1,35 @@
+{
+  "task_id": "dv-047",
+  "requirements": [
+    {
+      "requirement_id": "R-dv-047-001",
+      "statement": "All inputs are two-state values. counter and maxRound can both take values 0..63; the module has no internal round counter or handshake. maxRound=10 uses AES-128 key expansion of Key[255:128], =12 uses AES-192 expansion of Key[255:64], and all other values use AES-256 expansion of the full Key. Let (Nr,Nk,base)=(10,4,10), (12,6,12), and (14,8,14), respectively. The current round key is round Nr-(counter-base) of the expansion (0 is the original first 128-bit word group). The valid counter range for key selection is base..base+Nr. Key is a live input; changes between edges also affect the combinational output, and it is not latched in the first round. Unused low-order Key bits have no effect on the selected expansion.",
+      "source": "Decryption.v; KeyExpansion.v; InvShiftRows.v; InvSubBytes.v; Inv_MixColumns.v"
+    },
+    {
+      "requirement_id": "R-dv-047-002",
+      "statement": "When counter=maxRound, out directly equals in, without waiting for a clock and independently of the old state; this condition takes precedence over other output selections. The datapath for this cycle also uses in as its state source; other cycles use the inter-round state S. After inputs change, wait for combinational settling before observing. The module has no reset, and initial S is unknown; S must first be established by a first round with a valid key index and state updates enabled before relying on historical state. The first round may restart without first completing the old sequence.",
+      "source": "Decryption.v; KeyExpansion.v; InvShiftRows.v; InvSubBytes.v; Inv_MixColumns.v"
+    },
+    {
+      "requirement_id": "R-dv-047-003",
+      "statement": "On each rising edge of clk, compute the next state from the pre-edge inputs and old S; save that next state when counter < ((2*maxRound) mod 64), otherwise hold S. Neither falling edges nor input changes between edges save state. The six-bit addition of maxRound wraps around; for example, at 32 the threshold is 0. Holding state does not mean holding out: the combinational output is still determined by the current inputs and key. counter may repeat, jump, or proceed in reverse order; behavior is interpreted according to actual history, not implicit automatic incrementing.",
+      "source": "Decryption.v; KeyExpansion.v; InvShiftRows.v; InvSubBytes.v; Inv_MixColumns.v"
+    },
+    {
+      "requirement_id": "R-dv-047-004",
+      "statement": "Let A be the 128-bit result of bitwise XOR of the current state source with the current round key, and M be the AES inverse MixColumns result of A. When counter=maxRound, out=in; otherwise, when counter=((2*maxRound-1) mod 64), out=M; in all other cases, out=A. The final key index counter=2*maxRound in the conventional 10/12/14 modes still outputs A and no longer saves S. There is no additional completion pulse or output register.",
+      "source": "Decryption.v; KeyExpansion.v; InvShiftRows.v; InvSubBytes.v; Inv_MixColumns.v"
+    },
+    {
+      "requirement_id": "R-dv-047-005",
+      "statement": "Block bytes are numbered b0..b15 starting from the most significant byte, with AES column-major layout b[4*c+r], r,c=0..3. The initial 32-bit key words W[0..Nk-1] are arranged from the high-order to low-order bits of the selected key. Subsequent words are W[i]=W[i-Nk] XOR temp; temp initially equals W[i-1]. When i mod Nk=0, apply RotWord (rotate left by 1 byte), then SubWord, then XOR with Rcon[i/Nk]; when Nk=8 and i mod Nk=4, apply only SubWord. Rcon starts at 01 and advances by multiplication by 02 in GF(256), and is placed in the most significant byte of the word. The round q key consists of W[4q], W[4q+1], W[4q+2], W[4q+3] in high-to-low order. SubWord uses the standard AES S-box: take the inverse in GF(256) (0 maps to 0), then apply the AES affine transformation with constant 63; the finite-field modulus polynomial is x^8+x^4+x^3+x+1.",
+      "source": "Decryption.v; KeyExpansion.v; InvShiftRows.v; InvSubBytes.v; Inv_MixColumns.v"
+    },
+    {
+      "requirement_id": "R-dv-047-006",
+      "statement": "Inverse MixColumns multiplies the four bytes of each column by the matrix [0e,0b,0d,09;09,0e,0b,0d;0d,09,0e,0b;0b,0d,09,0e], with XOR as addition and multiplication in the same GF(256). Inverse ShiftRows takes the input at ((c-r) mod 4,r) for output position (column c,row r), after which each byte uses the standard AES inverse S-box. When pre-edge counter=maxRound, the next state is InvSubBytes(InvShiftRows(A)); otherwise it is InvSubBytes(InvShiftRows(M)). This task is not an API that completes decryption in one call, but a stateful interface with externally driven rounds. When the key index is out of bounds, data results are unspecified except for the first-round out=in bypass; if saving is triggered within this window, state must subsequently be reestablished with a valid first round. State holding can still be verified in the out-of-bounds window, and a valid index can be revisited without triggering saving to check holding. Initially unknown data is not treated as a known value for mismatch detection.",
+      "source": "Decryption.v; KeyExpansion.v; InvShiftRows.v; InvSubBytes.v; Inv_MixColumns.v"
+    }
+  ]
+}

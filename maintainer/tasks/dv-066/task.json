@@ -1,0 +1,275 @@
+{
+  "task_id": "dv-066",
+  "dut_top": "simt_stack",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "branch_join_stack.v",
+    "simt_stack.v",
+    "pop_cnt.v",
+    "stream_fifo.v",
+    "fifo.v",
+    "define.v"
+  ],
+  "rtl_sources": [
+    "branch_join_stack.v",
+    "simt_stack.v",
+    "pop_cnt.v",
+    "stream_fifo.v",
+    "fifo.v"
+  ],
+  "model_interface": {
+    "ports": [
+      {
+        "name": "branch_ctl_mask_init_i",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "branch_ctl_opcode_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "branch_ctl_pc_branch_i",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "branch_ctl_pc_execute_i",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "branch_ctl_ready_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "branch_ctl_valid_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "branch_ctl_wid_i",
+        "direction": "In",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "complete_valid_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "complete_wid_o",
+        "direction": "Out",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "fetch_ctl_jump_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "fetch_ctl_new_pc_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "fetch_ctl_ready_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "fetch_ctl_valid_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "fetch_ctl_wid_o",
+        "direction": "Out",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "if_mask_mask_i",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "if_mask_ready_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "if_mask_valid_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "if_mask_wid_i",
+        "direction": "In",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "input_wid_i",
+        "direction": "In",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "out_mask_o",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "pc_reconv_i",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "pc_reconv_valid_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "rst_n",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {}
+  },
+  "model_contract_policy": "native-module-v1",
+  "reference_submission": "solution/reference",
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6_ptr5",
+    "m7",
+    "m8",
+    "m9",
+    "m10",
+    "n1"
+  ],
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "branch_join_stack.v",
+    "simt_stack.v",
+    "pop_cnt.v",
+    "stream_fifo.v",
+    "fifo.v"
+  ]
+}

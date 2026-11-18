@@ -1,0 +1,120 @@
+{
+  "task_id": "dv-050",
+  "dut_top": "sha256_core",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "sha256_core.v",
+    "sha256_k_constants.v",
+    "sha256_w_mem.v"
+  ],
+  "parameters": {},
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m10"
+  ],
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "rtl_sources": [
+    "sha256_core.v",
+    "sha256_k_constants.v",
+    "sha256_w_mem.v"
+  ],
+  "model_interface": {
+    "ports": [
+      {
+        "name": "block",
+        "direction": "In",
+        "width": 512,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 511,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "digest",
+        "direction": "Out",
+        "width": 256,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 255,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "digest_valid",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "init",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "mode",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "next",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "ready",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "reset_n",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {},
+    "parser": "pyslang 11.0.0",
+    "top": "sha256_core",
+    "scope": "fixed native RTL declaration; parser-sorted ports"
+  },
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "sha256_core.v",
+    "sha256_k_constants.v",
+    "sha256_w_mem.v"
+  ]
+}

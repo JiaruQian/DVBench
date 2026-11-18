@@ -1,0 +1,155 @@
+{
+  "ports": [
+    {
+      "name": "PADDR",
+      "direction": "In",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "PCLK",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "PENABLE",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "PRDATA",
+      "direction": "Out",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "PREADY",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "PRESETn",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "PSEL",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "PSLVERR",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "PWDATA",
+      "direction": "In",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "PWRITE",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "capture_dr_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "data_register_i",
+      "direction": "In",
+      "width": 64,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 63,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "int_o",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "module_select_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "module_tdo_o",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "rst_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "shift_dr_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "tck_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "tdi_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "top_inhibit_o",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "update_dr_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {}
+}

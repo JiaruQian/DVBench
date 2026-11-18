@@ -1,0 +1,172 @@
+{
+  "task_id": "dv-078",
+  "task_mode": "A",
+  "dut_top": "fpgatop_taskB",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "TopLevelProccessor.v",
+    "addressdecoder.v",
+    "alu.v",
+    "alu_control.v",
+    "branchAdder.v",
+    "datamemory.v",
+    "fpgatop_taskB.v",
+    "immGen.v",
+    "instructionMemory.v",
+    "leds.v",
+    "main_control.v",
+    "mux2.v",
+    "pcAdder.v",
+    "programCounter.v",
+    "registerfile.v",
+    "seven_seg.v",
+    "switches.v"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "submission_top": "dvbench_top",
+  "reference_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_test": "dvbench_test",
+  "model_interface": {
+    "top": "dvbench_model",
+    "ports": [
+      {
+        "name": "an",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "leds",
+        "direction": "Out",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "rst",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "seg",
+        "direction": "Out",
+        "width": 7,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 6,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "sw",
+        "direction": "In",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      }
+    ],
+    "parameters": {}
+  },
+  "model_contract_policy": "native-module-v1",
+  "coverage": {
+    "scope": "dvbench_top.dut",
+    "metrics": [
+      "line",
+      "cond",
+      "branch",
+      "tgl"
+    ],
+    "line_contassign": true
+  },
+  "fixed_parameters": {
+    "CPU_HALF_PERIOD": 4,
+    "MEMFILE": "temp_warning_test.mem"
+  },
+  "data_files": [
+    "temp_warning_test.mem"
+  ],
+  "mutants": [
+    "m1",
+    "m10",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9"
+  ],
+  "rtl_sources": [
+    "TopLevelProccessor.v",
+    "addressdecoder.v",
+    "alu.v",
+    "alu_control.v",
+    "branchAdder.v",
+    "datamemory.v",
+    "fpgatop_taskB.v",
+    "immGen.v",
+    "instructionMemory.v",
+    "leds.v",
+    "main_control.v",
+    "mux2.v",
+    "pcAdder.v",
+    "programCounter.v",
+    "registerfile.v",
+    "seven_seg.v",
+    "switches.v"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "TopLevelProccessor.v",
+    "addressdecoder.v",
+    "alu.v",
+    "alu_control.v",
+    "branchAdder.v",
+    "datamemory.v",
+    "fpgatop_taskB.v",
+    "immGen.v",
+    "instructionMemory.v",
+    "leds.v",
+    "main_control.v",
+    "mux2.v",
+    "pcAdder.v",
+    "programCounter.v",
+    "registerfile.v",
+    "seven_seg.v",
+    "switches.v"
+  ]
+}

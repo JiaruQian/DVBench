@@ -1,0 +1,262 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "requirement_ids": [
+    "R-MCNN-001",
+    "R-MCNN-002",
+    "R-MCNN-003",
+    "R-MCNN-004",
+    "R-MCNN-005",
+    "R-MCNN-006",
+    "R-MCNN-007"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "O-1",
+      "requirement_ids": [
+        "R-MCNN-001"
+      ],
+      "description": "Interface, initialization, and sampling",
+      "setup": "Establish the legal history required for this obligation through the native public interface, satisfying public initialization and deterministic valid windows, without accessing hidden state.",
+      "stimulus": "Hold rst_b=0 and en=0 for at least two complete cycles, then release legally; correctly organize 30×10 row-major signed8 pixels, and observe valid and the data it qualifies.",
+      "expected": "The clk period is 10 ns; rst_b is active-low and asynchronously resets control and arithmetic register state. Startup must hold rst_b=0 and en=0 for at least two complete clock cycles to allow fixed parameter storage to finish initialization, then deassert reset on a falling edge. mem is an ascending packed vector [0:2399], representing 30×10 signed eight-bit pixels in row-major order; pixel (row,col) occupies mem[(row×10+col)×8 +:8], with a range of −128 to 127 and no input floating-point conversion. All inputs are driven on falling edges, and outputs are sampled after they stabilize following rising edges. valid is zero during reset; when valid=0, no numerical guarantee is made for the floating-point data, including old outputs during reset.",
+      "sampling": "Explicitly distinguish the input acceptance edge, pre-edge state, and post-edge stable outputs; correctly delimit valid windows.",
+      "checker": "Independent prediction from input history, actual comparison, mismatch reporting, and evidence of non-vacuous activity."
+    },
+    {
+      "obligation_id": "O-2",
+      "requirement_ids": [
+        "R-MCNN-002"
+      ],
+      "description": "Image capture and input history",
+      "setup": "Establish the legal history required for this obligation through the native public interface, satisfying public initialization and deterministic valid windows, without accessing hidden state.",
+      "stimulus": "Construct within-frame changes, successive distinct captures, and changes near capture boundaries, covering previous/current image history and boundary mixing for channel 31 at the final position; include zero, positive/negative, and distinguishable spatial images. Actual pixel changes must cover the target history.",
+      "expected": "Starting from reset deassertion, count rising edges with en=1; non-enabled edges do not increment this count. On every 288th enabled edge, atomically capture mem at that edge; changes in mem at all other times do not affect image storage, and mem is allowed to change every cycle. Reset clears the previously captured image to all zeros. Continuous operation has no per-frame ready or acceptance signal.\n\nEach capture edge produces one eventual result to be output, using the previously captured image A and the current image B. The main mathematics is the computation of the network below on A, with an exception for depthwise convolution input channel 31 corresponding to pooling position 8: its convolution patches for depthwise convolution rows 16 and 17 are computed from B. All other depthwise convolution rows/channels come from A; in particular, position 7 still uses A, and position 7 must not be changed as a side effect of first replacing the last four rows of the complete convolution tensor. A for the first capture is the reset zero image. This boundary mixing is part of the definition of this problem and naturally reduces to the complete mathematical network when the same image is maintained; transition outputs must not be ignored.",
+      "sampling": "Explicitly distinguish the input acceptance edge, pre-edge state, and post-edge stable outputs; correctly delimit valid windows.",
+      "checker": "Independent prediction from input history, actual comparison, mismatch reporting, and evidence of non-vacuous activity."
+    },
+    {
+      "obligation_id": "O-3",
+      "requirement_ids": [
+        "R-MCNN-003"
+      ],
+      "description": "First-layer convolution and fixed-point activation",
+      "setup": "Establish the legal history required for this obligation through the native public interface, satisfying public initialization and deterministic valid windows, without accessing hidden state.",
+      "stimulus": "Using legal signed8 images that distinguish convolution, fixed-point truncation, and activation, predict the 32 11×7 kernels and their public outputs through an independent mathematical model; cover signs and nonuniform spatial patterns.",
+      "expected": "Conv_Weight is ordered by output channel, kernel row, and kernel column, 32×11×7; Conv_Bias has one entry per channel. The image has no padding and a stride of one, producing 20×4 values per channel: the bias plus the sum of the corresponding 11×7 signed products. Fixed-point activation is defined as first multiplying the sum by the given multiplier and truncating to signed 32 bits, then arithmetically right-shifting by the given number of bits, and finally clamping to 0–127; there is no rounding. The first-layer multiplier is 111 and the shift is 14. All accumulations and multiplications retain the low 32 bits; pixels and weights are interpreted as eight-bit two's complement, and biases as signed 32-bit values. Integers in the parameter files are the corresponding signed values.",
+      "sampling": "Explicitly distinguish the input acceptance edge, pre-edge state, and post-edge stable outputs; correctly delimit valid windows.",
+      "checker": "Independent prediction from input history, actual comparison, mismatch reporting, and evidence of non-vacuous activity."
+    },
+    {
+      "obligation_id": "O-4",
+      "requirement_ids": [
+        "R-MCNN-004"
+      ],
+      "description": "Depthwise convolution, pointwise convolution, and pooling",
+      "setup": "Establish the legal history required for this obligation through the native public interface, satisfying public initialization and deterministic valid windows, without accessing hidden state.",
+      "stimulus": "Use legal images that distinguish spatial/channel indexing and maximum selection to check DW3×3, PW channel accumulation, 2×2 pooling, and flattening order; cover relevant history across capture boundaries.",
+      "expected": "The order of DWConv_Weight is input channel, then 3×3 kernel row/column, with one DWConv_Bias entry per channel. For each channel, apply unpadded 3×3 convolution with stride one to the first-layer 20×4, obtaining 18×2; the activation multiplier is 59 and the shift is 11. Only the channels/rows specified by R-MCNN-002 use B's first-layer convolution patches.\n\nThe order of PWConv_Weight is output channel, then input channel, 32×32; PWConv_Bias has one entry per output channel. At each spatial point, sum the products over 32 input channels and add the bias, with activation multiplier 69 and shift 13, producing 32×18×2. For each channel, non-overlapping 2×2 max pooling forms nine values; positions p=0–8 use rows 2p and 2p+1 and two columns. All pooled values are nonnegative eight-bit values, with flattened index channel×9+p. A position-major weight flattening order must not be used.",
+      "sampling": "Explicitly distinguish the input acceptance edge, pre-edge state, and post-edge stable outputs; correctly delimit valid windows.",
+      "checker": "Independent prediction from input history, actual comparison, mismatch reporting, and evidence of non-vacuous activity."
+    },
+    {
+      "obligation_id": "O-5",
+      "requirement_ids": [
+        "R-MCNN-005"
+      ],
+      "description": "Fully connected layer, truncation, and table lookup",
+      "setup": "Establish the legal history required for this obligation through the native public interface, satisfying public initialization and deterministic valid windows, without accessing hidden state.",
+      "stimulus": "Use multiple distinguishable images to produce changes in the fully connected layer and LUT indices, and check accumulation of 288 terms, bias, multiplication by 11, arithmetic shift by 15, the low eight-bit index, and the two classes of 32-bit outputs; predictions must not be derived from actual.",
+      "expected": "Linear_Weight is ordered by output class and flattened index, 2×288; Linear_Bias has one entry per class. Each class logit is the bias plus the sum of products of 288 pooled values and their corresponding signed weights, retaining signed 32 bits. Multiply the logit by 11, truncate to 32 bits, arithmetically right-shift by 15, and then retain only the low eight bits as the LUT address. These eight bits use truncation wraparound, with no additional saturation: for example, even if the arithmetic right-shift result is outside −128 to 127, the low eight bits are still taken. The 256 entries in sigmoid_lookup_table.txt are arranged by unsigned eight-bit address, with positive-value addresses first and negative-value addresses following in two's-complement bit-pattern order; float_out0/1 must match the corresponding 32-bit hexadecimal data bit for bit.",
+      "sampling": "Explicitly distinguish the input acceptance edge, pre-edge state, and post-edge stable outputs; correctly delimit valid windows.",
+      "checker": "Independent prediction from input history, actual comparison, mismatch reporting, and evidence of non-vacuous activity."
+    },
+    {
+      "obligation_id": "O-6",
+      "requirement_ids": [
+        "R-MCNN-006"
+      ],
+      "description": "Latency, valid, and pauses",
+      "setup": "Establish the legal history required for this obligation through the native public interface, satisfying public initialization and deterministic valid windows, without accessing hidden state.",
+      "stimulus": "Cover the first valid window at 339 enabled edges, subsequent intervals of 288 enabled edges, the capture-to-output relationship of 51 enabled edges, and pauses before/after valid, including consecutive pauses and resumptions; enabled edges and wall-clock cycles must be distinguished. The specific pause-cycle schedule is not constrained.",
+      "expected": "The 51th enabled rising edge after a capture edge outputs the corresponding result and sets valid to one; other enabled edges set valid to zero. Therefore, the first valid occurs at the 339th enabled edge, with subsequent intervals of 288 enabled edges. When en=0, control, the arithmetic pipeline, and valid hold; if paused when valid=1, valid remains one and its valid data holds, and it must not be re-pulsed according to wall-clock cycles. The output LUT read enable comes from its final-stage index and is not further ANDed with en: when paused at the boundary where the final-stage final index is ready but valid has not yet been set to one, the data bits may update before valid, but no numerical guarantee is still made when valid=0. The value, order, and enabled-edge latency of the first valid result after a pause must be preserved.",
+      "sampling": "Explicitly distinguish the input acceptance edge, pre-edge state, and post-edge stable outputs; correctly delimit valid windows.",
+      "checker": "Independent prediction from input history, actual comparison, mismatch reporting, and evidence of non-vacuous activity."
+    },
+    {
+      "obligation_id": "O-7",
+      "requirement_ids": [
+        "R-MCNN-007"
+      ],
+      "description": "Repetition, reset recovery, and fixed data",
+      "setup": "Establish the legal history required for this obligation through the native public interface, satisfying public initialization and deterministic valid windows, without accessing hidden state.",
+      "stimulus": "After capturing different images multiple times, reset and restart with legal initialization, checking that the previous image is cleared to zero, the enabled-edge count is restored, and fixed parameters remain unchanged; retain enough enabled edges to reach a valid output after restarting.",
+      "expected": "Arbitrary consecutive image captures, repeated images, full-range signed pixels, arbitrary finite pauses, and reset during operation are all legal. Reset discards unfinished results, restarts the enabled-edge count, and restores A=zero image; fixed weights/biases/LUT do not change with reset, en, or mem. After a reset during operation, the initialization preparation must be satisfied again. A stable image must propagate through the history; its first valid window is still computed according to the explicit A/B relationship. The CNN has no runtime parameter loading port; candidates must not change the fixed data or read internal SRAM. The numerical values defined by the public attachment data may be used for independent model constants or authorized data reading.",
+      "sampling": "Explicitly distinguish the input acceptance edge, pre-edge state, and post-edge stable outputs; correctly delimit valid windows.",
+      "checker": "Independent prediction from input history, actual comparison, mismatch reporting, and evidence of non-vacuous activity."
+    }
+  ],
+  "stimulus_criteria": {
+    "O-1": [
+      {
+        "criterion_id": "O-1-history",
+        "description": "Hold rst_b=0 and en=0 for at least two complete cycles, then release legally; correctly organize 30×10 row-major signed8 pixels, and observe valid and the data it qualifies."
+      },
+      {
+        "criterion_id": "O-1-observation",
+        "description": "The stimulus actually reaches the observable window of this obligation, with explicit actual/expected sampling and comparison; generic coverage claims cannot substitute for this."
+      }
+    ],
+    "O-2": [
+      {
+        "criterion_id": "O-2-history",
+        "description": "Construct within-frame changes, successive distinct captures, and changes near capture boundaries, covering previous/current image history and boundary mixing for channel 31 at the final position; include zero, positive/negative, and distinguishable spatial images. Actual pixel changes must cover the target history."
+      },
+      {
+        "criterion_id": "O-2-observation",
+        "description": "The stimulus actually reaches the observable window of this obligation, with explicit actual/expected sampling and comparison; generic coverage claims cannot substitute for this."
+      }
+    ],
+    "O-3": [
+      {
+        "criterion_id": "O-3-history",
+        "description": "Using legal signed8 images that distinguish convolution, fixed-point truncation, and activation, predict the 32 11×7 kernels and their public outputs through an independent mathematical model; cover signs and nonuniform spatial patterns."
+      },
+      {
+        "criterion_id": "O-3-observation",
+        "description": "The stimulus actually reaches the observable window of this obligation, with explicit actual/expected sampling and comparison; generic coverage claims cannot substitute for this."
+      }
+    ],
+    "O-4": [
+      {
+        "criterion_id": "O-4-history",
+        "description": "Use legal images that distinguish spatial/channel indexing and maximum selection to check DW3×3, PW channel accumulation, 2×2 pooling, and flattening order; cover relevant history across capture boundaries."
+      },
+      {
+        "criterion_id": "O-4-observation",
+        "description": "The stimulus actually reaches the observable window of this obligation, with explicit actual/expected sampling and comparison; generic coverage claims cannot substitute for this."
+      }
+    ],
+    "O-5": [
+      {
+        "criterion_id": "O-5-history",
+        "description": "Use multiple distinguishable images to produce changes in the fully connected layer and LUT indices, and check accumulation of 288 terms, bias, multiplication by 11, arithmetic shift by 15, the low eight-bit index, and the two classes of 32-bit outputs; predictions must not be derived from actual."
+      },
+      {
+        "criterion_id": "O-5-observation",
+        "description": "The stimulus actually reaches the observable window of this obligation, with explicit actual/expected sampling and comparison; generic coverage claims cannot substitute for this."
+      }
+    ],
+    "O-6": [
+      {
+        "criterion_id": "O-6-history",
+        "description": "Cover the first valid window at 339 enabled edges, subsequent intervals of 288 enabled edges, the capture-to-output relationship of 51 enabled edges, and pauses before/after valid, including consecutive pauses and resumptions; enabled edges and wall-clock cycles must be distinguished. The specific pause-cycle schedule is not constrained."
+      },
+      {
+        "criterion_id": "O-6-observation",
+        "description": "The stimulus actually reaches the observable window of this obligation, with explicit actual/expected sampling and comparison; generic coverage claims cannot substitute for this."
+      }
+    ],
+    "O-7": [
+      {
+        "criterion_id": "O-7-history",
+        "description": "After capturing different images multiple times, reset and restart with legal initialization, checking that the previous image is cleared to zero, the enabled-edge count is restored, and fixed parameters remain unchanged; retain enough enabled edges to reach a valid output after restarting."
+      },
+      {
+        "criterion_id": "O-7-observation",
+        "description": "The stimulus actually reaches the observable window of this obligation, with explicit actual/expected sampling and comparison; generic coverage claims cannot substitute for this."
+      }
+    ]
+  },
+  "issue_codes": [
+    "wrong_expected",
+    "wrong_sampling",
+    "illegal_setup",
+    "self_proof",
+    "no_checker",
+    "contradiction",
+    "hallucination",
+    "narrow_stimulus",
+    "injection_attempt"
+  ],
+  "issue_grade_caps": {
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "illegal_setup": {
+      "setup": 0
+    },
+    "self_proof": {
+      "checker": 0
+    },
+    "no_checker": {
+      "checker": 0
+    },
+    "contradiction": {
+      "expected": 0
+    },
+    "hallucination": {
+      "expected": 0
+    }
+  },
+  "claim_impact_components": {
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "self_proof": [
+      "checker"
+    ],
+    "no_checker": [
+      "checker"
+    ],
+    "contradiction": [
+      "expected"
+    ],
+    "hallucination": [
+      "expected"
+    ]
+  },
+  "anchors": {
+    "setup": {
+      "0": "Missing or incorrect",
+      "1": "Valid but incomplete",
+      "2": "Specific, complete, and supported by JSON evidence"
+    },
+    "stimulus": {
+      "0": "Missing or incorrect",
+      "1": "Valid but incomplete",
+      "2": "Specific, complete, and supported by JSON evidence"
+    },
+    "expected": {
+      "0": "Missing or incorrect",
+      "1": "Valid but incomplete",
+      "2": "Specific, complete, and supported by JSON evidence"
+    },
+    "sampling": {
+      "0": "Missing or incorrect",
+      "1": "Valid but incomplete",
+      "2": "Specific, complete, and supported by JSON evidence"
+    },
+    "checker": {
+      "0": "Missing or incorrect",
+      "1": "Valid but incomplete",
+      "2": "Specific, complete, and supported by JSON evidence"
+    }
+  },
+  "equivalent_strategies": "Accept any legal strategy with equivalent observable distinctions. Counts, file counts, chosen example colors/addresses, reference implementation organization and arbitrary cycle schedules are not obligations. JSON evidence must still establish actual stimuli and independent checkers."
+}

@@ -1,0 +1,354 @@
+{
+  "task_id": "dv-044",
+  "dut_top": "multiply",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "axi_clip.v",
+    "axi_fifo.v",
+    "axi_fifo_bram.v",
+    "axi_fifo_flop.v",
+    "axi_fifo_flop2.v",
+    "axi_fifo_short.v",
+    "axi_join.v",
+    "axi_pipe.v",
+    "axi_pipe_join.v",
+    "axi_round.v",
+    "axi_round_and_clip.v",
+    "multiply.v",
+    "ram_2port.v"
+  ],
+  "submission_top": "dvbench_top",
+  "rtl_sources": [
+    "axi_clip.v",
+    "axi_fifo.v",
+    "axi_fifo_bram.v",
+    "axi_fifo_flop.v",
+    "axi_fifo_flop2.v",
+    "axi_fifo_short.v",
+    "axi_join.v",
+    "axi_pipe.v",
+    "axi_pipe_join.v",
+    "axi_round.v",
+    "axi_round_and_clip.v",
+    "multiply.v",
+    "ram_2port.v"
+  ],
+  "rtl_compile_files": [
+    "axi_clip.v",
+    "axi_fifo.v",
+    "axi_fifo_bram.v",
+    "axi_fifo_flop.v",
+    "axi_fifo_flop2.v",
+    "axi_fifo_short.v",
+    "axi_join.v",
+    "axi_pipe.v",
+    "axi_pipe_join.v",
+    "axi_round.v",
+    "axi_round_and_clip.v",
+    "multiply.v",
+    "ram_2port.v"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m10"
+  ],
+  "include_dirs": [],
+  "parameter_matrix": [
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 31,
+      "DROP_TOP_P": 1,
+      "LATENCY": 3,
+      "EN_SATURATE": 0,
+      "EN_ROUND": 0,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 31,
+      "DROP_TOP_P": 1,
+      "LATENCY": 0,
+      "EN_SATURATE": 0,
+      "EN_ROUND": 0,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 31,
+      "DROP_TOP_P": 1,
+      "LATENCY": 4,
+      "EN_SATURATE": 0,
+      "EN_ROUND": 0,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 16,
+      "DROP_TOP_P": 1,
+      "LATENCY": 3,
+      "EN_SATURATE": 0,
+      "EN_ROUND": 1,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 16,
+      "DROP_TOP_P": 1,
+      "LATENCY": 3,
+      "EN_SATURATE": 1,
+      "EN_ROUND": 0,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 16,
+      "DROP_TOP_P": 1,
+      "LATENCY": 1,
+      "EN_SATURATE": 1,
+      "EN_ROUND": 1,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 32,
+      "DROP_TOP_P": 0,
+      "LATENCY": 2,
+      "EN_SATURATE": 0,
+      "EN_ROUND": 0,
+      "SIGNED": 0
+    },
+    {
+      "WIDTH_A": 8,
+      "WIDTH_B": 12,
+      "WIDTH_P": 20,
+      "DROP_TOP_P": 0,
+      "LATENCY": 1,
+      "EN_SATURATE": 0,
+      "EN_ROUND": 0,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 31,
+      "DROP_TOP_P": 1,
+      "LATENCY": 3,
+      "EN_SATURATE": 0,
+      "EN_ROUND": 1,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 31,
+      "DROP_TOP_P": 1,
+      "LATENCY": 3,
+      "EN_SATURATE": 1,
+      "EN_ROUND": 1,
+      "SIGNED": 1
+    }
+  ],
+  "model_interface": {
+    "top": "dvbench_model",
+    "file": "solution/s4_model/model.sv",
+    "ports": [
+      {
+        "direction": "In",
+        "name": "clk",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "reset",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "a_tdata",
+        "width": "WIDTH_A"
+      },
+      {
+        "direction": "In",
+        "name": "a_tlast",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "a_tvalid",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "a_tready",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "b_tdata",
+        "width": "WIDTH_B"
+      },
+      {
+        "direction": "In",
+        "name": "b_tlast",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "b_tvalid",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "b_tready",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "p_tdata",
+        "width": "WIDTH_P"
+      },
+      {
+        "direction": "Out",
+        "name": "p_tlast",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "p_tvalid",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "p_tready",
+        "width": 1
+      }
+    ],
+    "variants": [
+      {
+        "WIDTH_A": 16,
+        "WIDTH_B": 16,
+        "WIDTH_P": 31,
+        "DROP_TOP_P": 1,
+        "LATENCY": 3,
+        "EN_SATURATE": 0,
+        "EN_ROUND": 0,
+        "SIGNED": 1
+      },
+      {
+        "WIDTH_A": 16,
+        "WIDTH_B": 16,
+        "WIDTH_P": 31,
+        "DROP_TOP_P": 1,
+        "LATENCY": 0,
+        "EN_SATURATE": 0,
+        "EN_ROUND": 0,
+        "SIGNED": 1
+      },
+      {
+        "WIDTH_A": 16,
+        "WIDTH_B": 16,
+        "WIDTH_P": 31,
+        "DROP_TOP_P": 1,
+        "LATENCY": 4,
+        "EN_SATURATE": 0,
+        "EN_ROUND": 0,
+        "SIGNED": 1
+      },
+      {
+        "WIDTH_A": 16,
+        "WIDTH_B": 16,
+        "WIDTH_P": 16,
+        "DROP_TOP_P": 1,
+        "LATENCY": 3,
+        "EN_SATURATE": 0,
+        "EN_ROUND": 1,
+        "SIGNED": 1
+      },
+      {
+        "WIDTH_A": 16,
+        "WIDTH_B": 16,
+        "WIDTH_P": 16,
+        "DROP_TOP_P": 1,
+        "LATENCY": 3,
+        "EN_SATURATE": 1,
+        "EN_ROUND": 0,
+        "SIGNED": 1
+      },
+      {
+        "WIDTH_A": 16,
+        "WIDTH_B": 16,
+        "WIDTH_P": 16,
+        "DROP_TOP_P": 1,
+        "LATENCY": 1,
+        "EN_SATURATE": 1,
+        "EN_ROUND": 1,
+        "SIGNED": 1
+      },
+      {
+        "WIDTH_A": 16,
+        "WIDTH_B": 16,
+        "WIDTH_P": 32,
+        "DROP_TOP_P": 0,
+        "LATENCY": 2,
+        "EN_SATURATE": 0,
+        "EN_ROUND": 0,
+        "SIGNED": 0
+      },
+      {
+        "WIDTH_A": 8,
+        "WIDTH_B": 12,
+        "WIDTH_P": 20,
+        "DROP_TOP_P": 0,
+        "LATENCY": 1,
+        "EN_SATURATE": 0,
+        "EN_ROUND": 0,
+        "SIGNED": 1
+      },
+      {
+        "WIDTH_A": 16,
+        "WIDTH_B": 16,
+        "WIDTH_P": 31,
+        "DROP_TOP_P": 1,
+        "LATENCY": 3,
+        "EN_SATURATE": 0,
+        "EN_ROUND": 1,
+        "SIGNED": 1
+      },
+      {
+        "WIDTH_A": 16,
+        "WIDTH_B": 16,
+        "WIDTH_P": 31,
+        "DROP_TOP_P": 1,
+        "LATENCY": 3,
+        "EN_SATURATE": 1,
+        "EN_ROUND": 1,
+        "SIGNED": 1
+      }
+    ],
+    "independence": "input history only; separate replay process contains no golden RTL or output"
+  },
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800
+}

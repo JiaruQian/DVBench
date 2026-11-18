@@ -1,0 +1,65 @@
+{
+  "source": "public/spec.md",
+  "requirements": [
+    {
+      "requirement_id": "R-32C4343634EF-001",
+      "title": "异步复位",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-32C4343634EF-002",
+      "title": "ACK与总线有效条件",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-32C4343634EF-003",
+      "title": "寄存器映射与非法地址",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-32C4343634EF-004",
+      "title": "寄存读出",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-32C4343634EF-005",
+      "title": "控制位域",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-32C4343634EF-006",
+      "title": "分频相位",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-32C4343634EF-007",
+      "title": "计数与比较清零",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-32C4343634EF-008",
+      "title": "中断锁存",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-32C4343634EF-009",
+      "title": "ISR写一清除优先",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-32C4343634EF-010",
+      "title": "参数与常量输出",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    }
+  ]
+}

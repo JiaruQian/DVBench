@@ -1,0 +1,102 @@
+{
+  "ports": [
+    {
+      "name": "alarm_button",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "alarm_sound",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "clock",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "fastwatch",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "key",
+      "direction": "In",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "ls_hour",
+      "direction": "Out",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "ls_minute",
+      "direction": "Out",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "ms_hour",
+      "direction": "Out",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "ms_minute",
+      "direction": "Out",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "reset",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "time_button",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {},
+  "parser": "pyslang 12.1.0"
+}

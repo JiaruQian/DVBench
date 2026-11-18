@@ -1,0 +1,263 @@
+{
+  "requirement_ids": [
+    "R-dv-019-source-v3-K001",
+    "R-dv-019-source-v3-K002",
+    "R-dv-019-source-v3-K003",
+    "R-dv-019-source-v3-K004",
+    "R-dv-019-source-v3-K005",
+    "R-dv-019-source-v3-K006",
+    "R-dv-019-source-v3-K007"
+  ],
+  "atoms": [
+    {
+      "atom_id": "R-dv-019-source-v3-K001",
+      "requirement_ids": [
+        "R-dv-019-source-v3-K001"
+      ],
+      "definition": "The interface includes an independent UART, PS/2 keyboard reception, and ASCII conversion of the keyboard queue head. The two receivers share clk/rst_n; the keyboard queue head connects to the conversion input, while the UART transmit input remains externally driven, with no implicit automatic forwarding between them.",
+      "interface": [
+        "ascii",
+        "clk",
+        "kb_fifo_empty",
+        "kb_ps2c",
+        "kb_ps2d",
+        "kb_rd_data",
+        "kb_rd_fifo",
+        "rst_n",
+        "uart_rd_data",
+        "uart_rd_uart",
+        "uart_rx",
+        "uart_rx_empty",
+        "uart_tx",
+        "uart_tx_full",
+        "uart_wr_data",
+        "uart_wr_uart"
+      ],
+      "anchors": {
+        "0": "Omitted or explicitly mutually exclusive with the conditions, values, or window of this item",
+        "1": "Factually correct but covers only some of the relationships",
+        "2": "The interface includes an independent UART, PS/2 keyboard reception, and ASCII conversion of the keyboard queue head. The two receivers share clk/rst_n; the keyboard queue head connects to the conversion input, while the UART transmit input remains externally driven, with no implicit automatic forwarding between them."
+      },
+      "partial_credit": "Accept combinations of local features and justified references to functions defined in the specification; repetition of constant tables is not required; deduplicate synonymous facts."
+    },
+    {
+      "atom_id": "R-dv-019-source-v3-K002",
+      "requirement_ids": [
+        "R-dv-019-source-v3-K002"
+      ],
+      "definition": "ps2c is filtered using an 8-bit history sampled by clk; only filtered falling edges advance the 11-bit frame. The 8 data bits are extracted by right shifting, without validating the start, parity, or stop bits; there is no timeout, and an incomplete frame can continue waiting.",
+      "interface": [
+        "ascii",
+        "clk",
+        "kb_fifo_empty",
+        "kb_ps2c",
+        "kb_ps2d",
+        "kb_rd_data",
+        "kb_rd_fifo",
+        "rst_n"
+      ],
+      "anchors": {
+        "0": "Omitted or explicitly mutually exclusive with the conditions, values, or window of this item",
+        "1": "Factually correct but covers only some of the relationships",
+        "2": "ps2c is filtered using an 8-bit history sampled by clk; only filtered falling edges advance the 11-bit frame. The 8 data bits are extracted by right shifting, without validating the start, parity, or stop bits; there is no timeout, and an incomplete frame can continue waiting."
+      },
+      "partial_credit": "Accept combinations of local features and justified references to functions defined in the specification; repetition of constant tables is not required; deduplicate synonymous facts."
+    },
+    {
+      "atom_id": "R-dv-019-source-v3-K003",
+      "requirement_ids": [
+        "R-dv-019-source-v3-K003"
+      ],
+      "definition": "After f0, the next completed byte is swallowed; 12 or 59 sets a single shift state, and releasing either shift clears it. Other completed bytes form queue write requests of {old shift,scan code}; e0/e1 receive no special parsing.",
+      "interface": [
+        "ascii",
+        "clk",
+        "kb_fifo_empty",
+        "kb_ps2c",
+        "kb_ps2d",
+        "kb_rd_data",
+        "kb_rd_fifo",
+        "rst_n"
+      ],
+      "anchors": {
+        "0": "Omitted or explicitly mutually exclusive with the conditions, values, or window of this item",
+        "1": "Factually correct but covers only some of the relationships",
+        "2": "After f0, the next completed byte is swallowed; 12 or 59 sets a single shift state, and releasing either shift clears it. Other completed bytes form queue write requests of {old shift,scan code}; e0/e1 receive no special parsing."
+      },
+      "partial_credit": "Accept combinations of local features and justified references to functions defined in the specification; repetition of constant tables is not required; deduplicate synonymous facts."
+    },
+    {
+      "atom_id": "R-dv-019-source-v3-K004",
+      "requirement_ids": [
+        "R-dv-019-source-v3-K004"
+      ],
+      "definition": "The keyboard queue has depth 4 and width 9; the two UART queues have depth 4 and width 8. A nonempty head is a combinational output. A read alone advances when nonempty, and a write alone advances when not full; simultaneous read and write advance only when neither empty nor full, with no empty bypass or full replacement. Reset clears only logical occupancy and does not erase storage.",
+      "interface": [
+        "ascii",
+        "clk",
+        "kb_fifo_empty",
+        "kb_ps2c",
+        "kb_ps2d",
+        "kb_rd_data",
+        "kb_rd_fifo",
+        "rst_n",
+        "uart_rd_data",
+        "uart_rd_uart",
+        "uart_rx",
+        "uart_rx_empty",
+        "uart_tx",
+        "uart_tx_full",
+        "uart_wr_data",
+        "uart_wr_uart"
+      ],
+      "anchors": {
+        "0": "Omitted or explicitly mutually exclusive with the conditions, values, or window of this item",
+        "1": "Factually correct but covers only some of the relationships",
+        "2": "The keyboard queue has depth 4 and width 9; the two UART queues have depth 4 and width 8. A nonempty head is a combinational output. A read alone advances when nonempty, and a write alone advances when not full; simultaneous read and write advance only when neither empty nor full, with no empty bypass or full replacement. Reset clears only logical occupancy and does not erase storage."
+      },
+      "partial_credit": "Accept combinations of local features and justified references to functions defined in the specification; repetition of constant tables is not required; deduplicate synonymous facts."
+    },
+    {
+      "atom_id": "R-dv-019-source-v3-K005",
+      "requirement_ids": [
+        "R-dv-019-source-v3-K005"
+      ],
+      "definition": "Parameters are fixed at DBIT=8, SB_TICK=16, DVSR=4, DVSR_WIDTH=2, FIFO_W=2. A low level triggers start detection; the data phase begins after 8 visible ticks, after which one data bit is sampled every 16 ticks, LSB first, and completion occurs after 16 ticks in the stop phase. There is no stop-high detection or error port.",
+      "interface": [
+        "clk",
+        "rst_n",
+        "uart_rx",
+        "uart_rd_uart",
+        "uart_rd_data",
+        "uart_rx_empty"
+      ],
+      "anchors": {
+        "0": "Omitted or explicitly mutually exclusive with the conditions, values, or window of this item",
+        "1": "Factually correct but covers only some of the relationships",
+        "2": "Parameters are fixed at DBIT=8, SB_TICK=16, DVSR=4, DVSR_WIDTH=2, FIFO_W=2. A low level triggers start detection; the data phase begins after 8 visible ticks, after which one data bit is sampled every 16 ticks, LSB first, and completion occurs after 16 ticks in the stop phase. There is no stop-high detection or error port."
+      },
+      "partial_credit": "Accept combinations of local features and justified references to functions defined in the specification; repetition of constant tables is not required; deduplicate synonymous facts."
+    },
+    {
+      "atom_id": "R-dv-019-source-v3-K006",
+      "requirement_ids": [
+        "R-dv-019-source-v3-K006"
+      ],
+      "definition": "A nonempty transmit FIFO triggers latching of the queue head; registered tx is 0 during reset and idle high after reset release. The start bit, 8 LSB-first data bits, and stop bit each advance according to 16 visible ticks, and the queue head is released only when transmission completes. There are no re-latching semantics during transmission.",
+      "interface": [
+        "clk",
+        "rst_n",
+        "uart_wr_uart",
+        "uart_wr_data",
+        "uart_tx",
+        "uart_tx_full"
+      ],
+      "anchors": {
+        "0": "Omitted or explicitly mutually exclusive with the conditions, values, or window of this item",
+        "1": "Factually correct but covers only some of the relationships",
+        "2": "A nonempty transmit FIFO triggers latching of the queue head; registered tx is 0 during reset and idle high after reset release. The start bit, 8 LSB-first data bits, and stop bit each advance according to 16 visible ticks, and the queue head is released only when transmission completes. There are no re-latching semantics during transmission."
+      },
+      "partial_credit": "Accept combinations of local features and justified references to functions defined in the specification; repetition of constant tables is not required; deduplicate synonymous facts."
+    },
+    {
+      "atom_id": "R-dv-019-source-v3-K007",
+      "requirement_ids": [
+        "R-dv-019-source-v3-K007"
+      ],
+      "definition": "rd_data[8:0] is the complete lookup key, and ascii[7:0] is the combinational result for the current key. There is no clock, reset, handshake, state, or fixed cycle latency; observe after the input is stable and combinational propagation has occurred. Consecutive inputs are independent of previous keys.\n\n\n\nThe low 8-bit scan codes 1c 32 21 23 24 2b 34 33 43 3b 42 4b 3a 31 44 4d 15 2d 1b 2c 3c 2a 1d 22 35 1a represent a through z, respectively, in that order; bit8=0 outputs ASCII 61 through 7a, and bit8=1 outputs 41 through 5a. All values are hexadecimal.\n\n\n\nWhen bit8=0, scan codes 45 16 1e 26 25 2e 36 3d 3e 46 output 30 through 39 in order; scan codes 0e 4e 55 54 5b 5d 4c 52 41 49 4a 29 5a 66 output 60 2d 3d 5b 5d 5c 3b 27 2c 2e 2f 20 0d 08 in order. bit8=1 defines no alternate characters for these special characters; the unmatched rule applies. All values are hexadecimal.\n\n\n\nAny input that does not exactly match one of the complete 9-bit keys above outputs 2a, including keys containing X or Z; it neither retains the previous output nor outputs zero as the default.",
+      "interface": [
+        "kb_rd_data",
+        "ascii"
+      ],
+      "anchors": {
+        "0": "Omitted or explicitly mutually exclusive with the conditions, values, or window of this item",
+        "1": "Factually correct but covers only some of the relationships",
+        "2": "rd_data[8:0] is the complete lookup key, and ascii[7:0] is the combinational result for the current key. There is no clock, reset, handshake, state, or fixed cycle latency; observe after the input is stable and combinational propagation has occurred. Consecutive inputs are independent of previous keys.\n\n\n\nThe low 8-bit scan codes 1c 32 21 23 24 2b 34 33 43 3b 42 4b 3a 31 44 4d 15 2d 1b 2c 3c 2a 1d 22 35 1a represent a through z, respectively, in that order; bit8=0 outputs ASCII 61 through 7a, and bit8=1 outputs 41 through 5a. All values are hexadecimal.\n\n\n\nWhen bit8=0, scan codes 45 16 1e 26 25 2e 36 3d 3e 46 output 30 through 39 in order; scan codes 0e 4e 55 54 5b 5d 4c 52 41 49 4a 29 5a 66 output 60 2d 3d 5b 5d 5c 3b 27 2c 2e 2f 20 0d 08 in order. bit8=1 defines no alternate characters for these special characters; the unmatched rule applies. All values are hexadecimal.\n\n\n\nAny input that does not exactly match one of the complete 9-bit keys above outputs 2a, including keys containing X or Z; it neither retains the previous output nor outputs zero as the default."
+      },
+      "partial_credit": "Accept combinations of local features and justified references to functions defined in the specification; repetition of constant tables is not required; deduplicate synonymous facts."
+    }
+  ],
+  "required_interfaces": {
+    "R-dv-019-source-v3-K001": [
+      "ascii",
+      "clk",
+      "kb_fifo_empty",
+      "kb_ps2c",
+      "kb_ps2d",
+      "kb_rd_data",
+      "kb_rd_fifo",
+      "rst_n",
+      "uart_rd_data",
+      "uart_rd_uart",
+      "uart_rx",
+      "uart_rx_empty",
+      "uart_tx",
+      "uart_tx_full",
+      "uart_wr_data",
+      "uart_wr_uart"
+    ],
+    "R-dv-019-source-v3-K002": [
+      "ascii",
+      "clk",
+      "kb_fifo_empty",
+      "kb_ps2c",
+      "kb_ps2d",
+      "kb_rd_data",
+      "kb_rd_fifo",
+      "rst_n"
+    ],
+    "R-dv-019-source-v3-K003": [
+      "ascii",
+      "clk",
+      "kb_fifo_empty",
+      "kb_ps2c",
+      "kb_ps2d",
+      "kb_rd_data",
+      "kb_rd_fifo",
+      "rst_n"
+    ],
+    "R-dv-019-source-v3-K004": [
+      "ascii",
+      "clk",
+      "kb_fifo_empty",
+      "kb_ps2c",
+      "kb_ps2d",
+      "kb_rd_data",
+      "kb_rd_fifo",
+      "rst_n",
+      "uart_rd_data",
+      "uart_rd_uart",
+      "uart_rx",
+      "uart_rx_empty",
+      "uart_tx",
+      "uart_tx_full",
+      "uart_wr_data",
+      "uart_wr_uart"
+    ],
+    "R-dv-019-source-v3-K005": [
+      "clk",
+      "rst_n",
+      "uart_rx",
+      "uart_rd_uart",
+      "uart_rd_data",
+      "uart_rx_empty"
+    ],
+    "R-dv-019-source-v3-K006": [
+      "clk",
+      "rst_n",
+      "uart_wr_uart",
+      "uart_wr_data",
+      "uart_tx",
+      "uart_tx_full"
+    ],
+    "R-dv-019-source-v3-K007": [
+      "kb_rd_data",
+      "ascii"
+    ]
+  },
+  "module_aliases": {
+    "kb_uart_source_bundle": [
+      "kb_uart_source_bundle"
+    ]
+  }
+}

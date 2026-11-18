@@ -1,0 +1,78 @@
+{
+  "ports": [
+    {
+      "name": "R0_addr",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "R0_clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "R0_data",
+      "direction": "Out",
+      "width": 336,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 335,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "R0_en",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "W0_addr",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "W0_clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "W0_data",
+      "direction": "In",
+      "width": 336,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 335,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "W0_en",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "W0_mask",
+      "direction": "In",
+      "width": 336,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 335,
+          "right": 0
+        }
+      ]
+    }
+  ],
+  "parameters": {},
+  "parser": "pyslang 12.1.0"
+}

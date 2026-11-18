@@ -1,0 +1,258 @@
+{
+  "requirement_ids": [
+    "R-bb8eef11f6a971-001",
+    "R-bb8eef11f6a971-002",
+    "R-bb8eef11f6a971-003",
+    "R-bb8eef11f6a971-004",
+    "R-bb8eef11f6a971-005",
+    "R-bb8eef11f6a971-006",
+    "R-bb8eef11f6a971-007",
+    "R-bb8eef11f6a971-008",
+    "R-bb8eef11f6a971-009",
+    "R-bb8eef11f6a971-010"
+  ],
+  "atoms": [
+    {
+      "atom_id": "A1",
+      "requirement_ids": [
+        "R-bb8eef11f6a971-001"
+      ],
+      "definition": "Reset and transaction domain rst_n is an active-low asynchronous reset; dec_done, trigger_dec, total_bits_consumed, and all RGB outputs are cleared to zero; reset cancels in-flight transactions. dec_start is high for only one rising edge while idle; the three bitstreams, lengths, and block_num remain stable from acceptance to completion. Lengths are 0..1024, and all read indices must be within 1024 bits; each channel contains no more than 64 run/amplitude records (EOB also counts as one record), expanding to no more than 64 coefficients. No completion or numerical guarantees are made for over-capacity records, illegal codes, overlapping starts, or unstable streams. Reset may be asserted between clock edges, with a fresh start after deassertion; complete tasks are serialized.",
+      "anchors": {
+        "0": "Omitted or explicitly contradictory under the same conditions.",
+        "1": "The facts are partially correct but omit necessary timing/domain information.",
+        "2": "The entire JSON jointly expresses the public behavior completely; splitting, merging, and renaming are accepted."
+      }
+    },
+    {
+      "atom_id": "A2",
+      "requirement_ids": [
+        "R-bb8eef11f6a971-002"
+      ],
+      "definition": "Huffman and amplitudes The three channels each read bit by bit starting from bs_*[0], with the first bit read serving as the most significant bit of the codeword. Use the fixed code table below to match the first complete code. The high 4 bits of symbol are run, and the low 4 bits are category. 0x00 is EOB; 0xf0 is 16 zeros. For category>0, continue reading category bits to form an 8-bit shift buffer v (retain the last 8 bits when more than 8 bits are read), with mask equal to the low 8 bits of (2^category-1); for category1..8, if bit category-1 of v is 1, take v&mask; otherwise, take the low 8 bits of (v&mask)-mask and interpret them as signed. category9/10 follow the else branch because the index exceeds 8 bits. The code table defines the symbol facts; the input length may end at a code boundary, and unfilled coefficients are 0.",
+      "anchors": {
+        "0": "Omitted or explicitly contradictory under the same conditions.",
+        "1": "The facts are partially correct but omit necessary timing/domain information.",
+        "2": "The entire JSON jointly expresses the public behavior completely; splitting, merging, and renaming are accepted."
+      }
+    },
+    {
+      "atom_id": "A3",
+      "requirement_ids": [
+        "R-bb8eef11f6a971-003"
+      ],
+      "definition": "RLE and inverse scan run specifies the number of zeros inserted before the amplitude; decoding ends when a decoded record has run=0 and a truncated 8-bit amplitude of 0 (including EOB, and also category9/10 that happens to truncate to 0), and the remaining coefficients are zero-filled; Huffman continues reading according to its own bitstream, and stopped RLE never resumes. 0xf0 inserts 15 zeros and then writes one zero; each channel is arranged into 8x8 row-major coefficients using the zigzag-to-raster index table below, with the low byte corresponding to raster0. 8-bit coefficients use signed two's complement; both record and expansion capacities follow the transaction domain.",
+      "anchors": {
+        "0": "Omitted or explicitly contradictory under the same conditions.",
+        "1": "The facts are partially correct but omit necessary timing/domain information.",
+        "2": "The entire JSON jointly expresses the public behavior completely; splitting, merging, and renaming are accepted."
+      }
+    },
+    {
+      "atom_id": "A4",
+      "requirement_ids": [
+        "R-bb8eef11f6a971-004"
+      ],
+      "definition": "Steganographic trigger When the raster diagonal 0/9/18/27/36/45/54/63 of the Y block with block_num=0 equals -127,84,94,35,30,10,13,10 in order, trigger_dec is set to 1; before that, if the block is not block 0 or does not match, it retains its previous value. Once set to 1, it remains set until reset. The trigger takes effect after the Y inverse scan finishes and affects the current and subsequent transactions; Cb/Cr do not participate in triggering.",
+      "anchors": {
+        "0": "Omitted or explicitly contradictory under the same conditions.",
+        "1": "The facts are partially correct but omit necessary timing/domain information.",
+        "2": "The entire JSON jointly expresses the public behavior completely; splitting, merging, and renaming are accepted."
+      }
+    },
+    {
+      "atom_id": "A5",
+      "requirement_ids": [
+        "R-bb8eef11f6a971-005"
+      ],
+      "definition": "Y payload correction When trigger_dec is active, add 1 to each Y coefficient, with an original value of 127 remaining 127; other values are incremented by 1 as 8-bit signed values. When trigger_dec is inactive, Y is unchanged. Cb/Cr are never corrected. The current Y block that matches the trigger is also corrected; the trigger is no longer inherited after reset.",
+      "anchors": {
+        "0": "Omitted or explicitly contradictory under the same conditions.",
+        "1": "The facts are partially correct but omit necessary timing/domain information.",
+        "2": "The entire JSON jointly expresses the public behavior completely; splitting, merging, and renaming are accepted."
+      }
+    },
+    {
+      "atom_id": "A6",
+      "requirement_ids": [
+        "R-bb8eef11f6a971-006"
+      ],
+      "definition": "Dequantization Each raster entry in all three channels is multiplied by the unsigned 8-bit constant at the same index in the Q table below; coefficients are interpreted as signed 8-bit values, and products are treated as signed 16-bit values. The Q table is the same for Y/Cb/Cr, and all 64 coefficients participate.",
+      "anchors": {
+        "0": "Omitted or explicitly contradictory under the same conditions.",
+        "1": "The facts are partially correct but omit necessary timing/domain information.",
+        "2": "The entire JSON jointly expresses the public behavior completely; splitting, merging, and renaming are accepted."
+      }
+    },
+    {
+      "atom_id": "A7",
+      "requirement_ids": [
+        "R-bb8eef11f6a971-007"
+      ],
+      "definition": "Fixed integer two-dimensional transform First apply the one-dimensional T(w=16) below to each column, retaining each result as a signed 25-bit value; then apply T(w=25) to each row, again retaining each result as 25 bits. Arithmetically right-shift the second-pass results by 6, take signed 9-bit values, then add 128 and clamp to 0..255. wrap_w means retaining the low w bits and interpreting them as signed; right shifts are arithmetic shifts, and no floating-point IDCT substitution is made.",
+      "anchors": {
+        "0": "Omitted or explicitly contradictory under the same conditions.",
+        "1": "The facts are partially correct but omit necessary timing/domain information.",
+        "2": "The entire JSON jointly expresses the public behavior completely; splitting, merging, and renaming are accepted."
+      }
+    },
+    {
+      "atom_id": "A8",
+      "requirement_ids": [
+        "R-bb8eef11f6a971-008"
+      ],
+      "definition": "RGB conversion For each pixel, R=clip((256*Y+359*(Cr-128))>>>8), G=clip((256*Y-88*(Cb-128)-183*(Cr-128))>>>8), B=clip((256*Y+454*(Cb-128))>>>8), where clip clamps to 0..255. The low output byte corresponds to raster0. All multiplications and additions are within the signed 20-bit range; whole-block RGB numerical guarantees apply only during the dec_done=1 window, and partial outputs during conversion need not be compared.",
+      "anchors": {
+        "0": "Omitted or explicitly contradictory under the same conditions.",
+        "1": "The facts are partially correct but omit necessary timing/domain information.",
+        "2": "The entire JSON jointly expresses the public behavior completely; splitting, merging, and renaming are accepted."
+      }
+    },
+    {
+      "atom_id": "A9",
+      "requirement_ids": [
+        "R-bb8eef11f6a971-009"
+      ],
+      "definition": "Completion and consumed bit count dec_done is a completion pulse lasting one rising-edge update cycle. total_bits_consumed is the number of bits actually read by the Y channel, including Huffman codes, amplitudes, and the EOB code; after being updated, it is held until the next Y decoding finishes or reset. Cb/Cr lengths may differ; completion must wait until all three channels have reconstructed all pixels, and completion must not be lost because Y finishes first.",
+      "anchors": {
+        "0": "Omitted or explicitly contradictory under the same conditions.",
+        "1": "The facts are partially correct but omit necessary timing/domain information.",
+        "2": "The entire JSON jointly expresses the public behavior completely; splitting, merging, and renaming are accepted."
+      }
+    },
+    {
+      "atom_id": "A10",
+      "requirement_ids": [
+        "R-bb8eef11f6a971-010"
+      ],
+      "definition": "Native timing The acceptance edge is age0. For each channel, h is 2 times the total number of Huffman code bits read, plus category+2 for each record with category>0, plus 1 for EOB; add another 2 if the length is exhausted without EOB. r is the sum of run+1 for each nonzero-terminating record before RLE stops, plus 2; if no record with run=0 and 8-bit amplitude=0 occurs, likewise add 2 when the records are exhausted. Let i=h+r+2; then the completion age=max(iY+225,iCb+160,iCr+160)+66, the Y bit count is updated at age=hY+1, and trigger matching is updated at age=iY+1. This timing is guaranteed only for legal, complete bitstreams within the transaction domain; asynchronous reset need not wait for completion.",
+      "anchors": {
+        "0": "Omitted or explicitly contradictory under the same conditions.",
+        "1": "The facts are partially correct but omit necessary timing/domain information.",
+        "2": "The entire JSON jointly expresses the public behavior completely; splitting, merging, and renaming are accepted."
+      }
+    }
+  ],
+  "required_interfaces": {
+    "R-bb8eef11f6a971-001": [
+      "clk",
+      "rst_n",
+      "dec_start",
+      "bs_Y",
+      "bs_len_Y",
+      "bs_Cb",
+      "bs_len_Cb",
+      "bs_Cr",
+      "bs_len_Cr",
+      "block_num",
+      "R_out",
+      "G_out",
+      "B_out",
+      "dec_done",
+      "trigger_dec",
+      "total_bits_consumed"
+    ],
+    "R-bb8eef11f6a971-002": [
+      "dec_start",
+      "bs_Y",
+      "bs_len_Y",
+      "bs_Cb",
+      "bs_len_Cb",
+      "bs_Cr",
+      "bs_len_Cr",
+      "total_bits_consumed"
+    ],
+    "R-bb8eef11f6a971-003": [
+      "dec_start",
+      "bs_Y",
+      "bs_len_Y",
+      "bs_Cb",
+      "bs_len_Cb",
+      "bs_Cr",
+      "bs_len_Cr",
+      "R_out",
+      "G_out",
+      "B_out"
+    ],
+    "R-bb8eef11f6a971-004": [
+      "clk",
+      "rst_n",
+      "block_num",
+      "bs_Y",
+      "bs_len_Y",
+      "trigger_dec"
+    ],
+    "R-bb8eef11f6a971-005": [
+      "clk",
+      "rst_n",
+      "bs_Y",
+      "trigger_dec",
+      "R_out",
+      "G_out",
+      "B_out"
+    ],
+    "R-bb8eef11f6a971-006": [
+      "bs_Y",
+      "bs_len_Y",
+      "bs_Cb",
+      "bs_len_Cb",
+      "bs_Cr",
+      "bs_len_Cr",
+      "R_out",
+      "G_out",
+      "B_out"
+    ],
+    "R-bb8eef11f6a971-007": [
+      "bs_Y",
+      "bs_len_Y",
+      "bs_Cb",
+      "bs_len_Cb",
+      "bs_Cr",
+      "bs_len_Cr",
+      "R_out",
+      "G_out",
+      "B_out"
+    ],
+    "R-bb8eef11f6a971-008": [
+      "bs_Y",
+      "bs_len_Y",
+      "bs_Cb",
+      "bs_len_Cb",
+      "bs_Cr",
+      "bs_len_Cr",
+      "R_out",
+      "G_out",
+      "B_out",
+      "dec_done"
+    ],
+    "R-bb8eef11f6a971-009": [
+      "dec_start",
+      "bs_Y",
+      "bs_len_Y",
+      "bs_Cb",
+      "bs_len_Cb",
+      "bs_Cr",
+      "bs_len_Cr",
+      "dec_done",
+      "total_bits_consumed"
+    ],
+    "R-bb8eef11f6a971-010": [
+      "clk",
+      "rst_n",
+      "dec_start",
+      "bs_Y",
+      "bs_len_Y",
+      "bs_Cb",
+      "bs_len_Cb",
+      "bs_Cr",
+      "bs_len_Cr",
+      "block_num",
+      "R_out",
+      "G_out",
+      "B_out",
+      "dec_done",
+      "trigger_dec",
+      "total_bits_consumed"
+    ]
+  }
+}

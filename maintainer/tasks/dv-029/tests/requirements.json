@@ -1,0 +1,40 @@
+{
+  "requirements": [
+    {
+      "requirement_id": "R-dv-029-001",
+      "definition": "i_nRst is synchronous active-low; only source rising edges clear active state, beat count, busy flag, bank/index, write stencil, etc. Colors, addresses, read caches, and masks that are not reset must be established by legal transactions before use. fifoFull/fifoComplete are undriven and constantly Z in functional simulation; they do not indicate the existence of a command FIFO."
+    },
+    {
+      "requirement_id": "R-dv-029-002",
+      "definition": "When idle, initiate a request only when ack_i=0, prioritizing nonzero memoryWriteCommand, then a saveBGBlock transition from 0 to nonzero with a value of 2/3 or 1 with blending, then CLUT, and finally TEX. On the first beat, req=1; the command address is command21:7 shifted left by 5, the CLUT address is shifted left by 5, and TEX selects the L address, otherwise R, shifted left by 3; the first background beat address is 0. On the first beat, wrt_o=0; cnt for command 1 is 0, for other legal commands and BG/CLUT it is 7, and for TEX it is 1."
+    },
+    {
+      "requirement_id": "R-dv-029-003",
+      "definition": "After entering the active state, each edge with ack_i=1 advances the beat index, and req remains 1; when ack_i=0, req is low in that cycle and a return to idle or the subsequent BG phase is scheduled for the next edge. Low ack ends the transaction rather than waiting indefinitely. The low bits of the active address follow beat×4; the low 3 beat bits wrap modulo 8, with no automatic length-based stop."
+    },
+    {
+      "requirement_id": "R-dv-029-004",
+      "definition": "A command with low 3 bits equal to 1 is a pixel-pair write: field 55:40 is the low 16-bit color, 39:24 is the high 16-bit color, 23:22 gives the validity of the two halfwords, and 6:4 is the pair index; the active write address is the latched block address plus pair×4, and data is {high color,low color}. Command 2 fills 8 words, replicating color 55:40 into both halfwords, with the mask fully valid and the active address advancing by beat×4. Each halfword mask expands into two sel bits."
+    },
+    {
+      "requirement_id": "R-dv-029-005",
+      "definition": "The TEX address prioritizes L, while the completion side latches the R request bit at initiation: when both requests are high, the address may be L while completion is for R. Active beat 0 with ack high latches dat_i as the low 32 bits; beat 1 and subsequent beats with a nonzero low-3-bit index assert the selected completion side. TexCacheWrite is generated in the termination cycle when ack goes low; the high half of the 64-bit value is the current dat_i, and the low half is the value latched on the first beat; adrTexCacheWrite is the initiating byte address shifted right by 3."
+    },
+    {
+      "requirement_id": "R-dv-029-006",
+      "definition": "The CLUT first beat has cnt7; the active address uses the current adrClutCacheUpdate and the low 3 beat bits×4. When ack is high, an internal cache write intent is issued; ClutCacheWrite and ClutWriteIndex are registered on the source edge, while ClutCacheData always passes dat_i through directly; at beat7, the completion output is 1."
+    },
+    {
+      "requirement_id": "R-dv-029-007",
+      "definition": "Only a saveBGBlock transition from 0 to nonzero triggers an operation. 1 reads the background only with blending; 2/3 first write 8 words, taking data and masks directly from the corresponding beat of the current exported block. Write termination generates resetMask; with blending and a value other than 3, issue another read first beat and read loadAdr; otherwise, terminate and generate a pipeline reset pulse. Read termination issues an import pulse and pipeline reset; the imported block is arranged as 8 32-bit dat_i values."
+    },
+    {
+      "requirement_id": "R-dv-029-008",
+      "definition": "Command 3 reads 8 words into one of two banks, each containing 8 32-bit words; the bank is command3. The corresponding 16-bit pixel mask comes from 55:40; when command22 is 1, clear the other bank's mask. The cache and masks are not fully reset; both banks must first be legally loaded separately before use."
+    },
+    {
+      "requirement_id": "R-dv-029-009",
+      "definition": "Command 4 writes back 8 words. bank=command3, VVIndex=27:24; the pixel source starting point rotates forward by bank×16+VVIndex 16-bit pixels modulo 32, then advances by 2 pixels per beat; the two halfwords come from this cyclic pixel sequence. command4 forces the most significant bit of each halfword to 1. When command5 is 1, only pixels whose corresponding stencil bit is 0 are written, and the source pixel mask must still be valid. stencil comes from 55:40, with two bits selected according to the current beat. After termination, command23:22 selects clearing the bank0/1 mask."
+    }
+  ]
+}

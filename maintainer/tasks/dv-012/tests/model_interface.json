@@ -1,0 +1,160 @@
+{
+  "top": "dvbench_model",
+  "file": "solution/s4_model/model.sv",
+  "ports": [
+    {
+      "direction": "input",
+      "name": "blif_clk_net",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "blif_reset_net",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "G0",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "G1",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "G2",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "G3",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "G4",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "G5",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "G6",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "G7",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "G8",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "G9",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "G10",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "G11",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "G12",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "G13",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "G546",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "G539",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "G550",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "G551",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "G552",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "G547",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "G548",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "G549",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "G530",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "G45",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "G542",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "G532",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "G535",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "G537",
+      "width": 1
+    }
+  ],
+  "variants": [
+    {}
+  ],
+  "independence": "Only driven inputs and their history; separate model replay has no DUT or golden output. s1196 uses reduced Shannon functions rather than copied gate assignments."
+}

@@ -1,0 +1,250 @@
+{
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "model_module": "dvbench_model",
+  "dut_top": "fpnew_fma",
+  "model": {
+    "interface": {
+      "ports": [
+        {
+          "name": "aux_i",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "aux_o",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "busy_o",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "clk_i",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "extension_bit_o",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "flush_i",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "in_ready_o",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "in_valid_i",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "is_boxed_i",
+          "direction": "In",
+          "width": 3,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 2,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "mask_i",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "mask_o",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "op_i",
+          "direction": "In",
+          "width": 4,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 3,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "op_mod_i",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "operands_i",
+          "direction": "In",
+          "width": 96,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 2,
+              "right": 0
+            },
+            {
+              "kind": "packed",
+              "left": 31,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "out_ready_i",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "out_valid_o",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "reg_ena_i",
+          "direction": "In",
+          "width": 1,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 0,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "result_o",
+          "direction": "Out",
+          "width": 32,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 31,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "rnd_mode_i",
+          "direction": "In",
+          "width": 3,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 2,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "rst_ni",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "status_o",
+          "direction": "Out",
+          "width": 5,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 4,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "tag_i",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "tag_o",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        }
+      ],
+      "parameters": {},
+      "parser": "manual RTL native declaration audit, fixed elaboration"
+    },
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "self_contained": true
+  },
+  "top": "dvbench_top",
+  "submission_format": "public/submission_format.md",
+  "json_is_complete_fact_carrier": true,
+  "parameter_profiles": [
+    {
+      "profile": "default_logic",
+      "FpFormat": 0,
+      "NumPipeRegs": 0,
+      "PipeConfig": 0,
+      "TagType": "logic",
+      "AuxType": "logic"
+    },
+    {
+      "profile": "original_comb",
+      "FpFormat": 0,
+      "NumPipeRegs": 0,
+      "PipeConfig": 0,
+      "TagType": "logic[3:0]",
+      "AuxType": "logic[1:0]"
+    },
+    {
+      "profile": "original_pipe2",
+      "FpFormat": 0,
+      "NumPipeRegs": 2,
+      "PipeConfig": 3,
+      "TagType": "logic[3:0]",
+      "AuxType": "logic[1:0]"
+    }
+  ],
+  "task_id": "dv-046",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

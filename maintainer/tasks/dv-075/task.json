@@ -1,0 +1,301 @@
+{
+  "task_id": "dv-075",
+  "dut_top": "axi_rdma",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "axi_rdma.v",
+    "axis_realign.v",
+    "fifo_async.v"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m10",
+    "n1",
+    "n2"
+  ],
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "reference_sources": [
+    "model/model.sv",
+    "rdma_if.sv",
+    "rdma_pkg.sv",
+    "model_check.sv",
+    "top.sv"
+  ],
+  "model_contract_policy": "native-module-v1",
+  "model_interface": {
+    "top": "dvbench_model",
+    "file": "model/model.sv",
+    "ports": [
+      {
+        "name": "aclk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "aresetn",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "axi_m_araddr",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "axi_m_arburst",
+        "direction": "Out",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "axi_m_arid",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "axi_m_arlen",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "axi_m_arready",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "axi_m_arsize",
+        "direction": "Out",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "axi_m_arvalid",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "axi_m_rdata",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "axi_m_rid",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "axi_m_rlast",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "axi_m_rready",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "axi_m_rresp",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "axi_m_rvalid",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "cmd_address",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "cmd_bytes",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "cmd_ready",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "cmd_valid",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "dout_tdata",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "dout_tkeep",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "dout_tlast",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "dout_tready",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "dout_tvalid",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {
+      "ADDRESS_BITS": "32",
+      "LENGTH_BITS": "32",
+      "MAX_BURST": "256",
+      "STREAM_BIG_ENDIAN": "32'd1414681925",
+      "MEM_BIG_ENDIAN": "32'd1414681925"
+    },
+    "sampling": {
+      "clock": "aclk",
+      "edge": "negedge",
+      "offset_ns": 0
+    },
+    "independence": "Input history only; ordinal queue/pointers, no DUT instance, DUT output or golden trace"
+  },
+  "native_instance_range": [
+    2,
+    2
+  ],
+  "coverage": {
+    "metrics": [
+      "LINE",
+      "COND",
+      "BRANCH",
+      "TOGGLE"
+    ],
+    "scope": "Both disjoint native DUT subtrees and descendants; TB/model excluded"
+  },
+  "rtl_sources": [
+    "axi_rdma.v",
+    "axis_realign.v",
+    "fifo_async.v"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "axi_rdma.v",
+    "axis_realign.v",
+    "fifo_async.v"
+  ]
+}

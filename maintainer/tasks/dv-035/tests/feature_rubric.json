@@ -1,0 +1,158 @@
+{
+  "requirement_ids": [
+    "R-dv-035-001",
+    "R-dv-035-002",
+    "R-dv-035-003",
+    "R-dv-035-004",
+    "R-dv-035-005"
+  ],
+  "atoms": [
+    {
+      "atom_id": "R-dv-035-001-behavior",
+      "requirement_ids": [
+        "R-dv-035-001"
+      ],
+      "description": "rst clears both FIFOs and the valid flags on the rising edge of clk, and s_ip_hdr_ready is 0 after that edge; busy is always 0. After the next rising edge following rst deassertion, ready for the empty header path is 1. Payload input ready is 1 after reset clearing. Invalid payload/header data is unspecified.",
+      "grade_anchors": {
+        "0": "Semantics absent from the full text or contradictory under the same conditions/windows as this item",
+        "1": "Covers only part of this item's legal domain or lacks necessary timing/boundaries",
+        "2": "rst clears both FIFOs and the valid flags on the rising edge of clk, and s_ip_hdr_ready is 0 after that edge; busy is always 0. After the next rising edge following rst deassertion, ready for the empty header path is 1. Payload input ready is 1 after reset clearing. Invalid payload/header data is unspecified."
+      }
+    },
+    {
+      "atom_id": "R-dv-035-002-behavior",
+      "requirement_ids": [
+        "R-dv-035-002"
+      ],
+      "description": "Each time s_ip_payload_axis_tvalid and ready are both 1, one 64-bit data, 8-bit keep, last, and user are accepted; this is independent of header valid and both header ready signals. Output is in acceptance order; data with output valid equal to 0 is undefined, and all payload fields hold when valid is 1 and output ready is 0.",
+      "grade_anchors": {
+        "0": "Semantics absent from the full text or contradictory under the same conditions/windows as this item",
+        "1": "Covers only part of this item's legal domain or lacks necessary timing/boundaries",
+        "2": "Each time s_ip_payload_axis_tvalid and ready are both 1, one 64-bit data, 8-bit keep, last, and user are accepted; this is independent of header valid and both header ready signals. Output is in acceptance order; data with output valid equal to 0 is undefined, and all payload fields hold when valid is 1 and output ready is 0."
+      }
+    },
+    {
+      "atom_id": "R-dv-035-003-behavior",
+      "requirement_ids": [
+        "R-dv-035-003"
+      ],
+      "description": "The payload RAM holds 256 64-bit beats, with two additional output pipeline positions. Data accepted into an empty queue first becomes valid at the output after the third acceptance edge. Input ready is 0 when the RAM is full, and ready recovers after output removal frees space; there is no loss, duplication, or reordering.",
+      "grade_anchors": {
+        "0": "Semantics absent from the full text or contradictory under the same conditions/windows as this item",
+        "1": "Covers only part of this item's legal domain or lacks necessary timing/boundaries",
+        "2": "The payload RAM holds 256 64-bit beats, with two additional output pipeline positions. Data accepted into an empty queue first becomes valid at the output after the third acceptance edge. Input ready is 0 when the RAM is full, and ready recovers after output removal frees space; there is no loss, duplication, or reordering."
+      }
+    },
+    {
+      "atom_id": "R-dv-035-004-behavior",
+      "requirement_ids": [
+        "R-dv-035-004"
+      ],
+      "description": "Header input ready is a registered signal. After a header handshake, ready is 0 on the next cycle, and subsequently recovers according to the header FIFO full status. The header is enqueued only if a payload handshake also occurs on the same acceptance edge with last equal to 1; a multibeat payload ending on a later edge does not commit an earlier header.",
+      "grade_anchors": {
+        "0": "Semantics absent from the full text or contradictory under the same conditions/windows as this item",
+        "1": "Covers only part of this item's legal domain or lacks necessary timing/boundaries",
+        "2": "Header input ready is a registered signal. After a header handshake, ready is 0 on the next cycle, and subsequently recovers according to the header FIFO full status. The header is enqueued only if a payload handshake also occurs on the same acceptance edge with last equal to 1; a multibeat payload ending on a later edge does not commit an earlier header."
+      }
+    },
+    {
+      "atom_id": "R-dv-035-005-behavior",
+      "requirement_ids": [
+        "R-dv-035-005"
+      ],
+      "description": "All s_eth_* and s_ip_* non-payload fields are captured on the header acceptance edge that satisfies the commit conditions above, and are output unchanged in order on the corresponding m-side fields; a new header first becomes valid after the third edge following acceptance. Fields hold when output valid is asserted and ready is 0. The header RAM has 8 entries and one output position; when full, subsequent acceptance is paused.",
+      "grade_anchors": {
+        "0": "Semantics absent from the full text or contradictory under the same conditions/windows as this item",
+        "1": "Covers only part of this item's legal domain or lacks necessary timing/boundaries",
+        "2": "All s_eth_* and s_ip_* non-payload fields are captured on the header acceptance edge that satisfies the commit conditions above, and are output unchanged in order on the corresponding m-side fields; a new header first becomes valid after the third edge following acceptance. Fields hold when output valid is asserted and ready is 0. The header RAM has 8 entries and one output position; when full, subsequent acceptance is paused."
+      }
+    }
+  ],
+  "required_interfaces": {
+    "R-dv-035-001": [
+      "clk",
+      "rst",
+      "s_ip_hdr_ready",
+      "m_ip_hdr_valid",
+      "s_ip_payload_axis_tready",
+      "m_ip_payload_axis_tvalid",
+      "busy"
+    ],
+    "R-dv-035-002": [
+      "clk",
+      "rst",
+      "s_ip_payload_axis_tdata",
+      "s_ip_payload_axis_tkeep",
+      "s_ip_payload_axis_tvalid",
+      "s_ip_payload_axis_tready",
+      "s_ip_payload_axis_tlast",
+      "s_ip_payload_axis_tuser",
+      "m_ip_payload_axis_tdata",
+      "m_ip_payload_axis_tkeep",
+      "m_ip_payload_axis_tvalid",
+      "m_ip_payload_axis_tready",
+      "m_ip_payload_axis_tlast",
+      "m_ip_payload_axis_tuser"
+    ],
+    "R-dv-035-003": [
+      "clk",
+      "rst",
+      "s_ip_payload_axis_tvalid",
+      "s_ip_payload_axis_tready",
+      "m_ip_payload_axis_tvalid",
+      "m_ip_payload_axis_tready"
+    ],
+    "R-dv-035-004": [
+      "clk",
+      "rst",
+      "s_ip_hdr_valid",
+      "s_ip_hdr_ready",
+      "s_ip_payload_axis_tvalid",
+      "s_ip_payload_axis_tready",
+      "s_ip_payload_axis_tlast",
+      "m_ip_hdr_valid"
+    ],
+    "R-dv-035-005": [
+      "s_eth_dest_mac",
+      "s_eth_src_mac",
+      "s_eth_type",
+      "s_ip_version",
+      "s_ip_ihl",
+      "s_ip_dscp",
+      "s_ip_ecn",
+      "s_ip_length",
+      "s_ip_identification",
+      "s_ip_flags",
+      "s_ip_fragment_offset",
+      "s_ip_ttl",
+      "s_ip_protocol",
+      "s_ip_header_checksum",
+      "s_ip_source_ip",
+      "s_ip_dest_ip",
+      "m_eth_dest_mac",
+      "m_eth_src_mac",
+      "m_eth_type",
+      "m_ip_version",
+      "m_ip_ihl",
+      "m_ip_dscp",
+      "m_ip_ecn",
+      "m_ip_length",
+      "m_ip_identification",
+      "m_ip_flags",
+      "m_ip_fragment_offset",
+      "m_ip_ttl",
+      "m_ip_protocol",
+      "m_ip_header_checksum",
+      "m_ip_source_ip",
+      "m_ip_dest_ip",
+      "s_ip_hdr_valid",
+      "s_ip_hdr_ready",
+      "m_ip_hdr_valid",
+      "m_ip_hdr_ready",
+      "clk",
+      "rst"
+    ]
+  },
+  "basis": "fixed RTL and public spec",
+  "aggregation": "current evaluator fixed atoms + semantically deduplicated claims; no aggregate"
+}

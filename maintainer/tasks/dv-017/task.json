@@ -1,0 +1,334 @@
+{
+  "task_id": "dv-017",
+  "dut_top": "prim_sram_arbiter",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "backfill/prim_util_pkg.sv",
+    "prim_arbiter_ppc.sv",
+    "prim_arbiter_tree.sv",
+    "prim_count.sv",
+    "prim_fifo_sync.sv",
+    "prim_fifo_sync_cnt.sv",
+    "prim_flop.sv",
+    "prim_generic_flop.sv",
+    "prim_sram_arbiter.sv",
+    "support/prim_flop_macros.sv",
+    "support/prim_assert.sv",
+    "support/prim_assert_sec_cm.svh",
+    "support/prim_assert_yosys_macros.svh",
+    "support/prim_assert_dummy_macros.svh"
+  ],
+  "rtl_compile_files": [
+    "backfill/prim_util_pkg.sv",
+    "prim_arbiter_ppc.sv",
+    "prim_arbiter_tree.sv",
+    "prim_count.sv",
+    "prim_fifo_sync.sv",
+    "prim_fifo_sync_cnt.sv",
+    "prim_flop.sv",
+    "prim_generic_flop.sv",
+    "prim_sram_arbiter.sv"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m10"
+  ],
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "clk_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "gnt_o",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "req_addr_i",
+        "direction": "In",
+        "width": 48,
+        "dimensions": [
+          {
+            "kind": "unpacked",
+            "left": 0,
+            "right": 3
+          },
+          {
+            "kind": "packed",
+            "left": 11,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "req_i",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "req_wdata_i",
+        "direction": "In",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "unpacked",
+            "left": 0,
+            "right": 3
+          },
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "req_wmask_i",
+        "direction": "In",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "unpacked",
+            "left": 0,
+            "right": 3
+          },
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "req_write_i",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "rsp_error_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "unpacked",
+            "left": 0,
+            "right": 3
+          },
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "rsp_rdata_o",
+        "direction": "Out",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "unpacked",
+            "left": 0,
+            "right": 3
+          },
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "rsp_rvalid_o",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "rst_ni",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "sram_addr_o",
+        "direction": "Out",
+        "width": 12,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 11,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "sram_rdata_i",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "sram_req_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "sram_rerror_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "sram_rvalid_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "sram_wdata_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "sram_wmask_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "sram_write_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {
+      "N": "32'd4",
+      "SramDw": "32'd32",
+      "SramAw": "32'd12",
+      "ArbiterImpl": "24'd5263427",
+      "EnMask": "1'b0"
+    },
+    "parser": "pyslang 12.1.0"
+  },
+  "parameter_profiles": [
+    {
+      "profile": "default-ppc",
+      "N": 4,
+      "SramDw": 32,
+      "SramAw": 12,
+      "ArbiterImpl": "PPC",
+      "EnMask": 0
+    },
+    {
+      "profile": "masked-ppc",
+      "N": 4,
+      "SramDw": 32,
+      "SramAw": 12,
+      "ArbiterImpl": "PPC",
+      "EnMask": 1
+    },
+    {
+      "profile": "masked-tree",
+      "N": 2,
+      "SramDw": 32,
+      "SramAw": 12,
+      "ArbiterImpl": "BINTREE",
+      "EnMask": 1
+    }
+  ],
+  "reference_submission": "solution/reference",
+  "rtl_sources": [
+    "backfill/prim_util_pkg.sv",
+    "prim_arbiter_ppc.sv",
+    "prim_arbiter_tree.sv",
+    "prim_count.sv",
+    "prim_fifo_sync.sv",
+    "prim_fifo_sync_cnt.sv",
+    "prim_flop.sv",
+    "prim_generic_flop.sv",
+    "prim_sram_arbiter.sv"
+  ],
+  "include_dirs": [
+    "backfill",
+    "support"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800
+}

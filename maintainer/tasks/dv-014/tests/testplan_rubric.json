@@ -1,0 +1,251 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "requirement_ids": [
+    "R-dv-014-ap3216c-sensor-001",
+    "R-dv-014-ap3216c-sensor-002",
+    "R-dv-014-ap3216c-sensor-003",
+    "R-dv-014-ap3216c-sensor-004",
+    "R-dv-014-ap3216c-sensor-005",
+    "R-dv-014-ap3216c-sensor-006",
+    "R-dv-014-ap3216c-sensor-007",
+    "R-dv-014-ap3216c-sensor-008",
+    "R-dv-014-ap3216c-sensor-009"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "R-dv-014-ap3216c-sensor-001-verification",
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-001"
+      ],
+      "description": "sys_rst_n is asynchronous active-low. After reset, the I2C clock and master SDA drive are both high, led=0000, sel=111111, and seg_led=C0. Reset interrupts in-flight polling, and initialization restarts after release; no data guarantee is made for the ALS displayed value before the first complete publication, and this undefined domain must not be used to reject a legal design.",
+      "setup": "While sys_clk is running, apply a real high-to-low reset edge and hold reset for 32 system cycles, then release it; do not modify any internal clocks, counts, parameters, or display values.",
+      "stimulus": "While sys_clk is running, apply a real high-to-low reset edge and hold reset for 32 system cycles, then release it; do not modify any internal clocks, counts, parameters, or display values.",
+      "expected": "The native outputs during reset have the specified values, and initialization restarts after release; before the first ALS publication, check only SCL/SDA/LED/sel and the reset segment code.",
+      "sampling": "Compare according to the asynchronous, combinational, or acceptance-edge/output-valid window specified in this item; X/Z within valid windows must not be skipped.",
+      "checker": "ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, reporting differences with uvm_error; at the end, check for at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectation/window, or self-proving/vacuous checker",
+        "1": "Legal preparation and error-detection methods exist, but the actual stimulus/windows cover only part of this obligation",
+        "2": "Apply a real high-to-low reset edge while sys_clk is running and hold it for 32 system cycles, then release it; do not modify any internal clocks, counters, parameters, or display values.; Native reset outputs have the specified values, and operation restarts from initialization after release; before the first ALS publication, check only SCL/SDA/LED/sel and the reset segment codes.; ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, issuing uvm_error on differences; at the end, check at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy."
+      }
+    },
+    {
+      "obligation_id": "R-dv-014-ap3216c-sensor-002-verification",
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-002"
+      ],
+      "description": "Fixed sys_clk=50MHz, CLK_FREQ=50000000, I2C_FREQ=250000. I2C operations use a 1MHz internal time tick; the master holds each data bit for four ticks, transmitting MSB first; SDA changes during the SCL-low phase and remains stable during the high phase, except for START and STOP. SCL clock stretching and multi-master arbitration are not supported.",
+      "setup": "Run naturally for 355ms with a 50MHz system clock, using an independent port-level sensor to respond to the master's SCL and SDA, with no internal hierarchical reads.",
+      "stimulus": "Run naturally for 355ms with a 50MHz system clock, using an independent port-level sensor to respond to the master's SCL and SDA, with no internal hierarchical reads.",
+      "expected": "Compare against the independent input-history transaction model 1ns after every native SCL/SDA output change and predicted change, with bit-by-bit MSB-first transmission and four-tick bit timing matching.",
+      "sampling": "Compare according to the asynchronous, combinational, or acceptance-edge/output-valid window specified in this item; X/Z within valid windows must not be skipped.",
+      "checker": "ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, reporting differences with uvm_error; at the end, check for at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectation/window, or self-proving/vacuous checker",
+        "1": "Legal preparation and error-detection methods exist, but the actual stimulus/windows cover only part of this obligation",
+        "2": "Run naturally for 355ms with a 50MHz system clock, using an independent port-level sensor to respond to the master's SCL and SDA, with no internal hierarchy reads.; Compare against an independent transaction model based on input history 1ns after every native SCL/SDA output change and predicted change; bit-by-bit MSB-first transmission and four-tick bit timing must be consistent.; ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, issuing uvm_error on differences; at the end, check at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy."
+      }
+    },
+    {
+      "obligation_id": "R-dv-014-ap3216c-sensor-003-verification",
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-003"
+      ],
+      "description": "After each reset release, the master waits for the startup delay, then issues a write transaction to 7-bit address 1E, sending 8-bit register address 00 and data 03. The first START occurs on the 105th operation-tick rising edge after release; clock division restarts from a count cleared to zero during reset. The configuration write occurs only once after reset.",
+      "setup": "After real reset release, wait for natural startup and the first configuration write; the external slave decodes the device address, register address, and data, responding separately to the actual bus and the predicted bus.",
+      "stimulus": "After real reset release, wait for natural startup and the first configuration write; the external slave decodes the device address, register address, and data, responding separately to the actual bus and the predicted bus.",
+      "expected": "The native waveforms exactly match the independent expectations for the 1E write, 00, and 03; do not backfill expectations using actual device outputs.",
+      "sampling": "Compare according to the asynchronous, combinational, or acceptance-edge/output-valid window specified in this item; X/Z within valid windows must not be skipped.",
+      "checker": "ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, reporting differences with uvm_error; at the end, check for at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectation/window, or self-proving/vacuous checker",
+        "1": "Legal preparation and error-detection methods exist, but the actual stimulus/windows cover only part of this obligation",
+        "2": "After a real reset is released, wait for natural startup and the first configuration write; an external slave decodes the device address, register address, and data, responding separately to the actual bus and predicted bus.; Native waveforms exactly match the independently expected 1E write, 00, and 03; do not backfill expectations from actual device outputs.; ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, issuing uvm_error on differences; at the end, check at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy."
+      }
+    },
+    {
+      "obligation_id": "R-dv-014-ap3216c-sensor-004-verification",
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-004"
+      ],
+      "description": "After initialization, repeatedly read one byte each in the order 0E, 0F, 0C, 0D indefinitely. Each read first writes the device address and 8-bit register address, then issues a repeated START and the device read address, receives 8 bits, and sends a high-level non-acknowledgment followed by STOP. The interval from the SDA rising edge of the preceding STOP to the next START is: 12519 operation ticks after the configuration write or a 0D read; 21 operation ticks after a 0E or 0C read; 100019 operation ticks after a 0F read. The complete top level must not be reduced to a standalone display or I2C submodule.",
+      "setup": "Retain the default conversion wait and continuously acquire at least three rounds of 0E/0F/0C/0D sensor data, including repeated START, single-byte reads, and STOP; let all waits elapse naturally, without force/defparam.",
+      "stimulus": "Retain the default conversion wait and continuously acquire at least three rounds of 0E/0F/0C/0D sensor data, including repeated START, single-byte reads, and STOP; let all waits elapse naturally, without force/defparam.",
+      "expected": "The bit-level SCL/SDA waveforms, intervals, and ordering match the transaction timetable model; require at least 12 data bytes and 13 STOPs to prevent vacuous transaction passes.",
+      "sampling": "Compare according to the asynchronous, combinational, or acceptance-edge/output-valid window specified in this item; X/Z within valid windows must not be skipped.",
+      "checker": "ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, reporting differences with uvm_error; at the end, check for at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectation/window, or self-proving/vacuous checker",
+        "1": "Legal preparation and error-detection methods exist, but the actual stimulus/windows cover only part of this obligation",
+        "2": "Retain the default conversion wait and continuously acquire at least three rounds of 0E/0F/0C/0D sensor data, including repeated START, single-byte reads, and STOP; allow all waits to elapse naturally, without force/defparam.; Bit-level SCL/SDA waveforms, intervals, and ordering match the transaction timetable model; at least 12 data bytes and 13 STOPs prevent passing with empty transactions.; ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, issuing uvm_error on differences; at the end, check at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy."
+      }
+    },
+    {
+      "obligation_id": "R-dv-014-ap3216c-sensor-005-verification",
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-005"
+      ],
+      "description": "The master actively drives 0 or 1 when transmitting bits and non-acknowledgments; it releases SDA when receiving slave ACKs and data, with the external pull-up and slave pull-down forming the input. A high ACK level does not terminate subsequent bytes, STOP, or polling. The external sensor must drive only within receive windows in which the master releases the line, keeping data stable before sampling; a high ap_sda level from the master is not synonymous with open-drain release.",
+      "setup": "The port-level slave pulls down for 0 or releases for 1 during ACK and read-data windows; initialization and read polling cover master transmission and reception; actual/expected each use an independent slave with the same seed.",
+      "stimulus": "The port-level slave pulls down for 0 or releases for 1 during ACK and read-data windows; initialization and read polling cover master transmission and reception; actual/expected each use an independent slave with the same seed.",
+      "expected": "The resolved SDA value matches the model, with no illegal driver conflicts; ACK is 0 in this implementation, and the textual obligation that NACK does not terminate has not yet received dedicated NACK stimulus and is separately recorded as uncovered.",
+      "sampling": "Compare according to the asynchronous, combinational, or acceptance-edge/output-valid window specified in this item; X/Z within valid windows must not be skipped.",
+      "checker": "ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, reporting differences with uvm_error; at the end, check for at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectation/window, or self-proving/vacuous checker",
+        "1": "Legal preparation and error-detection methods exist, but the actual stimulus/windows cover only part of this obligation",
+        "2": "The port-level slave pulls low for 0 or releases for 1 during ACK and read-data windows; initialization and read polling cover master transmission and reception; actual/expected each use independent slaves with the same seed.; The resolved SDA value matches the model, with no illegal drive contention; this implementation uses ACK=0, and the textual obligation that NACK does not terminate has not yet received dedicated NACK stimulus and is separately recorded as uncovered.; ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, issuing uvm_error on differences; at the end, check at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy."
+      }
+    },
+    {
+      "obligation_id": "R-dv-014-ap3216c-sensor-006-verification",
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-006"
+      ],
+      "description": "The low 4 bits of the byte received from 0E become the low 4 bits of the PS value, and the low 6 bits of the byte received from 0F become its high 6 bits. Bits 6 and 7 in the two bytes do not inhibit data publication. This 10-bit value is published 100015 operation ticks after the STOP of the 0F transaction, and the LEDs update one operation tick later. For PS less than 16, the LEDs are 0001; for 16 through 127, 0011; for 128 through 511, 0111; for 512 through 1023, 1111; before the first PS publication, outside reset, display 0001 according to PS=0.",
+      "setup": "The slave cyclically provides PS=15, 16, 128 over three rounds; seed1/7/42 select different starting rounds. After the PS high byte, naturally wait for the ALS wait to expire before observing LED.",
+      "stimulus": "The slave cyclically provides PS=15, 16, 128 over three rounds; seed1/7/42 select different starting rounds. After the PS high byte, naturally wait for the ALS wait to expire before observing LED.",
+      "expected": "15 corresponds to 0001, 16 to 0011, and 128 to 0111, with update timing matching the input-history model. 512 and the high range at 1023 are defined in the model and contract but have not yet been specifically covered by this three-round reference.",
+      "sampling": "Compare according to the asynchronous, combinational, or acceptance-edge/output-valid window specified in this item; X/Z within valid windows must not be skipped.",
+      "checker": "ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, reporting differences with uvm_error; at the end, check for at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectation/window, or self-proving/vacuous checker",
+        "1": "Legal preparation and error-detection methods exist, but the actual stimulus/windows cover only part of this obligation",
+        "2": "The slave cyclically supplies PS=15, 16, 128 over three rounds; seed1/7/42 select different starting rounds. After the PS high byte, naturally wait for the ALS wait to expire before observing LED.; 15 corresponds to 0001, 16 to 0011, and 128 to 0111, with update timing matching the input-history model. 512 and the high range of 1023 are defined in the model and contract but have not been specifically covered by this three-round reference.; ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, issuing uvm_error on differences; at the end, check at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy."
+      }
+    },
+    {
+      "obligation_id": "R-dv-014-ap3216c-sensor-007-verification",
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-007"
+      ],
+      "description": "The 0C byte is the low byte of the raw ALS value, and the 0D byte is the high byte. Publish the converted value 14 operation ticks after the STOP of the 0D transaction: first multiply the unsigned 16-bit raw value by 35, truncate the product to 16 bits, then divide by 100 and round toward zero. Thus the result ranges from 0 to 655; for example, a raw value of 30000 yields 14, and 65535 yields 655. Retain the previous value between complete publications; receiving the low byte alone does not change the published value; before the first complete publication, the data meaning of the segment codes is undefined.",
+      "setup": "The slave's raw ALS values over three rounds are 65535, 10000, and 12345, each returned byte by byte via 0C/0D; wait for the entire high-byte read to complete.",
+      "stimulus": "The slave's raw ALS values over three rounds are 65535, 10000, and 12345, each returned byte by byte via 0C/0D; wait for the entire high-byte read to complete.",
+      "expected": "The calculation first truncates the product to 16 bits and then divides by 100, holding the value after publication; the minimal bit-width controls for raw 30000/65535 have been independently verified as 14/655; the full top-level comparison for this run remains to be executed.",
+      "sampling": "Compare according to the asynchronous, combinational, or acceptance-edge/output-valid window specified in this item; X/Z within valid windows must not be skipped.",
+      "checker": "ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, reporting differences with uvm_error; at the end, check for at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectation/window, or self-proving/vacuous checker",
+        "1": "Legal preparation and error-detection methods exist, but the actual stimulus/windows cover only part of this obligation",
+        "2": "The slave's raw ALS values over three rounds are 65535, 10000, and 12345, each returned as separate bytes through 0C/0D; wait until the complete high-byte read finishes.; The calculation first truncates the product to 16 bits and then divides by 100, holding the value after publication; the minimal bit-width control for raw 30000/65535 has been independently verified as 14/655; the full top-level comparison for this run remains to be executed.; ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, issuing uvm_error on differences; at the end, check at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy."
+      }
+    },
+    {
+      "obligation_id": "R-dv-014-ap3216c-sensor-008-verification",
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-008"
+      ],
+      "description": "Display the decimal representation of the published converted ALS value, with the least significant digit at the lowest bit of sel; leave leading-zero positions in higher digits blank, and display the value 0 as a single 0. There is no minus sign, and all decimal points are off. The eight-bit active-low segment codes for 0 through 9 are, in order, C0, F9, A4, B0, 99, 92, 82, F8, 80, 90; blank is FF.",
+      "setup": "The 355ms run covers three known ALS values and a complete six-digit scan in each round, independently generating expectations using decimal integer decomposition and a code table; non-reset data segment-code comparison is enabled only 16us after the independent expected slave completes the 4th read byte and the 5th STOP.",
+      "stimulus": "The 355ms run covers three known ALS values and a complete six-digit scan in each round, independently generating expectations using decimal integer decomposition and a code table; non-reset data segment-code comparison is enabled only 16us after the independent expected slave completes the 4th read byte and the 5th STOP.",
+      "expected": "Compare seg_led on each occasion within meaningful display windows; high-order blanking, low-order digits, and absence of a decimal point all match the model. 0 and all individual digit glyphs from 0 to 9 are not all covered item by item in these three rounds.",
+      "sampling": "Compare according to the asynchronous, combinational, or acceptance-edge/output-valid window specified in this item; X/Z within valid windows must not be skipped.",
+      "checker": "ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, reporting differences with uvm_error; at the end, check for at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectation/window, or self-proving/vacuous checker",
+        "1": "Legal preparation and error-detection methods exist, but the actual stimulus/windows cover only part of this obligation",
+        "2": "A 355ms run covers three known ALS values and a complete six-digit scan in each round, independently generating expectations using decimal integer decomposition and a code table; enable non-reset data segment-code comparison only 16us after the independent expected slave completes the 4th read byte and the 5th STOP.; Compare seg_led on each occasion within meaningful display windows; upper-digit blanking, lower-digit numerals, and absence of a decimal point all match the model. 0 and all individual glyphs from 0 to 9 are not all covered item by item in these three rounds.; ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, issuing uvm_error on differences; at the end, check at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy."
+      }
+    },
+    {
+      "obligation_id": "R-dv-014-ap3216c-sensor-009-verification",
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-009"
+      ],
+      "description": "The display timebase is sys_clk divided by ten, with a high reset phase. The six digit-select signals cycle through 111110, 111101, 111011, 110111, 101111, and 011111; the scan position advances every 5000 display rising edges, and due to the register pipeline, the new digit selection occurs one additional display rising edge after the position advances. Decimal conversion, current-digit selection, and segment-code encoding each use the values registered on the previous display edge; after a new ALS value appears, allow this fixed pipeline to propagate. The scanning of sel is independent of whether the first ALS data is valid.",
+      "setup": "Run naturally with the default divide-by-ten clock division and a display-edge count of 5000, monitoring sel changes and segment changes and covering all six digit selects.",
+      "stimulus": "Run naturally with the default divide-by-ten clock division and a display-edge count of 5000, monitoring sel changes and segment changes and covering all six digit selects.",
+      "expected": "sel advances according to the fixed 1ms scan and register pipeline, and segment codes are predicted by the same model using the two-stage display pipeline; compare 1ns after each actual/expected output event, keeping coverage separate from correctness.",
+      "sampling": "Compare according to the asynchronous, combinational, or acceptance-edge/output-valid window specified in this item; X/Z within valid windows must not be skipped.",
+      "checker": "ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, reporting differences with uvm_error; at the end, check for at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectation/window, or self-proving/vacuous checker",
+        "1": "Legal preparation and error-detection methods exist, but the actual stimulus/windows cover only part of this obligation",
+        "2": "Run naturally with the default divide-by-ten clock and a count of 5000 display edges, monitoring sel changes and segment changes to cover all six digit selects.; sel advances according to the fixed 1ms scan and register pipeline, and segment codes are predicted by the same model using a two-stage display pipeline; compare 1ns after every actual/expected output event, keeping coverage separate from correctness.; ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, issuing uvm_error on differences; at the end, check at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy."
+      }
+    }
+  ],
+  "stimulus_criteria": {
+    "R-dv-014-ap3216c-sensor-001-verification": [
+      {
+        "criterion_id": "R-dv-014-ap3216c-sensor-001-verification-domain",
+        "description": "While sys_clk is running, apply a real high-to-low reset edge and hold reset for 32 system cycles, then release it; do not modify any internal clocks, counts, parameters, or display values."
+      }
+    ],
+    "R-dv-014-ap3216c-sensor-002-verification": [
+      {
+        "criterion_id": "R-dv-014-ap3216c-sensor-002-verification-domain",
+        "description": "Run naturally for 355ms with a 50MHz system clock, using an independent port-level sensor to respond to the master's SCL and SDA, with no internal hierarchical reads."
+      }
+    ],
+    "R-dv-014-ap3216c-sensor-003-verification": [
+      {
+        "criterion_id": "R-dv-014-ap3216c-sensor-003-verification-domain",
+        "description": "After real reset release, wait for natural startup and the first configuration write; the external slave decodes the device address, register address, and data, responding separately to the actual bus and the predicted bus."
+      }
+    ],
+    "R-dv-014-ap3216c-sensor-004-verification": [
+      {
+        "criterion_id": "R-dv-014-ap3216c-sensor-004-verification-domain",
+        "description": "Retain the default conversion wait and continuously acquire at least three rounds of 0E/0F/0C/0D sensor data, including repeated START, single-byte reads, and STOP; let all waits elapse naturally, without force/defparam."
+      }
+    ],
+    "R-dv-014-ap3216c-sensor-005-verification": [
+      {
+        "criterion_id": "R-dv-014-ap3216c-sensor-005-verification-domain",
+        "description": "The port-level slave pulls down for 0 or releases for 1 during ACK and read-data windows; initialization and read polling cover master transmission and reception; actual/expected each use an independent slave with the same seed."
+      }
+    ],
+    "R-dv-014-ap3216c-sensor-006-verification": [
+      {
+        "criterion_id": "R-dv-014-ap3216c-sensor-006-verification-domain",
+        "description": "The slave cyclically provides PS=15, 16, 128 over three rounds; seed1/7/42 select different starting rounds. After the PS high byte, naturally wait for the ALS wait to expire before observing LED."
+      }
+    ],
+    "R-dv-014-ap3216c-sensor-007-verification": [
+      {
+        "criterion_id": "R-dv-014-ap3216c-sensor-007-verification-domain",
+        "description": "The slave's raw ALS values over three rounds are 65535, 10000, and 12345, each returned byte by byte via 0C/0D; wait for the entire high-byte read to complete."
+      }
+    ],
+    "R-dv-014-ap3216c-sensor-008-verification": [
+      {
+        "criterion_id": "R-dv-014-ap3216c-sensor-008-verification-domain",
+        "description": "The 355ms run covers three known ALS values and a complete six-digit scan in each round, independently generating expectations using decimal integer decomposition and a code table; non-reset data segment-code comparison is enabled only 16us after the independent expected slave completes the 4th read byte and the 5th STOP."
+      }
+    ],
+    "R-dv-014-ap3216c-sensor-009-verification": [
+      {
+        "criterion_id": "R-dv-014-ap3216c-sensor-009-verification-domain",
+        "description": "Run naturally with the default divide-by-ten clock division and a display-edge count of 5000, monitoring sel changes and segment changes and covering all six digit selects."
+      }
+    ]
+  },
+  "issue_codes": [
+    "missing",
+    "partial",
+    "incorrect",
+    "illegal_setup",
+    "wrong_sampling",
+    "vacuous",
+    "self_oracle",
+    "contradiction",
+    "hallucination"
+  ],
+  "issue_grade_caps": {},
+  "claim_impact_components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ]
+}

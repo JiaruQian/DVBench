@@ -1,0 +1,1225 @@
+{
+  "task_id": "dv-038",
+  "dut_top": "ibuffer",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "ibuffer.v",
+    "slowdown.v"
+  ],
+  "rtl_sources": [
+    "ibuffer.v",
+    "slowdown.v",
+    "deps/common_cell/stream_fifo_hasflush_true.v",
+    "deps/common_cell/stream_fifo_hasflush_true_no_empty_full.v",
+    "deps/common_cell/fifo_with_flush.v",
+    "deps/common_cell/fixed_pri_arb.v",
+    "deps/common_cell/one2bin.v"
+  ],
+  "rtl_compile_files": [
+    "ibuffer.v",
+    "slowdown.v",
+    "deps/common_cell/stream_fifo_hasflush_true.v",
+    "deps/common_cell/stream_fifo_hasflush_true_no_empty_full.v",
+    "deps/common_cell/fifo_with_flush.v",
+    "deps/common_cell/fixed_pri_arb.v",
+    "deps/common_cell/one2bin.v"
+  ],
+  "include_dirs": [
+    "deps/define"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m10",
+    "n1"
+  ],
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "model_contract_policy": "native-module-v1",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "ibuffer2issue_grant_i",
+        "direction": "In",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer2issue_io_in_ready_i",
+        "direction": "In",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_flush_wid_i",
+        "direction": "In",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_flush_wid_valid_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "ibuffer_in_control_Signals_alu_fn_i",
+        "direction": "In",
+        "width": 12,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 11,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_aq_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_atomic_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_barrier_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_branch_i",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_csr_i",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_custom_signal_0_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_disable_mask_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_fence_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_force_rm_rtz_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_fp_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_imm_ext_i",
+        "direction": "In",
+        "width": 12,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 11,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_inst_i",
+        "direction": "In",
+        "width": 64,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 63,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_is_vls12_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_isvec_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_mask_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_mem_cmd_i",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_mem_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_mem_unsigned_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_mem_whb_i",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_mop_i",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_mul_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_pc_i",
+        "direction": "In",
+        "width": 64,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 63,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_readmask_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_reg_idx1_i",
+        "direction": "In",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_reg_idx2_i",
+        "direction": "In",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_reg_idx3_i",
+        "direction": "In",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_reg_idxw_i",
+        "direction": "In",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_reverse_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_rl_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_rm_i",
+        "direction": "In",
+        "width": 6,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 5,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_rm_is_static_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_sel_alu1_i",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_sel_alu2_i",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_sel_alu3_i",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_sel_imm_i",
+        "direction": "In",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_sfu_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_simt_stack_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_simt_stack_op_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_tc_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_wid_i",
+        "direction": "In",
+        "width": 6,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 5,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_writemask_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_wvd_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_Signals_wxd_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_control_mask_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_in_ready_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "ibuffer_in_valid_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "ibuffer_out_valid_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_ready_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_alu_fn_o",
+        "direction": "Out",
+        "width": 48,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 47,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_aq_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_atomic_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_barrier_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_branch_o",
+        "direction": "Out",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_csr_o",
+        "direction": "Out",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_custom_signal_0_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_disable_mask_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_fence_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_force_rm_rtz_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_fp_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_imm_ext_o",
+        "direction": "Out",
+        "width": 48,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 47,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_inst_o",
+        "direction": "Out",
+        "width": 256,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 255,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_is_vls12_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_isvec_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_mask_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_mem_cmd_o",
+        "direction": "Out",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_mem_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_mem_unsigned_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_mem_whb_o",
+        "direction": "Out",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_mop_o",
+        "direction": "Out",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_mul_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_pc_o",
+        "direction": "Out",
+        "width": 256,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 255,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_readmask_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_reg_idx1_o",
+        "direction": "Out",
+        "width": 64,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 63,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_reg_idx2_o",
+        "direction": "Out",
+        "width": 64,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 63,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_reg_idx3_o",
+        "direction": "Out",
+        "width": 64,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 63,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_reg_idxw_o",
+        "direction": "Out",
+        "width": 64,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 63,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_reverse_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_rl_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_rm_is_static_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_rm_o",
+        "direction": "Out",
+        "width": 24,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 23,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_sel_alu1_o",
+        "direction": "Out",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_sel_alu2_o",
+        "direction": "Out",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_sel_alu3_o",
+        "direction": "Out",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_sel_imm_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_sfu_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_simt_stack_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_simt_stack_op_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_tc_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_wid_o",
+        "direction": "Out",
+        "width": 24,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 23,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_wvd_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ibuffer_warps_control_Signals_wxd_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "rst_n",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "warp_sche_io_warp_ready_i",
+        "direction": "In",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "BUFFER_WIDTH": "159",
+      "SIZE_IBUFFER": "2",
+      "NUM_FETCH": "2"
+    },
+    "parser": "Audited native ibuffer declarations and fixed define.v configuration"
+  },
+  "coverage_scope": "dvbench_top.dut",
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800
+}

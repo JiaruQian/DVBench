@@ -1,0 +1,221 @@
+{
+  "ports": [
+    {
+      "name": "branch_ctl_mask_init_i",
+      "direction": "In",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "branch_ctl_opcode_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "branch_ctl_pc_branch_i",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "branch_ctl_pc_execute_i",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "branch_ctl_ready_o",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "branch_ctl_valid_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "branch_ctl_wid_i",
+      "direction": "In",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "complete_valid_o",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "complete_wid_o",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "fetch_ctl_jump_o",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "fetch_ctl_new_pc_o",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "fetch_ctl_ready_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "fetch_ctl_valid_o",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "fetch_ctl_wid_o",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "if_mask_mask_i",
+      "direction": "In",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "if_mask_ready_o",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "if_mask_valid_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "if_mask_wid_i",
+      "direction": "In",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "input_wid_i",
+      "direction": "In",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "out_mask_o",
+      "direction": "Out",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "pc_reconv_i",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "pc_reconv_valid_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "rst_n",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {}
+}

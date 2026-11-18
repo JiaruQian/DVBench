@@ -1,0 +1,255 @@
+{
+  "features": [
+    {
+      "feature_id": "F-1",
+      "parent_id": null,
+      "module": "cdc_source_bundle",
+      "definition": "The task includes four Gray synchronization contexts, combinational encoding/decoding, reset synchronization, two-stage handshake buffering, debug serial output, and the remaining CDC variants; there are no CPU interface or processor instruction obligations. See the interface contract for port aliases and fixed parameters.",
+      "timing": "Stable before the accepting edge of each native clock, with observations 2ns and 8ns after the edge; combinational inputs likewise use 2ns and 8ns settling windows.",
+      "boundary": "Bounded by this item's conditions and the interface contract's valid input domain and observation windows.",
+      "interface": [
+        "array0_dest_out",
+        "array0_src_in",
+        "array1_dest_out",
+        "array1_src_in",
+        "async_reset0_dest_arst",
+        "async_reset0_src_arst",
+        "async_reset1_dest_arst",
+        "async_reset1_src_arst",
+        "b2g_A",
+        "b2g_Z",
+        "bypass_data_i",
+        "bypass_data_o",
+        "bypass_ready_i",
+        "bypass_ready_o",
+        "bypass_valid_i",
+        "bypass_valid_o",
+        "debug_data",
+        "debug_debug_wb_instr",
+        "debug_debug_wb_pc",
+        "debug_debug_wb_rf_wdata",
+        "debug_mode",
+        "flush_data_i",
+        "flush_data_o",
+        "flush_flush_i",
+        "flush_ready_i",
+        "flush_ready_o",
+        "flush_valid_i",
+        "flush_valid_o",
+        "g2b_A",
+        "g2b_Z",
+        "gray0_dest_clk",
+        "gray0_dest_out_bin",
+        "gray0_src_clk",
+        "gray0_src_in_bin",
+        "gray1_dest_clk",
+        "gray1_dest_out_bin",
+        "gray1_src_clk",
+        "gray1_src_in_bin",
+        "gray2_dest_clk",
+        "gray2_dest_out_bin",
+        "gray2_src_clk",
+        "gray2_src_in_bin",
+        "gray3_dest_clk",
+        "gray3_dest_out_bin",
+        "gray3_src_clk",
+        "gray3_src_in_bin",
+        "hclk",
+        "hclk2",
+        "hrst",
+        "hrstn",
+        "pulse0_dest_pulse",
+        "pulse0_dest_rst",
+        "pulse0_src_pulse",
+        "pulse0_src_rst",
+        "pulse1_dest_pulse",
+        "pulse1_src_pulse",
+        "single0_dest_out",
+        "single0_src_in",
+        "single1_dest_out",
+        "single1_src_in",
+        "spill_data_i",
+        "spill_data_o",
+        "spill_ready_i",
+        "spill_ready_o",
+        "spill_valid_i",
+        "spill_valid_o",
+        "sync_reset_dest_rst",
+        "sync_reset_src_rst",
+        "sync_serial_i",
+        "sync_serial_o"
+      ],
+      "requirement_ids": [
+        "R-dv-008-source-v3.1-C001"
+      ]
+    },
+    {
+      "feature_id": "F-2",
+      "parent_id": null,
+      "module": "cdc_source_bundle",
+      "definition": "For WIDTH=1, 2, or 4, the source-domain rising edge captures the current Gray encoding; each destination-domain rising edge advances the DEST_SYNC_FF-stage synchronization history. When REG_OUTPUT is 1, the binary decoding is output only after one additional destination rising edge. In the fixed WIDTH=1, DEST_SYNC_FF=2, REG_OUTPUT=0 context, Gray encoding and decoding both preserve the bit: each captured 0 or 1 appears after two destination rising edges. Coincident source and destination rising edges use the previous source capture. There is no reset or handshake, and the power-up history is unknown; enough effective source/destination edges must be allowed for convergence. No modeling of metastability behavior is promised.",
+      "timing": "Stable before the accepting edge of each native clock, with observations 2ns and 8ns after the edge; combinational inputs likewise use 2ns and 8ns settling windows.",
+      "boundary": "Bounded by this item's conditions and the interface contract's valid input domain and observation windows.",
+      "interface": [
+        "gray0_dest_clk",
+        "gray0_dest_out_bin",
+        "gray0_src_clk",
+        "gray0_src_in_bin",
+        "gray1_dest_clk",
+        "gray1_dest_out_bin",
+        "gray1_src_clk",
+        "gray1_src_in_bin",
+        "gray2_dest_clk",
+        "gray2_dest_out_bin",
+        "gray2_src_clk",
+        "gray2_src_in_bin",
+        "gray3_dest_clk",
+        "gray3_dest_out_bin",
+        "gray3_src_clk",
+        "gray3_src_in_bin"
+      ],
+      "requirement_ids": [
+        "R-dv-008-source-v3.1-C002"
+      ]
+    },
+    {
+      "feature_id": "F-3",
+      "parent_id": null,
+      "module": "cdc_source_bundle",
+      "definition": "With fixed N=4, binary_to_gray XORs adjacent binary bits, and gray_to_binary cumulatively XORs from the most significant bit toward the lower bits; four-state results propagate according to logical truth values.",
+      "timing": "Stable before the accepting edge of each native clock, with observations 2ns and 8ns after the edge; combinational inputs likewise use 2ns and 8ns settling windows.",
+      "boundary": "Bounded by this item's conditions and the interface contract's valid input domain and observation windows.",
+      "interface": [
+        "b2g_A",
+        "b2g_Z",
+        "g2b_A",
+        "g2b_Z"
+      ],
+      "requirement_ids": [
+        "R-dv-008-source-v3.1-C003"
+      ]
+    },
+    {
+      "feature_id": "F-4",
+      "parent_id": null,
+      "module": "cdc_source_bundle",
+      "definition": "When SRC_INPUT_REG is 1, the input is first captured on a source rising edge; otherwise, the input is captured directly on a destination edge. DEST_SYNC_FF destination edges constitute the complete synchronization history. stolen_cdc_sync_rst is also only a destination-domain synchronization chain and does not have asynchronous reset assertion behavior.",
+      "timing": "Stable before the accepting edge of each native clock, with observations 2ns and 8ns after the edge; combinational inputs likewise use 2ns and 8ns settling windows.",
+      "boundary": "Bounded by this item's conditions and the interface contract's valid input domain and observation windows.",
+      "interface": [
+        "array0_dest_out",
+        "array0_src_in",
+        "array1_dest_out",
+        "array1_src_in",
+        "hclk",
+        "hclk2",
+        "single0_dest_out",
+        "single0_src_in",
+        "single1_dest_out",
+        "single1_src_in",
+        "sync_reset_dest_rst",
+        "sync_reset_src_rst"
+      ],
+      "requirement_ids": [
+        "R-dv-008-source-v3.1-C004"
+      ]
+    },
+    {
+      "feature_id": "F-5",
+      "parent_id": null,
+      "module": "cdc_source_bundle",
+      "definition": "sync asynchronously clears to zero on the falling edge of rst_ni and synchronizes the input using two rising edges. stolen_cdc_async_rst asynchronously asserts the destination reset according to the fixed polarity and releases it after the specified number of destination edges; its initial value is the deasserted level. The sampling windows of the two cannot be interchanged.",
+      "timing": "Stable before the accepting edge of each native clock, with observations 2ns and 8ns after the edge; combinational inputs likewise use 2ns and 8ns settling windows.",
+      "boundary": "Bounded by this item's conditions and the interface contract's valid input domain and observation windows.",
+      "interface": [
+        "async_reset0_dest_arst",
+        "async_reset0_src_arst",
+        "async_reset1_dest_arst",
+        "async_reset1_src_arst",
+        "hclk",
+        "hclk2",
+        "hrstn",
+        "sync_serial_i",
+        "sync_serial_o"
+      ],
+      "requirement_ids": [
+        "R-dv-008-source-v3.1-C005"
+      ]
+    },
+    {
+      "feature_id": "F-6",
+      "parent_id": null,
+      "module": "cdc_source_bundle",
+      "definition": "A source rising edge detects src_pulse transitioning from low to high and encodes the event as a toggling level; after destination synchronization, XOR with the previous event generates a pulse, and REG_OUTPUT determines whether it is registered again. When RST_USED=0, the reset inputs have no effect. When inputs are too closely spaced, individual event delivery is not guaranteed and must be interpreted according to the actual capture history.",
+      "timing": "Stable before the accepting edge of each native clock, with observations 2ns and 8ns after the edge; combinational inputs likewise use 2ns and 8ns settling windows.",
+      "boundary": "Bounded by this item's conditions and the interface contract's valid input domain and observation windows.",
+      "interface": [
+        "hclk",
+        "hclk2",
+        "pulse0_dest_pulse",
+        "pulse0_dest_rst",
+        "pulse0_src_pulse",
+        "pulse0_src_rst",
+        "pulse1_dest_pulse",
+        "pulse1_src_pulse"
+      ],
+      "requirement_ids": [
+        "R-dv-008-source-v3.1-C006"
+      ]
+    },
+    {
+      "feature_id": "F-7",
+      "parent_id": null,
+      "module": "cdc_source_bundle",
+      "definition": "Non-bypass instances have a two-slot capacity, and active-low asynchronous reset clears occupancy and data. ready_o is 0 only when both slots are full; valid_o indicates that at least one slot is full, and older data is output first; flush cancels occupancy and must not be asserted simultaneously with valid. The valid/data/ready signals of the bypass instance are directly and transparently connected, and neither flush nor reset changes this relationship.",
+      "timing": "Stable before the accepting edge of each native clock, with observations 2ns and 8ns after the edge; combinational inputs likewise use 2ns and 8ns settling windows.",
+      "boundary": "Bounded by this item's conditions and the interface contract's valid input domain and observation windows.",
+      "interface": [
+        "bypass_data_i",
+        "bypass_data_o",
+        "bypass_ready_i",
+        "bypass_ready_o",
+        "bypass_valid_i",
+        "bypass_valid_o",
+        "flush_data_i",
+        "flush_data_o",
+        "flush_flush_i",
+        "flush_ready_i",
+        "flush_ready_o",
+        "flush_valid_i",
+        "flush_valid_o",
+        "hclk",
+        "hrstn",
+        "spill_data_i",
+        "spill_data_o",
+        "spill_ready_i",
+        "spill_ready_o",
+        "spill_valid_i",
+        "spill_valid_o"
+      ],
+      "requirement_ids": [
+        "R-dv-008-source-v3.1-C007"
+      ]
+    },
+    {
+      "feature_id": "F-8",
+      "parent_id": null,
+      "module": "cdc_source_bundle",
+      "definition": "Synchronous active-high rst clears the history; after detecting a PC change, mode/PC/instruction/writeback data are captured, and a sequence starting with the low nibble is output cycle by cycle. Modes 0/1/2 serialize 8/16/24 nibbles, respectively; no recapture occurs while busy. Mode 3 follows the PC nibble-selection path but has no mode termination condition; return values beyond the selectable range must still be checked according to the fixed RTL four-state semantics.",
+      "timing": "Stable before the accepting edge of each native clock, with observations 2ns and 8ns after the edge; combinational inputs likewise use 2ns and 8ns settling windows.",
+      "boundary": "Bounded by this item's conditions and the interface contract's valid input domain and observation windows.",
+      "interface": [
+        "debug_data",
+        "debug_debug_wb_instr",
+        "debug_debug_wb_pc",
+        "debug_debug_wb_rf_wdata",
+        "debug_mode",
+        "hclk",
+        "hrst"
+      ],
+      "requirement_ids": [
+        "R-dv-008-source-v3.1-C008"
+      ]
+    }
+  ]
+}

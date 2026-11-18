@@ -1,0 +1,82 @@
+# test_id
+
+## T1
+
+- feature_ids: F1
+- requirement_ids: R-bb5eabcd72c0cd-001
+- stimulus: Reset both configurations at startup, and assert reset again on a falling edge after a history of reads/writes/refill; check the controls 2ns between edges, then release reset and wait for a complete sets scan; track that written words are retained after reset.
+- expected: rst_i is an active-high asynchronous reset; the controls enter the invalidation scan 1ns after assertion: stall_request=1, restart_request=0, refill_request=0, refilling=0, and refill_address is unknown. After release, invalidate all tags one cycle at a time from set=sets-1 toward 0, entering the queryable phase after exactly sets rising edges. All control register outputs update 1ns after an active rising edge or reset event; RAM updates only on rising edges. The scan cursor is continuously reloaded during reset. Neither reset nor dflush clears the data RAM; contents already written are retained. No definite numeric value is guaranteed for initially uninitialized data.
+- checker: Update the same model/model.sv only from input and reset history; independently store tag/valid/word and the abstract phase. The monitor performs four-state comparisons of the 6 native outputs 2ns after posedge, with additional between-edge sampling for reset, and reports UVM_ERROR on a mismatch. Activity and completion checks rule out vacuity.
+- implementation_id: V1
+- source: tb/cache_pkg.sv: cache_sequence/native_driver/native_monitor/native_scoreboard; tb/cache_top.sv; model/model.sv
+
+## T2
+
+- feature_ids: F2
+- requirement_ids: R-bb5eabcd72c0cd-002
+- stimulus: First read different words, then change address_x while stall_x=1, and subsequently release it; also observe initialized words without load_q_m, checking read-port changes after 1ns and the results of reads and writes to the same address.
+- expected: On a rising edge with stall_x=0, latch the word index and set index of address_x; after 1ns, load_data continuously reflects the selected stored word. With stall_x=1, retain the previous read index. load_data is not gated by load_q_m or a tag hit; no output is guaranteed before the first reset. The low 2 bits of the 32-bit address do not participate in the word index, and the highest 4 bits do not participate in the tag; see the two profiles in the port documentation.
+- checker: Update the same model/model.sv only from input and reset history; independently store tag/valid/word and the abstract phase. The monitor performs four-state comparisons of the 6 native outputs 2ns after posedge, with additional between-edge sampling for reset, and reports UVM_ERROR on a mismatch. Activity and completion checks rule out vacuity.
+- implementation_id: V2
+- source: tb/cache_pkg.sv: cache_sequence/native_driver/native_monitor/native_scoreboard; tb/cache_top.sv; model/model.sv
+
+## T3
+
+- feature_ids: F3
+- requirement_ids: R-bb5eabcd72c0cd-003
+- stimulus: Prepare a filled line and a conflicting tag, applying address_x before address_m; combine the 0/1 values of load_q_m/stall_m, checking that hits cause no refill and that misses are initiated/addresses are saved; additionally apply simultaneous dflush to test priority.
+- expected: In the queryable phase, compare the valid tag of the latched read set with the current address_m[27:tag_lsb]. When load_q_m=1, stall_m=0, and there is a miss, enter refill after the edge, set refill_request=1, and save the complete 32-bit address_m to refill_address. Miss determination uses the stable inputs before the edge and the latched tag; address_x normally leads by one cycle, and the two addresses are allowed to differ, with behavior as defined in this clause. None of load_q_m=0, stall_m=1, or a hit initiates a miss; a miss takes priority over dflush on the same edge.
+- checker: Update the same model/model.sv only from input and reset history; independently store tag/valid/word and the abstract phase. The monitor performs four-state comparisons of the 6 native outputs 2ns after posedge, with additional between-edge sampling for reset, and reports UVM_ERROR on a mismatch. Activity and completion checks rule out vacuity.
+- implementation_id: V3
+- source: tb/cache_pkg.sv: cache_sequence/native_driver/native_monitor/native_scoreboard; tb/cache_top.sv; model/model.sv
+
+## T4
+
+- feature_ids: F4
+- requirement_ids: R-bb5eabcd72c0cd-004
+- stimulus: For misses with different input word offsets, provide 4 words of known refill_data, inserting gaps of 0..3 cycles between ready assertions; compare the final line contents word by word, the time when the tag becomes valid, and the request pulse width.
+- expected: In the refill phase, accept four 32-bit refill_data values sequentially on rising edges with refill_ready=1, writing word0, 1, 2, and 3 of the line belonging to the saved address; the starting point is independent of the word offset in the input address; ready=0 does not advance progress. When the last word is written, mark the tag valid and return to the queryable phase. refill_request is 1 only for the one cycle after entering refill and is deasserted on the first rising edge of refill; refill_address is retained until the next miss or reset. A legal environment provides refill_ready only within the refill window and deasserts it after the fourth word; the tag of an incomplete refill is invalid.
+- checker: Update the same model/model.sv only from input and reset history; independently store tag/valid/word and the abstract phase. The monitor performs four-state comparisons of the 6 native outputs 2ns after posedge, with additional between-edge sampling for reset, and reports UVM_ERROR on a mismatch. Activity and completion checks rule out vacuity.
+- implementation_id: V4
+- source: tb/cache_pkg.sv: cache_sequence/native_driver/native_monitor/native_scoreboard; tb/cache_top.sv; model/model.sv
+
+## T5
+
+- feature_ids: F5
+- requirement_ids: R-bb5eabcd72c0cd-005
+- stimulus: Observe stall/refilling/restart cycle by cycle during refill gaps and before and after the last word; hold stall_a=1 for two cycles after the last word, then release it; stop the inputs to confirm a return to the queryable phase.
+- expected: stall_request is 1 in the invalidation scan or refill phase and 0 in the queryable phase. After each rising edge, refilling reflects whether the phase before the edge was refill, lagging phase changes by one cycle. Set restart_request to 1 when the last word is accepted; clear it on a rising edge in the queryable phase with stall_a=0, and otherwise retain it. On the same edge, the final refill takes priority in setting restart; it is not cleared according to stall_a until the next queryable edge. Retain progress during arbitrary gaps while waiting for refill_ready; stall_a can extend restart.
+- checker: Update the same model/model.sv only from input and reset history; independently store tag/valid/word and the abstract phase. The monitor performs four-state comparisons of the 6 native outputs 2ns after posedge, with additional between-edge sampling for reset, and reports UVM_ERROR on a mismatch. Activity and completion checks rule out vacuity.
+- implementation_id: V5
+- source: tb/cache_pkg.sv: cache_sequence/native_driver/native_monitor/native_scoreboard; tb/cache_top.sv; model/model.sv
+
+## T6
+
+- feature_ids: F6
+- requirement_ids: R-bb5eabcd72c0cd-006
+- stimulus: For a filled line, iterate through 16 byte select values and random 32-bit data, covering store hits and stall_m suppression; additionally prepare address_x/address_m for different words in the same set to distinguish the sources of unselected bytes in the two configurations, and observe subsequent readback. In a directed test, first select a set that already contains an initialized word, but XOR the tags of address_x/address_m with 0x00100000 to cause a miss; when load_q_m=0 and stall_m=0, apply a store with all byte selects enabled, then hold and compare to verify that this initialized word has not been overwritten; subsequently restore the original addresses for normal load/refill and store.
+- expected: In the queryable phase, when store_q_m=1, the tag of the latched read set hits the current address_m, and stall_m=0, write the word corresponding to address_m. Bit j of store_byte_select selects store_data[8*j+:8]. Do not write on a miss or when stall_m=1. The write takes effect 1ns after the rising edge; load_q_m and store_q_m can be independent. In the 512-set configuration, unselected bytes retain the original values in the target write word; in the 64-set configuration, unselected bytes come from load_data before the edge, so unselected bytes may differ when the two addresses select different words.
+- checker: Update the same model/model.sv only from input and reset history; independently store tag/valid/word and the abstract phase. The monitor performs four-state comparisons of the 6 native outputs 2ns after posedge, with additional between-edge sampling for reset, and reports UVM_ERROR on a mismatch. Activity and completion checks rule out vacuity.
+- implementation_id: V6
+- source: tb/cache_pkg.sv: cache_sequence/native_driver/native_monitor/native_scoreboard; tb/cache_top.sv; model/model.sv
+
+## T7
+
+- feature_ids: F7
+- requirement_ids: R-bb5eabcd72c0cd-007
+- stimulus: Issue dflush after initialization is complete and after filling multiple lines, wait for the respective sets cycles, and then accesses to old lines must miss; use simultaneous miss/dflush and dflush during refill to test priority and non-queuing, respectively.
+- expected: When queryable and there is no acceptable load miss, dflush=1 causes the next phase to enter the invalidation scan, which then invalidates all tags sequentially over sets rising edges. Ignore dflush and load requests during the scan. The scan cursor decrements from sets-1 to 0 and wraps around; return to the queryable phase when the scan ends. When a miss and dflush both occur on the same edge, handle the miss first; dflush is not queued during refill. Data is not cleared to zero.
+- checker: Update the same model/model.sv only from input and reset history; independently store tag/valid/word and the abstract phase. The monitor performs four-state comparisons of the 6 native outputs 2ns after posedge, with additional between-edge sampling for reset, and reports UVM_ERROR on a mismatch. Activity and completion checks rule out vacuity.
+- implementation_id: V7
+- source: tb/cache_pkg.sv: cache_sequence/native_driver/native_monitor/native_scoreboard; tb/cache_top.sv; model/model.sv
+
+## T8
+
+- feature_ids: F8
+- requirement_ids: R-bb5eabcd72c0cd-008
+- stimulus: In both configurations, access multiple sets, different words, and different tags in the same set; after filling, perform conflict replacement and read again; change the upper 4 bits and low 2 bits to check index and tag aliasing.
+- expected: Fixed single-way direct mapping: a line is 16 bytes; for 512 sets, use set=address[12:4], word=address[12:2], and tag=address[27:13]; for 64 sets, use set=address[9:4], word=address[9:2], and tag=address[27:10]. When different tags map to the same set, a new refill replaces the old tag and all 4 words. The read index comes from the latched address_x; the write word index comes from address_m or the refill sequence. The native parameters base_address and limit do not determine the range in the fixed implementation; the fixed macros CFG_DCACHE_BASE_ADDRESS=0 and CFG_DCACHE_LIMIT=0x0fffffff determine that the highest tag bit is 27. associativity=1, bytes_per_line=16.
+- checker: Update the same model/model.sv only from input and reset history; independently store tag/valid/word and the abstract phase. The monitor performs four-state comparisons of the 6 native outputs 2ns after posedge, with additional between-edge sampling for reset, and reports UVM_ERROR on a mismatch. Activity and completion checks rule out vacuity.
+- implementation_id: V8
+- source: tb/cache_pkg.sv: cache_sequence/native_driver/native_monitor/native_scoreboard; tb/cache_top.sv; model/model.sv
+

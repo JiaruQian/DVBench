@@ -1,0 +1,121 @@
+{
+  "submission_root": "submission",
+  "top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "dut_top": "sha256_core",
+  "access": {
+    "candidate_may_read": [
+      "instruction.md",
+      "submission_contract.json",
+      "public",
+      "environment"
+    ],
+    "candidate_may_not_read": [
+      "maintainer",
+      "other questions",
+      "old runs"
+    ],
+    "dut_interaction": "declared native ports only"
+  },
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "self_contained": true,
+    "same_file_in_D_and_scoreboard": true,
+    "interface": {
+      "ports": [
+        {
+          "name": "block",
+          "direction": "In",
+          "width": 512,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 511,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "clk",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "digest",
+          "direction": "Out",
+          "width": 256,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 255,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "digest_valid",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "init",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "mode",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "next",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "ready",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "reset_n",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        }
+      ],
+      "parameters": {},
+      "parser": "pyslang 11.0.0",
+      "top": "sha256_core",
+      "scope": "fixed native RTL declaration; parser-sorted ports"
+    }
+  },
+  "submission_format": "public/submission_format.md",
+  "json_is_complete_fact_carrier": true,
+  "task_id": "dv-050",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

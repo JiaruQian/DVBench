@@ -1,0 +1,298 @@
+{
+  "top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "dut_top": "prim_sram_arbiter",
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "self_contained": true,
+    "interface": {
+      "ports": [
+        {
+          "name": "clk_i",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "gnt_o",
+          "direction": "Out",
+          "width": 4,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 3,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "req_addr_i",
+          "direction": "In",
+          "width": 48,
+          "dimensions": [
+            {
+              "kind": "unpacked",
+              "left": 0,
+              "right": 3
+            },
+            {
+              "kind": "packed",
+              "left": 11,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "req_i",
+          "direction": "In",
+          "width": 4,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 3,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "req_wdata_i",
+          "direction": "In",
+          "width": 128,
+          "dimensions": [
+            {
+              "kind": "unpacked",
+              "left": 0,
+              "right": 3
+            },
+            {
+              "kind": "packed",
+              "left": 31,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "req_wmask_i",
+          "direction": "In",
+          "width": 128,
+          "dimensions": [
+            {
+              "kind": "unpacked",
+              "left": 0,
+              "right": 3
+            },
+            {
+              "kind": "packed",
+              "left": 31,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "req_write_i",
+          "direction": "In",
+          "width": 4,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 3,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "rsp_error_o",
+          "direction": "Out",
+          "width": 8,
+          "dimensions": [
+            {
+              "kind": "unpacked",
+              "left": 0,
+              "right": 3
+            },
+            {
+              "kind": "packed",
+              "left": 1,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "rsp_rdata_o",
+          "direction": "Out",
+          "width": 128,
+          "dimensions": [
+            {
+              "kind": "unpacked",
+              "left": 0,
+              "right": 3
+            },
+            {
+              "kind": "packed",
+              "left": 31,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "rsp_rvalid_o",
+          "direction": "Out",
+          "width": 4,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 3,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "rst_ni",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "sram_addr_o",
+          "direction": "Out",
+          "width": 12,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 11,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "sram_rdata_i",
+          "direction": "In",
+          "width": 32,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 31,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "sram_req_o",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "sram_rerror_i",
+          "direction": "In",
+          "width": 2,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 1,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "sram_rvalid_i",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "sram_wdata_o",
+          "direction": "Out",
+          "width": 32,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 31,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "sram_wmask_o",
+          "direction": "Out",
+          "width": 32,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 31,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "sram_write_o",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        }
+      ],
+      "parameters": {
+        "N": "32'd4",
+        "SramDw": "32'd32",
+        "SramAw": "32'd12",
+        "ArbiterImpl": "24'd5263427",
+        "EnMask": "1'b0"
+      },
+      "parser": "pyslang 12.1.0"
+    }
+  },
+  "parameter_profiles": [
+    {
+      "profile": "default-ppc",
+      "N": 4,
+      "SramDw": 32,
+      "SramAw": 12,
+      "ArbiterImpl": "PPC",
+      "EnMask": 0
+    },
+    {
+      "profile": "masked-ppc",
+      "N": 4,
+      "SramDw": 32,
+      "SramAw": 12,
+      "ArbiterImpl": "PPC",
+      "EnMask": 1
+    },
+    {
+      "profile": "masked-tree",
+      "N": 2,
+      "SramDw": 32,
+      "SramAw": 12,
+      "ArbiterImpl": "BINTREE",
+      "EnMask": 1
+    }
+  ],
+  "prohibited": [
+    "hidden hierarchy",
+    "force/release",
+    "DPI",
+    "file/OS/network probes"
+  ],
+  "submission_format": "public/submission_format.md",
+  "json_is_complete_fact_carrier": true,
+  "task_id": "dv-017",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

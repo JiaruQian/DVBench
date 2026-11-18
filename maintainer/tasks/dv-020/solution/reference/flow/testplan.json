@@ -1,0 +1,116 @@
+{
+  "tests": [
+    {
+      "test_id": "T-001",
+      "feature_ids": [
+        "F-001"
+      ],
+      "requirement_ids": [
+        "R-dv-020-001"
+      ],
+      "stimulus": "First complete initialization and enqueue requests.; Separately apply reset between edges, hold it across edges, and apply reset with outstanding read/write items; resend after deassertion.",
+      "expected": "Cancel only in-flight transactions internal to the controller; asynchronous ports reset immediately, followed by full initialization.",
+      "checker": "Generate expectations using an independent transaction queue/event calendar; perform four-state comparisons of valid outputs, comparing both write drive and undriven Z; report UVM_ERROR on a mismatch and require transactions to drain. Actual sampling window for this test: assertion between edges takes effect immediately; full initialization is performed again after deassertion.",
+      "implementation_id": "V-001",
+      "source": "reference_pkg.sv:reference_sequence.body;reference_scoreboard.write;reference_checker.write"
+    },
+    {
+      "test_id": "T-002",
+      "feature_ids": [
+        "F-002"
+      ],
+      "requirement_ids": [
+        "R-dv-020-002"
+      ],
+      "stimulus": "Reset deasserted, operations inactive.; During initialization, enqueue continuously until both entries are full, hold the third item until fullness clears, and cover dequeue on the same edge while full; separately toggle az_cs and exercise both operations.",
+      "expected": "An independent two-entry queue processes items in first-in, first-out order, with write priority and no loss or duplication of accepted items.",
+      "checker": "Generate expectations using an independent transaction queue/event calendar; perform four-state comparisons of valid outputs, comparing both write drive and undriven Z; report UVM_ERROR on a mismatch and require transactions to drain. Actual sampling window for this test: acceptance is determined by the full flag before the edge; enqueueing does not mean SDRAM completion, and there is no empty-queue combinational bypass.",
+      "implementation_id": "V-002",
+      "source": "reference_pkg.sv:reference_sequence.body;reference_scoreboard.write;reference_checker.write"
+    },
+    {
+      "test_id": "T-003",
+      "feature_ids": [
+        "F-003"
+      ],
+      "requirement_ids": [
+        "R-dv-020-003"
+      ],
+      "stimulus": "Complete natural initialization, with space available in the queue.; Enqueue reads and writes one by one across bank/row/column boundaries, and apply all four write masks.",
+      "expected": "Independently split the address arithmetically; commands correspond to the row, column, bank, and mask, without making determinations based on DUT internal signals.",
+      "checker": "Generate expectations using an independent transaction queue/event calendar; perform four-state comparisons of valid outputs, comparing both write drive and undriven Z; report UVM_ERROR on a mismatch and require transactions to drain. Actual sampling window for this test: command/address/mask take effect as registered values after the source rising edge; sample at least 1ns later.",
+      "implementation_id": "V-003",
+      "source": "reference_pkg.sv:reference_sequence.body;reference_scoreboard.write;reference_checker.write"
+    },
+    {
+      "test_id": "T-004",
+      "feature_ids": [
+        "F-004"
+      ],
+      "requirement_ids": [
+        "R-dv-020-004"
+      ],
+      "stimulus": "Asynchronous reset, with operations inactive or at most both entries enqueued to full.; After deassertion, run for at least 5020 edges in full, recording PRE, two REFs, MRS, and the earliest main scheduling time.",
+      "expected": "An independent edge-count calendar predicts all initialization commands and the MRS address.",
+      "checker": "Generate expectations using an independent transaction queue/event calendar; perform four-state comparisons of valid outputs, comparing both write drive and undriven Z; report UVM_ERROR on a mismatch and require transactions to drain. Actual sampling window for this test: count edge 1 as the first rising edge after reset_n is deasserted; commands are the values after the corresponding edge. During initialization, the address changes to fff on the first edge; MRS030 lasts only one command cycle, followed by fff.",
+      "implementation_id": "V-004",
+      "source": "reference_pkg.sv:reference_sequence.body;reference_scoreboard.write;reference_checker.write"
+    },
+    {
+      "test_id": "T-005",
+      "feature_ids": [
+        "F-005"
+      ],
+      "requirement_ids": [
+        "R-dv-020-005"
+      ],
+      "stimulus": "Complete initialization, holding legal requests until accepted.; Perform consecutive column writes/reads in the same row and direction, insert gaps, and drain the queue tail; use distinct write data to distinguish active/the next item.",
+      "expected": "An independent queue and command schedule predict ACT→NOP→column, per-item data and addresses, and no duplicated tail item.",
+      "checker": "Generate expectations using an independent transaction queue/event calendar; perform four-state comparisons of valid outputs, comparing both write drive and undriven Z; report UVM_ERROR on a mismatch and require transactions to drain. Actual sampling window for this test: the interval from enqueue to fetch is affected by initialization, the queue, refresh, and the preceding item, with no fixed total latency; use the main fetch edge or an observable ACT as the timing anchor.",
+      "implementation_id": "V-005",
+      "source": "reference_pkg.sv:reference_sequence.body;reference_scoreboard.write;reference_checker.write"
+    },
+    {
+      "test_id": "T-006",
+      "feature_ids": [
+        "F-006"
+      ],
+      "requirement_ids": [
+        "R-dv-020-006"
+      ],
+      "stimulus": "Establish an open row with the first transaction and wait for draining.; Hit the same row after idle, then change direction/bank/row, comparing the full command sequence and column transactions.",
+      "expected": "Matching continuation omits ACT; a mismatch requires PRE before ACT, without losing queued items.",
+      "checker": "Generate expectations using an independent transaction queue/event calendar; perform four-state comparisons of valid outputs, comparing both write drive and undriven Z; report UVM_ERROR on a mismatch and require transactions to drain. Actual sampling window for this test: an empty queue does not precharge on its own; a new matching request accesses the column on the next edge after being fetched.",
+      "implementation_id": "V-006",
+      "source": "reference_pkg.sv:reference_sequence.body;reference_scoreboard.write;reference_checker.write"
+    },
+    {
+      "test_id": "T-007",
+      "feature_ids": [
+        "F-007"
+      ],
+      "requirement_ids": [
+        "R-dv-020-007"
+      ],
+      "stimulus": "Complete initialization; the external port fixture provides independent known read data.; Drive distinct read-return data, cover consecutive and intermittent READs, and apply asynchronous reset within the pipeline.",
+      "expected": "An independent READ event queue delays by 4 edges, without using DUT za_valid/data as the expectation.",
+      "checker": "Generate expectations using an independent transaction queue/event calendar; perform four-state comparisons of valid outputs, comparing both write drive and undriven Z; report UVM_ERROR on a mismatch and require transactions to drain. Actual sampling window for this test: the external read value on DQ must be stable before the sampling edge and must not conflict with the controller's write drive; compare the response 1ns after the edge.",
+      "implementation_id": "V-007",
+      "source": "reference_pkg.sv:reference_sequence.body;reference_scoreboard.write;reference_checker.write"
+    },
+    {
+      "test_id": "T-008",
+      "feature_ids": [
+        "F-008"
+      ],
+      "requirement_ids": [
+        "R-dv-020-008"
+      ],
+      "stimulus": "Run naturally beyond 5783 edges, and keep the queue continuously supplied with requests in the same direction and row near expiry.; Naturally cross refresh while idle, in a read stream, in a write stream, and while retaining a row, separately; hold source requests, then drain.",
+      "expected": "Use an independent periodic calendar and pending service requests to check PRE/REF and wait lengths, with all accepted items resuming in order.",
+      "checker": "Generate expectations using an independent transaction queue/event calendar; perform four-state comparisons of valid outputs, comparing both write drive and undriven Z; report UVM_ERROR on a mismatch and require transactions to drain. Actual sampling window for this test: request is registered on the expiry edge and seen by control on the next edge; servicing reads the old ack, and request/ack must not be cleared on the same edge.",
+      "implementation_id": "V-008",
+      "source": "reference_pkg.sv:reference_sequence.body;reference_scoreboard.write;reference_checker.write"
+    }
+  ]
+}

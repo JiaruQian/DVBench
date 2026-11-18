@@ -1,0 +1,6 @@
+{
+  "adapter_argv": ["/srv/dvbench-runtime/bin/dvbench-adapter"],
+  "adapter_timeout_seconds": 110,
+  "request_slots": 16,
+  "token_env": "DVBENCH_SERVICE_TOKEN"
+}

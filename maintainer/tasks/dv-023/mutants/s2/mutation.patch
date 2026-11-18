@@ -1,0 +1,11 @@
+--- golden/fifo.sv
++++ s2/fifo.sv
+@@ -118,7 +118,7 @@
+             //push
+             2'b10: begin
+                 if (!full) begin
+-                    wptr_next  = wptr_reg + 1;
++                    wptr_next  = wptr_reg + 2;
+                     empty_next = 1'b0;
+                 end
+                 if (wptr_next == rptr_next) begin

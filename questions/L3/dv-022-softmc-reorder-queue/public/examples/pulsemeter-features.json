@@ -1,0 +1,19 @@
+{
+  "features": [
+    {
+      "feature_id": "F-PM-01",
+      "requirement_ids": [
+        "R-PM-01"
+      ],
+      "module": "PulseMeter",
+      "definition": "The fictional PulseMeter's 8-bit count is initially 0; on each clk rising edge, increment by 1 if pulse=1, otherwise hold.",
+      "interface": [
+        "clk",
+        "pulse",
+        "count"
+      ],
+      "timing": "pulse is driven on the clk falling edge and sampled on the rising edge; count is stable after the register update on that rising edge.",
+      "boundary": "No reset port; the 8-bit unsigned count wraps around from 255 to 0."
+    }
+  ]
+}

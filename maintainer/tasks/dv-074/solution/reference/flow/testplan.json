@@ -1,0 +1,116 @@
+{
+  "tests": [
+    {
+      "test_id": "T-113-001",
+      "feature_ids": [
+        "F-113-001"
+      ],
+      "requirement_ids": [
+        "R-N113-001"
+      ],
+      "stimulus": "分别覆盖正常、次正规和零有效数；确认done前的数据不作为有效结果。",
+      "expected": "本模块是平方根的前规格化有效数数据通路，不是完整IEEE754平方根：没有符号、NaN/Inf处理或最终舍入；固定无参数。仅sqrt_done=1的稳定窗口要求检查sig/exp/uf，sqrt_done每拍均检查。",
+      "checker": "输入历史独立预测器维护本条行为，monitor读取实际原生端口；在所述稳定窗口逐位四态比较actual/expected并以UVM_ERROR报告失配；统计比较次数和输出变化，禁止expected从actual回填。",
+      "implementation_id": "native_sequence.body/native_monitor.run_phase/native_scoreboard.write",
+      "source": "tb.sv:native_sequence.body; native_monitor.run_phase; native_scoreboard.write; model/model.sv"
+    },
+    {
+      "test_id": "T-113-002",
+      "feature_ids": [
+        "F-113-002"
+      ],
+      "requirement_ids": [
+        "R-N113-002"
+      ],
+      "stimulus": "在空闲与迭代中间异步断言reset，保持至少两拍后释放并发起新操作。",
+      "expected": "reset下降立即取消运算并使sqrt_done=0；复位保持期间不接受start，释放后可重新发起。结果数据只在done有效窗口有检查义务。",
+      "checker": "输入历史独立预测器维护本条行为，monitor读取实际原生端口；在所述稳定窗口逐位四态比较actual/expected并以UVM_ERROR报告失配；统计比较次数和输出变化，禁止expected从actual回填。",
+      "implementation_id": "native_sequence.body/native_monitor.run_phase/native_scoreboard.write",
+      "source": "tb.sv:native_sequence.body; native_monitor.run_phase; native_scoreboard.write; model/model.sv"
+    },
+    {
+      "test_id": "T-113-003",
+      "feature_ids": [
+        "F-113-003"
+      ],
+      "requirement_ids": [
+        "R-N113-003"
+      ],
+      "stimulus": "单拍启动、装载沿前改变数据、忙时脉冲start和持续start跨越完成。",
+      "expected": "空闲上升沿采到start=1后进入装载阶段；下一上升沿才采in_sig以及由is_subnormal、in_exp0决定的缩放。忙时start不排队；回到空闲后持续高start会在下一沿重新启动。",
+      "checker": "输入历史独立预测器维护本条行为，monitor读取实际原生端口；在所述稳定窗口逐位四态比较actual/expected并以UVM_ERROR报告失配；统计比较次数和输出变化，禁止expected从actual回填。",
+      "implementation_id": "native_sequence.body/native_monitor.run_phase/native_scoreboard.write",
+      "source": "tb.sv:native_sequence.body; native_monitor.run_phase; native_scoreboard.write; model/model.sv"
+    },
+    {
+      "test_id": "T-113-004",
+      "feature_ids": [
+        "F-113-004"
+      ],
+      "requirement_ids": [
+        "R-N113-004"
+      ],
+      "stimulus": "逐沿计数检查0至47沿，包括中途start、连续两操作与中途复位。",
+      "expected": "接受start的沿为第0沿，第1沿装载，随后44沿迭代，第46沿sqrt_done=1且完整结果有效；done为单拍，下一沿清零，start持续高可在该下一沿接受。",
+      "checker": "输入历史独立预测器维护本条行为，monitor读取实际原生端口；在所述稳定窗口逐位四态比较actual/expected并以UVM_ERROR报告失配；统计比较次数和输出变化，禁止expected从actual回填。",
+      "implementation_id": "native_sequence.body/native_monitor.run_phase/native_scoreboard.write",
+      "source": "tb.sv:native_sequence.body; native_monitor.run_phase; native_scoreboard.write; model/model.sv"
+    },
+    {
+      "test_id": "T-113-005",
+      "feature_ids": [
+        "F-113-005"
+      ],
+      "requirement_ids": [
+        "R-N113-005"
+      ],
+      "stimulus": "用零、1、2的幂、最大24位、随机有效数独立求整数平方根并检查完成结果。",
+      "expected": "装载时A为88位无符号数：is_subnormal=0且in_exp0=0时A=in_sig乘2^64，其余A=in_sig乘2^63。完成的44位R=floor(sqrt(A))；不得用实际DUT输出反推。",
+      "checker": "输入历史独立预测器维护本条行为，monitor读取实际原生端口；在所述稳定窗口逐位四态比较actual/expected并以UVM_ERROR报告失配；统计比较次数和输出变化，禁止expected从actual回填。",
+      "implementation_id": "native_sequence.body/native_monitor.run_phase/native_scoreboard.write",
+      "source": "tb.sv:native_sequence.body; native_monitor.run_phase; native_scoreboard.write; model/model.sv"
+    },
+    {
+      "test_id": "T-113-006",
+      "feature_ids": [
+        "F-113-006"
+      ],
+      "requirement_ids": [
+        "R-N113-006"
+      ],
+      "stimulus": "对两种缩放、零/极小/最大及随机有效数逐字段比较；低位非零时检查sticky。",
+      "expected": "完成窗口且当前is_subnormal=0时，sqrt_proNorm_sig={R[43:18],OR(R[17:0])}，exp=当前exp_half，uf=0。这里包括所有in_sig取值，不假定隐含位一定为1。",
+      "checker": "输入历史独立预测器维护本条行为，monitor读取实际原生端口；在所述稳定窗口逐位四态比较actual/expected并以UVM_ERROR报告失配；统计比较次数和输出变化，禁止expected从actual回填。",
+      "implementation_id": "native_sequence.body/native_monitor.run_phase/native_scoreboard.write",
+      "source": "tb.sv:native_sequence.body; native_monitor.run_phase; native_scoreboard.write; model/model.sv"
+    },
+    {
+      "test_id": "T-113-007",
+      "feature_ids": [
+        "F-113-007"
+      ],
+      "requirement_ids": [
+        "R-N113-007"
+      ],
+      "stimulus": "覆盖R=0、小有效数、指数下溢回绕、各舍入编码，独立计算前导零和截位。",
+      "expected": "当前is_subnormal=1时，L为R的44位前导零数（R=0时L=44），N=(R<<L)截为44位，exp=(当前exp_half-L)模256，uf=!N[43]。rounding_mode!=3时sig={N[43:18],OR(N[17:0])}。",
+      "checker": "输入历史独立预测器维护本条行为，monitor读取实际原生端口；在所述稳定窗口逐位四态比较actual/expected并以UVM_ERROR报告失配；统计比较次数和输出变化，禁止expected从actual回填。",
+      "implementation_id": "native_sequence.body/native_monitor.run_phase/native_scoreboard.write",
+      "source": "tb.sv:native_sequence.body; native_monitor.run_phase; native_scoreboard.write; model/model.sv"
+    },
+    {
+      "test_id": "T-113-008",
+      "feature_ids": [
+        "F-113-008"
+      ],
+      "requirement_ids": [
+        "R-N113-008"
+      ],
+      "stimulus": "使用需要左移且原值低位与规格化低位不同的输入，比较模式3和其它模式；done窗口改变分类/指数/模式后等待组合稳定。",
+      "expected": "当前次正规且rounding_mode=3时sig={N[43:20],R[19:18],OR(R[17:0])}，低三位取未规格化R；模式编码只在此选择投影，不执行加一舍入。输出分类、指数和模式为当前输入的组合值，需在done窗口稳定后采样。",
+      "checker": "输入历史独立预测器维护本条行为，monitor读取实际原生端口；在所述稳定窗口逐位四态比较actual/expected并以UVM_ERROR报告失配；统计比较次数和输出变化，禁止expected从actual回填。",
+      "implementation_id": "native_sequence.body/native_monitor.run_phase/native_scoreboard.write",
+      "source": "tb.sv:native_sequence.body; native_monitor.run_phase; native_scoreboard.write; model/model.sv"
+    }
+  ]
+}

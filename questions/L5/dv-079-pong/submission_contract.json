@@ -1,0 +1,168 @@
+{
+  "task_mode": "A",
+  "top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "interface": {
+      "top": "dvbench_model",
+      "ports": [
+        {
+          "name": "btn",
+          "direction": "In",
+          "width": 2,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 1,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "clk",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "reset_n",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "rx",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "vga_hsync",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "vga_rgb",
+          "direction": "Out",
+          "width": 3,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 2,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "vga_vsync",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        }
+      ],
+      "parameters": {}
+    },
+    "independent_input_history_only": true,
+    "self_contained": true
+  },
+  "fixed_parameters": {},
+  "format": "public/submission_format.md",
+  "hdl_policy": {
+    "system_tasks_and_functions": [
+      "abs",
+      "bits",
+      "bitstoreal",
+      "bitstoshortreal",
+      "cast",
+      "ceil",
+      "clog2",
+      "countbits",
+      "countones",
+      "dimensions",
+      "display",
+      "error",
+      "exp",
+      "fatal",
+      "finish",
+      "floor",
+      "high",
+      "increment",
+      "info",
+      "isunknown",
+      "itor",
+      "left",
+      "ln",
+      "log10",
+      "low",
+      "monitor",
+      "monitoroff",
+      "monitoron",
+      "onehot",
+      "onehot0",
+      "pow",
+      "psprintf",
+      "random",
+      "realtime",
+      "realtobits",
+      "right",
+      "rtoi",
+      "sformat",
+      "sformatf",
+      "shortrealtobits",
+      "signed",
+      "size",
+      "sqrt",
+      "srandom",
+      "stime",
+      "strobe",
+      "test$plusargs",
+      "time",
+      "timeformat",
+      "typename",
+      "unpacked_dimensions",
+      "unsigned",
+      "urandom",
+      "urandom_range",
+      "value$plusargs",
+      "warning",
+      "write"
+    ],
+    "custom_macros": "Only empty header guards; UVM macros supported.",
+    "directives": [
+      "include",
+      "timescale",
+      "ifndef",
+      "ifdef",
+      "endif",
+      "else",
+      "define",
+      "undef",
+      "default_nettype"
+    ]
+  },
+  "dut_top": "pong_top",
+  "submission_format": "public/submission_format.md",
+  "json_is_complete_fact_carrier": true,
+  "task_id": "dv-079",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

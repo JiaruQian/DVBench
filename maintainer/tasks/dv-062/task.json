@@ -1,0 +1,165 @@
+{
+  "task_id": "dv-062",
+  "dut_top": "fp32_sigmoid_pipeline",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "backfill/fp8_pkg.sv",
+    "npu/common/fp32_add_one_pipeline.sv",
+    "npu/common/fp32_exp_approx.sv",
+    "npu/common/fp32_exp_mul_u19_u4.sv",
+    "npu/common/fp32_mul_pipeline.sv",
+    "npu/common/fp32_mul_round_pack.sv",
+    "npu/common/fp32_mul_round_prepare.sv",
+    "npu/common/fp32_recip_pipeline.sv",
+    "npu/common/fp32_sigmoid_pipeline.sv",
+    "npu/common/fp32_subnormal_normalize.sv",
+    "npu/common/fp32_unpack.sv",
+    "npu/common/kogge_stone_adder_48.sv"
+  ],
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "scope": "FULL_SELECTED_TOP_NATIVE_PORT_REFERENCE_TWO_FTZ_PROFILES",
+  "mutant_root": "mutants/{variant}",
+  "model_comparison": {
+    "kind": "bit_exact",
+    "sampling": "Valid and invalid-cycle valid are compared exactly; result/invalid compared only when expected_valid=1",
+    "operator": "!==",
+    "ordinary_absolute": null,
+    "ordinary_relative": null,
+    "numeric_basis": "Published Q5.16 + Q1.23 interpolation + FP32 RNE equations; all 34 mathematical anchors verified against immutable source table",
+    "invalid_cycle_data": "not_compared",
+    "valid_and_invalid_flags": "exact"
+  },
+  "mutants": [
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m11",
+    "n1",
+    "n2"
+  ],
+  "model_interface": {
+    "ports": [
+      {
+        "name": "clear_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "clk_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "data_i",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "invalid_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "invalid_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "result_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "rst_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "valid_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "valid_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {
+      "FTZ": "1'b0"
+    },
+    "parser": "pyslang 12.1.0",
+    "ignored_unnamed_ast_ports": [],
+    "source_default_parameters": {
+      "FTZ": "1'b0"
+    }
+  },
+  "coverage_scopes": [
+    "dvbench_top.dut0",
+    "dvbench_top.dut1"
+  ],
+  "rtl_sources": [
+    "backfill/fp8_pkg.sv",
+    "npu/common/fp32_add_one_pipeline.sv",
+    "npu/common/fp32_exp_approx.sv",
+    "npu/common/fp32_exp_mul_u19_u4.sv",
+    "npu/common/fp32_mul_pipeline.sv",
+    "npu/common/fp32_mul_round_pack.sv",
+    "npu/common/fp32_mul_round_prepare.sv",
+    "npu/common/fp32_recip_pipeline.sv",
+    "npu/common/fp32_sigmoid_pipeline.sv",
+    "npu/common/fp32_subnormal_normalize.sv",
+    "npu/common/fp32_unpack.sv",
+    "npu/common/kogge_stone_adder_48.sv"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "backfill/fp8_pkg.sv",
+    "npu/common/fp32_add_one_pipeline.sv",
+    "npu/common/fp32_exp_approx.sv",
+    "npu/common/fp32_exp_mul_u19_u4.sv",
+    "npu/common/fp32_mul_pipeline.sv",
+    "npu/common/fp32_mul_round_pack.sv",
+    "npu/common/fp32_mul_round_prepare.sv",
+    "npu/common/fp32_recip_pipeline.sv",
+    "npu/common/fp32_sigmoid_pipeline.sv",
+    "npu/common/fp32_subnormal_normalize.sv",
+    "npu/common/fp32_unpack.sv",
+    "npu/common/kogge_stone_adder_48.sv"
+  ]
+}

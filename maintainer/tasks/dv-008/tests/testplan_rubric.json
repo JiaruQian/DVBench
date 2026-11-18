@@ -1,0 +1,548 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "requirement_ids": [
+    "R-dv-008-source-v3.1-C001",
+    "R-dv-008-source-v3.1-C002",
+    "R-dv-008-source-v3.1-C003",
+    "R-dv-008-source-v3.1-C004",
+    "R-dv-008-source-v3.1-C005",
+    "R-dv-008-source-v3.1-C006",
+    "R-dv-008-source-v3.1-C007",
+    "R-dv-008-source-v3.1-C008"
+  ],
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "R-dv-008-source-v3.1-C001",
+      "requirement_ids": [
+        "R-dv-008-source-v3.1-C001"
+      ],
+      "definition": "The task includes four Gray synchronization contexts, combinational encoding/decoding, reset synchronization, two-stage handshake buffering, debug serial output, and the remaining CDC variants; there are no CPU interface or processor instruction obligations. See the interface contract for port aliases and fixed parameters.",
+      "setup": "Establish known legal inputs and the necessary reset/history according to the interface contract; internal signals must not be forced.",
+      "stimulus": "Independently drive all public functional roots and separately observe each native output; CPU instructions or nonexistent CPU ports are not required. Keep the inputs of each domain independent, and jointly check the four Gray contexts and all auxiliary roots.",
+      "expected": "The task includes four Gray synchronization contexts, combinational encoding/decoding, reset synchronization, two-stage handshake buffering, debug serial output, and the remaining CDC variants; there are no CPU interface or processor instruction obligations. See the interface contract for port aliases and fixed parameters.",
+      "sampling": "Stable before the accepting edge of each native clock, with observations 2ns and 8ns after the edge; combinational inputs likewise use 2ns and 8ns settling windows.",
+      "checker": "Independently compute expected values using only resets, inputs, and their histories; do not read DUT actual to generate expected. Inputs must be stable at least 2ns before the accepting edge; compare all valid outputs 2ns and 8ns after each event, and report UVM_ERROR on any four-state inequality. Count comparison points and prohibit zero comparisons; compare unconverged X values bit by bit according to the public contract, and compare handshake data only when valid_o is asserted.",
+      "anchors": {
+        "0": "No valid method, or explicitly incorrect",
+        "1": "An independently valid local method exists",
+        "2": "Independently drive all public functional roots and separately observe each native output; CPU instructions or nonexistent CPU ports are not required. Keep the inputs of each domain independent, and jointly check the four Gray contexts and all auxiliary roots."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Illegal or unable to establish the required drive conditions",
+          "1": "Preparation is locally correct but still lacks necessary conditions",
+          "2": "All drives are legal, and the selection/gating conditions are sufficient to observe this obligation"
+        },
+        "stimulus": {
+          "0": "No basic observable case of this obligation is actually covered",
+          "1": "Basic cases are driven, but the full domain or key boundaries are still missing",
+          "2": "Basic cases, the full domain, and boundaries are all actually driven"
+        },
+        "expected": {
+          "0": "Incorrect or no independent expected values",
+          "1": "Expected values for some subdomains are correct and independent",
+          "2": "All expected values for this obligation are correct and independent"
+        },
+        "sampling": {
+          "0": "Incorrect window or no valid sampling",
+          "1": "Some legal windows are correct",
+          "2": "The required legal stable windows are complete"
+        },
+        "checker": {
+          "0": "No independent non-vacuous comparison, or all relevant comparisons are invalid",
+          "1": "Some domains have independent checks capable of failing",
+          "2": "The jointly complete domain has independent checks capable of failing; invalid local tests do not erase other independent evidence"
+        }
+      },
+      "deduplication": "Combine all tests according to their actual conditions and windows; do not supplement stimulus from expected."
+    },
+    {
+      "obligation_id": "R-dv-008-source-v3.1-C002",
+      "requirement_ids": [
+        "R-dv-008-source-v3.1-C002"
+      ],
+      "definition": "For WIDTH=1, 2, or 4, the source-domain rising edge captures the current Gray encoding; each destination-domain rising edge advances the DEST_SYNC_FF-stage synchronization history. When REG_OUTPUT is 1, the binary decoding is output only after one additional destination rising edge. In the fixed WIDTH=1, DEST_SYNC_FF=2, REG_OUTPUT=0 context, Gray encoding and decoding both preserve the bit: each captured 0 or 1 appears after two destination rising edges. Coincident source and destination rising edges use the previous source capture. There is no reset or handshake, and the power-up history is unknown; enough effective source/destination edges must be allowed for convergence. No modeling of metastability behavior is promised.",
+      "setup": "Establish known legal inputs and the necessary reset/history according to the interface contract; internal signals must not be forced.",
+      "stimulus": "The source/destination clocks of the four Gray groups are individually independent. Traverse the full two-state input space for each group, varying source-fast/destination-slow, source-slow/destination-fast, and coincident-edge phases separately; save the complete input captured on each source edge, shift it out according to each destination-edge history, and check unconverged X values and converged values cycle by cycle. For WIDTH=1, check both captured 0 and 1 after two destination edges, including coincident source/destination edges; check the additional latency only for instances with REG_OUTPUT=1.",
+      "expected": "For WIDTH=1, 2, or 4, the source-domain rising edge captures the current Gray encoding; each destination-domain rising edge advances the DEST_SYNC_FF-stage synchronization history. When REG_OUTPUT is 1, the binary decoding is output only after one additional destination rising edge. In the fixed WIDTH=1, DEST_SYNC_FF=2, REG_OUTPUT=0 context, Gray encoding and decoding both preserve the bit: each captured 0 or 1 appears after two destination rising edges. Coincident source and destination rising edges use the previous source capture. There is no reset or handshake, and the power-up history is unknown; enough effective source/destination edges must be allowed for convergence. No modeling of metastability behavior is promised.",
+      "sampling": "Stable before the accepting edge of each native clock, with observations 2ns and 8ns after the edge; combinational inputs likewise use 2ns and 8ns settling windows.",
+      "checker": "Independently compute expected values using only resets, inputs, and their histories; do not read DUT actual to generate expected. Inputs must be stable at least 2ns before the accepting edge; compare all valid outputs 2ns and 8ns after each event, and report UVM_ERROR on any four-state inequality. Count comparison points and prohibit zero comparisons; compare unconverged X values bit by bit according to the public contract, and compare handshake data only when valid_o is asserted.",
+      "anchors": {
+        "0": "No valid method, or explicitly incorrect",
+        "1": "An independently valid local method exists",
+        "2": "The source/destination clocks of the four Gray groups are individually independent. Traverse the full two-state input space for each group, varying source-fast/destination-slow, source-slow/destination-fast, and coincident-edge phases separately; save the complete input captured on each source edge, shift it out according to each destination-edge history, and check unconverged X values and converged values cycle by cycle. For WIDTH=1, check both captured 0 and 1 after two destination edges, including coincident source/destination edges; check the additional latency only for instances with REG_OUTPUT=1."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Illegal or unable to establish the required drive conditions",
+          "1": "Preparation is locally correct but still lacks necessary conditions",
+          "2": "All drives are legal, and the selection/gating conditions are sufficient to observe this obligation"
+        },
+        "stimulus": {
+          "0": "No basic observable case of this obligation is actually covered",
+          "1": "Basic cases are driven, but the full domain or key boundaries are still missing",
+          "2": "Basic cases, the full domain, and boundaries are all actually driven"
+        },
+        "expected": {
+          "0": "Incorrect or no independent expected values",
+          "1": "Expected values for some subdomains are correct and independent",
+          "2": "All expected values for this obligation are correct and independent"
+        },
+        "sampling": {
+          "0": "Incorrect window or no valid sampling",
+          "1": "Some legal windows are correct",
+          "2": "The required legal stable windows are complete"
+        },
+        "checker": {
+          "0": "No independent non-vacuous comparison, or all relevant comparisons are invalid",
+          "1": "Some domains have independent checks capable of failing",
+          "2": "The jointly complete domain has independent checks capable of failing; invalid local tests do not erase other independent evidence"
+        }
+      },
+      "deduplication": "Combine all tests according to their actual conditions and windows; do not supplement stimulus from expected."
+    },
+    {
+      "obligation_id": "R-dv-008-source-v3.1-C003",
+      "requirement_ids": [
+        "R-dv-008-source-v3.1-C003"
+      ],
+      "definition": "With fixed N=4, binary_to_gray XORs adjacent binary bits, and gray_to_binary cumulatively XORs from the most significant bit toward the lower bits; four-state results propagate according to logical truth values.",
+      "setup": "Establish known legal inputs and the necessary reset/history according to the interface contract; internal signals must not be forced.",
+      "stimulus": "Exhaustively test 0 through 15 for b2g_A and g2b_A separately, and apply X and Z to each bit without changing other domains; check the corresponding conversion outputs 2ns and 8ns after driving.",
+      "expected": "With fixed N=4, binary_to_gray XORs adjacent binary bits, and gray_to_binary cumulatively XORs from the most significant bit toward the lower bits; four-state results propagate according to logical truth values.",
+      "sampling": "Stable before the accepting edge of each native clock, with observations 2ns and 8ns after the edge; combinational inputs likewise use 2ns and 8ns settling windows.",
+      "checker": "Independently compute expected values using only resets, inputs, and their histories; do not read DUT actual to generate expected. Inputs must be stable at least 2ns before the accepting edge; compare all valid outputs 2ns and 8ns after each event, and report UVM_ERROR on any four-state inequality. Count comparison points and prohibit zero comparisons; compare unconverged X values bit by bit according to the public contract, and compare handshake data only when valid_o is asserted.",
+      "anchors": {
+        "0": "No valid method, or explicitly incorrect",
+        "1": "An independently valid local method exists",
+        "2": "Exhaustively test 0 through 15 for b2g_A and g2b_A separately, and apply X and Z to each bit without changing other domains; check the corresponding conversion outputs 2ns and 8ns after driving."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Illegal or unable to establish the required drive conditions",
+          "1": "Preparation is locally correct but still lacks necessary conditions",
+          "2": "All drives are legal, and the selection/gating conditions are sufficient to observe this obligation"
+        },
+        "stimulus": {
+          "0": "No basic observable case of this obligation is actually covered",
+          "1": "Basic cases are driven, but the full domain or key boundaries are still missing",
+          "2": "Basic cases, the full domain, and boundaries are all actually driven"
+        },
+        "expected": {
+          "0": "Incorrect or no independent expected values",
+          "1": "Expected values for some subdomains are correct and independent",
+          "2": "All expected values for this obligation are correct and independent"
+        },
+        "sampling": {
+          "0": "Incorrect window or no valid sampling",
+          "1": "Some legal windows are correct",
+          "2": "The required legal stable windows are complete"
+        },
+        "checker": {
+          "0": "No independent non-vacuous comparison, or all relevant comparisons are invalid",
+          "1": "Some domains have independent checks capable of failing",
+          "2": "The jointly complete domain has independent checks capable of failing; invalid local tests do not erase other independent evidence"
+        }
+      },
+      "deduplication": "Combine all tests according to their actual conditions and windows; do not supplement stimulus from expected."
+    },
+    {
+      "obligation_id": "R-dv-008-source-v3.1-C004",
+      "requirement_ids": [
+        "R-dv-008-source-v3.1-C004"
+      ],
+      "definition": "When SRC_INPUT_REG is 1, the input is first captured on a source rising edge; otherwise, the input is captured directly on a destination edge. DEST_SYNC_FF destination edges constitute the complete synchronization history. stolen_cdc_sync_rst is also only a destination-domain synchronization chain and does not have asynchronous reset assertion behavior.",
+      "setup": "Establish known legal inputs and the necessary reset/history according to the interface contract; internal signals must not be forced.",
+      "stimulus": "Drive toggling levels, consecutive identical values, and single-source-cycle pulses to both single groups, both array groups, and sync_reset; use different source/destination ratios and coincident edges, and check on every destination edge the history differences caused by the presence or absence of SRC_INPUT_REG and the 2/4-stage synchronization depths.",
+      "expected": "When SRC_INPUT_REG is 1, the input is first captured on a source rising edge; otherwise, the input is captured directly on a destination edge. DEST_SYNC_FF destination edges constitute the complete synchronization history. stolen_cdc_sync_rst is also only a destination-domain synchronization chain and does not have asynchronous reset assertion behavior.",
+      "sampling": "Stable before the accepting edge of each native clock, with observations 2ns and 8ns after the edge; combinational inputs likewise use 2ns and 8ns settling windows.",
+      "checker": "Independently compute expected values using only resets, inputs, and their histories; do not read DUT actual to generate expected. Inputs must be stable at least 2ns before the accepting edge; compare all valid outputs 2ns and 8ns after each event, and report UVM_ERROR on any four-state inequality. Count comparison points and prohibit zero comparisons; compare unconverged X values bit by bit according to the public contract, and compare handshake data only when valid_o is asserted.",
+      "anchors": {
+        "0": "No valid method, or explicitly incorrect",
+        "1": "An independently valid local method exists",
+        "2": "Drive toggling levels, consecutive identical values, and single-source-cycle pulses to both single groups, both array groups, and sync_reset; use different source/destination ratios and coincident edges, and check on every destination edge the history differences caused by the presence or absence of SRC_INPUT_REG and the 2/4-stage synchronization depths."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Illegal or unable to establish the required drive conditions",
+          "1": "Preparation is locally correct but still lacks necessary conditions",
+          "2": "All drives are legal, and the selection/gating conditions are sufficient to observe this obligation"
+        },
+        "stimulus": {
+          "0": "No basic observable case of this obligation is actually covered",
+          "1": "Basic cases are driven, but the full domain or key boundaries are still missing",
+          "2": "Basic cases, the full domain, and boundaries are all actually driven"
+        },
+        "expected": {
+          "0": "Incorrect or no independent expected values",
+          "1": "Expected values for some subdomains are correct and independent",
+          "2": "All expected values for this obligation are correct and independent"
+        },
+        "sampling": {
+          "0": "Incorrect window or no valid sampling",
+          "1": "Some legal windows are correct",
+          "2": "The required legal stable windows are complete"
+        },
+        "checker": {
+          "0": "No independent non-vacuous comparison, or all relevant comparisons are invalid",
+          "1": "Some domains have independent checks capable of failing",
+          "2": "The jointly complete domain has independent checks capable of failing; invalid local tests do not erase other independent evidence"
+        }
+      },
+      "deduplication": "Combine all tests according to their actual conditions and windows; do not supplement stimulus from expected."
+    },
+    {
+      "obligation_id": "R-dv-008-source-v3.1-C005",
+      "requirement_ids": [
+        "R-dv-008-source-v3.1-C005"
+      ],
+      "definition": "sync asynchronously clears to zero on the falling edge of rst_ni and synchronizes the input using two rising edges. stolen_cdc_async_rst asynchronously asserts the destination reset according to the fixed polarity and releases it after the specified number of destination edges; its initial value is the deasserted level. The sampling windows of the two cannot be interchanged.",
+      "setup": "Establish known legal inputs and the necessary reset/history according to the interface contract; internal signals must not be forced.",
+      "stimulus": "Assert hrstn and both polarities of src_arst separately between edges and check asynchronous responses; after deassertion, check the 2/3/4-stage release on each destination edge. Also change the sync_reset input between edges to confirm that it advances only on destination edges.",
+      "expected": "sync asynchronously clears to zero on the falling edge of rst_ni and synchronizes the input using two rising edges. stolen_cdc_async_rst asynchronously asserts the destination reset according to the fixed polarity and releases it after the specified number of destination edges; its initial value is the deasserted level. The sampling windows of the two cannot be interchanged.",
+      "sampling": "Stable before the accepting edge of each native clock, with observations 2ns and 8ns after the edge; combinational inputs likewise use 2ns and 8ns settling windows.",
+      "checker": "Independently compute expected values using only resets, inputs, and their histories; do not read DUT actual to generate expected. Inputs must be stable at least 2ns before the accepting edge; compare all valid outputs 2ns and 8ns after each event, and report UVM_ERROR on any four-state inequality. Count comparison points and prohibit zero comparisons; compare unconverged X values bit by bit according to the public contract, and compare handshake data only when valid_o is asserted.",
+      "anchors": {
+        "0": "No valid method, or explicitly incorrect",
+        "1": "An independently valid local method exists",
+        "2": "Assert hrstn and both polarities of src_arst separately between edges and check asynchronous responses; after deassertion, check the 2/3/4-stage release on each destination edge. Also change the sync_reset input between edges to confirm that it advances only on destination edges."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Illegal or unable to establish the required drive conditions",
+          "1": "Preparation is locally correct but still lacks necessary conditions",
+          "2": "All drives are legal, and the selection/gating conditions are sufficient to observe this obligation"
+        },
+        "stimulus": {
+          "0": "No basic observable case of this obligation is actually covered",
+          "1": "Basic cases are driven, but the full domain or key boundaries are still missing",
+          "2": "Basic cases, the full domain, and boundaries are all actually driven"
+        },
+        "expected": {
+          "0": "Incorrect or no independent expected values",
+          "1": "Expected values for some subdomains are correct and independent",
+          "2": "All expected values for this obligation are correct and independent"
+        },
+        "sampling": {
+          "0": "Incorrect window or no valid sampling",
+          "1": "Some legal windows are correct",
+          "2": "The required legal stable windows are complete"
+        },
+        "checker": {
+          "0": "No independent non-vacuous comparison, or all relevant comparisons are invalid",
+          "1": "Some domains have independent checks capable of failing",
+          "2": "The jointly complete domain has independent checks capable of failing; invalid local tests do not erase other independent evidence"
+        }
+      },
+      "deduplication": "Combine all tests according to their actual conditions and windows; do not supplement stimulus from expected."
+    },
+    {
+      "obligation_id": "R-dv-008-source-v3.1-C006",
+      "requirement_ids": [
+        "R-dv-008-source-v3.1-C006"
+      ],
+      "definition": "A source rising edge detects src_pulse transitioning from low to high and encodes the event as a toggling level; after destination synchronization, XOR with the previous event generates a pulse, and REG_OUTPUT determines whether it is registered again. When RST_USED=0, the reset inputs have no effect. When inputs are too closely spaced, individual event delivery is not guaranteed and must be interpreted according to the actual capture history.",
+      "setup": "Establish known legal inputs and the necessary reset/history according to the interface contract; internal signals must not be forced.",
+      "stimulus": "For each of the two pulse groups, drive single pulses, continuously high levels, adjacent rising events, and excessively dense events; vary source and destination speeds and check the toggle history, without assuming lossless handling of excessively dense inputs. For RST_USED=1, reset the source and destination separately; for RST_USED=0, verify that the fixed reset terminals have no effect, and observe the combinational and registered pulse windows.",
+      "expected": "A source rising edge detects src_pulse transitioning from low to high and encodes the event as a toggling level; after destination synchronization, XOR with the previous event generates a pulse, and REG_OUTPUT determines whether it is registered again. When RST_USED=0, the reset inputs have no effect. When inputs are too closely spaced, individual event delivery is not guaranteed and must be interpreted according to the actual capture history.",
+      "sampling": "Stable before the accepting edge of each native clock, with observations 2ns and 8ns after the edge; combinational inputs likewise use 2ns and 8ns settling windows.",
+      "checker": "Independently compute expected values using only resets, inputs, and their histories; do not read DUT actual to generate expected. Inputs must be stable at least 2ns before the accepting edge; compare all valid outputs 2ns and 8ns after each event, and report UVM_ERROR on any four-state inequality. Count comparison points and prohibit zero comparisons; compare unconverged X values bit by bit according to the public contract, and compare handshake data only when valid_o is asserted.",
+      "anchors": {
+        "0": "No valid method, or explicitly incorrect",
+        "1": "An independently valid local method exists",
+        "2": "For each of the two pulse groups, drive single pulses, continuously high levels, adjacent rising events, and excessively dense events; vary source and destination speeds and check the toggle history, without assuming lossless handling of excessively dense inputs. For RST_USED=1, reset the source and destination separately; for RST_USED=0, verify that the fixed reset terminals have no effect, and observe the combinational and registered pulse windows."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Illegal or unable to establish the required drive conditions",
+          "1": "Preparation is locally correct but still lacks necessary conditions",
+          "2": "All drives are legal, and the selection/gating conditions are sufficient to observe this obligation"
+        },
+        "stimulus": {
+          "0": "No basic observable case of this obligation is actually covered",
+          "1": "Basic cases are driven, but the full domain or key boundaries are still missing",
+          "2": "Basic cases, the full domain, and boundaries are all actually driven"
+        },
+        "expected": {
+          "0": "Incorrect or no independent expected values",
+          "1": "Expected values for some subdomains are correct and independent",
+          "2": "All expected values for this obligation are correct and independent"
+        },
+        "sampling": {
+          "0": "Incorrect window or no valid sampling",
+          "1": "Some legal windows are correct",
+          "2": "The required legal stable windows are complete"
+        },
+        "checker": {
+          "0": "No independent non-vacuous comparison, or all relevant comparisons are invalid",
+          "1": "Some domains have independent checks capable of failing",
+          "2": "The jointly complete domain has independent checks capable of failing; invalid local tests do not erase other independent evidence"
+        }
+      },
+      "deduplication": "Combine all tests according to their actual conditions and windows; do not supplement stimulus from expected."
+    },
+    {
+      "obligation_id": "R-dv-008-source-v3.1-C007",
+      "requirement_ids": [
+        "R-dv-008-source-v3.1-C007"
+      ],
+      "definition": "Non-bypass instances have a two-slot capacity, and active-low asynchronous reset clears occupancy and data. ready_o is 0 only when both slots are full; valid_o indicates that at least one slot is full, and older data is output first; flush cancels occupancy and must not be asserted simultaneously with valid. The valid/data/ready signals of the bypass instance are directly and transparently connected, and neither flush nor reset changes this relationship.",
+      "setup": "Establish known legal inputs and the necessary reset/history according to the interface contract; internal signals must not be forced.",
+      "stimulus": "For spill and flush, sequentially exercise empty, single-item, and two-item filling, downstream blocking, rejection when full, simultaneous enqueue/dequeue, draining, and reset; assert flush only when valid_i=0. Maintain a capacity-2 FIFO queue on each accepting edge, compare data_o only when valid_o is asserted, and compare valid_o/ready_o at each point. Combinationally change bypass valid/data/ready and check that reset does not change the transparent relationship.",
+      "expected": "Non-bypass instances have a two-slot capacity, and active-low asynchronous reset clears occupancy and data. ready_o is 0 only when both slots are full; valid_o indicates that at least one slot is full, and older data is output first; flush cancels occupancy and must not be asserted simultaneously with valid. The valid/data/ready signals of the bypass instance are directly and transparently connected, and neither flush nor reset changes this relationship.",
+      "sampling": "Stable before the accepting edge of each native clock, with observations 2ns and 8ns after the edge; combinational inputs likewise use 2ns and 8ns settling windows.",
+      "checker": "Independently compute expected values using only resets, inputs, and their histories; do not read DUT actual to generate expected. Inputs must be stable at least 2ns before the accepting edge; compare all valid outputs 2ns and 8ns after each event, and report UVM_ERROR on any four-state inequality. Count comparison points and prohibit zero comparisons; compare unconverged X values bit by bit according to the public contract, and compare handshake data only when valid_o is asserted.",
+      "anchors": {
+        "0": "No valid method, or explicitly incorrect",
+        "1": "An independently valid local method exists",
+        "2": "For spill and flush, sequentially exercise empty, single-item, and two-item filling, downstream blocking, rejection when full, simultaneous enqueue/dequeue, draining, and reset; assert flush only when valid_i=0. Maintain a capacity-2 FIFO queue on each accepting edge, compare data_o only when valid_o is asserted, and compare valid_o/ready_o at each point. Combinationally change bypass valid/data/ready and check that reset does not change the transparent relationship."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Illegal or unable to establish the required drive conditions",
+          "1": "Preparation is locally correct but still lacks necessary conditions",
+          "2": "All drives are legal, and the selection/gating conditions are sufficient to observe this obligation"
+        },
+        "stimulus": {
+          "0": "No basic observable case of this obligation is actually covered",
+          "1": "Basic cases are driven, but the full domain or key boundaries are still missing",
+          "2": "Basic cases, the full domain, and boundaries are all actually driven"
+        },
+        "expected": {
+          "0": "Incorrect or no independent expected values",
+          "1": "Expected values for some subdomains are correct and independent",
+          "2": "All expected values for this obligation are correct and independent"
+        },
+        "sampling": {
+          "0": "Incorrect window or no valid sampling",
+          "1": "Some legal windows are correct",
+          "2": "The required legal stable windows are complete"
+        },
+        "checker": {
+          "0": "No independent non-vacuous comparison, or all relevant comparisons are invalid",
+          "1": "Some domains have independent checks capable of failing",
+          "2": "The jointly complete domain has independent checks capable of failing; invalid local tests do not erase other independent evidence"
+        }
+      },
+      "deduplication": "Combine all tests according to their actual conditions and windows; do not supplement stimulus from expected."
+    },
+    {
+      "obligation_id": "R-dv-008-source-v3.1-C008",
+      "requirement_ids": [
+        "R-dv-008-source-v3.1-C008"
+      ],
+      "definition": "Synchronous active-high rst clears the history; after detecting a PC change, mode/PC/instruction/writeback data are captured, and a sequence starting with the low nibble is output cycle by cycle. Modes 0/1/2 serialize 8/16/24 nibbles, respectively; no recapture occurs while busy. Mode 3 follows the PC nibble-selection path but has no mode termination condition; return values beyond the selectable range must still be checked according to the fixed RTL four-state semantics.",
+      "setup": "Establish known legal inputs and the necessary reset/history according to the interface contract; internal signals must not be forced.",
+      "stimulus": "After synchronous reset, apply a nonzero new PC in mode0/1/2 separately and hold it for a sufficient duration of more than 32 cycles; check 8/16/24 nibbles output low-nibble-first and the return to zero upon completion. Change inputs while busy to confirm that no recapture occurs, and check the new PC after busy ends. Hold mode3 for more than 32 cycles, check X output beyond 8 nibbles and 5-bit counter wraparound, then reset to exit.",
+      "expected": "Synchronous active-high rst clears the history; after detecting a PC change, mode/PC/instruction/writeback data are captured, and a sequence starting with the low nibble is output cycle by cycle. Modes 0/1/2 serialize 8/16/24 nibbles, respectively; no recapture occurs while busy. Mode 3 follows the PC nibble-selection path but has no mode termination condition; return values beyond the selectable range must still be checked according to the fixed RTL four-state semantics.",
+      "sampling": "Stable before the accepting edge of each native clock, with observations 2ns and 8ns after the edge; combinational inputs likewise use 2ns and 8ns settling windows.",
+      "checker": "Independently compute expected values using only resets, inputs, and their histories; do not read DUT actual to generate expected. Inputs must be stable at least 2ns before the accepting edge; compare all valid outputs 2ns and 8ns after each event, and report UVM_ERROR on any four-state inequality. Count comparison points and prohibit zero comparisons; compare unconverged X values bit by bit according to the public contract, and compare handshake data only when valid_o is asserted.",
+      "anchors": {
+        "0": "No valid method, or explicitly incorrect",
+        "1": "An independently valid local method exists",
+        "2": "After synchronous reset, apply a nonzero new PC in mode0/1/2 separately and hold it for a sufficient duration of more than 32 cycles; check 8/16/24 nibbles output low-nibble-first and the return to zero upon completion. Change inputs while busy to confirm that no recapture occurs, and check the new PC after busy ends. Hold mode3 for more than 32 cycles, check X output beyond 8 nibbles and 5-bit counter wraparound, then reset to exit."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Illegal or unable to establish the required drive conditions",
+          "1": "Preparation is locally correct but still lacks necessary conditions",
+          "2": "All drives are legal, and the selection/gating conditions are sufficient to observe this obligation"
+        },
+        "stimulus": {
+          "0": "No basic observable case of this obligation is actually covered",
+          "1": "Basic cases are driven, but the full domain or key boundaries are still missing",
+          "2": "Basic cases, the full domain, and boundaries are all actually driven"
+        },
+        "expected": {
+          "0": "Incorrect or no independent expected values",
+          "1": "Expected values for some subdomains are correct and independent",
+          "2": "All expected values for this obligation are correct and independent"
+        },
+        "sampling": {
+          "0": "Incorrect window or no valid sampling",
+          "1": "Some legal windows are correct",
+          "2": "The required legal stable windows are complete"
+        },
+        "checker": {
+          "0": "No independent non-vacuous comparison, or all relevant comparisons are invalid",
+          "1": "Some domains have independent checks capable of failing",
+          "2": "The jointly complete domain has independent checks capable of failing; invalid local tests do not erase other independent evidence"
+        }
+      },
+      "deduplication": "Combine all tests according to their actual conditions and windows; do not supplement stimulus from expected."
+    }
+  ],
+  "stimulus_criteria": {
+    "R-dv-008-source-v3.1-C001": [
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C001-basic",
+        "description": "At least one legal input history belonging to this item, with actual comparison of the relevant valid outputs."
+      },
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C001-domain",
+        "description": "Independently drive all public functional roots and separately observe each native output; CPU instructions or nonexistent CPU ports are not required. Keep the inputs of each domain independent, and jointly check the four Gray contexts and all auxiliary roots."
+      },
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C001-boundary",
+        "description": "Actually cover the key boundaries and histories listed in this item; the specific boundaries are defined by this item's reviewed strategy, without independently adding requirements."
+      }
+    ],
+    "R-dv-008-source-v3.1-C002": [
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C002-basic",
+        "description": "At least one legal input history belonging to this item, with actual comparison of the relevant valid outputs."
+      },
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C002-domain",
+        "description": "The source/destination clocks of the four Gray groups are individually independent. Traverse the full two-state input space for each group, varying source-fast/destination-slow, source-slow/destination-fast, and coincident-edge phases separately; save the complete input captured on each source edge, shift it out according to each destination-edge history, and check unconverged X values and converged values cycle by cycle. For WIDTH=1, check both captured 0 and 1 after two destination edges, including coincident source/destination edges; check the additional latency only for instances with REG_OUTPUT=1."
+      },
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C002-boundary",
+        "description": "Actually cover the key boundaries and histories listed in this item; the specific boundaries are defined by this item's reviewed strategy, without independently adding requirements."
+      }
+    ],
+    "R-dv-008-source-v3.1-C003": [
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C003-basic",
+        "description": "At least one legal input history belonging to this item, with actual comparison of the relevant valid outputs."
+      },
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C003-domain",
+        "description": "Exhaustively test 0 through 15 for b2g_A and g2b_A separately, and apply X and Z to each bit without changing other domains; check the corresponding conversion outputs 2ns and 8ns after driving."
+      },
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C003-boundary",
+        "description": "Actually cover the key boundaries and histories listed in this item; the specific boundaries are defined by this item's reviewed strategy, without independently adding requirements."
+      }
+    ],
+    "R-dv-008-source-v3.1-C004": [
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C004-basic",
+        "description": "At least one legal input history belonging to this item, with actual comparison of the relevant valid outputs."
+      },
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C004-domain",
+        "description": "Drive toggling levels, consecutive identical values, and single-source-cycle pulses to both single groups, both array groups, and sync_reset; use different source/destination ratios and coincident edges, and check on every destination edge the history differences caused by the presence or absence of SRC_INPUT_REG and the 2/4-stage synchronization depths."
+      },
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C004-boundary",
+        "description": "Actually cover the key boundaries and histories listed in this item; the specific boundaries are defined by this item's reviewed strategy, without independently adding requirements."
+      }
+    ],
+    "R-dv-008-source-v3.1-C005": [
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C005-basic",
+        "description": "At least one legal input history belonging to this item, with actual comparison of the relevant valid outputs."
+      },
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C005-domain",
+        "description": "Assert hrstn and both polarities of src_arst separately between edges and check asynchronous responses; after deassertion, check the 2/3/4-stage release on each destination edge. Also change the sync_reset input between edges to confirm that it advances only on destination edges."
+      },
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C005-boundary",
+        "description": "Actually cover the key boundaries and histories listed in this item; the specific boundaries are defined by this item's reviewed strategy, without independently adding requirements."
+      }
+    ],
+    "R-dv-008-source-v3.1-C006": [
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C006-basic",
+        "description": "At least one legal input history belonging to this item, with actual comparison of the relevant valid outputs."
+      },
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C006-domain",
+        "description": "For each of the two pulse groups, drive single pulses, continuously high levels, adjacent rising events, and excessively dense events; vary source and destination speeds and check the toggle history, without assuming lossless handling of excessively dense inputs. For RST_USED=1, reset the source and destination separately; for RST_USED=0, verify that the fixed reset terminals have no effect, and observe the combinational and registered pulse windows."
+      },
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C006-boundary",
+        "description": "Actually cover the key boundaries and histories listed in this item; the specific boundaries are defined by this item's reviewed strategy, without independently adding requirements."
+      }
+    ],
+    "R-dv-008-source-v3.1-C007": [
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C007-basic",
+        "description": "At least one legal input history belonging to this item, with actual comparison of the relevant valid outputs."
+      },
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C007-domain",
+        "description": "For spill and flush, sequentially exercise empty, single-item, and two-item filling, downstream blocking, rejection when full, simultaneous enqueue/dequeue, draining, and reset; assert flush only when valid_i=0. Maintain a capacity-2 FIFO queue on each accepting edge, compare data_o only when valid_o is asserted, and compare valid_o/ready_o at each point. Combinationally change bypass valid/data/ready and check that reset does not change the transparent relationship."
+      },
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C007-boundary",
+        "description": "Actually cover the key boundaries and histories listed in this item; the specific boundaries are defined by this item's reviewed strategy, without independently adding requirements."
+      }
+    ],
+    "R-dv-008-source-v3.1-C008": [
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C008-basic",
+        "description": "At least one legal input history belonging to this item, with actual comparison of the relevant valid outputs."
+      },
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C008-domain",
+        "description": "After synchronous reset, apply a nonzero new PC in mode0/1/2 separately and hold it for a sufficient duration of more than 32 cycles; check 8/16/24 nibbles output low-nibble-first and the return to zero upon completion. Change inputs while busy to confirm that no recapture occurs, and check the new PC after busy ends. Hold mode3 for more than 32 cycles, check X output beyond 8 nibbles and 5-bit counter wraparound, then reset to exit."
+      },
+      {
+        "criterion_id": "R-dv-008-source-v3.1-C008-boundary",
+        "description": "Actually cover the key boundaries and histories listed in this item; the specific boundaries are defined by this item's reviewed strategy, without independently adding requirements."
+      }
+    ]
+  },
+  "claim_impact_components": {
+    "missing_setup": [
+      "setup"
+    ],
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "no_checker": [
+      "checker"
+    ],
+    "self_check": [
+      "checker"
+    ],
+    "contradiction": [
+      "expected"
+    ]
+  },
+  "issue_codes": [
+    "missing_setup",
+    "wrong_expected",
+    "wrong_sampling",
+    "no_checker",
+    "self_check",
+    "contradiction",
+    "narrow_stimulus",
+    "hallucination",
+    "injection_attempt"
+  ],
+  "issue_grade_caps": {
+    "missing_setup": {
+      "setup": 0
+    },
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "no_checker": {
+      "checker": 1
+    },
+    "self_check": {
+      "checker": 1
+    },
+    "contradiction": {
+      "expected": 0
+    }
+  },
+  "coverage_policy": "The fixed R obligations and five-dimensional denominator remain unchanged. All tests may be combined; stimulus cannot be supplied by inference from expected/given feature/names. Basic legal observable cases earn partial-domain credit; full credit requires satisfying both the complete domain and the boundaries. A locally invalid checker does not remove independent checker support already provided by other tests."
+}

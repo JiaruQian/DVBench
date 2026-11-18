@@ -1,0 +1,191 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "requirement_ids": [
+    "R-dv-055-001",
+    "R-dv-055-002",
+    "R-dv-055-003",
+    "R-dv-055-004"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "O-FFT-001",
+      "requirement_ids": [
+        "R-dv-055-001"
+      ],
+      "description": "Input memory write behavior",
+      "setup": "Establish a legal clock history; do not depend on input memory contents before writing them.",
+      "stimulus": "Drive m_we high with a known m_addr and m_data before a rising edge, then exercise m_we low while changing address and data.",
+      "expected": "Only a rising edge with m_we high writes m_data at m_addr. Reset does not initialize the input memory.",
+      "sampling": "Relate each write to the active rising edge and observe effects only after the write edge.",
+      "checker": "Use an independent history of enabled input writes and compare the resulting complete settled FFT output frame. Input RAM has no direct read port; do not require direct readback."
+    },
+    {
+      "obligation_id": "O-FFT-002",
+      "requirement_ids": [
+        "R-dv-055-002"
+      ],
+      "description": "Registered output read and hold",
+      "setup": "First establish a complete settled frame so the selected output word is known.",
+      "stimulus": "Request selected s_addr values with s_re high, then lower s_re while changing s_addr.",
+      "expected": "The requested word is registered at the rising edge and appears after that edge; with s_re low, s_data holds its prior value.",
+      "sampling": "Sample after the rising edge for an enabled read and after the next rising edge to check hold behavior.",
+      "checker": "Compare against a value predicted from the selected output history and report any mismatch or unknown in a valid comparison window."
+    },
+    {
+      "obligation_id": "O-FFT-003",
+      "requirement_ids": [
+        "R-dv-055-003"
+      ],
+      "description": "Fixed profile and continuous core operation",
+      "setup": "Use the fixed default wrapper configuration and legal reset/write/read history.",
+      "stimulus": "Run the clock continuously through frame writes, settling, and reads without assuming an external start or completion handshake. After reading a known value, assert reset with s_re=0, change s_addr, release reset, rewrite the full input frame and wait 20 rising edges.",
+      "expected": "The selected profile is DIVISOR=5, N=16, Q=8, ADDR_WIDTH=5, DATA_WIDTH=16, DEPTH=32; the core operates continuously and exposes no start, ready, or done. rst is asynchronous active-high; neither RAM is initialized. With s_re=0, reset does not clear s_data.",
+      "sampling": "Check profile-dependent behavior only through the public interface over the settled frame window.",
+      "checker": "Use public-interface observations and reject reliance on nonexistent handshake signals. Compare the held output to an independent retained model value during reset and compare the rewritten settled frame afterward."
+    },
+    {
+      "obligation_id": "O-FFT-004",
+      "requirement_ids": [
+        "R-dv-055-004"
+      ],
+      "description": "Stable-frame fixed-point transform",
+      "setup": "Write exactly one known value to every input address 0 through 31 after reset; then stop writes and preserve a stable input frame.",
+      "stimulus": "Exercise distinguishing complete frames, including zero, an impulse, seeded full-range samples, and alternating signed rails; allow at least 20 rising edges with no write and request all 32 output addresses.",
+      "expected": "Use the public coefficient table, bit-reversed input order, separately truncated Q8.8 products, 16-bit wraparound for each addition/subtraction, natural frequency order, and {real[15:0],imaginary[15:0]} packing.",
+      "sampling": "Compare each registered s_data after its request rising edge, only after the complete-frame settling interval.",
+      "checker": "Compute expected values independently from input history; actively reject unknown data and every 32-bit mismatch. Do not derive expected values from DUT outputs."
+    }
+  ],
+  "stimulus_criteria": {
+    "O-FFT-001": [
+      {
+        "criterion_id": "O-FFT-001-write",
+        "description": "Exercise enabled writes at known addresses and disabled cycles with changing address/data."
+      },
+      {
+        "criterion_id": "O-FFT-001-reset",
+        "description": "Do not assume reset initializes input memory; establish all data used by later checks through legal writes."
+      }
+    ],
+    "O-FFT-002": [
+      {
+        "criterion_id": "O-FFT-002-request",
+        "description": "Assert s_re for registered reads at selected addresses after the frame is valid."
+      },
+      {
+        "criterion_id": "O-FFT-002-hold",
+        "description": "Deassert s_re while changing s_addr and check that s_data holds."
+      }
+    ],
+    "O-FFT-003": [
+      {
+        "criterion_id": "O-FFT-003-profile",
+        "description": "Use the fixed default profile and exercise the complete 32-address public interface."
+      },
+      {
+        "criterion_id": "O-FFT-003-continuous",
+        "description": "Run without relying on start, ready, or done signals."
+      },
+      {
+        "criterion_id": "O-FFT-003-reset",
+        "description": "Assert reset after a known read with s_re low; check hold and rewrite a full frame before new numeric checks."
+      }
+    ],
+    "O-FFT-004": [
+      {
+        "criterion_id": "O-FFT-004-frame",
+        "description": "Write a complete legal frame with values that distinguish transform behavior."
+      },
+      {
+        "criterion_id": "O-FFT-004-settle",
+        "description": "Stop writes and wait at least 20 rising edges before checking output."
+      },
+      {
+        "criterion_id": "O-FFT-004-all-outputs",
+        "description": "Read and check all 32 output addresses."
+      }
+    ]
+  },
+  "claim_impact_components": {
+    "O-FFT-001": [
+      "setup",
+      "stimulus",
+      "expected",
+      "sampling",
+      "checker"
+    ],
+    "O-FFT-002": [
+      "setup",
+      "stimulus",
+      "expected",
+      "sampling",
+      "checker"
+    ],
+    "O-FFT-003": [
+      "setup",
+      "stimulus",
+      "expected",
+      "sampling",
+      "checker"
+    ],
+    "O-FFT-004": [
+      "setup",
+      "stimulus",
+      "expected",
+      "sampling",
+      "checker"
+    ],
+    "self_reference": [
+      "expected",
+      "checker"
+    ],
+    "ineffective_checker": [
+      "checker"
+    ]
+  },
+  "issue_codes": [
+    "missing_setup",
+    "insufficient_stimulus",
+    "wrong_expected",
+    "invalid_sampling",
+    "ineffective_checker",
+    "self_reference",
+    "illegal_history",
+    "scope_error"
+  ],
+  "issue_grade_caps": {
+    "missing_setup": {
+      "setup": 0
+    },
+    "insufficient_stimulus": {
+      "stimulus": 0
+    },
+    "wrong_expected": {
+      "expected": 0
+    },
+    "invalid_sampling": {
+      "sampling": 0
+    },
+    "ineffective_checker": {
+      "checker": 0
+    },
+    "self_reference": {
+      "checker": 0
+    },
+    "illegal_history": {
+      "setup": 0,
+      "stimulus": 0
+    },
+    "scope_error": {
+      "setup": 0
+    }
+  },
+  "scoring": "Fixed obligations; each obligation grade is the minimum of setup, stimulus, expected, sampling, and checker, with stimulus coverage derived from every listed criterion. Claims are separately deduplicated and checked against the public spec."
+}

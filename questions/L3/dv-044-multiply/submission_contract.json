@@ -1,0 +1,139 @@
+{
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "self_contained": true
+  },
+  "prohibited": [
+    "hidden hierarchy",
+    "force/release",
+    "DPI",
+    "file/OS/network probes"
+  ],
+  "top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "dut_top": "multiply",
+  "submission_format": "public/submission_format.md",
+  "json_is_complete_fact_carrier": true,
+  "native_parameter_matrix": [
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 31,
+      "DROP_TOP_P": 1,
+      "LATENCY": 3,
+      "EN_SATURATE": 0,
+      "EN_ROUND": 0,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 31,
+      "DROP_TOP_P": 1,
+      "LATENCY": 0,
+      "EN_SATURATE": 0,
+      "EN_ROUND": 0,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 31,
+      "DROP_TOP_P": 1,
+      "LATENCY": 4,
+      "EN_SATURATE": 0,
+      "EN_ROUND": 0,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 16,
+      "DROP_TOP_P": 1,
+      "LATENCY": 3,
+      "EN_SATURATE": 0,
+      "EN_ROUND": 1,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 16,
+      "DROP_TOP_P": 1,
+      "LATENCY": 3,
+      "EN_SATURATE": 1,
+      "EN_ROUND": 0,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 16,
+      "DROP_TOP_P": 1,
+      "LATENCY": 1,
+      "EN_SATURATE": 1,
+      "EN_ROUND": 1,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 32,
+      "DROP_TOP_P": 0,
+      "LATENCY": 2,
+      "EN_SATURATE": 0,
+      "EN_ROUND": 0,
+      "SIGNED": 0
+    },
+    {
+      "WIDTH_A": 8,
+      "WIDTH_B": 12,
+      "WIDTH_P": 20,
+      "DROP_TOP_P": 0,
+      "LATENCY": 1,
+      "EN_SATURATE": 0,
+      "EN_ROUND": 0,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 31,
+      "DROP_TOP_P": 1,
+      "LATENCY": 3,
+      "EN_SATURATE": 0,
+      "EN_ROUND": 1,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 31,
+      "DROP_TOP_P": 1,
+      "LATENCY": 3,
+      "EN_SATURATE": 1,
+      "EN_ROUND": 1,
+      "SIGNED": 1
+    }
+  ],
+  "task_id": "dv-044",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

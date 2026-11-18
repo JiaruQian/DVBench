@@ -1,0 +1,78 @@
+{
+  "ports": [
+    {
+      "name": "cq_rd_pd",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "cq_rd_prdy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "cq_rd_pvld",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "cq_wr_pd",
+      "direction": "In",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "cq_wr_prdy",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "cq_wr_pvld",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "nvdla_core_clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "nvdla_core_rstn",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "pwrbus_ram_pd",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    }
+  ],
+  "parameters": {},
+  "parser": "manual declaration audit against original source lines43-51"
+}

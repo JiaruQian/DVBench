@@ -1,0 +1,30 @@
+# Dual-clock FIFO black-box specification
+
+The native top level under test is `fifo`, with fixed parameters `ADDR=16` and `BIT_WIDTH=8`. This task covers only this FIFO and its internal dependencies; the standalone UART top level in the same source directory is outside the scope of this task.
+
+The following "logical write position" and "logical read position" are merely positions defined by the accepted input history; both start at 0, increment by one for each advance, and use modulo 16 for addresses and equality relationships. They are not internal signals readable by the candidate. Do not equate this task with a standard asynchronous FIFO using synchronized pointers.
+
+### R-dv-023-fifo-001 — Reset and status
+
+rst is asynchronous and active high; upon assertion, full is 0, empty is 1, and both logical positions return to their starting points. After reset is released, operation follows subsequent clocks and requests. Reset empties the logical queue but does not clear storage contents; keep we and re at 0 during reset.
+
+### R-dv-023-fifo-002 — Writes and rejection when full
+
+On each w_clk rising edge, evaluate the we request using the pre-edge full value; when we is 1 and full is 0, accept wdata and advance the logical write position; otherwise, do not write or advance. The capacity is 16 8-bit data items, and positions wrap modulo 16. After 16 consecutive accepted writes without any advance of the read position, full becomes 1; additional writes while full must not overwrite stored data.
+
+### R-dv-023-fifo-003 — Reads and rejection when empty
+
+On each r_clk rising edge, evaluate the re request using the pre-edge empty value; when re is 1 and empty is 0, advance the logical read position by one item; otherwise, hold it. rdata combinationally reflects the data at the current logical read position; it is not registered on the r_clk edge and is not gated by re. When empty is 0 and that slot has been written, its value must equal the data from the corresponding most recent accepted write; no valid-value guarantee is made for data in the empty state or in unwritten slots.
+
+### R-dv-023-fifo-004 — Write-clock-domain status updates
+
+full and empty update only on w_clk rising edges or asynchronous reset; an r_clk edge alone does not directly update either flag. When we and re are both 0, the flags hold. When only we is 1, clear empty if the write is accepted; compare this edge's candidate write position with the current read position modulo 16, set full if they are equal, and otherwise retain the original full. When only re is 1, clear full if nonempty before the edge; compare the current write position with the candidate read position calculated from pre-edge empty and re modulo 16, set empty if they are equal, and otherwise retain the original empty. Here, the candidate read position anticipates one acceptable read request, even if there is no r_clk rising edge at this time; the actual read position still advances only on r_clk rising edges.
+
+### R-dv-023-fifo-005 — Boundary priority for simultaneous requests
+
+When we and re are both 1: if full before the edge, only the read position is allowed to advance on the r_clk edge, the write is rejected, and full is cleared on the w_clk edge; if empty before the edge, only the write position is allowed to advance on the w_clk edge, the read is rejected, and empty is cleared on the w_clk edge; if neither full nor empty, each side advances on its own rising edge, while full and empty hold. If both clocks rise simultaneously, every decision uses the pre-edge status and logical positions at that same instant, not values newly updated by the other clock at that instant.
+
+### R-dv-023-fifo-006 — Independent clocks and observation window
+
+w_clk and r_clk may operate independently; inputs are stable before and after the relevant sampling edges, and port comparisons are performed after the status and combinational outputs have settled within the same time step. The behavior specified here is ideal digital timing behavior; CDC synchronization, metastability tolerance, or latency guarantees of a standard asynchronous FIFO are not required. The above update rules for full and empty apply to different frequencies, phases, and coincident rising edges.
+

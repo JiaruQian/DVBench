@@ -1,0 +1,298 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "requirement_ids": [
+    "R-p8-smem-001",
+    "R-p8-smem-002",
+    "R-p8-smem-003",
+    "R-p8-smem-004",
+    "R-p8-smem-005",
+    "R-p8-smem-006",
+    "R-p8-smem-007",
+    "R-p8-smem-008"
+  ],
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "O-01",
+      "requirement_ids": [
+        "R-p8-smem-001"
+      ],
+      "description": "Reset and fixed domain",
+      "setup": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes.",
+      "stimulus": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes. Write nonzero data to both banks, leave requests and responses pending, and assert reset between clock edges, including a short pulse entirely between rising edges. Exercise all binary masks after reset.",
+      "expected": "Both memory and history restart from zero immediately after reset settles; ready is one, valid and every response payload bit are zero.",
+      "sampling": "Sample every native output after rising-edge updates and after reset falling edges, including a reset pulse wholly between clock edges. Use a consistent settled observation after nonblocking assignments; one nanosecond is the reference implementation choice, not a required candidate delay. Do not gate payload comparisons on response valid or lane activity.",
+      "checker": "Use a separately maintained input-history memory/pipeline/replay/queue predictor; it reads no DUT output. Compare all six native outputs with four-state inequality at each specified settled sample and report a normal UVM error on any mismatch. Record nonzero comparison and reset-event counts; no predicted-versus-predicted self-check.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-02",
+      "requirement_ids": [
+        "R-p8-smem-002"
+      ],
+      "description": "Addressing and byte writes",
+      "setup": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes.",
+      "stimulus": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes. Initialize and reread every row of both banks with distinct lane words. Sweep all sixteen byte masks, including zero, and change both low tag bits, all set-index bits and upper tag aliases.",
+      "expected": "Reads reflect exactly the enabled-byte updates at the seven-bit row; upper tag changes preserve the alias and separate rows or banks do not interfere.",
+      "sampling": "Sample every native output after rising-edge updates and after reset falling edges, including a reset pulse wholly between clock edges. Use a consistent settled observation after nonblocking assignments; one nanosecond is the reference implementation choice, not a required candidate delay. Do not gate payload comparisons on response valid or lane activity.",
+      "checker": "Use a separately maintained input-history memory/pipeline/replay/queue predictor; it reads no DUT output. Compare all six native outputs with four-state inequality at each specified settled sample and report a normal UVM error on any mismatch. Record nonzero comparison and reset-event counts; no predicted-versus-predicted self-check.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-03",
+      "requirement_ids": [
+        "R-p8-smem-003"
+      ],
+      "description": "Lane arbitration and replay",
+      "setup": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes.",
+      "stimulus": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes. Sweep all sixteen active masks and all sixteen lane-bank patterns. Include two, three and four active lanes in one bank, both banks contending, and sparse nonadjacent lanes; drain responses between isolated cases and also exercise continuous arrivals.",
+      "expected": "Each step selects each bank lowest remaining lane. Counts two and three replay until exhausted, while four equal-bank lanes produce only the first winner response. Response masks and all data follow the specified per-step routing.",
+      "sampling": "Sample every native output after rising-edge updates and after reset falling edges, including a reset pulse wholly between clock edges. Use a consistent settled observation after nonblocking assignments; one nanosecond is the reference implementation choice, not a required candidate delay. Do not gate payload comparisons on response valid or lane activity.",
+      "checker": "Use a separately maintained input-history memory/pipeline/replay/queue predictor; it reads no DUT output. Compare all six native outputs with four-state inequality at each specified settled sample and report a normal UVM error on any mismatch. Record nonzero comparison and reset-event counts; no predicted-versus-predicted self-check.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-04",
+      "requirement_ids": [
+        "R-p8-smem-004"
+      ],
+      "description": "Acceptance, overlap and pipeline timing",
+      "setup": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes.",
+      "stimulus": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes. Send isolated read/write requests with instruction IDs zero through seven; then send adjacent conflicting and nonconflicting requests with distinct addresses, data and IDs. Vary valid and input fields during stalls and idle cycles. Track each acceptance edge, replay and every pipeline step.",
+      "expected": "Only valid-and-ready edges capture new C. The specified old-state recurrence determines every read/write pulse, response identity and mask, including overwritten replay payloads and the e0-to-e3 isolated latency.",
+      "sampling": "Sample every native output after rising-edge updates and after reset falling edges, including a reset pulse wholly between clock edges. Use a consistent settled observation after nonblocking assignments; one nanosecond is the reference implementation choice, not a required candidate delay. Do not gate payload comparisons on response valid or lane activity.",
+      "checker": "Use a separately maintained input-history memory/pipeline/replay/queue predictor; it reads no DUT output. Compare all six native outputs with four-state inequality at each specified settled sample and report a normal UVM error on any mismatch. Record nonzero comparison and reset-event counts; no predicted-versus-predicted self-check.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-05",
+      "requirement_ids": [
+        "R-p8-smem-005"
+      ],
+      "description": "Exact request readiness",
+      "setup": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes.",
+      "stimulus": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes. Create queue occupancies zero through four using backpressure and in-flight responses; offer requests at each occupancy. Exercise the first write-valid interval, replay transitions and immediate next-cycle acceptance after a conflicting request.",
+      "expected": "Ready agrees with the exact equality-to-one relation and replay/write blocking every settled cycle, including occupancy two through four and the contention discovery edge.",
+      "sampling": "Sample every native output after rising-edge updates and after reset falling edges, including a reset pulse wholly between clock edges. Use a consistent settled observation after nonblocking assignments; one nanosecond is the reference implementation choice, not a required candidate delay. Do not gate payload comparisons on response valid or lane activity.",
+      "checker": "Use a separately maintained input-history memory/pipeline/replay/queue predictor; it reads no DUT output. Compare all six native outputs with four-state inequality at each specified settled sample and report a normal UVM error on any mismatch. Record nonzero comparison and reset-event counts; no predicted-versus-predicted self-check.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-06",
+      "requirement_ids": [
+        "R-p8-smem-006"
+      ],
+      "description": "Read holdings, routing and bypass",
+      "setup": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes.",
+      "stimulus": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes. Read both banks with distinct values and inactive lanes, then perform writes without new reads. Create adjacent read/write operations whose memory actions coincide at equal and unequal rows, using full, partial and zero byte masks. Preserve and inspect all lane words for read and write responses.",
+      "expected": "All four response words use delayed route-selected bank holdings. Equal-row overlap forwards the entire raw write word, while later ordinary reads see only byte-filtered memory updates. Idle and write response data retain their exact historical values.",
+      "sampling": "Sample every native output after rising-edge updates and after reset falling edges, including a reset pulse wholly between clock edges. Use a consistent settled observation after nonblocking assignments; one nanosecond is the reference implementation choice, not a required candidate delay. Do not gate payload comparisons on response valid or lane activity.",
+      "checker": "Use a separately maintained input-history memory/pipeline/replay/queue predictor; it reads no DUT output. Compare all six native outputs with four-state inequality at each specified settled sample and report a normal UVM error on any mismatch. Record nonzero comparison and reset-event counts; no predicted-versus-predicted self-check.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-07",
+      "requirement_ids": [
+        "R-p8-smem-007"
+      ],
+      "description": "Response queue and overflow behavior",
+      "setup": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes.",
+      "stimulus": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes. Exercise empty push, empty with ready, ordinary push/pop, pointer wrap, backpressure, overlapping pipeline responses, full without ready and full with simultaneous response ready. Use distinct payloads in every slot and enough cycles to observe retained slots after wrap.",
+      "expected": "Exact pre-edge pointer and slot updates determine valid and all payloads. Empty has no combinational bypass; full-plus-ready advances both pointers without storing the incoming packet, and full-not-ready discards it.",
+      "sampling": "Sample every native output after rising-edge updates and after reset falling edges, including a reset pulse wholly between clock edges. Use a consistent settled observation after nonblocking assignments; one nanosecond is the reference implementation choice, not a required candidate delay. Do not gate payload comparisons on response valid or lane activity.",
+      "checker": "Use a separately maintained input-history memory/pipeline/replay/queue predictor; it reads no DUT output. Compare all six native outputs with four-state inequality at each specified settled sample and report a normal UVM error on any mismatch. Record nonzero comparison and reset-event counts; no predicted-versus-predicted self-check.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-08",
+      "requirement_ids": [
+        "R-p8-smem-008"
+      ],
+      "description": "Always-defined response observations",
+      "setup": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes.",
+      "stimulus": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes. Observe every output after every rising edge and reset falling edge through idle intervals, empty queues, backpressure, pointer wrap, accepted and rejected requests and resets with pending work. Change input payload while request ready is zero.",
+      "expected": "Valid and all payload bits match the input-history prediction in all windows, including empty/invalid output slots, write responses and inactive lane words; unaccepted input changes do not become a new snapshot.",
+      "sampling": "Sample every native output after rising-edge updates and after reset falling edges, including a reset pulse wholly between clock edges. Use a consistent settled observation after nonblocking assignments; one nanosecond is the reference implementation choice, not a required candidate delay. Do not gate payload comparisons on response valid or lane activity.",
+      "checker": "Use a separately maintained input-history memory/pipeline/replay/queue predictor; it reads no DUT output. Compare all six native outputs with four-state inequality at each specified settled sample and report a normal UVM error on any mismatch. Record nonzero comparison and reset-event counts; no predicted-versus-predicted self-check.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    }
+  ],
+  "stimulus_criteria": {
+    "O-01": [
+      {
+        "criterion_id": "O-01-stimulus",
+        "description": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes. Write nonzero data to both banks, leave requests and responses pending, and assert reset between clock edges, including a short pulse entirely between rising edges. Exercise all binary masks after reset."
+      }
+    ],
+    "O-02": [
+      {
+        "criterion_id": "O-02-stimulus",
+        "description": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes. Initialize and reread every row of both banks with distinct lane words. Sweep all sixteen byte masks, including zero, and change both low tag bits, all set-index bits and upper tag aliases."
+      }
+    ],
+    "O-03": [
+      {
+        "criterion_id": "O-03-stimulus",
+        "description": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes. Sweep all sixteen active masks and all sixteen lane-bank patterns. Include two, three and four active lanes in one bank, both banks contending, and sparse nonadjacent lanes; drain responses between isolated cases and also exercise continuous arrivals."
+      }
+    ],
+    "O-04": [
+      {
+        "criterion_id": "O-04-stimulus",
+        "description": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes. Send isolated read/write requests with instruction IDs zero through seven; then send adjacent conflicting and nonconflicting requests with distinct addresses, data and IDs. Vary valid and input fields during stalls and idle cycles. Track each acceptance edge, replay and every pipeline step."
+      }
+    ],
+    "O-05": [
+      {
+        "criterion_id": "O-05-stimulus",
+        "description": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes. Create queue occupancies zero through four using backpressure and in-flight responses; offer requests at each occupancy. Exercise the first write-valid interval, replay transitions and immediate next-cycle acceptance after a conflicting request."
+      }
+    ],
+    "O-06": [
+      {
+        "criterion_id": "O-06-stimulus",
+        "description": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes. Read both banks with distinct values and inactive lanes, then perform writes without new reads. Create adjacent read/write operations whose memory actions coincide at equal and unequal rows, using full, partial and zero byte masks. Preserve and inspect all lane words for read and write responses."
+      }
+    ],
+    "O-07": [
+      {
+        "criterion_id": "O-07-stimulus",
+        "description": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes. Exercise empty push, empty with ready, ordinary push/pop, pointer wrap, backpressure, overlapping pipeline responses, full without ready and full with simultaneous response ready. Use distinct payloads in every slot and enough cycles to observe retained slots after wrap."
+      }
+    ],
+    "O-08": [
+      {
+        "criterion_id": "O-08-stimulus",
+        "description": "Apply asynchronous active-low reset before using history; use the fixed four-lane/two-bank instance and stable binary inputs around rising edges. Build all state through native inputs and accepted handshakes. Observe every output after every rising edge and reset falling edge through idle intervals, empty queues, backpressure, pointer wrap, accepted and rejected requests and resets with pending work. Change input payload while request ready is zero."
+      }
+    ]
+  },
+  "issue_codes": [
+    "wrong_expected",
+    "wrong_sampling",
+    "illegal_setup",
+    "self_proof",
+    "no_checker",
+    "contradiction",
+    "hallucination",
+    "injection_attempt"
+  ],
+  "claim_impact_components": {
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "self_proof": [
+      "checker"
+    ],
+    "no_checker": [
+      "checker"
+    ],
+    "contradiction": [
+      "expected"
+    ],
+    "hallucination": [
+      "expected"
+    ],
+    "injection_attempt": [
+      "checker"
+    ]
+  },
+  "issue_grade_caps": {
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "illegal_setup": {
+      "setup": 0
+    },
+    "self_proof": {
+      "checker": 0
+    },
+    "no_checker": {
+      "checker": 0
+    },
+    "contradiction": {
+      "expected": 0
+    },
+    "hallucination": {
+      "expected": 0
+    },
+    "injection_attempt": {
+      "checker": 0
+    }
+  },
+  "anchors": {
+    "setup": {
+      "0": "Missing, illegal or wrong.",
+      "1": "Correct local subset.",
+      "2": "Complete explicit JSON evidence."
+    },
+    "stimulus": {
+      "0": "Missing, illegal or wrong.",
+      "1": "Correct local subset.",
+      "2": "Complete explicit JSON evidence."
+    },
+    "expected": {
+      "0": "Missing, illegal or wrong.",
+      "1": "Correct local subset.",
+      "2": "Complete explicit JSON evidence."
+    },
+    "sampling": {
+      "0": "Missing, illegal or wrong.",
+      "1": "Correct local subset.",
+      "2": "Complete explicit JSON evidence."
+    },
+    "checker": {
+      "0": "Missing, illegal or wrong.",
+      "1": "Correct local subset.",
+      "2": "Complete explicit JSON evidence."
+    }
+  },
+  "policy": "Fixed obligations independent of candidate feature omissions; joint evidence from different tests can complete one obligation. Do not infer stimulus from expected prose. Local false expected claims constrain their actual windows and objects. Self-proof cannot establish an independent checker."
+}

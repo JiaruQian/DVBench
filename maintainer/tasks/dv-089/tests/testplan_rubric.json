@@ -1,0 +1,376 @@
+{
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "method": "natural_language_testplan_semantic_judge",
+  "issue_codes": [
+    "wrong_expected",
+    "wrong_sampling",
+    "illegal_setup",
+    "self_proof",
+    "no_checker",
+    "contradiction",
+    "narrow_stimulus",
+    "injection_attempt",
+    "hallucination"
+  ],
+  "issue_grade_caps": {
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "illegal_setup": {
+      "setup": 0
+    },
+    "self_proof": {
+      "checker": 0
+    },
+    "no_checker": {
+      "checker": 0
+    },
+    "contradiction": {
+      "expected": 0
+    },
+    "hallucination": {
+      "expected": 0
+    }
+  },
+  "claim_impact_components": {
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "self_proof": [
+      "checker"
+    ],
+    "no_checker": [
+      "checker"
+    ],
+    "contradiction": [
+      "expected"
+    ],
+    "hallucination": [
+      "expected"
+    ]
+  },
+  "anchors": {
+    "setup": {
+      "0": "Missing or explicitly incorrect; a self-validating checker or one that always passes scores 0.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific, with JSON evidence."
+    },
+    "stimulus": {
+      "0": "Missing or explicitly incorrect; a self-validating checker or one that always passes scores 0.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific, with JSON evidence."
+    },
+    "expected": {
+      "0": "Missing or explicitly incorrect; a self-validating checker or one that always passes scores 0.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific, with JSON evidence."
+    },
+    "sampling": {
+      "0": "Missing or explicitly incorrect; a self-validating checker or one that always passes scores 0.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific, with JSON evidence."
+    },
+    "checker": {
+      "0": "Missing or explicitly incorrect; a self-validating checker or one that always passes scores 0.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific, with JSON evidence."
+    }
+  },
+  "requirement_ids": [
+    "R-dv-089-001",
+    "R-dv-089-002",
+    "R-dv-089-003",
+    "R-dv-089-004",
+    "R-dv-089-005",
+    "R-dv-089-006",
+    "R-dv-089-007",
+    "R-dv-089-008",
+    "R-dv-089-009",
+    "R-dv-089-010",
+    "R-dv-089-011",
+    "R-dv-089-012"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "O-1",
+      "requirement_ids": [
+        "R-dv-089-001"
+      ],
+      "description": "Clock, synchronous reset, and validity domains",
+      "setup": "First set rst_i=1 between edges, hold it across 3 rising edges, then release it on a falling edge; also insert short pulses that do not span a rising edge and resets that span an edge during operation.",
+      "stimulus": "Apply resets spanning an edge separately at power-up, during instruction-fetch waits, during data waits, and in the halted state; short pulses occur only between two rising edges.",
+      "expected": "The input-history model accepts reset only on rising edges, expecting the next fetch address to be 0, no pending responses, and halt/trace cleared; short pulses do not clear existing state.",
+      "sampling": "Accept before the rising edge and sample valid ports stably 1ns after the edge; observe synchronous-reset short pulses between edges.",
+      "checker": "Use an input-history interpreter or independent relational prediction, compare valid ports using four-state logic, and report errors; use activity counts to prevent vacuity."
+    },
+    {
+      "obligation_id": "O-2",
+      "requirement_ids": [
+        "R-dv-089-002"
+      ],
+      "description": "Instruction-fetch requests, responses, and backpressure",
+      "setup": "Start from reset address 0 and maintain the address of each accepted request using an external program image.",
+      "stimulus": "Alternate ready between 0 and 1, delay responses by 1 to 6 cycles, hold responses until ready, and continuously execute ordinary instructions with different encodings.",
+      "expected": "An independent transaction scheduler calculates request addresses, waiting/buffering, and advancement times; compare valid/ready cycle by cycle, compare addresses at handshakes, and check for duplicate acceptance or lost instructions.",
+      "sampling": "Accept before the rising edge and sample valid ports stably 1ns after the edge; observe synchronous-reset short pulses between edges.",
+      "checker": "Use an input-history interpreter or independent relational prediction, compare valid ports using four-state logic, and report errors; use activity counts to prevent vacuity."
+    },
+    {
+      "obligation_id": "O-3",
+      "requirement_ids": [
+        "R-dv-089-003"
+      ],
+      "description": "Custom encodings, registers, and ALU",
+      "setup": "Use legal immediates and LUI to establish zero, positive numbers, negative numbers, the highest bit, and all-ones patterns; subsequent STORE instructions output the computation results onto the native data bus.",
+      "stimulus": "Execute all 15 R-type instructions, 7 I-type instructions, and LUI, covering shifts by 0/15/16/31, 32-bit overflow, equality/inequality, signed and unsigned ordering, writes to r0, and reads from r0.",
+      "expected": "An independent integer arithmetic interpreter calculates the register image and subsequent STORE data, checking the PC and original instruction for each retire; it does not read internal registers.",
+      "sampling": "Accept before the rising edge and sample valid ports stably 1ns after the edge; observe synchronous-reset short pulses between edges.",
+      "checker": "Use an input-history interpreter or independent relational prediction, compare valid ports using four-state logic, and report errors; use activity counts to prevent vacuity."
+    },
+    {
+      "obligation_id": "O-4",
+      "requirement_ids": [
+        "R-dv-089-004"
+      ],
+      "description": "Loads and stores",
+      "setup": "Initialize the external data memory image with patterns such as 80FF807F and FEDCBA98; establish base address 4096 through the program.",
+      "stimulus": "Five load types, three store widths, byte offsets 0..3, legal halfword offsets 0/2, negative offsets, overwriting and readback, and immediate use after a load.",
+      "expected": "An independent byte array calculates addresses, strobes, write data, and extended values; observe load results externally through STORE instructions following loads, and compare all valid data requests.",
+      "sampling": "Accept before the rising edge and sample valid ports stably 1ns after the edge; observe synchronous-reset short pulses between edges.",
+      "checker": "Use an input-history interpreter or independent relational prediction, compare valid ports using four-state logic, and report errors; use activity counts to prevent vacuity."
+    },
+    {
+      "obligation_id": "O-5",
+      "requirement_ids": [
+        "R-dv-089-005"
+      ],
+      "description": "Data handshakes, blocking, and dependencies",
+      "setup": "The program executes a LOAD, an immediately dependent ALU instruction, and a STORE, and also executes a CSR instruction followed by a dependent instruction; externally delay data responses.",
+      "stimulus": "Request backpressure of 1 to 5 cycles, response delays of 1 to 10 cycles, dependencies on rs1 and rs2, nondependent instructions, and same-cycle response/subsequent advancement.",
+      "expected": "The independent interpreter updates the architectural image on completion events, then schedules dependent execution; compare complete request payloads and retire times, without substituting coverage hits for checking.",
+      "sampling": "Accept before the rising edge and sample valid ports stably 1ns after the edge; observe synchronous-reset short pulses between edges.",
+      "checker": "Use an input-history interpreter or independent relational prediction, compare valid ports using four-state logic, and report errors; use activity counts to prevent vacuity."
+    },
+    {
+      "obligation_id": "O-6",
+      "requirement_ids": [
+        "R-dv-089-006"
+      ],
+      "description": "Branches, jumps, and links",
+      "setup": "Establish equal operands, positive and negative operands, and operands with reversed unsigned ordering; place recognizable side effects at skipped locations, and output link values through STORE.",
+      "stimulus": "Taken/not-taken outcomes for six branch types, positive and negative offsets, J/JAL/JR/JALR, link rd boundaries, and aligned and misaligned jump targets.",
+      "expected": "An independent ISA interpreter calculates the next PC, link values, and exceptions; compare fetch addresses, retirement sequences, and valid STORE operations, confirming that flushed instructions have no side effects.",
+      "sampling": "Accept before the rising edge and sample valid ports stably 1ns after the edge; observe synchronous-reset short pulses between edges.",
+      "checker": "Use an input-history interpreter or independent relational prediction, compare valid ports using four-state logic, and report errors; use activity counts to prevent vacuity."
+    },
+    {
+      "obligation_id": "O-7",
+      "requirement_ids": [
+        "R-dv-089-007"
+      ],
+      "description": "Redirects, stale responses, and commit",
+      "setup": "Keep one instruction-fetch response delayed before a branch, HALT, or exception so that it spans the redirect.",
+      "stimulus": "Redirect separately before the response arrives and in the same cycle as its arrival, while the external side still returns the old response normally; place a different program at the target.",
+      "expected": "Request generation tags from input history determine response validity and independently predict the commit sequence; confirm cycle by cycle that no stale instruction produces retire/STORE.",
+      "sampling": "Accept before the rising edge and sample valid ports stably 1ns after the edge; observe synchronous-reset short pulses between edges.",
+      "checker": "Use an input-history interpreter or independent relational prediction, compare valid ports using four-state logic, and report errors; use activity counts to prevent vacuity."
+    },
+    {
+      "obligation_id": "O-8",
+      "requirement_ids": [
+        "R-dv-089-008"
+      ],
+      "description": "Illegal instructions, instruction-fetch errors, and alignment exceptions",
+      "setup": "First set tvec, then, through a legal peer, separately return an illegal encoding, an instruction-fetch error, and a misaligned operation.",
+      "stimulus": "Single errors and combinations of instruction-fetch error with legal misaligned/trap encodings; different low address bits for byte/halfword/word accesses.",
+      "expected": "The interpreter calculates priority and cause/badaddr/EPC from input encodings/error bits, compares trap cycle by cycle, and confirms that the instruction produces no retire/data side effects.",
+      "sampling": "Accept before the rising edge and sample valid ports stably 1ns after the edge; observe synchronous-reset short pulses between edges.",
+      "checker": "Use an input-history interpreter or independent relational prediction, compare valid ports using four-state logic, and report errors; use activity counts to prevent vacuity."
+    },
+    {
+      "obligation_id": "O-9",
+      "requirement_ids": [
+        "R-dv-089-009"
+      ],
+      "description": "Data bus errors",
+      "setup": "Issue a LOAD or STORE at a legal aligned address, and externally record the handshake.",
+      "stimulus": "Return error separately for reads and writes, covering delayed errors after backpressure and alternating normal/error responses.",
+      "expected": "At the actual response acceptance edge, compare cause5/7, the original address, absence of retire, and redirection; the subsequent program confirms through STORE that no erroneous load writeback occurred.",
+      "sampling": "Accept before the rising edge and sample valid ports stably 1ns after the edge; observe synchronous-reset short pulses between edges.",
+      "checker": "Use an input-history interpreter or independent relational prediction, compare valid ports using four-state logic, and report errors; use activity counts to prevent vacuity."
+    },
+    {
+      "obligation_id": "O-10",
+      "requirement_ids": [
+        "R-dv-089-010"
+      ],
+      "description": "System encodings, CSRs, and counters",
+      "setup": "Establish a known CSR/counter mirror from reset, configure it through CSRW, and read it out using CSRR+STORE.",
+      "stimulus": "All 11 read addresses, 4 write addresses, illegal reads and writes, misaligned EPC/tvec inputs, differences between cycle and instret, and r0 as the destination register.",
+      "expected": "The independent image accumulates on each cycle and on successful completion; compare externally exposed STORE data and illegal-access exceptions, without reading internal CSRs.",
+      "sampling": "Accept before the rising edge and sample valid ports stably 1ns after the edge; observe synchronous-reset short pulses between edges.",
+      "checker": "Use an input-history interpreter or independent relational prediction, compare valid ports using four-state logic, and report errors; use activity counts to prevent vacuity."
+    },
+    {
+      "obligation_id": "O-11",
+      "requirement_ids": [
+        "R-dv-089-011"
+      ],
+      "description": "Trap entry, MRET, and status priority",
+      "setup": "Set tvec; the handler reads EPC/cause/status through CSRR and performs STORE, then modifies EPC and uses MRET to return to the specified continuation address.",
+      "stimulus": "EBREAK, TRAP with different immediates, combinations of software traps and IE, MRET round trips, EI/DI, and CSR writes.",
+      "expected": "An independent state stack calculates EPC/IE/MPIE, targets, and counters; check that traps do not retire, that MRET retires, and that the restored address is correct.",
+      "sampling": "Accept before the rising edge and sample valid ports stably 1ns after the edge; observe synchronous-reset short pulses between edges.",
+      "checker": "Use an input-history interpreter or independent relational prediction, compare valid ports using four-state logic, and report errors; use activity counts to prevent vacuity."
+    },
+    {
+      "obligation_id": "O-12",
+      "requirement_ids": [
+        "R-dv-089-012"
+      ],
+      "description": "Interrupts and HALT recovery",
+      "setup": "Configure tvec and the handler, execute HALT with IE=0/1 separately, and also inject IRQ during ordinary/system instructions and data waits.",
+      "stimulus": "timer, external, both simultaneously, wakeup from halt, remaining halted without enable, interrupts in the same cycle as retire, and synchronous trap/MRET/HALT priority.",
+      "expected": "Independent transaction history determines the oldest unexecuted PC and the state stack; compare trap/cause, whether halted, the fetch target, and concurrency with retire; the handler reads back EPC through CSR.",
+      "sampling": "Accept before the rising edge and sample valid ports stably 1ns after the edge; observe synchronous-reset short pulses between edges.",
+      "checker": "Use an input-history interpreter or independent relational prediction, compare valid ports using four-state logic, and report errors; use activity counts to prevent vacuity."
+    }
+  ],
+  "stimulus_criteria": {
+    "O-1": [
+      {
+        "criterion_id": "O-1-history",
+        "description": "First set rst_i=1 between edges, hold it across 3 rising edges, then release it on a falling edge; also insert short pulses that do not span a rising edge and resets that span an edge during operation."
+      },
+      {
+        "criterion_id": "O-1-domain",
+        "description": "Apply resets spanning an edge separately at power-up, during instruction-fetch waits, during data waits, and in the halted state; short pulses occur only between two rising edges."
+      }
+    ],
+    "O-2": [
+      {
+        "criterion_id": "O-2-history",
+        "description": "Start from reset address 0 and maintain the address of each accepted request using an external program image."
+      },
+      {
+        "criterion_id": "O-2-domain",
+        "description": "Alternate ready between 0 and 1, delay responses by 1 to 6 cycles, hold responses until ready, and continuously execute ordinary instructions with different encodings."
+      }
+    ],
+    "O-3": [
+      {
+        "criterion_id": "O-3-history",
+        "description": "Use legal immediates and LUI to establish zero, positive numbers, negative numbers, the highest bit, and all-ones patterns; subsequent STORE instructions output the computation results onto the native data bus."
+      },
+      {
+        "criterion_id": "O-3-domain",
+        "description": "Execute all 15 R-type instructions, 7 I-type instructions, and LUI, covering shifts by 0/15/16/31, 32-bit overflow, equality/inequality, signed and unsigned ordering, writes to r0, and reads from r0."
+      }
+    ],
+    "O-4": [
+      {
+        "criterion_id": "O-4-history",
+        "description": "Initialize the external data memory image with patterns such as 80FF807F and FEDCBA98; establish base address 4096 through the program."
+      },
+      {
+        "criterion_id": "O-4-domain",
+        "description": "Five load types, three store widths, byte offsets 0..3, legal halfword offsets 0/2, negative offsets, overwriting and readback, and immediate use after a load."
+      }
+    ],
+    "O-5": [
+      {
+        "criterion_id": "O-5-history",
+        "description": "The program executes a LOAD, an immediately dependent ALU instruction, and a STORE, and also executes a CSR instruction followed by a dependent instruction; externally delay data responses."
+      },
+      {
+        "criterion_id": "O-5-domain",
+        "description": "Request backpressure of 1 to 5 cycles, response delays of 1 to 10 cycles, dependencies on rs1 and rs2, nondependent instructions, and same-cycle response/subsequent advancement."
+      }
+    ],
+    "O-6": [
+      {
+        "criterion_id": "O-6-history",
+        "description": "Establish equal operands, positive and negative operands, and operands with reversed unsigned ordering; place recognizable side effects at skipped locations, and output link values through STORE."
+      },
+      {
+        "criterion_id": "O-6-domain",
+        "description": "Taken/not-taken outcomes for six branch types, positive and negative offsets, J/JAL/JR/JALR, link rd boundaries, and aligned and misaligned jump targets."
+      }
+    ],
+    "O-7": [
+      {
+        "criterion_id": "O-7-history",
+        "description": "Keep one instruction-fetch response delayed before a branch, HALT, or exception so that it spans the redirect."
+      },
+      {
+        "criterion_id": "O-7-domain",
+        "description": "Redirect separately before the response arrives and in the same cycle as its arrival, while the external side still returns the old response normally; place a different program at the target."
+      }
+    ],
+    "O-8": [
+      {
+        "criterion_id": "O-8-history",
+        "description": "First set tvec, then, through a legal peer, separately return an illegal encoding, an instruction-fetch error, and a misaligned operation."
+      },
+      {
+        "criterion_id": "O-8-domain",
+        "description": "Single errors and combinations of instruction-fetch error with legal misaligned/trap encodings; different low address bits for byte/halfword/word accesses."
+      }
+    ],
+    "O-9": [
+      {
+        "criterion_id": "O-9-history",
+        "description": "Issue a LOAD or STORE at a legal aligned address, and externally record the handshake."
+      },
+      {
+        "criterion_id": "O-9-domain",
+        "description": "Return error separately for reads and writes, covering delayed errors after backpressure and alternating normal/error responses."
+      }
+    ],
+    "O-10": [
+      {
+        "criterion_id": "O-10-history",
+        "description": "Establish a known CSR/counter mirror from reset, configure it through CSRW, and read it out using CSRR+STORE."
+      },
+      {
+        "criterion_id": "O-10-domain",
+        "description": "All 11 read addresses, 4 write addresses, illegal reads and writes, misaligned EPC/tvec inputs, differences between cycle and instret, and r0 as the destination register."
+      }
+    ],
+    "O-11": [
+      {
+        "criterion_id": "O-11-history",
+        "description": "Set tvec; the handler reads EPC/cause/status through CSRR and performs STORE, then modifies EPC and uses MRET to return to the specified continuation address."
+      },
+      {
+        "criterion_id": "O-11-domain",
+        "description": "EBREAK, TRAP with different immediates, combinations of software traps and IE, MRET round trips, EI/DI, and CSR writes."
+      }
+    ],
+    "O-12": [
+      {
+        "criterion_id": "O-12-history",
+        "description": "Configure tvec and the handler, execute HALT with IE=0/1 separately, and also inject IRQ during ordinary/system instructions and data waits."
+      },
+      {
+        "criterion_id": "O-12-domain",
+        "description": "timer, external, both simultaneously, wakeup from halt, remaining halted without enable, interrupts in the same cycle as retire, and synchronous trap/MRET/HALT priority."
+      }
+    ]
+  }
+}

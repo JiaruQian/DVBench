@@ -1,0 +1,66 @@
+{
+  "selected_top": "dpc_5x5",
+  "ports": [
+    {
+      "name": "clk",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "name": "reset_n",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "name": "bayer_format",
+      "direction": "input",
+      "width": 1
+    },
+    {
+      "name": "i_dpc_threshold",
+      "direction": "input",
+      "width": 8
+    },
+    {
+      "name": "i_video_syn",
+      "direction": "input",
+      "width": 3
+    },
+    {
+      "name": "i_data_r0",
+      "direction": "input",
+      "width": 8
+    },
+    {
+      "name": "i_data_r1",
+      "direction": "input",
+      "width": 8
+    },
+    {
+      "name": "i_data_r2",
+      "direction": "input",
+      "width": 8
+    },
+    {
+      "name": "i_data_r3",
+      "direction": "input",
+      "width": 8
+    },
+    {
+      "name": "i_data_r4",
+      "direction": "input",
+      "width": 8
+    },
+    {
+      "name": "o_video_sync",
+      "direction": "output",
+      "width": 3
+    },
+    {
+      "name": "o_data",
+      "direction": "output",
+      "width": 8
+    }
+  ],
+  "typed_struct_ports_require_package_layout_review": false
+}

@@ -1,0 +1,200 @@
+{
+  "task_id": "dv-012",
+  "dut_top": "s1196",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "s1196.v"
+  ],
+  "submission_top": "dvbench_top",
+  "rtl_sources": [
+    "s1196.v"
+  ],
+  "rtl_compile_files": [
+    "s1196.v"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m10"
+  ],
+  "include_dirs": [],
+  "parameter_matrix": [
+    {}
+  ],
+  "model_interface": {
+    "top": "dvbench_model",
+    "file": "solution/s4_model/model.sv",
+    "ports": [
+      {
+        "direction": "In",
+        "name": "blif_clk_net",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "blif_reset_net",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "G0",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "G1",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "G2",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "G3",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "G4",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "G5",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "G6",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "G7",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "G8",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "G9",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "G10",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "G11",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "G12",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "G13",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "G546",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "G539",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "G550",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "G551",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "G552",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "G547",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "G548",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "G549",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "G530",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "G45",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "G542",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "G532",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "G535",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "G537",
+        "width": 1
+      }
+    ],
+    "variants": [
+      {}
+    ],
+    "independence": "Only driven inputs and their history; separate model replay has no DUT or golden output. s1196 uses reduced Shannon functions rather than copied gate assignments."
+  },
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800
+}

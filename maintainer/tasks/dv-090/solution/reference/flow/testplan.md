@@ -1,0 +1,95 @@
+## T-001
+
+feature_ids: ["F-001"]
+
+requirement_ids: ["R-MIPS-25B-001"]
+
+stimulus: Assert Reset high between edges during idle and result retention, immediately compare the peripherals against zero, then hold for 8 cycles, release, and run the complete program; repeat and cancel transactions partway through.
+
+expected: The complete Controller retains the five-stage pipeline, ROM, and RAM containing 64 32-bit words. It advances on rising edges of Clk, and Reset is active high. Peripheral result_valid/result_data are asynchronously cleared on a rising edge of Reset; CPU pipeline/PC reset must be held for at least 8 Clk cycles. Inputs must be stable before reset release, driving occurs after falling edges, and results are observed after propagation has settled following rising edges. Reset does not reload ROM/RAM; do not assess capabilities using a history with no reset.
+
+checker: The self-contained dvbench_model reads only native inputs and history, with actual and expected wired separately; the monitor samples 1ns after source rising edges and at stable inter-edge reset points, and the scoreboard compares all public outputs using four-state !==. Report UVM_ERROR on mismatches and accumulate them. There must be a nonzero number of comparison points, and the completion marker is printed only after checking that there are no ERROR/FATAL messages in the report phase.
+
+implementation_id: V-1
+
+source: tb.sv:dvbench_scoreboard.write;tb.sv:dvbench_sequence.body
+
+## T-002
+
+feature_ids: ["F-002"]
+
+requirement_ids: ["R-MIPS-25B-002"]
+
+stimulus: Independently derive the operation order and latency from the public ROM. Verify multiple boundary/random inputs at the native output after passing through the complete CPU and a RAM round trip, and continue running for at least 200 cycles after the result to confirm a single output and retention.
+
+expected: PROGRAM_FILE is fixed to "code.txt". The public attachment contains 32-bit hexadecimal instruction words. ROM is read using byte PC>>2, has a capacity of 1025 words, and unwritten locations are filled with NOP. test_data.txt contains the RAM power-up initial words; uncovered words are 0. The fixed firmware consists, in order, of 8 NOPs, then ADDI r8,r0,-8; thereafter, each non-NOP is followed by 8 NOPs, with the non-NOPs in this order: LW r9,0(r8), ADDI r10,r9,7, SW r10,0(r0), LW r11,0(r0), ADDI r11,r11,-3, SW r11,4(r8). All remaining instructions are NOPs. The original complete CPU is retained; ISA correctness for other programs or branches is not guaranteed.
+
+checker: The self-contained dvbench_model reads only native inputs and history, with actual and expected wired separately; the monitor samples 1ns after source rising edges and at stable inter-edge reset points, and the scoreboard compares all public outputs using four-state !==. Report UVM_ERROR on mismatches and accumulate them. There must be a nonzero number of comparison points, and the completion marker is printed only after checking that there are no ERROR/FATAL messages in the report phase.
+
+implementation_id: V-2
+
+source: tb.sv:dvbench_scoreboard.write;tb.sv:dvbench_sequence.body
+
+## T-003
+
+feature_ids: ["F-003"]
+
+requirement_ids: ["R-MIPS-25B-003"]
+
+stimulus: Change the input before and after the 21st edge, respectively, and use an independent history to capture the input at that edge; distinguish the read timing through the complete CPU result. At the MMIO addresses actually reached by the fixed firmware, check the high/low data bits of the sampled input and full 32-bit data fidelity; do not claim to drive unreachable addresses or SB/SH accesses.
+
+expected: Byte address fffffff8 is the 32-bit input peripheral, and fffffffc is the state-holding output peripheral. Peripheral reads select using the full address, without aliasing based on low bits; writes to the input are ignored, and peripheral writes do not reach RAM. The output accepts only SW width (BHW=2); SB/SH cannot produce output. This fixed program uses only word accesses, and the input read is latched on the 21st rising edge of Clk after reset release. Thus, input_data may change during other cycles as long as it is stable at that sampling edge; legal tests must not depend on unreached software branches.
+
+checker: The self-contained dvbench_model reads only native inputs and history, with actual and expected wired separately; the monitor samples 1ns after source rising edges and at stable inter-edge reset points, and the scoreboard compares all public outputs using four-state !==. Report UVM_ERROR on mismatches and accumulate them. There must be a nonzero number of comparison points, and the completion marker is printed only after checking that there are no ERROR/FATAL messages in the report phase.
+
+implementation_id: V-3
+
+source: tb.sv:dvbench_scoreboard.write;tb.sv:dvbench_sequence.body
+
+## T-004
+
+feature_ids: ["F-004"]
+
+requirement_ids: ["R-MIPS-25B-004"]
+
+stimulus: Drive 0, 1, fffffffc, ffffffff, 7fffffff, 80000000, random 32-bit values, and patterns with different values in each byte at the sampling edge; independently verify high-bit carry/wraparound and RAM fidelity using modular arithmetic.
+
+expected: The fixed program adds 7 to the sampled input using 32-bit modular arithmetic, writes it to RAM byte address 0, reads it back, and then adds the sign-extended immediate -3. The final value is the sampled input+4. r0 reads as zero, and NOP does not change functional registers. Addition does not trigger an overflow exception. RAM word accesses preserve all 32 bits, and the negative immediate must be sign-extended, not treated as 65533; this is the complete observable arithmetic contract for the fixed legal software domain.
+
+checker: The self-contained dvbench_model reads only native inputs and history, with actual and expected wired separately; the monitor samples 1ns after source rising edges and at stable inter-edge reset points, and the scoreboard compares all public outputs using four-state !==. Report UVM_ERROR on mismatches and accumulate them. There must be a nonzero number of comparison points, and the completion marker is printed only after checking that there are no ERROR/FATAL messages in the report phase.
+
+implementation_id: V-4
+
+source: tb.sv:dvbench_scoreboard.write;tb.sv:dvbench_sequence.body
+
+## T-005
+
+feature_ids: ["F-005"]
+
+requirement_ids: ["R-MIPS-25B-005"]
+
+stimulus: Compare valid and data edge by edge, continuing through the 300th edge to check for no repeated pulses and for retention; reset after edge 65 to cancel, then restart timing after release to prevent old results from carrying over.
+
+expected: The 66th rising edge of Clk after release produces the sole cycle with result_valid=1, and result_data updates to the result above on that same edge. On the 67th edge, valid returns to 0, and data is retained until the next reset or legal output write. The fixed program has no subsequent output; valid is 0 from edges 1 through 65 and after the 67th edge. Reset takes priority over output, so even if asserted just before the scheduled output, no old transaction leaks through.
+
+checker: The self-contained dvbench_model reads only native inputs and history, with actual and expected wired separately; the monitor samples 1ns after source rising edges and at stable inter-edge reset points, and the scoreboard compares all public outputs using four-state !==. Report UVM_ERROR on mismatches and accumulate them. There must be a nonzero number of comparison points, and the completion marker is printed only after checking that there are no ERROR/FATAL messages in the report phase.
+
+implementation_id: V-5
+
+source: tb.sv:dvbench_scoreboard.write;tb.sv:dvbench_sequence.body
+
+## T-006
+
+feature_ids: ["F-006"]
+
+requirement_ids: ["R-MIPS-25B-006"]
+
+stimulus: Use multiple seeds to vary legal input_data and reset phase; the independent D and complete UVM use the same model. Each check must trigger an actual/expected comparison and be capable of reporting an error.
+
+expected: Use only deterministic binary inputs and the fixed PROGRAM_FILE; hierarchical probes, backdoors, force, and ROM replacement are prohibited. Data comparison points include inter-edge reset windows, after settling following every rising edge, and after input changes between edges. Reference expectations depend only on input history and the public firmware. Pipeline BHW propagation and the writeback-address race have been fixed in this version; the old top level without outputs and the original branch path are not measurement targets for the new problem.
+
+checker: The self-contained dvbench_model reads only native inputs and history, with actual and expected wired separately; the monitor samples 1ns after source rising edges and at stable inter-edge reset points, and the scoreboard compares all public outputs using four-state !==. Report UVM_ERROR on mismatches and accumulate them. There must be a nonzero number of comparison points, and the completion marker is printed only after checking that there are no ERROR/FATAL messages in the report phase.
+
+implementation_id: V-6
+
+source: tb.sv:dvbench_scoreboard.write;tb.sv:dvbench_sequence.body

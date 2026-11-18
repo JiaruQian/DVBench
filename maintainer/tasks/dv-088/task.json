@@ -1,0 +1,269 @@
+{
+  "task_id": "dv-088",
+  "dut_top": "NV_NVDLA_bdma",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "compile_profile.sv",
+    "NV_NVDLA_BDMA_cq.v",
+    "NV_NVDLA_BDMA_csb.v",
+    "NV_NVDLA_BDMA_gate.v",
+    "NV_NVDLA_BDMA_load.v",
+    "NV_NVDLA_BDMA_reg.v",
+    "NV_NVDLA_BDMA_store.v",
+    "NV_NVDLA_bdma.v",
+    "simulate_x_tick.vh",
+    "nv_ram_rwsp_20x289.v",
+    "nv_ram_rwsp_245x514.v",
+    "NV_CLK_gate_power.v",
+    "assertion_header.vh",
+    "assertion_task.vh",
+    "nv_assert_no_x.v",
+    "NV_BLKBOX_SINK.v"
+  ],
+  "rtl_sources": [
+    "compile_profile.sv",
+    "NV_NVDLA_BDMA_cq.v",
+    "NV_NVDLA_BDMA_csb.v",
+    "NV_NVDLA_BDMA_gate.v",
+    "NV_NVDLA_BDMA_load.v",
+    "NV_NVDLA_BDMA_reg.v",
+    "NV_NVDLA_BDMA_store.v",
+    "NV_NVDLA_bdma.v",
+    "nv_ram_rwsp_20x289.v",
+    "nv_ram_rwsp_245x514.v",
+    "NV_CLK_gate_power.v",
+    "nv_assert_no_x.v",
+    "NV_BLKBOX_SINK.v"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "s4",
+    "s5",
+    "s6",
+    "s7",
+    "s8",
+    "s9",
+    "s10",
+    "n1",
+    "n2"
+  ],
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "model_contract_policy": "native-module-v1",
+  "parameters": {},
+  "model_interface": {
+    "ports": [
+      {
+        "name": "bdma2csb_resp_pd",
+        "direction": "Out",
+        "width": 34,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 33,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "bdma2csb_resp_valid",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "bdma2glb_done_intr_pd",
+        "direction": "Out",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "bdma2mcif_rd_cdt_lat_fifo_pop",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "bdma2mcif_rd_req_pd",
+        "direction": "Out",
+        "width": 79,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 78,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "bdma2mcif_rd_req_ready",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "bdma2mcif_rd_req_valid",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "bdma2mcif_wr_req_pd",
+        "direction": "Out",
+        "width": 515,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 514,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "bdma2mcif_wr_req_ready",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "bdma2mcif_wr_req_valid",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "csb2bdma_req_pd",
+        "direction": "In",
+        "width": 63,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 62,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "csb2bdma_req_prdy",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "csb2bdma_req_pvld",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "dla_clk_ovr_on_sync",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "global_clk_ovr_on_sync",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "mcif2bdma_rd_rsp_pd",
+        "direction": "In",
+        "width": 514,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 513,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "mcif2bdma_rd_rsp_ready",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "mcif2bdma_rd_rsp_valid",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "mcif2bdma_wr_rsp_complete",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "nvdla_core_clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "nvdla_core_rstn",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "pwrbus_ram_pd",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "tmc2slcg_disable_clock_gating",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {}
+  },
+  "reference_submission": "solution/reference",
+  "rtl_compile_files": [
+    "compile_profile.sv",
+    "NV_NVDLA_BDMA_cq.v",
+    "NV_NVDLA_BDMA_csb.v",
+    "NV_NVDLA_BDMA_gate.v",
+    "NV_NVDLA_BDMA_load.v",
+    "NV_NVDLA_BDMA_reg.v",
+    "NV_NVDLA_BDMA_store.v",
+    "NV_NVDLA_bdma.v",
+    "nv_ram_rwsp_20x289.v",
+    "nv_ram_rwsp_245x514.v",
+    "NV_CLK_gate_power.v",
+    "nv_assert_no_x.v",
+    "NV_BLKBOX_SINK.v"
+  ],
+  "include_dirs": [],
+  "compile_defines": [
+    "VLIB_BYPASS_POWER_CG",
+    "PRAND_OFF"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800
+}

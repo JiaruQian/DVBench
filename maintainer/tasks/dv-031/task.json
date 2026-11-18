@@ -1,0 +1,205 @@
+{
+  "task_id": "dv-031",
+  "dut_top": "BRAM_TDP_24w_256d",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "BRAM_TDP_24w_256d_sim_netlist.v",
+    "BUF.v",
+    "GND.v",
+    "LUT4.v",
+    "backfill/FDR.v",
+    "backfill/FDRE.v",
+    "backfill/LUT2.v",
+    "backfill/RAMB36E2.v",
+    "backfill/SRL16E.v",
+    "trusted_powerup_context.sv"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "model_contract_policy": "native-module-v1",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "addra",
+        "direction": "In",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "addrb",
+        "direction": "In",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "clka",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "clkb",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "dina",
+        "direction": "In",
+        "width": 24,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 23,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "dinb",
+        "direction": "In",
+        "width": 24,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 23,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "douta",
+        "direction": "Out",
+        "width": 24,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 23,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "doutb",
+        "direction": "Out",
+        "width": 24,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 23,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "rsta",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "rsta_busy",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "rstb",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "rstb_busy",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "wea",
+        "direction": "In",
+        "width": 1,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 0,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "web",
+        "direction": "In",
+        "width": 1,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 0,
+            "right": 0
+          }
+        ]
+      }
+    ],
+    "parameters": {}
+  },
+  "reference_submission": "solution/reference",
+  "mutants": [
+    "m1",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "n1",
+    "n2",
+    "n3",
+    "n4"
+  ],
+  "rtl_sources": [
+    "BRAM_TDP_24w_256d_sim_netlist.v",
+    "BUF.v",
+    "GND.v",
+    "LUT4.v",
+    "backfill/FDR.v",
+    "backfill/FDRE.v",
+    "backfill/LUT2.v",
+    "backfill/RAMB36E2.v",
+    "backfill/SRL16E.v",
+    "trusted_powerup_context.sv"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "BRAM_TDP_24w_256d_sim_netlist.v",
+    "BUF.v",
+    "GND.v",
+    "LUT4.v",
+    "backfill/FDR.v",
+    "backfill/FDRE.v",
+    "backfill/LUT2.v",
+    "backfill/RAMB36E2.v",
+    "backfill/SRL16E.v",
+    "trusted_powerup_context.sv"
+  ]
+}

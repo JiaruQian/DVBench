@@ -1,0 +1,145 @@
+# Reference testplan
+
+## T1
+
+**test_id**: T1
+
+**requirement_ids**: ["R-dv-003-001"]
+
+**feature_ids**: ["F1"]
+
+**stimulus**: Initialize all native inputs to zero at time zero, generate a 10 ns clock, then drive inputs on each falling edge and retain them through the next rising edge. Randomize each input over its full declared two-state width; whenever G is true, force rs2_data[64]=0 and fp_val=0 for ctrl_is_std, and restrict fp_val=1 to uopc=1 or 2. Toggle reset and all native inputs, exercise active and inactive G, and preserve asserted legal constraints at each rising edge.
+
+**expected**: The complete native ALUExeUnit interface has no parameters or functional storage. Outputs react combinationally to current inputs; compare after propagation has settled. clock only checks legality on its rising edge. reset disables those legality checks but does not reset, clear or gate functional outputs. All described outputs remain defined for legal two-state inputs, including when corresponding valid is low. Numerical results with X/Z inputs are unspecified. Let G mean io_req_valid and bit 2 of io_req_bits_uop_fu_code. When reset is low at a rising edge, G and ctrl_is_std require rs2_data[64]=0 and fp_val=0; G and fp_val require uopc=1 or 2.
+
+**checker**: Sample actual and independent model outputs 2 ns after each falling-edge drive, before the next rising edge. Compare all output bits using four-state !== against the same input-only dvbench_model; count 4096 observations and fail on any mismatch or a vacuous run.
+
+**implementation_id**: aluexe_sequence+aluexe_if.prepare+aluexe_scoreboard
+
+**source**: tb/aluexe_pkg.sv;tb/aluexe_if.sv;model/model.sv
+
+## T2
+
+**test_id**: T2
+
+**requirement_ids**: ["R-dv-003-002"]
+
+**feature_ids**: ["F2"]
+
+**stimulus**: Initialize all native inputs to zero at time zero, generate a 10 ns clock, then drive inputs on each falling edge and retain them through the next rising edge. Randomize each input over its full declared two-state width; whenever G is true, force rs2_data[64]=0 and fp_val=0 for ctrl_is_std, and restrict fp_val=1 to uopc=1 or 2. Randomize every native uop field; sweep valid/FU bit2 and branch masks including overlapping resolve/mispredict bits, empty masks, and highest bit.
+
+**expected**: io_lsu_io_req_valid equals G unless any bit is shared by the incoming uop br_mask and io_brupdate_b1_mispredict_mask, in which case it is zero. Every io_lsu_io_req_bits_uop_ field copies the correspondingly suffixed io_req_bits_uop_ field, except br_mask, whose resolved bits are cleared using io_brupdate_b1_resolve_mask. Branch resolution does not first remove bits when testing misprediction. Request payload forwarding is independent of validity, reset and exceptions.
+
+**checker**: Sample actual and independent model outputs 2 ns after each falling-edge drive, before the next rising edge. Compare all output bits using four-state !== against the same input-only dvbench_model; count 4096 observations and fail on any mismatch or a vacuous run.
+
+**implementation_id**: aluexe_sequence+aluexe_if.prepare+aluexe_scoreboard
+
+**source**: tb/aluexe_pkg.sv;tb/aluexe_if.sv;model/model.sv
+
+## T3
+
+**test_id**: T3
+
+**requirement_ids**: ["R-dv-003-003"]
+
+**feature_ids**: ["F3"]
+
+**stimulus**: Initialize all native inputs to zero at time zero, generate a 10 ns clock, then drive inputs on each falling edge and retain them through the next rising edge. Randomize each input over its full declared two-state width; whenever G is true, force rs2_data[64]=0 and fp_val=0 for ctrl_is_std, and restrict fp_val=1 to uopc=1 or 2. Exercise positive/negative 12-bit immediates, ignored bits, 64-bit carry/wrap, S[38] transitions and upper bits all-zero, all-one and mixed.
+
+**expected**: Form a 64-bit modular sum S of rs1_data[63:0] and the sign-extended 12-bit immediate imm_packed[19:8]. Ignore rs1_data[64] and imm_packed[7:0]. Address output bits 38:0 equal S[38:0]. Address output bit39 equals 1 precisely when either S[38]=1 and S[63:39] consists entirely of ones, or S[38]=0 and S[63:39] is nonzero. This is unconditional and includes carries, negative immediates and 64-bit wraparound.
+
+**checker**: Sample actual and independent model outputs 2 ns after each falling-edge drive, before the next rising edge. Compare all output bits using four-state !== against the same input-only dvbench_model; count 4096 observations and fail on any mismatch or a vacuous run.
+
+**implementation_id**: aluexe_sequence+aluexe_if.prepare+aluexe_scoreboard
+
+**source**: tb/aluexe_pkg.sv;tb/aluexe_if.sv;model/model.sv
+
+## T4
+
+**test_id**: T4
+
+**requirement_ids**: ["R-dv-003-004"]
+
+**feature_ids**: ["F4"]
+
+**stimulus**: Initialize all native inputs to zero at time zero, generate a 10 ns clock, then drive inputs on each falling edge and retain them through the next rising edge. Randomize each input over its full declared two-state width; whenever G is true, force rs2_data[64]=0 and fp_val=0 for ctrl_is_std, and restrict fp_val=1 to uopc=1 or 2. Toggle each of the 65 rs2 data bits with valid on/off, reset high/low and branch hits; independently vary all other fields.
+
+**expected**: io_lsu_io_req_bits_data equals rs2_data[63:0], discarding bit64. Forward all 64 low bits regardless of opcode, valid, reset, branch outcome or alignment.
+
+**checker**: Sample actual and independent model outputs 2 ns after each falling-edge drive, before the next rising edge. Compare all output bits using four-state !== against the same input-only dvbench_model; count 4096 observations and fail on any mismatch or a vacuous run.
+
+**implementation_id**: aluexe_sequence+aluexe_if.prepare+aluexe_scoreboard
+
+**source**: tb/aluexe_pkg.sv;tb/aluexe_if.sv;model/model.sv
+
+## T5
+
+**test_id**: T5
+
+**requirement_ids**: ["R-dv-003-005"]
+
+**feature_ids**: ["F5"]
+
+**stimulus**: Initialize all native inputs to zero at time zero, generate a 10 ns clock, then drive inputs on each falling edge and retain them through the next rising edge. Randomize each input over its full declared two-state width; whenever G is true, force rs2_data[64]=0 and fp_val=0 for ctrl_is_std, and restrict fp_val=1 to uopc=1 or 2. Cross mem_size 0..3 and low address offsets 0..7 with opcodes 1,2,0x43 and neighbors 3/0x42; include G off, branch hit and immediate-induced misalignment.
+
+**expected**: Alignment is based on S: mem_size 0,1,2,3 respectively require divisibility by 1,2,4,8. io_lsu_io_req_bits_mxcpt_valid equals G and misalignment and membership of uopc in {1,2,0x43}. Other opcodes never cause this exception. A branch misprediction may suppress request valid while this exception remains asserted; neither exception nor misalignment suppresses request valid.
+
+**checker**: Sample actual and independent model outputs 2 ns after each falling-edge drive, before the next rising edge. Compare all output bits using four-state !== against the same input-only dvbench_model; count 4096 observations and fail on any mismatch or a vacuous run.
+
+**implementation_id**: aluexe_sequence+aluexe_if.prepare+aluexe_scoreboard
+
+**source**: tb/aluexe_pkg.sv;tb/aluexe_if.sv;model/model.sv
+
+## T6
+
+**test_id**: T6
+
+**requirement_ids**: ["R-dv-003-006"]
+
+**feature_ids**: ["F6"]
+
+**stimulus**: Initialize all native inputs to zero at time zero, generate a 10 ns clock, then drive inputs on each falling edge and retain them through the next rising edge. Randomize each input over its full declared two-state width; whenever G is true, force rs2_data[64]=0 and fp_val=0 for ctrl_is_std, and restrict fp_val=1 to uopc=1 or 2. Cross commands 0x14/0x15, sizes 0..3, G on/off and branch hit; vary rs1 bit38 and immediate independently.
+
+**expected**: io_lsu_io_req_bits_sfence_valid equals G and mem_cmd=0x14. It has no opcode, branch, reset or alignment gate. sfence_bits_rs1 equals mem_size[0]; sfence_bits_rs2 equals mem_size[1]. sfence_bits_addr equals incoming rs1_data[38:0], without adding the immediate. All sideband payload bits are unconditional.
+
+**checker**: Sample actual and independent model outputs 2 ns after each falling-edge drive, before the next rising edge. Compare all output bits using four-state !== against the same input-only dvbench_model; count 4096 observations and fail on any mismatch or a vacuous run.
+
+**implementation_id**: aluexe_sequence+aluexe_if.prepare+aluexe_scoreboard
+
+**source**: tb/aluexe_pkg.sv;tb/aluexe_if.sv;model/model.sv
+
+## T7
+
+**test_id**: T7
+
+**requirement_ids**: ["R-dv-003-007"]
+
+**feature_ids**: ["F7"]
+
+**stimulus**: Initialize all native inputs to zero at time zero, generate a 10 ns clock, then drive inputs on each falling edge and retain them through the next rising edge. Randomize each input over its full declared two-state width; whenever G is true, force rs2_data[64]=0 and fp_val=0 for ctrl_is_std, and restrict fp_val=1 to uopc=1 or 2. Randomize every integer response field independently at both valid values; exercise data bit63 and simultaneous floating response.
+
+**expected**: Every io_ll_iresp_ field directly copies its correspondingly suffixed io_lsu_io_iresp_ input. The 64-bit integer response data is zero-extended to the 65-bit output. Valid, metadata and data are independent of request activity, branch update and reset, and payload is forwarded when response valid is zero.
+
+**checker**: Sample actual and independent model outputs 2 ns after each falling-edge drive, before the next rising edge. Compare all output bits using four-state !== against the same input-only dvbench_model; count 4096 observations and fail on any mismatch or a vacuous run.
+
+**implementation_id**: aluexe_sequence+aluexe_if.prepare+aluexe_scoreboard
+
+**source**: tb/aluexe_pkg.sv;tb/aluexe_if.sv;model/model.sv
+
+## T8
+
+**test_id**: T8
+
+**requirement_ids**: ["R-dv-003-008"]
+
+**feature_ids**: ["F8"]
+
+**stimulus**: Initialize all native inputs to zero at time zero, generate a 10 ns clock, then drive inputs on each falling edge and retain them through the next rising edge. Randomize each input over its full declared two-state width; whenever G is true, force rs2_data[64]=0 and fp_val=0 for ctrl_is_std, and restrict fp_val=1 to uopc=1 or 2. Randomize every floating response field independently at both valid values, including data bit64 and br_mask; exercise simultaneous integer response and branch update.
+
+**expected**: Every io_ll_fresp_ field directly copies its correspondingly suffixed io_lsu_io_fresp_ input, preserving all 65 data bits and all metadata including br_mask. No branch-mask update, validity gating, reset gating or integer response selection applies. Both response channels may be active simultaneously.
+
+**checker**: Sample actual and independent model outputs 2 ns after each falling-edge drive, before the next rising edge. Compare all output bits using four-state !== against the same input-only dvbench_model; count 4096 observations and fail on any mismatch or a vacuous run.
+
+**implementation_id**: aluexe_sequence+aluexe_if.prepare+aluexe_scoreboard
+
+**source**: tb/aluexe_pkg.sv;tb/aluexe_if.sv;model/model.sv

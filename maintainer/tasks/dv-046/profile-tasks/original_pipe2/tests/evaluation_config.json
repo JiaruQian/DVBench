@@ -1,0 +1,31 @@
+{
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_seconds": 900,
+  "golden_D_seconds": 600,
+  "mutant_seconds": 1800,
+  "profiles": [
+    "default_logic",
+    "original_comb",
+    "original_pipe2"
+  ],
+  "fixed_mutants": [
+    "m1",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m10"
+  ],
+  "dut_scope": "dvbench_top.dut entire subtree",
+  "scope": "all original TB profiles plus native scalar default",
+  "candidate_started": false,
+  "phase2_frozen_candidate_changed": false
+}

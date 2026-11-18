@@ -1,0 +1,54 @@
+{
+  "ports": [
+    {
+      "name": "ciphertext",
+      "direction": "In",
+      "width": 128,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 127,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "key10",
+      "direction": "In",
+      "width": 128,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 127,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "plaintext",
+      "direction": "Out",
+      "width": 128,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 127,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "rst",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {},
+  "parser": "pyslang 12.1.0"
+}

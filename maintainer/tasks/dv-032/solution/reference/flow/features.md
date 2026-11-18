@@ -1,0 +1,145 @@
+# features
+
+## F1
+
+feature_id: F1
+
+requirement_ids: ["R-dv-032-jtag-apb-debug-001"]
+
+module: adbg_jsp_apb_module
+
+definition: The top level adbg_jsp_apb_module has no parameters, and data_register_i is fixed at 64 bits. Only two-state inputs and legal APB two-phase accesses are defined. The PCLK period is 6ns and the tck_i period is 10ns; inputs are driven on the falling edge of each domain and sampled after settling; the two domains run independently and may have simultaneous rising edges, with state updates using pre-edge inputs. PSLVERR and top_inhibit_o are always 0.
+
+interface: ["PCLK", "tck_i", "data_register_i", "PSLVERR", "top_inhibit_o"]
+
+timing: Accept inputs on the rising edges of the domains specified by definition, and sample after combinational settling; use the declared delays for cross-domain events/snapshots.
+
+boundary: Only legal two-state inputs; empty RBR and TDO beyond the header count have no valid-data obligation, and the two reset domains must not be conflated.
+
+## F2
+
+feature_id: F2
+
+requirement_ids: ["R-dv-032-jtag-apb-debug-002"]
+
+module: adbg_jsp_apb_module
+
+definition: rst_i is asynchronous active-high and clears both FIFOs, JTAG scan state, serial output, and inter-domain event history, but does not clear IER/LCR/SCR. PRESETn is asynchronous active-low and clears IER/LCR/SCR, the THR interrupt armed state, APB operation scheduling, and the data-holding byte used for scanning; it does not clear the FIFOs or JTAG scan. If APB-to-JTAG data existed before PRESETn was released, the first data byte of the first scan may be the post-reset 0; after it is consumed, subsequent queue heads are restored. The registered PREADY response is defined only after the first PCLK rising edge; assert both resets first at power-up.
+
+interface: ["rst_i", "PRESETn", "PCLK", "tck_i", "module_tdo_o", "PREADY", "PRDATA", "int_o"]
+
+timing: Accept inputs on the rising edges of the domains specified by definition, and sample after combinational settling; use the declared delays for cross-domain events/snapshots.
+
+boundary: Only legal two-state inputs; empty RBR and TDO beyond the header count have no valid-data obligation, and the two reset domains must not be conflated.
+
+## F3
+
+feature_id: F3
+
+requirement_ids: ["R-dv-032-jtag-apb-debug-003"]
+
+module: adbg_jsp_apb_module
+
+definition: Addresses are 3 bits and data is 8 bits. PSEL=1/PENABLE=0 is setup; access on the next cycle holds selection, address, direction, and write data until PREADY. FIFO actions at address 0 with LCR[7]=0 are initiated by setup: after setup is accepted on a PCLK rising edge, the response is visible after that edge; the actual push/pop executes on the immediately following PCLK rising edge (the access completion edge). Writes enter the APB-to-JTAG queue, and reads consume the JTAG-to-APB queue. Other addresses, or address 0 with LCR[7]=1, respond one cycle after setup. PRDATA combinationally follows PADDR and the current state, without gating by PSEL/PENABLE; RBR reads the byte being consumed before the completion edge, and the read value of an empty FIFO is undefined.
+
+interface: ["PSEL", "PENABLE", "PWRITE", "PADDR", "PWDATA", "PRDATA", "PREADY", "PCLK"]
+
+timing: Accept inputs on the rising edges of the domains specified by definition, and sample after combinational settling; use the declared delays for cross-domain events/snapshots.
+
+boundary: Only legal two-state inputs; empty RBR and TDO beyond the header count have no valid-data obligation, and the two reset domains must not be conflated.
+
+## F4
+
+feature_id: F4
+
+requirement_ids: ["R-dv-032-jtag-apb-debug-004"]
+
+module: adbg_jsp_apb_module
+
+definition: Address 1 is the lower 4 bits of IER, with the upper 4 bits reading as 0; IER writes are accepted only when LCR[7]=0. Address 3 is the 8-bit LCR; address 7 is the 8-bit SCR; all are written on the access rising edge. Address 4 MCR is always 0, and address 6 MSR is always 0b; writes are ignored. Address 2 reads IIR and writes FCR. LCR[7] only disables FIFO operations and IER writes; it does not provide DLL/DLM divisor registers, IER reads still return IER, and address 0 reads still combinationally present RBR.
+
+interface: ["PADDR", "PWDATA", "PRDATA", "PSEL", "PENABLE", "PWRITE", "PCLK"]
+
+timing: Accept inputs on the rising edges of the domains specified by definition, and sample after combinational settling; use the declared delays for cross-domain events/snapshots.
+
+boundary: Only legal two-state inputs; empty RBR and TDO beyond the header count have no valid-data obligation, and the two reset domains must not be conflated.
+
+## F5
+
+feature_id: F5
+
+requirement_ids: ["R-dv-032-jtag-apb-debug-005"]
+
+module: adbg_jsp_apb_module
+
+definition: Each of the two FIFOs holds 8 8-bit bytes, first in, first out. JTAG writes for APB RBR reads, and APB THR writes for JTAG shifting out; when full, new pushes are discarded and old bytes are retained; a pop when empty makes no change. An access write to FCR at address 2 with bit1=1 asynchronously clears the JTAG-to-APB queue, and bit2=1 asynchronously clears the APB-to-JTAG queue; both may be set simultaneously. Other registers, armed, and the scan count are not cleared. FCR is not stored; the read value is defined by IIR.
+
+interface: ["PADDR", "PWDATA", "PSEL", "PENABLE", "PWRITE", "PRDATA", "module_tdo_o", "rst_i"]
+
+timing: Accept inputs on the rising edges of the domains specified by definition, and sample after combinational settling; use the declared delays for cross-domain events/snapshots.
+
+boundary: Only legal two-state inputs; empty RBR and TDO beyond the header count have no valid-data obligation, and the two reset domains must not be conflated.
+
+## F6
+
+feature_id: F6
+
+requirement_ids: ["R-dv-032-jtag-apb-debug-006"]
+
+module: adbg_jsp_apb_module
+
+definition: A scan starts on a tck_i rising edge with both module_select_i and capture_dr_i equal to 1; having only one asserted does not start it. The first output byte is {number of bytes available to shift out,number of free slots available to receive}, with the high and low nibbles each ranging from 0 to 8; each byte is output LSB first. The high nibble of the first input byte is the number the user wishes to send, and subsequent input bytes are formed at complete-byte boundaries from {tdi_i,data_register_i[63:57]}; externally, each shift rising edge shifts data_register_i right and places tdi_i in bit63. The bit count advances only when shift_dr_i=1; update_dr_i terminates the scan, retaining bytes already fully input. At most the lesser of the free-slot count at capture and the user-declared count is received; excess complete bytes are ignored. The number of valid output bytes is limited by the high nibble of the header, and excess TDO has no valid-data obligation; TDO within the header and valid payload is stable before the corresponding shift rising edge.
+
+interface: ["tck_i", "tdi_i", "module_tdo_o", "capture_dr_i", "shift_dr_i", "update_dr_i", "data_register_i", "module_select_i"]
+
+timing: Accept inputs on the rising edges of the domains specified by definition, and sample after combinational settling; use the declared delays for cross-domain events/snapshots.
+
+boundary: Only legal two-state inputs; empty RBR and TDO beyond the header count have no valid-data obligation, and the two reset domains must not be conflated.
+
+## F7
+
+feature_id: F7
+
+requirement_ids: ["R-dv-032-jtag-apb-debug-007"]
+
+module: adbg_jsp_apb_module
+
+definition: JTAG complete-byte commits and output-byte consumption are sent as events to the PCLK domain; an event appears after two PCLK synchronization rising edges, then changes the queue after one scheduling edge followed by one execution edge. The JTAG boundary and FIFO change must not be treated as simultaneous. Byte events are spaced at least 8 tck_i periods apart. FIFO counts are updated toward JTAG through a request/ack snapshot round trip: when the count changes and the previous snapshot has been acknowledged, it is latched and a request is sent; after two tck_i synchronization edges, the request is loaded on the next edge; the next snapshot may be latched only after acknowledgment returns through two PCLK synchronization edges. Multiple intervening changes may be merged. capture uses the snapshot already visible, and the header may be stale under concurrency. After rst_i is released, a tck_i edge occurs first, followed by two PCLK synchronization edges before the link is ready; before that, LSR[6:5]=0.
+
+interface: ["tck_i", "PCLK", "rst_i", "module_tdo_o", "PRDATA", "PREADY", "int_o"]
+
+timing: Accept inputs on the rising edges of the domains specified by definition, and sample after combinational settling; use the declared delays for cross-domain events/snapshots.
+
+boundary: Only legal two-state inputs; empty RBR and TDO beyond the header count have no valid-data obligation, and the two reset domains must not be conflated.
+
+## F8
+
+feature_id: F8
+
+requirement_ids: ["R-dv-032-jtag-apb-debug-008"]
+
+module: adbg_jsp_apb_module
+
+definition: At LSR address 5, bit0 indicates that the JTAG-to-APB FIFO is nonempty; bit5/6 both indicate that the link is ready and APB-to-JTAG is not full; other bits are 0, and do not indicate UART transmit busy. IIR gives priority to 04 (JTAG-to-APB nonempty), otherwise 02 when armed and APB-to-JTAG is not full and ready, otherwise 01; IIR is not masked by IER. A THR setup write or consumption of the last APB-to-JTAG byte sets armed; an access read of IIR when JTAG-to-APB is empty clears armed, with setting taking priority.
+
+interface: ["PADDR", "PRDATA", "PCLK", "PSEL", "PENABLE", "PWRITE", "int_o"]
+
+timing: Accept inputs on the rising edges of the domains specified by definition, and sample after combinational settling; use the declared delays for cross-domain events/snapshots.
+
+boundary: Only legal two-state inputs; empty RBR and TDO beyond the header count have no valid-data obligation, and the two reset domains must not be conflated.
+
+## F9
+
+feature_id: F9
+
+requirement_ids: ["R-dv-032-jtag-apb-debug-009"]
+
+module: adbg_jsp_apb_module
+
+definition: int_o is (IER[1] and armed and APB-to-JTAG not full and link ready) or (IER[0] and JTAG-to-APB nonempty), combinationally reflecting the state. PRDATA at register addresses can be compared after combinational settling; address 0 has a data obligation only when the queue is nonempty. TDO has a data obligation only in the header of a selected scan and the payload within its declared count; pausing preserves the shift position, and residual values after update are not new data. PREADY, int_o, and the two constant-0 outputs can always be compared within the defined windows.
+
+interface: ["int_o", "PRDATA", "PREADY", "module_tdo_o", "top_inhibit_o", "PSLVERR", "PADDR", "capture_dr_i", "shift_dr_i", "update_dr_i"]
+
+timing: Accept inputs on the rising edges of the domains specified by definition, and sample after combinational settling; use the declared delays for cross-domain events/snapshots.
+
+boundary: Only legal two-state inputs; empty RBR and TDO beyond the header count have no valid-data obligation, and the two reset domains must not be conflated.

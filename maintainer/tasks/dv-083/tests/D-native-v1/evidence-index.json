@@ -1,0 +1,4 @@
+{
+  "replay": "D-isolated-v1 actual separate golden/model VCS executables, original 3 input seeds; copied harness/model assets are exact old bytes",
+  "defined_domain_report": "reports/dv-083-lm32-dcache/D-defined-domain-recomparison-v2.json"
+}

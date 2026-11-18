@@ -1,0 +1,167 @@
+## F-axi-01
+
+requirement_ids: ["R-dv-080-001"]
+
+module: axi_interconnect
+
+definition: The default configuration is fixed at 4 s-side request ports and 4 m-side target ports, with DATA_WIDTH=32, ADDR_WIDTH=32, STRB_WIDTH=4, ID_WIDTH=8, each USER_WIDTH=1, all USER_ENABLE=0, FORWARD_ID=0, and M_REGIONS=1. Each M_ADDR_WIDTH=24, M_BASE_ADDR=0 uses automatic regions, all M_CONNECT_READ/WRITE connections are enabled, and M_SECURE=0. Lower port indices occupy the lower bits of packed vectors; do not change to 1×1 or enable user/ID forwarding.
+
+interface: ["clk", "m_axi_araddr", "m_axi_arburst", "m_axi_arcache", "m_axi_arid", "m_axi_arlen", "m_axi_arlock", "m_axi_arprot", "m_axi_arqos", "m_axi_arready", "m_axi_arregion", "m_axi_arsize", "m_axi_aruser", "m_axi_arvalid", "m_axi_awaddr", "m_axi_awburst", "m_axi_awcache", "m_axi_awid", "m_axi_awlen", "m_axi_awlock", "m_axi_awprot", "m_axi_awqos", "m_axi_awready", "m_axi_awregion", "m_axi_awsize", "m_axi_awuser", "m_axi_awvalid", "m_axi_bid", "m_axi_bready", "m_axi_bresp", "m_axi_buser", "m_axi_bvalid", "m_axi_rdata", "m_axi_rid", "m_axi_rlast", "m_axi_rready", "m_axi_rresp", "m_axi_ruser", "m_axi_rvalid", "m_axi_wdata", "m_axi_wlast", "m_axi_wready", "m_axi_wstrb", "m_axi_wuser", "m_axi_wvalid", "rst", "s_axi_araddr", "s_axi_arburst", "s_axi_arcache", "s_axi_arid", "s_axi_arlen", "s_axi_arlock", "s_axi_arprot", "s_axi_arqos", "s_axi_arready", "s_axi_arsize", "s_axi_aruser", "s_axi_arvalid", "s_axi_awaddr", "s_axi_awburst", "s_axi_awcache", "s_axi_awid", "s_axi_awlen", "s_axi_awlock", "s_axi_awprot", "s_axi_awqos", "s_axi_awready", "s_axi_awsize", "s_axi_awuser", "s_axi_awvalid", "s_axi_bid", "s_axi_bready", "s_axi_bresp", "s_axi_buser", "s_axi_bvalid", "s_axi_rdata", "s_axi_rid", "s_axi_rlast", "s_axi_rready", "s_axi_rresp", "s_axi_ruser", "s_axi_rvalid", "s_axi_wdata", "s_axi_wlast", "s_axi_wready", "s_axi_wstrb", "s_axi_wuser", "s_axi_wvalid"]
+
+timing: The exact timing and validity domain of this clause follow definition; do not assume additional pipelining or out-of-order behavior.
+
+boundary: Use the fixed public default parameters and the domain defined by this clause; do not add requirements from other AXI versions.
+
+## F-axi-02
+
+requirement_ids: ["R-dv-080-002"]
+
+module: axi_interconnect
+
+definition: Sampling occurs on the rising edge of clk, and rst is an active-high synchronous reset. After a reset edge, all output ready and valid signals for AW/AR/W/B/R are cleared, and unfinished transactions are discarded; invalid payloads are not required to be cleared or held. Drives change on falling edges, and payload remains stable while valid waits for ready; a handshake is effective only on a rising edge where valid and ready are both 1; ready may change freely. Transactions restart after reset is deasserted, and legal inputs contain no X/Z.
+
+interface: ["clk", "m_axi_arburst", "m_axi_awburst", "rst", "s_axi_arburst", "s_axi_awburst"]
+
+timing: The exact timing and validity domain of this clause follow definition; do not assume additional pipelining or out-of-order behavior.
+
+boundary: Use the fixed public default parameters and the domain defined by this clause; do not add requirements from other AXI versions.
+
+## F-axi-03
+
+requirement_ids: ["R-dv-080-003"]
+
+module: axi_interconnect
+
+definition: Only one transaction is serviced globally; among the 8 requests, index 2*n is AW for s[n], and 2*n+1 is AR. After reset, round-robin priority starts at the lowest index; after a selection, the next starting point is the selected index+1, wrapping around. The grant remains asserted until the corresponding s-side B handshake or Rlast handshake releases it. AW/AR completion must not release it early; simultaneous reads and writes and different request ports are serialized according to this rule.
+
+interface: ["clk", "m_axi_arready", "m_axi_arvalid", "m_axi_awready", "m_axi_awvalid", "m_axi_bready", "m_axi_bvalid", "m_axi_rready", "m_axi_rvalid", "m_axi_wready", "m_axi_wvalid", "rst", "s_axi_arready", "s_axi_arvalid", "s_axi_awready", "s_axi_awvalid", "s_axi_bready", "s_axi_bvalid", "s_axi_rready", "s_axi_rvalid", "s_axi_wready", "s_axi_wvalid"]
+
+timing: The exact timing and validity domain of this clause follow definition; do not assume additional pipelining or out-of-order behavior.
+
+boundary: Use the fixed public default parameters and the domain defined by this clause; do not add requirements from other AXI versions.
+
+## F-axi-04
+
+requirement_ids: ["R-dv-080-004"]
+
+module: axi_interconnect
+
+definition: When idle, a request first wins arbitration on one rising edge; on the next rising edge, the address fields are captured and the corresponding s_awready or s_arready is set to 1; the address handshake occurs on the following rising edge. Decoding occurs on that handshake edge; after the edge, a legal write enables the corresponding s_wready, and a legal read enables m_rready; the following rising edge generates the corresponding m_awvalid or m_arvalid. The m address valid remains asserted until a handshake with the target ready; a new address is accepted only at the next idle service opportunity after global response completion.
+
+interface: ["clk", "m_axi_araddr", "m_axi_arburst", "m_axi_arcache", "m_axi_arid", "m_axi_arlen", "m_axi_arlock", "m_axi_arprot", "m_axi_arqos", "m_axi_arready", "m_axi_arregion", "m_axi_arsize", "m_axi_aruser", "m_axi_arvalid", "m_axi_awaddr", "m_axi_awburst", "m_axi_awcache", "m_axi_awid", "m_axi_awlen", "m_axi_awlock", "m_axi_awprot", "m_axi_awqos", "m_axi_awready", "m_axi_awregion", "m_axi_awsize", "m_axi_awuser", "m_axi_awvalid", "rst", "s_axi_araddr", "s_axi_arburst", "s_axi_arcache", "s_axi_arid", "s_axi_arlen", "s_axi_arlock", "s_axi_arprot", "s_axi_arqos", "s_axi_arready", "s_axi_arsize", "s_axi_aruser", "s_axi_arvalid", "s_axi_awaddr", "s_axi_awburst", "s_axi_awcache", "s_axi_awid", "s_axi_awlen", "s_axi_awlock", "s_axi_awprot", "s_axi_awqos", "s_axi_awready", "s_axi_awsize", "s_axi_awuser", "s_axi_awvalid"]
+
+timing: The exact timing and validity domain of this clause follow definition; do not assume additional pipelining or out-of-order behavior.
+
+boundary: Use the fixed public default parameters and the domain defined by this clause; do not add requirements from other AXI versions.
+
+## F-axi-05
+
+requirement_ids: ["R-dv-080-005"]
+
+module: axi_interconnect
+
+definition: The four target regions are, in order, 0x00000000–0x00ffffff, 0x01000000–0x01ffffff, 0x02000000–0x02ffffff, and 0x03000000–0x03ffffff; all other addresses miss. The target AW/AR address, len, size, burst, lock, cache, prot, and qos pass through the original request, with region=0, user=0, and downstream ID=0. Addresses are not incremented per beat or split; burst counting is maintained by the endpoints; valid is 0 for unselected targets.
+
+interface: ["clk", "m_axi_araddr", "m_axi_arburst", "m_axi_arcache", "m_axi_arid", "m_axi_arlen", "m_axi_arlock", "m_axi_arprot", "m_axi_arqos", "m_axi_arready", "m_axi_arregion", "m_axi_arsize", "m_axi_aruser", "m_axi_arvalid", "m_axi_awaddr", "m_axi_awburst", "m_axi_awcache", "m_axi_awid", "m_axi_awlen", "m_axi_awlock", "m_axi_awprot", "m_axi_awqos", "m_axi_awready", "m_axi_awregion", "m_axi_awsize", "m_axi_awuser", "m_axi_awvalid", "rst", "s_axi_araddr", "s_axi_arburst", "s_axi_arcache", "s_axi_arid", "s_axi_arlen", "s_axi_arlock", "s_axi_arprot", "s_axi_arqos", "s_axi_arready", "s_axi_arsize", "s_axi_aruser", "s_axi_arvalid", "s_axi_awaddr", "s_axi_awburst", "s_axi_awcache", "s_axi_awid", "s_axi_awlen", "s_axi_awlock", "s_axi_awprot", "s_axi_awqos", "s_axi_awready", "s_axi_awsize", "s_axi_awuser", "s_axi_awvalid"]
+
+timing: The exact timing and validity domain of this clause follow definition; do not assume additional pipelining or out-of-order behavior.
+
+boundary: Use the fixed public default parameters and the domain defined by this clause; do not add requirements from other AXI versions.
+
+## F-axi-06
+
+requirement_ids: ["R-dv-080-006"]
+
+module: axi_interconnect
+
+definition: The selected write transaction receives W from the corresponding s port, and Wdata/strb/last are sent in order to the selected m port, with Wuser fixed at 0. The W path has an elastic capacity of two beats; a handshaken beat may become m_wvalid after that edge. Valid output payload remains stable when blocked, and beats must not be lost, duplicated, or reordered. s_wready is a registered output; target ready or a buffer slot still unoccupied after the update is the condition for enabling it on the next cycle; acceptance under the current ready determines whether data enters the buffer on this edge. After receiving Wlast, stop receiving W for this transaction and switch to waiting for B.
+
+interface: ["clk", "m_axi_awaddr", "m_axi_awburst", "m_axi_awcache", "m_axi_awid", "m_axi_awlen", "m_axi_awlock", "m_axi_awprot", "m_axi_awqos", "m_axi_awready", "m_axi_awregion", "m_axi_awsize", "m_axi_awuser", "m_axi_awvalid", "m_axi_wdata", "m_axi_wlast", "m_axi_wready", "m_axi_wstrb", "m_axi_wuser", "m_axi_wvalid", "rst", "s_axi_awaddr", "s_axi_awburst", "s_axi_awcache", "s_axi_awid", "s_axi_awlen", "s_axi_awlock", "s_axi_awprot", "s_axi_awqos", "s_axi_awready", "s_axi_awsize", "s_axi_awuser", "s_axi_awvalid", "s_axi_wdata", "s_axi_wlast", "s_axi_wready", "s_axi_wstrb", "s_axi_wuser", "s_axi_wvalid"]
+
+timing: The exact timing and validity domain of this clause follow definition; do not assume additional pipelining or out-of-order behavior.
+
+boundary: Use the fixed public default parameters and the domain defined by this clause; do not add requirements from other AXI versions.
+
+## F-axi-07
+
+requirement_ids: ["R-dv-080-007"]
+
+module: axi_interconnect
+
+definition: Enable the selected m_bready after the edge that receives upstream Wlast; legal endpoints provide B only after the target AW and all W have handshaken. After the downstream B handshake, set Bvalid for the selected s port after the edge, passing Bresp through, using the original AWID rather than m_bid for Bid, and setting Buser=0. While s_bready is low, hold Bvalid and the valid payload; the final s-side B handshake releases arbitration, and no Bvalid appears on other s ports.
+
+interface: ["clk", "m_axi_arburst", "m_axi_awburst", "m_axi_bid", "m_axi_bready", "m_axi_bresp", "m_axi_buser", "m_axi_bvalid", "m_axi_wstrb", "rst", "s_axi_arburst", "s_axi_awburst", "s_axi_bid", "s_axi_bready", "s_axi_bresp", "s_axi_buser", "s_axi_bvalid", "s_axi_wstrb"]
+
+timing: The exact timing and validity domain of this clause follow definition; do not assume additional pipelining or out-of-order behavior.
+
+boundary: Use the fixed public default parameters and the domain defined by this clause; do not add requirements from other AXI versions.
+
+## F-axi-08
+
+requirement_ids: ["R-dv-080-008"]
+
+module: axi_interconnect
+
+definition: The selected read transaction receives R only from the selected m port; Rdata/resp/last pass through beat by beat to the original s port, with Rid always equal to the original ARID rather than m_rid, and Ruser=0. The R path has an elastic capacity of two beats; valid payload remains stable when blocked, and beats must not be lost, duplicated, or reordered; upstream ready and capacity determine the registered m_rready. After receiving the target Rlast, stop receiving downstream R, and release arbitration only after this final beat handshakes on the s side; normal reads do not independently generate or truncate data based on ARLEN.
+
+interface: ["clk", "m_axi_araddr", "m_axi_arburst", "m_axi_arcache", "m_axi_arid", "m_axi_arlen", "m_axi_arlock", "m_axi_arprot", "m_axi_arqos", "m_axi_arready", "m_axi_arregion", "m_axi_arsize", "m_axi_aruser", "m_axi_arvalid", "m_axi_awaddr", "m_axi_awburst", "m_axi_awprot", "m_axi_awready", "m_axi_awregion", "m_axi_awuser", "m_axi_bready", "m_axi_bresp", "m_axi_buser", "m_axi_rdata", "m_axi_rid", "m_axi_rlast", "m_axi_rready", "m_axi_rresp", "m_axi_ruser", "m_axi_rvalid", "m_axi_wready", "m_axi_wstrb", "m_axi_wuser", "rst", "s_axi_araddr", "s_axi_arburst", "s_axi_arcache", "s_axi_arid", "s_axi_arlen", "s_axi_arlock", "s_axi_arprot", "s_axi_arqos", "s_axi_arready", "s_axi_arsize", "s_axi_aruser", "s_axi_arvalid", "s_axi_awaddr", "s_axi_awburst", "s_axi_awprot", "s_axi_awready", "s_axi_awuser", "s_axi_bready", "s_axi_bresp", "s_axi_buser", "s_axi_rdata", "s_axi_rid", "s_axi_rlast", "s_axi_rready", "s_axi_rresp", "s_axi_ruser", "s_axi_rvalid", "s_axi_wready", "s_axi_wstrb", "s_axi_wuser"]
+
+timing: The exact timing and validity domain of this clause follow definition; do not assume additional pipelining or out-of-order behavior.
+
+boundary: Use the fixed public default parameters and the domain defined by this clause; do not add requirements from other AXI versions.
+
+## F-axi-09
+
+requirement_ids: ["R-dv-080-009"]
+
+module: axi_interconnect
+
+definition: An address miss sends no AR to any m port. Internally generate ARLEN+1 R beats, with data 0, resp=2'b11 meaning DECERR, Rid equal to the request ID, and user0; only the final beat has last1. Observe the same R buffering and upstream backpressure; the transaction completes after all beats are received, and the count must not overflow while incrementing and cause unlimited transmission.
+
+interface: ["clk", "m_axi_araddr", "m_axi_arburst", "m_axi_arcache", "m_axi_arid", "m_axi_arlen", "m_axi_arlock", "m_axi_arprot", "m_axi_arqos", "m_axi_arready", "m_axi_arregion", "m_axi_arsize", "m_axi_aruser", "m_axi_arvalid", "m_axi_awaddr", "m_axi_awburst", "m_axi_awprot", "m_axi_awready", "m_axi_awregion", "m_axi_awuser", "m_axi_bready", "m_axi_bresp", "m_axi_buser", "m_axi_rdata", "m_axi_rid", "m_axi_rlast", "m_axi_rready", "m_axi_rresp", "m_axi_ruser", "m_axi_rvalid", "m_axi_wready", "m_axi_wstrb", "m_axi_wuser", "rst", "s_axi_araddr", "s_axi_arburst", "s_axi_arcache", "s_axi_arid", "s_axi_arlen", "s_axi_arlock", "s_axi_arprot", "s_axi_arqos", "s_axi_arready", "s_axi_arsize", "s_axi_aruser", "s_axi_arvalid", "s_axi_awaddr", "s_axi_awburst", "s_axi_awprot", "s_axi_awready", "s_axi_awuser", "s_axi_bready", "s_axi_bresp", "s_axi_buser", "s_axi_rdata", "s_axi_rid", "s_axi_rlast", "s_axi_rready", "s_axi_rresp", "s_axi_ruser", "s_axi_rvalid", "s_axi_wready", "s_axi_wstrb", "s_axi_wuser"]
+
+timing: The exact timing and validity domain of this clause follow definition; do not assume additional pipelining or out-of-order behavior.
+
+boundary: Use the fixed public default parameters and the domain defined by this clause; do not add requirements from other AXI versions.
+
+## F-axi-10
+
+requirement_ids: ["R-dv-080-010"]
+
+module: axi_interconnect
+
+definition: An address miss sends no AW or W to any m port. Receive and discard W from the selected s port, returning one B to that s port only after the Wlast handshake, with resp=2'b11 meaning DECERR, Bid equal to the original AWID, and user0. AWLEN does not replace the Wlast termination condition; hold the response under upstream B backpressure.
+
+interface: ["clk", "m_axi_arburst", "m_axi_awaddr", "m_axi_awburst", "m_axi_awcache", "m_axi_awid", "m_axi_awlen", "m_axi_awlock", "m_axi_awprot", "m_axi_awqos", "m_axi_awready", "m_axi_awregion", "m_axi_awsize", "m_axi_awuser", "m_axi_awvalid", "m_axi_bid", "m_axi_bready", "m_axi_bresp", "m_axi_buser", "m_axi_bvalid", "m_axi_wdata", "m_axi_wlast", "m_axi_wready", "m_axi_wstrb", "m_axi_wuser", "m_axi_wvalid", "rst", "s_axi_arburst", "s_axi_awaddr", "s_axi_awburst", "s_axi_awcache", "s_axi_awid", "s_axi_awlen", "s_axi_awlock", "s_axi_awprot", "s_axi_awqos", "s_axi_awready", "s_axi_awsize", "s_axi_awuser", "s_axi_awvalid", "s_axi_bid", "s_axi_bready", "s_axi_bresp", "s_axi_buser", "s_axi_bvalid", "s_axi_wdata", "s_axi_wlast", "s_axi_wready", "s_axi_wstrb", "s_axi_wuser", "s_axi_wvalid"]
+
+timing: The exact timing and validity domain of this clause follow definition; do not assume additional pipelining or out-of-order behavior.
+
+boundary: Use the fixed public default parameters and the domain defined by this clause; do not add requirements from other AXI versions.
+
+## F-axi-11
+
+requirement_ids: ["R-dv-080-011"]
+
+module: axi_interconnect
+
+definition: In the first cycle after a legal read address handshake, the onehot position of m_rready uses the target index saved from the previous decoding, with an initial value of 0 at the start of simulation; synchronous reset does not clear the saved target index, and the reset edge still commits the index obtained from combinational decoding before reset. The subsequent first beat projects according to this historical index; from the next cycle onward, use the current target index. Validity is determined by the read buffer availability condition at that time. Legal endpoints do not send R before the corresponding AR handshake, so this ready projection cannot create data from nothing; this clause only specifies the exact timing of public control outputs.
+
+interface: ["clk", "m_axi_araddr", "m_axi_arburst", "m_axi_arcache", "m_axi_arid", "m_axi_arlen", "m_axi_arlock", "m_axi_arprot", "m_axi_arqos", "m_axi_arready", "m_axi_arregion", "m_axi_arsize", "m_axi_aruser", "m_axi_arvalid", "m_axi_awaddr", "m_axi_awburst", "m_axi_awprot", "m_axi_awready", "m_axi_awregion", "m_axi_awuser", "m_axi_bready", "m_axi_bresp", "m_axi_buser", "m_axi_rdata", "m_axi_rid", "m_axi_rlast", "m_axi_rready", "m_axi_rresp", "m_axi_ruser", "m_axi_rvalid", "m_axi_wready", "m_axi_wstrb", "m_axi_wuser", "rst", "s_axi_araddr", "s_axi_arburst", "s_axi_arcache", "s_axi_arid", "s_axi_arlen", "s_axi_arlock", "s_axi_arprot", "s_axi_arqos", "s_axi_arready", "s_axi_arsize", "s_axi_aruser", "s_axi_arvalid", "s_axi_awaddr", "s_axi_awburst", "s_axi_awprot", "s_axi_awready", "s_axi_awuser", "s_axi_bready", "s_axi_bresp", "s_axi_buser", "s_axi_rdata", "s_axi_rid", "s_axi_rlast", "s_axi_rready", "s_axi_rresp", "s_axi_ruser", "s_axi_rvalid", "s_axi_wready", "s_axi_wstrb", "s_axi_wuser"]
+
+timing: The exact timing and validity domain of this clause follow definition; do not assume additional pipelining or out-of-order behavior.
+
+boundary: Use the fixed public default parameters and the domain defined by this clause; do not add requirements from other AXI versions.
+
+## F-axi-12
+
+requirement_ids: ["R-dv-080-012"]
+
+module: axi_interconnect
+
+definition: All output ready/valid signals are meaningful in both the pre-edge and post-edge stable windows of every edge after reset has occurred; payload is valid only when its port's valid is 1. Payload may show the same value on multiple ports; payload on unselected ports with valid0 is not scored and is not required to be 0. Differences in valid must be reported independently as errors; control mismatches must not be masked because actual or expected valid is 0; X/Z at valid points is an error.
+
+interface: ["clk", "m_axi_araddr", "m_axi_arburst", "m_axi_arcache", "m_axi_arid", "m_axi_arlen", "m_axi_arlock", "m_axi_arprot", "m_axi_arqos", "m_axi_arready", "m_axi_arregion", "m_axi_arsize", "m_axi_aruser", "m_axi_arvalid", "m_axi_awaddr", "m_axi_awburst", "m_axi_awcache", "m_axi_awid", "m_axi_awlen", "m_axi_awlock", "m_axi_awprot", "m_axi_awqos", "m_axi_awready", "m_axi_awregion", "m_axi_awsize", "m_axi_awuser", "m_axi_awvalid", "m_axi_bid", "m_axi_bready", "m_axi_bresp", "m_axi_buser", "m_axi_bvalid", "m_axi_rdata", "m_axi_rid", "m_axi_rlast", "m_axi_rready", "m_axi_rresp", "m_axi_ruser", "m_axi_rvalid", "m_axi_wdata", "m_axi_wlast", "m_axi_wready", "m_axi_wstrb", "m_axi_wuser", "m_axi_wvalid", "rst", "s_axi_araddr", "s_axi_arburst", "s_axi_arcache", "s_axi_arid", "s_axi_arlen", "s_axi_arlock", "s_axi_arprot", "s_axi_arqos", "s_axi_arready", "s_axi_arsize", "s_axi_aruser", "s_axi_arvalid", "s_axi_awaddr", "s_axi_awburst", "s_axi_awcache", "s_axi_awid", "s_axi_awlen", "s_axi_awlock", "s_axi_awprot", "s_axi_awqos", "s_axi_awready", "s_axi_awsize", "s_axi_awuser", "s_axi_awvalid", "s_axi_bid", "s_axi_bready", "s_axi_bresp", "s_axi_buser", "s_axi_bvalid", "s_axi_rdata", "s_axi_rid", "s_axi_rlast", "s_axi_rready", "s_axi_rresp", "s_axi_ruser", "s_axi_rvalid", "s_axi_wdata", "s_axi_wlast", "s_axi_wready", "s_axi_wstrb", "s_axi_wuser", "s_axi_wvalid"]
+
+timing: The exact timing and validity domain of this clause follow definition; do not assume additional pipelining or out-of-order behavior.
+
+boundary: Use the fixed public default parameters and the domain defined by this clause; do not add requirements from other AXI versions.

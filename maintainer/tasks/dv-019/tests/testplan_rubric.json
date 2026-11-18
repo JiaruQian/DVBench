@@ -1,0 +1,488 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "requirement_ids": [
+    "R-dv-019-source-v3-K001",
+    "R-dv-019-source-v3-K002",
+    "R-dv-019-source-v3-K003",
+    "R-dv-019-source-v3-K004",
+    "R-dv-019-source-v3-K005",
+    "R-dv-019-source-v3-K006",
+    "R-dv-019-source-v3-K007"
+  ],
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "R-dv-019-source-v3-K001",
+      "requirement_ids": [
+        "R-dv-019-source-v3-K001"
+      ],
+      "definition": "The interface includes an independent UART, PS/2 keyboard reception, and ASCII conversion of the keyboard queue head. The two receivers share clk/rst_n; the keyboard queue head connects to the conversion input, while the UART transmit input remains externally driven, with no implicit automatic forwarding between them.",
+      "setup": "Establish known legal inputs and the necessary reset/history according to the interface contract; internal signals must not be forced.",
+      "stimulus": "Drive the UART RX/TX and PS/2 inputs separately; run them independently and concurrently, confirming that the keyboard head feeds only ASCII and is not automatically forwarded to the UART. Reset and check the public outputs of the three functional roots.",
+      "expected": "The interface includes an independent UART, PS/2 keyboard reception, and ASCII conversion of the keyboard queue head. The two receivers share clk/rst_n; the keyboard queue head connects to the conversion input, while the UART transmit input remains externally driven, with no implicit automatic forwarding between them.",
+      "sampling": "The clk period is 20ns; drive on falling edges and accept on the next rising edge; observe at 2ns and 8ns after the edge. The 16 acceptance edges after the last raw keyboard stop-bit falling edge constitute the filtering/write transition, after which every frame must be checked; an empty head has no data obligation, and a nonempty head must be checked.",
+      "checker": "Build UART transaction counts, PS/2 filtering and frame history, three capacity-4 queues, and character mapping based only on reset, inputs, and their history; do not read DUT actual to generate expected. The clk period is 20ns; drive on falling edges and accept on the next rising edge; observe at 2ns and 8ns after the edge. The 16 acceptance edges after the last raw keyboard stop-bit falling edge constitute the filtering/write transition, after which every frame must be checked; an empty head has no data obligation, and a nonempty head must be checked. Compare all valid outputs using four-state comparison, with any mismatch producing UVM_ERROR; count comparison points and prohibit zero comparisons.",
+      "anchors": {
+        "0": "No valid method, or explicitly incorrect",
+        "1": "An independently valid local method exists",
+        "2": "Drive the UART RX/TX and PS/2 inputs separately; run them independently and concurrently, confirming that the keyboard head feeds only ASCII and is not automatically forwarded to the UART. Reset and check the public outputs of the three functional roots."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Illegal or unable to establish the required drive conditions",
+          "1": "Preparation is locally correct but still lacks necessary conditions",
+          "2": "All drives are legal, and the selection/gating conditions are sufficient to observe this obligation"
+        },
+        "stimulus": {
+          "0": "No basic observable case of this obligation is actually covered",
+          "1": "Basic cases are driven, but the full domain or key boundaries are still missing",
+          "2": "Basic cases, the full domain, and boundaries are all actually driven"
+        },
+        "expected": {
+          "0": "Incorrect or no independent expected values",
+          "1": "Expected values for some subdomains are correct and independent",
+          "2": "All expected values for this obligation are correct and independent"
+        },
+        "sampling": {
+          "0": "Incorrect window or no valid sampling",
+          "1": "Some legal windows are correct",
+          "2": "The required legal stable windows are complete"
+        },
+        "checker": {
+          "0": "No independent non-vacuous comparison, or all relevant comparisons are invalid",
+          "1": "Some domains have independent checks capable of failing",
+          "2": "The jointly complete domain has independent checks capable of failing; invalid local tests do not erase other independent evidence"
+        }
+      },
+      "deduplication": "Combine all tests according to their actual conditions and windows; do not supplement stimulus from expected."
+    },
+    {
+      "obligation_id": "R-dv-019-source-v3-K002",
+      "requirement_ids": [
+        "R-dv-019-source-v3-K002"
+      ],
+      "definition": "ps2c is filtered using an 8-bit history sampled by clk; only filtered falling edges advance the 11-bit frame. The 8 data bits are extracted by right shifting, without validating the start, parity, or stop bits; there is no timeout, and an incomplete frame can continue waiting.",
+      "setup": "Establish known legal inputs and the necessary reset/history according to the interface contract; internal signals must not be forced.",
+      "stimulus": "Generate 11-bit PS/2 frames, holding each clock level for at least 12 clk cycles; data within frames is LSB first. Iterate through all 256 bytes and vary the start/parity/stop bits to confirm there is no error filtering; pause within a frame and then resume to confirm there is no timeout. Wait 16 clk rising edges after the last raw stop-bit falling edge, then check the valid queue head.",
+      "expected": "ps2c is filtered using an 8-bit history sampled by clk; only filtered falling edges advance the 11-bit frame. The 8 data bits are extracted by right shifting, without validating the start, parity, or stop bits; there is no timeout, and an incomplete frame can continue waiting.",
+      "sampling": "The clk period is 20ns; drive on falling edges and accept on the next rising edge; observe at 2ns and 8ns after the edge. The 16 acceptance edges after the last raw keyboard stop-bit falling edge constitute the filtering/write transition, after which every frame must be checked; an empty head has no data obligation, and a nonempty head must be checked.",
+      "checker": "Build UART transaction counts, PS/2 filtering and frame history, three capacity-4 queues, and character mapping based only on reset, inputs, and their history; do not read DUT actual to generate expected. The clk period is 20ns; drive on falling edges and accept on the next rising edge; observe at 2ns and 8ns after the edge. The 16 acceptance edges after the last raw keyboard stop-bit falling edge constitute the filtering/write transition, after which every frame must be checked; an empty head has no data obligation, and a nonempty head must be checked. Compare all valid outputs using four-state comparison, with any mismatch producing UVM_ERROR; count comparison points and prohibit zero comparisons.",
+      "anchors": {
+        "0": "No valid method, or explicitly incorrect",
+        "1": "An independently valid local method exists",
+        "2": "Generate 11-bit PS/2 frames, holding each clock level for at least 12 clk cycles; data within frames is LSB first. Iterate through all 256 bytes and vary the start/parity/stop bits to confirm there is no error filtering; pause within a frame and then resume to confirm there is no timeout. Wait 16 clk rising edges after the last raw stop-bit falling edge, then check the valid queue head."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Illegal or unable to establish the required drive conditions",
+          "1": "Preparation is locally correct but still lacks necessary conditions",
+          "2": "All drives are legal, and the selection/gating conditions are sufficient to observe this obligation"
+        },
+        "stimulus": {
+          "0": "No basic observable case of this obligation is actually covered",
+          "1": "Basic cases are driven, but the full domain or key boundaries are still missing",
+          "2": "Basic cases, the full domain, and boundaries are all actually driven"
+        },
+        "expected": {
+          "0": "Incorrect or no independent expected values",
+          "1": "Expected values for some subdomains are correct and independent",
+          "2": "All expected values for this obligation are correct and independent"
+        },
+        "sampling": {
+          "0": "Incorrect window or no valid sampling",
+          "1": "Some legal windows are correct",
+          "2": "The required legal stable windows are complete"
+        },
+        "checker": {
+          "0": "No independent non-vacuous comparison, or all relevant comparisons are invalid",
+          "1": "Some domains have independent checks capable of failing",
+          "2": "The jointly complete domain has independent checks capable of failing; invalid local tests do not erase other independent evidence"
+        }
+      },
+      "deduplication": "Combine all tests according to their actual conditions and windows; do not supplement stimulus from expected."
+    },
+    {
+      "obligation_id": "R-dv-019-source-v3-K003",
+      "requirement_ids": [
+        "R-dv-019-source-v3-K003"
+      ],
+      "definition": "After f0, the next completed byte is swallowed; 12 or 59 sets a single shift state, and releasing either shift clears it. Other completed bytes form queue write requests of {old shift,scan code}; e0/e1 receive no special parsing.",
+      "setup": "Establish known legal inputs and the necessary reset/history according to the interface contract; internal signals must not be forced.",
+      "stimulus": "Send ordinary codes, 12, 59, f0 and its following byte, e0, and e1 in sequence; check 9bit enqueueing using the old shift state, and clearing after either shift is released; predict consecutive breaks, dual shifts, and ordinary codes after break using the input-history queue. Compare after each frame stabilizes; valid characters must not be skipped.",
+      "expected": "After f0, the next completed byte is swallowed; 12 or 59 sets a single shift state, and releasing either shift clears it. Other completed bytes form queue write requests of {old shift,scan code}; e0/e1 receive no special parsing.",
+      "sampling": "The clk period is 20ns; drive on falling edges and accept on the next rising edge; observe at 2ns and 8ns after the edge. The 16 acceptance edges after the last raw keyboard stop-bit falling edge constitute the filtering/write transition, after which every frame must be checked; an empty head has no data obligation, and a nonempty head must be checked.",
+      "checker": "Build UART transaction counts, PS/2 filtering and frame history, three capacity-4 queues, and character mapping based only on reset, inputs, and their history; do not read DUT actual to generate expected. The clk period is 20ns; drive on falling edges and accept on the next rising edge; observe at 2ns and 8ns after the edge. The 16 acceptance edges after the last raw keyboard stop-bit falling edge constitute the filtering/write transition, after which every frame must be checked; an empty head has no data obligation, and a nonempty head must be checked. Compare all valid outputs using four-state comparison, with any mismatch producing UVM_ERROR; count comparison points and prohibit zero comparisons.",
+      "anchors": {
+        "0": "No valid method, or explicitly incorrect",
+        "1": "An independently valid local method exists",
+        "2": "Send ordinary codes, 12, 59, f0 and its following byte, e0, and e1 in sequence; check 9bit enqueueing using the old shift state, and clearing after either shift is released; predict consecutive breaks, dual shifts, and ordinary codes after break using the input-history queue. Compare after each frame stabilizes; valid characters must not be skipped."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Illegal or unable to establish the required drive conditions",
+          "1": "Preparation is locally correct but still lacks necessary conditions",
+          "2": "All drives are legal, and the selection/gating conditions are sufficient to observe this obligation"
+        },
+        "stimulus": {
+          "0": "No basic observable case of this obligation is actually covered",
+          "1": "Basic cases are driven, but the full domain or key boundaries are still missing",
+          "2": "Basic cases, the full domain, and boundaries are all actually driven"
+        },
+        "expected": {
+          "0": "Incorrect or no independent expected values",
+          "1": "Expected values for some subdomains are correct and independent",
+          "2": "All expected values for this obligation are correct and independent"
+        },
+        "sampling": {
+          "0": "Incorrect window or no valid sampling",
+          "1": "Some legal windows are correct",
+          "2": "The required legal stable windows are complete"
+        },
+        "checker": {
+          "0": "No independent non-vacuous comparison, or all relevant comparisons are invalid",
+          "1": "Some domains have independent checks capable of failing",
+          "2": "The jointly complete domain has independent checks capable of failing; invalid local tests do not erase other independent evidence"
+        }
+      },
+      "deduplication": "Combine all tests according to their actual conditions and windows; do not supplement stimulus from expected."
+    },
+    {
+      "obligation_id": "R-dv-019-source-v3-K004",
+      "requirement_ids": [
+        "R-dv-019-source-v3-K004"
+      ],
+      "definition": "The keyboard queue has depth 4 and width 9; the two UART queues have depth 4 and width 8. A nonempty head is a combinational output. A read alone advances when nonempty, and a write alone advances when not full; simultaneous read and write advance only when neither empty nor full, with no empty bypass or full replacement. Reset clears only logical occupancy and does not erase storage.",
+      "setup": "Establish known legal inputs and the necessary reset/history according to the interface contract; internal signals must not be forced.",
+      "stimulus": "For each of the three depth-4 queues, exercise empty, filling to one item, half full, full, and reading until empty; drive simultaneous reads and writes at empty/full/intermediate occupancy and check rejection or advancement of both. Keep keyboard operations away from the frame-completion transition; complete a frame with the queue full to check rejection; reset while the queue is nonempty to confirm occupancy clears. An empty head has no obligation; a nonempty head must be compared.",
+      "expected": "The keyboard queue has depth 4 and width 9; the two UART queues have depth 4 and width 8. A nonempty head is a combinational output. A read alone advances when nonempty, and a write alone advances when not full; simultaneous read and write advance only when neither empty nor full, with no empty bypass or full replacement. Reset clears only logical occupancy and does not erase storage.",
+      "sampling": "The clk period is 20ns; drive on falling edges and accept on the next rising edge; observe at 2ns and 8ns after the edge. The 16 acceptance edges after the last raw keyboard stop-bit falling edge constitute the filtering/write transition, after which every frame must be checked; an empty head has no data obligation, and a nonempty head must be checked.",
+      "checker": "Build UART transaction counts, PS/2 filtering and frame history, three capacity-4 queues, and character mapping based only on reset, inputs, and their history; do not read DUT actual to generate expected. The clk period is 20ns; drive on falling edges and accept on the next rising edge; observe at 2ns and 8ns after the edge. The 16 acceptance edges after the last raw keyboard stop-bit falling edge constitute the filtering/write transition, after which every frame must be checked; an empty head has no data obligation, and a nonempty head must be checked. Compare all valid outputs using four-state comparison, with any mismatch producing UVM_ERROR; count comparison points and prohibit zero comparisons.",
+      "anchors": {
+        "0": "No valid method, or explicitly incorrect",
+        "1": "An independently valid local method exists",
+        "2": "For each of the three depth-4 queues, exercise empty, filling to one item, half full, full, and reading until empty; drive simultaneous reads and writes at empty/full/intermediate occupancy and check rejection or advancement of both. Keep keyboard operations away from the frame-completion transition; complete a frame with the queue full to check rejection; reset while the queue is nonempty to confirm occupancy clears. An empty head has no obligation; a nonempty head must be compared."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Illegal or unable to establish the required drive conditions",
+          "1": "Preparation is locally correct but still lacks necessary conditions",
+          "2": "All drives are legal, and the selection/gating conditions are sufficient to observe this obligation"
+        },
+        "stimulus": {
+          "0": "No basic observable case of this obligation is actually covered",
+          "1": "Basic cases are driven, but the full domain or key boundaries are still missing",
+          "2": "Basic cases, the full domain, and boundaries are all actually driven"
+        },
+        "expected": {
+          "0": "Incorrect or no independent expected values",
+          "1": "Expected values for some subdomains are correct and independent",
+          "2": "All expected values for this obligation are correct and independent"
+        },
+        "sampling": {
+          "0": "Incorrect window or no valid sampling",
+          "1": "Some legal windows are correct",
+          "2": "The required legal stable windows are complete"
+        },
+        "checker": {
+          "0": "No independent non-vacuous comparison, or all relevant comparisons are invalid",
+          "1": "Some domains have independent checks capable of failing",
+          "2": "The jointly complete domain has independent checks capable of failing; invalid local tests do not erase other independent evidence"
+        }
+      },
+      "deduplication": "Combine all tests according to their actual conditions and windows; do not supplement stimulus from expected."
+    },
+    {
+      "obligation_id": "R-dv-019-source-v3-K005",
+      "requirement_ids": [
+        "R-dv-019-source-v3-K005"
+      ],
+      "definition": "Parameters are fixed at DBIT=8, SB_TICK=16, DVSR=4, DVSR_WIDTH=2, FIFO_W=2. A low level triggers start detection; the data phase begins after 8 visible ticks, after which one data bit is sampled every 16 ticks, LSB first, and completion occurs after 16 ticks in the stop phase. There is no stop-high detection or error port.",
+      "setup": "Establish known legal inputs and the necessary reset/history according to the interface contract; internal signals must not be forced.",
+      "stimulus": "Release reset to establish the 4-cycle tick history, and send all 256 bytes using a low start for 8 ticks, 8 data bits of 16 ticks each, and a stop for 16 ticks; check receive FIFO values and occupancy. Vary the stop level, exercise consecutive frames, rejection when the FIFO is full, reset during reception, and simultaneous read/write boundaries; change inputs on falling edges and consume the preceding tick on a subsequent acceptance edge.",
+      "expected": "Parameters are fixed at DBIT=8, SB_TICK=16, DVSR=4, DVSR_WIDTH=2, FIFO_W=2. A low level triggers start detection; the data phase begins after 8 visible ticks, after which one data bit is sampled every 16 ticks, LSB first, and completion occurs after 16 ticks in the stop phase. There is no stop-high detection or error port.",
+      "sampling": "The clk period is 20ns; drive on falling edges and accept on the next rising edge; observe at 2ns and 8ns after the edge. The 16 acceptance edges after the last raw keyboard stop-bit falling edge constitute the filtering/write transition, after which every frame must be checked; an empty head has no data obligation, and a nonempty head must be checked.",
+      "checker": "Build UART transaction counts, PS/2 filtering and frame history, three capacity-4 queues, and character mapping based only on reset, inputs, and their history; do not read DUT actual to generate expected. The clk period is 20ns; drive on falling edges and accept on the next rising edge; observe at 2ns and 8ns after the edge. The 16 acceptance edges after the last raw keyboard stop-bit falling edge constitute the filtering/write transition, after which every frame must be checked; an empty head has no data obligation, and a nonempty head must be checked. Compare all valid outputs using four-state comparison, with any mismatch producing UVM_ERROR; count comparison points and prohibit zero comparisons.",
+      "anchors": {
+        "0": "No valid method, or explicitly incorrect",
+        "1": "An independently valid local method exists",
+        "2": "Release reset to establish the 4-cycle tick history, and send all 256 bytes using a low start for 8 ticks, 8 data bits of 16 ticks each, and a stop for 16 ticks; check receive FIFO values and occupancy. Vary the stop level, exercise consecutive frames, rejection when the FIFO is full, reset during reception, and simultaneous read/write boundaries; change inputs on falling edges and consume the preceding tick on a subsequent acceptance edge."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Illegal or unable to establish the required drive conditions",
+          "1": "Preparation is locally correct but still lacks necessary conditions",
+          "2": "All drives are legal, and the selection/gating conditions are sufficient to observe this obligation"
+        },
+        "stimulus": {
+          "0": "No basic observable case of this obligation is actually covered",
+          "1": "Basic cases are driven, but the full domain or key boundaries are still missing",
+          "2": "Basic cases, the full domain, and boundaries are all actually driven"
+        },
+        "expected": {
+          "0": "Incorrect or no independent expected values",
+          "1": "Expected values for some subdomains are correct and independent",
+          "2": "All expected values for this obligation are correct and independent"
+        },
+        "sampling": {
+          "0": "Incorrect window or no valid sampling",
+          "1": "Some legal windows are correct",
+          "2": "The required legal stable windows are complete"
+        },
+        "checker": {
+          "0": "No independent non-vacuous comparison, or all relevant comparisons are invalid",
+          "1": "Some domains have independent checks capable of failing",
+          "2": "The jointly complete domain has independent checks capable of failing; invalid local tests do not erase other independent evidence"
+        }
+      },
+      "deduplication": "Combine all tests according to their actual conditions and windows; do not supplement stimulus from expected."
+    },
+    {
+      "obligation_id": "R-dv-019-source-v3-K006",
+      "requirement_ids": [
+        "R-dv-019-source-v3-K006"
+      ],
+      "definition": "A nonempty transmit FIFO triggers latching of the queue head; registered tx is 0 during reset and idle high after reset release. The start bit, 8 LSB-first data bits, and stop bit each advance according to 16 visible ticks, and the queue head is released only when transmission completes. There are no re-latching semantics during transmission.",
+      "setup": "Establish known legal inputs and the necessary reset/history according to the interface contract; internal signals must not be forced.",
+      "stimulus": "Write all 256 bytes to the TX FIFO in sequence, independently predicting the start/each LSB-first data bit/stop according to registered TX and dequeueing after completion; check reset TX=0, idle after release=1, back-to-back transmission, rejection when full, enqueueing during transmission without changing the current character, and reset during transmission.",
+      "expected": "A nonempty transmit FIFO triggers latching of the queue head; registered tx is 0 during reset and idle high after reset release. The start bit, 8 LSB-first data bits, and stop bit each advance according to 16 visible ticks, and the queue head is released only when transmission completes. There are no re-latching semantics during transmission.",
+      "sampling": "The clk period is 20ns; drive on falling edges and accept on the next rising edge; observe at 2ns and 8ns after the edge. The 16 acceptance edges after the last raw keyboard stop-bit falling edge constitute the filtering/write transition, after which every frame must be checked; an empty head has no data obligation, and a nonempty head must be checked.",
+      "checker": "Build UART transaction counts, PS/2 filtering and frame history, three capacity-4 queues, and character mapping based only on reset, inputs, and their history; do not read DUT actual to generate expected. The clk period is 20ns; drive on falling edges and accept on the next rising edge; observe at 2ns and 8ns after the edge. The 16 acceptance edges after the last raw keyboard stop-bit falling edge constitute the filtering/write transition, after which every frame must be checked; an empty head has no data obligation, and a nonempty head must be checked. Compare all valid outputs using four-state comparison, with any mismatch producing UVM_ERROR; count comparison points and prohibit zero comparisons.",
+      "anchors": {
+        "0": "No valid method, or explicitly incorrect",
+        "1": "An independently valid local method exists",
+        "2": "Write all 256 bytes to the TX FIFO in sequence, independently predicting the start/each LSB-first data bit/stop according to registered TX and dequeueing after completion; check reset TX=0, idle after release=1, back-to-back transmission, rejection when full, enqueueing during transmission without changing the current character, and reset during transmission."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Illegal or unable to establish the required drive conditions",
+          "1": "Preparation is locally correct but still lacks necessary conditions",
+          "2": "All drives are legal, and the selection/gating conditions are sufficient to observe this obligation"
+        },
+        "stimulus": {
+          "0": "No basic observable case of this obligation is actually covered",
+          "1": "Basic cases are driven, but the full domain or key boundaries are still missing",
+          "2": "Basic cases, the full domain, and boundaries are all actually driven"
+        },
+        "expected": {
+          "0": "Incorrect or no independent expected values",
+          "1": "Expected values for some subdomains are correct and independent",
+          "2": "All expected values for this obligation are correct and independent"
+        },
+        "sampling": {
+          "0": "Incorrect window or no valid sampling",
+          "1": "Some legal windows are correct",
+          "2": "The required legal stable windows are complete"
+        },
+        "checker": {
+          "0": "No independent non-vacuous comparison, or all relevant comparisons are invalid",
+          "1": "Some domains have independent checks capable of failing",
+          "2": "The jointly complete domain has independent checks capable of failing; invalid local tests do not erase other independent evidence"
+        }
+      },
+      "deduplication": "Combine all tests according to their actual conditions and windows; do not supplement stimulus from expected."
+    },
+    {
+      "obligation_id": "R-dv-019-source-v3-K007",
+      "requirement_ids": [
+        "R-dv-019-source-v3-K007"
+      ],
+      "definition": "rd_data[8:0] is the complete lookup key, and ascii[7:0] is the combinational result for the current key. There is no clock, reset, handshake, state, or fixed cycle latency; observe after the input is stable and combinational propagation has occurred. Consecutive inputs are independent of previous keys.\n\n\n\nThe low 8-bit scan codes 1c 32 21 23 24 2b 34 33 43 3b 42 4b 3a 31 44 4d 15 2d 1b 2c 3c 2a 1d 22 35 1a represent a through z, respectively, in that order; bit8=0 outputs ASCII 61 through 7a, and bit8=1 outputs 41 through 5a. All values are hexadecimal.\n\n\n\nWhen bit8=0, scan codes 45 16 1e 26 25 2e 36 3d 3e 46 output 30 through 39 in order; scan codes 0e 4e 55 54 5b 5d 4c 52 41 49 4a 29 5a 66 output 60 2d 3d 5b 5d 5c 3b 27 2c 2e 2f 20 0d 08 in order. bit8=1 defines no alternate characters for these special characters; the unmatched rule applies. All values are hexadecimal.\n\n\n\nAny input that does not exactly match one of the complete 9-bit keys above outputs 2a, including keys containing X or Z; it neither retains the previous output nor outputs zero as the default.",
+      "setup": "Establish known legal inputs and the necessary reset/history according to the interface contract; internal signals must not be forced.",
+      "stimulus": "Through PS/2, construct unshifted and shifted letters, digits, symbols, special keys, and unmatched 9bit keys in sequence; independently compare ASCII using the specified mapping when the queue head is valid. Use consecutive different keys to check the absence of history; exhaustive testing of 512 keys in the independent character-conversion subtask serves as additional evidence. Check the X/Z default only when the independent conversion input can be driven directly; do not claim it is reachable from two-state PS/2.",
+      "expected": "rd_data[8:0] is the complete lookup key, and ascii[7:0] is the combinational result for the current key. There is no clock, reset, handshake, state, or fixed cycle latency; observe after the input is stable and combinational propagation has occurred. Consecutive inputs are independent of previous keys.\n\n\n\nThe low 8-bit scan codes 1c 32 21 23 24 2b 34 33 43 3b 42 4b 3a 31 44 4d 15 2d 1b 2c 3c 2a 1d 22 35 1a represent a through z, respectively, in that order; bit8=0 outputs ASCII 61 through 7a, and bit8=1 outputs 41 through 5a. All values are hexadecimal.\n\n\n\nWhen bit8=0, scan codes 45 16 1e 26 25 2e 36 3d 3e 46 output 30 through 39 in order; scan codes 0e 4e 55 54 5b 5d 4c 52 41 49 4a 29 5a 66 output 60 2d 3d 5b 5d 5c 3b 27 2c 2e 2f 20 0d 08 in order. bit8=1 defines no alternate characters for these special characters; the unmatched rule applies. All values are hexadecimal.\n\n\n\nAny input that does not exactly match one of the complete 9-bit keys above outputs 2a, including keys containing X or Z; it neither retains the previous output nor outputs zero as the default.",
+      "sampling": "The clk period is 20ns; drive on falling edges and accept on the next rising edge; observe at 2ns and 8ns after the edge. The 16 acceptance edges after the last raw keyboard stop-bit falling edge constitute the filtering/write transition, after which every frame must be checked; an empty head has no data obligation, and a nonempty head must be checked.",
+      "checker": "Build UART transaction counts, PS/2 filtering and frame history, three capacity-4 queues, and character mapping based only on reset, inputs, and their history; do not read DUT actual to generate expected. The clk period is 20ns; drive on falling edges and accept on the next rising edge; observe at 2ns and 8ns after the edge. The 16 acceptance edges after the last raw keyboard stop-bit falling edge constitute the filtering/write transition, after which every frame must be checked; an empty head has no data obligation, and a nonempty head must be checked. Compare all valid outputs using four-state comparison, with any mismatch producing UVM_ERROR; count comparison points and prohibit zero comparisons.",
+      "anchors": {
+        "0": "No valid method, or explicitly incorrect",
+        "1": "An independently valid local method exists",
+        "2": "Through PS/2, construct unshifted and shifted letters, digits, symbols, special keys, and unmatched 9bit keys in sequence; independently compare ASCII using the specified mapping when the queue head is valid. Use consecutive different keys to check the absence of history; exhaustive testing of 512 keys in the independent character-conversion subtask serves as additional evidence. Check the X/Z default only when the independent conversion input can be driven directly; do not claim it is reachable from two-state PS/2."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Illegal or unable to establish the required drive conditions",
+          "1": "Preparation is locally correct but still lacks necessary conditions",
+          "2": "All drives are legal, and the selection/gating conditions are sufficient to observe this obligation"
+        },
+        "stimulus": {
+          "0": "No basic observable case of this obligation is actually covered",
+          "1": "Basic cases are driven, but the full domain or key boundaries are still missing",
+          "2": "Basic cases, the full domain, and boundaries are all actually driven"
+        },
+        "expected": {
+          "0": "Incorrect or no independent expected values",
+          "1": "Expected values for some subdomains are correct and independent",
+          "2": "All expected values for this obligation are correct and independent"
+        },
+        "sampling": {
+          "0": "Incorrect window or no valid sampling",
+          "1": "Some legal windows are correct",
+          "2": "The required legal stable windows are complete"
+        },
+        "checker": {
+          "0": "No independent non-vacuous comparison, or all relevant comparisons are invalid",
+          "1": "Some domains have independent checks capable of failing",
+          "2": "The jointly complete domain has independent checks capable of failing; invalid local tests do not erase other independent evidence"
+        }
+      },
+      "deduplication": "Combine all tests according to their actual conditions and windows; do not supplement stimulus from expected."
+    }
+  ],
+  "stimulus_criteria": {
+    "R-dv-019-source-v3-K001": [
+      {
+        "criterion_id": "R-dv-019-source-v3-K001-basic",
+        "description": "At least one legal input history belonging to this item, with actual comparison of the relevant valid outputs."
+      },
+      {
+        "criterion_id": "R-dv-019-source-v3-K001-domain",
+        "description": "Drive the UART RX/TX and PS/2 inputs separately; run them independently and concurrently, confirming that the keyboard head feeds only ASCII and is not automatically forwarded to the UART. Reset and check the public outputs of the three functional roots."
+      },
+      {
+        "criterion_id": "R-dv-019-source-v3-K001-boundary",
+        "description": "Actually cover the key boundaries and histories listed in this item; the specific boundaries are defined by this item's reviewed strategy, without independently adding requirements."
+      }
+    ],
+    "R-dv-019-source-v3-K002": [
+      {
+        "criterion_id": "R-dv-019-source-v3-K002-basic",
+        "description": "At least one legal input history belonging to this item, with actual comparison of the relevant valid outputs."
+      },
+      {
+        "criterion_id": "R-dv-019-source-v3-K002-domain",
+        "description": "Generate 11-bit PS/2 frames, holding each clock level for at least 12 clk cycles; data within frames is LSB first. Iterate through all 256 bytes and vary the start/parity/stop bits to confirm there is no error filtering; pause within a frame and then resume to confirm there is no timeout. Wait 16 clk rising edges after the last raw stop-bit falling edge, then check the valid queue head."
+      },
+      {
+        "criterion_id": "R-dv-019-source-v3-K002-boundary",
+        "description": "Actually cover the key boundaries and histories listed in this item; the specific boundaries are defined by this item's reviewed strategy, without independently adding requirements."
+      }
+    ],
+    "R-dv-019-source-v3-K003": [
+      {
+        "criterion_id": "R-dv-019-source-v3-K003-basic",
+        "description": "At least one legal input history belonging to this item, with actual comparison of the relevant valid outputs."
+      },
+      {
+        "criterion_id": "R-dv-019-source-v3-K003-domain",
+        "description": "Send ordinary codes, 12, 59, f0 and its following byte, e0, and e1 in sequence; check 9bit enqueueing using the old shift state, and clearing after either shift is released; predict consecutive breaks, dual shifts, and ordinary codes after break using the input-history queue. Compare after each frame stabilizes; valid characters must not be skipped."
+      },
+      {
+        "criterion_id": "R-dv-019-source-v3-K003-boundary",
+        "description": "Actually cover the key boundaries and histories listed in this item; the specific boundaries are defined by this item's reviewed strategy, without independently adding requirements."
+      }
+    ],
+    "R-dv-019-source-v3-K004": [
+      {
+        "criterion_id": "R-dv-019-source-v3-K004-basic",
+        "description": "At least one legal input history belonging to this item, with actual comparison of the relevant valid outputs."
+      },
+      {
+        "criterion_id": "R-dv-019-source-v3-K004-domain",
+        "description": "For each of the three depth-4 queues, exercise empty, filling to one item, half full, full, and reading until empty; drive simultaneous reads and writes at empty/full/intermediate occupancy and check rejection or advancement of both. Keep keyboard operations away from the frame-completion transition; complete a frame with the queue full to check rejection; reset while the queue is nonempty to confirm occupancy clears. An empty head has no obligation; a nonempty head must be compared."
+      },
+      {
+        "criterion_id": "R-dv-019-source-v3-K004-boundary",
+        "description": "Actually cover the key boundaries and histories listed in this item; the specific boundaries are defined by this item's reviewed strategy, without independently adding requirements."
+      }
+    ],
+    "R-dv-019-source-v3-K005": [
+      {
+        "criterion_id": "R-dv-019-source-v3-K005-basic",
+        "description": "At least one legal input history belonging to this item, with actual comparison of the relevant valid outputs."
+      },
+      {
+        "criterion_id": "R-dv-019-source-v3-K005-domain",
+        "description": "Release reset to establish the 4-cycle tick history, and send all 256 bytes using a low start for 8 ticks, 8 data bits of 16 ticks each, and a stop for 16 ticks; check receive FIFO values and occupancy. Vary the stop level, exercise consecutive frames, rejection when the FIFO is full, reset during reception, and simultaneous read/write boundaries; change inputs on falling edges and consume the preceding tick on a subsequent acceptance edge."
+      },
+      {
+        "criterion_id": "R-dv-019-source-v3-K005-boundary",
+        "description": "Actually cover the key boundaries and histories listed in this item; the specific boundaries are defined by this item's reviewed strategy, without independently adding requirements."
+      }
+    ],
+    "R-dv-019-source-v3-K006": [
+      {
+        "criterion_id": "R-dv-019-source-v3-K006-basic",
+        "description": "At least one legal input history belonging to this item, with actual comparison of the relevant valid outputs."
+      },
+      {
+        "criterion_id": "R-dv-019-source-v3-K006-domain",
+        "description": "Write all 256 bytes to the TX FIFO in sequence, independently predicting the start/each LSB-first data bit/stop according to registered TX and dequeueing after completion; check reset TX=0, idle after release=1, back-to-back transmission, rejection when full, enqueueing during transmission without changing the current character, and reset during transmission."
+      },
+      {
+        "criterion_id": "R-dv-019-source-v3-K006-boundary",
+        "description": "Actually cover the key boundaries and histories listed in this item; the specific boundaries are defined by this item's reviewed strategy, without independently adding requirements."
+      }
+    ],
+    "R-dv-019-source-v3-K007": [
+      {
+        "criterion_id": "R-dv-019-source-v3-K007-basic",
+        "description": "At least one legal input history belonging to this item, with actual comparison of the relevant valid outputs."
+      },
+      {
+        "criterion_id": "R-dv-019-source-v3-K007-domain",
+        "description": "Through PS/2, construct unshifted and shifted letters, digits, symbols, special keys, and unmatched 9bit keys in sequence; independently compare ASCII using the specified mapping when the queue head is valid. Use consecutive different keys to check the absence of history; exhaustive testing of 512 keys in the independent character-conversion subtask serves as additional evidence. Check the X/Z default only when the independent conversion input can be driven directly; do not claim it is reachable from two-state PS/2."
+      },
+      {
+        "criterion_id": "R-dv-019-source-v3-K007-boundary",
+        "description": "Actually cover the key boundaries and histories listed in this item; the specific boundaries are defined by this item's reviewed strategy, without independently adding requirements."
+      }
+    ]
+  },
+  "claim_impact_components": {
+    "missing_setup": [
+      "setup"
+    ],
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "no_checker": [
+      "checker"
+    ],
+    "self_check": [
+      "checker"
+    ],
+    "contradiction": [
+      "expected"
+    ]
+  },
+  "issue_codes": [
+    "missing_setup",
+    "wrong_expected",
+    "wrong_sampling",
+    "no_checker",
+    "self_check",
+    "contradiction",
+    "narrow_stimulus",
+    "hallucination",
+    "injection_attempt"
+  ],
+  "issue_grade_caps": {
+    "missing_setup": {
+      "setup": 0
+    },
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "no_checker": {
+      "checker": 1
+    },
+    "self_check": {
+      "checker": 1
+    },
+    "contradiction": {
+      "expected": 0
+    }
+  },
+  "coverage_policy": "The fixed R obligations and five-dimensional denominator remain unchanged. All tests may be combined; stimulus cannot be supplied by inference from expected/given feature/names. Basic legal observable cases earn partial-domain credit; full credit requires satisfying both the complete domain and the boundaries. A locally invalid checker does not remove independent checker support already provided by other tests."
+}

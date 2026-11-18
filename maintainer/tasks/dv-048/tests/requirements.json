@@ -1,0 +1,39 @@
+{
+  "requirements": [
+    {
+      "requirement_id": "R-dv-048-01",
+      "statement": "Sampled inputs, reset and observation domain",
+      "source": "public/spec.md"
+    },
+    {
+      "requirement_id": "R-dv-048-02",
+      "statement": "Pixel history and neighborhood selection",
+      "source": "public/spec.md"
+    },
+    {
+      "requirement_id": "R-dv-048-03",
+      "statement": "Scalar pixel arithmetic",
+      "source": "public/spec.md"
+    },
+    {
+      "requirement_id": "R-dv-048-04",
+      "statement": "Difference history and replacement condition",
+      "source": "public/spec.md"
+    },
+    {
+      "requirement_id": "R-dv-048-05",
+      "statement": "Output history and latency",
+      "source": "public/spec.md"
+    },
+    {
+      "requirement_id": "R-dv-048-06",
+      "statement": "Synchronization delay",
+      "source": "public/spec.md"
+    },
+    {
+      "requirement_id": "R-dv-048-07",
+      "statement": "Color-phase evolution",
+      "source": "public/spec.md"
+    }
+  ]
+}

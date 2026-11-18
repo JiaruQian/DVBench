@@ -1,0 +1,179 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "requirement_ids": [
+    "R-dv-023-fifo-001",
+    "R-dv-023-fifo-002",
+    "R-dv-023-fifo-003",
+    "R-dv-023-fifo-004",
+    "R-dv-023-fifo-005",
+    "R-dv-023-fifo-006"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "R-dv-023-fifo-001-verification",
+      "requirement_ids": [
+        "R-dv-023-fifo-001"
+      ],
+      "description": "rst is asynchronous and active high; upon assertion, full is 0, empty is 1, and both logical positions return to their starting points. After reset is released, operation follows subsequent clocks and requests. Reset empties the logical queue but does not clear storage contents; keep we and re at 0 during reset.",
+      "setup": "First write 5 items to establish a nonempty history, asynchronously assert rst during a window when both clocks are low, and hold it for at least two write/read clock periods; after reset is released, write different data and read it out. During reset, we=re=0.",
+      "stimulus": "First write 5 items to establish a nonempty history, asynchronously assert rst during a window when both clocks are low, and hold it for at least two write/read clock periods; after reset is released, write different data and read it out. During reset, we=re=0.",
+      "expected": "After reset assertion, the two status values are full=0 and empty=1; the first item after reset release is independent of the pre-reset queue; undefined empty data is not compared.",
+      "sampling": "Compare according to the asynchronous, combinational, or acceptance-edge/output-valid window specified in this item; X/Z within valid windows must not be skipped.",
+      "checker": "fifo_scoreboard::write samples actual from the native ports and generates expected from input history using dvbench_model in the same file; flags are compared using four-state case equality, and data is compared point by point when nonempty and expected is known, with uvm_error on a mismatch; check_phase requires at least 200 status points and 32 valid data points.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectation/window, or self-proving/vacuous checker",
+        "1": "Legal preparation and error-detection methods exist, but the actual stimulus/windows cover only part of this obligation",
+        "2": "First write 5 items to establish a nonempty history, asynchronously assert rst during a window when both clocks are low, and hold it for at least two write/read clock cycles; after reset deassertion, write different data again and read it out. During reset, we=re=0.; After reset assertion, the two states are full=0 and empty=1; the first item after reset deassertion is independent of the pre-reset queue; undefined empty data is not compared.; fifo_scoreboard::write samples actual from the native ports and uses dvbench_model in the same file to generate expected from the input history; compare flags using four-state case equality, compare data point by point when nonempty and expected is known, and issue uvm_error on a mismatch; check_phase requires at least 200 state points and 32 valid data points."
+      }
+    },
+    {
+      "obligation_id": "R-dv-023-fifo-002-verification",
+      "requirement_ids": [
+        "R-dv-023-fifo-002"
+      ],
+      "description": "On each w_clk rising edge, evaluate the we request using the pre-edge full value; when we is 1 and full is 0, accept wdata and advance the logical write position; otherwise, do not write or advance. The capacity is 16 8-bit data items, and positions wrap modulo 16. After 16 consecutive accepted writes without any advance of the read position, full becomes 1; additional writes while full must not overwrite stored data.",
+      "setup": "Empty the logical queue, hold re=0, set we and data on w_clk falling edges, and pass through 16 accepting rising edges, with data covering 00, FF, 55, AA, and incrementing values; continue issuing 4 writes while full, then issue read requests; repeat filling and draining to wrap the positions multiple times.",
+      "stimulus": "Empty the logical queue, hold re=0, set we and data on w_clk falling edges, and pass through 16 accepting rising edges, with data covering 00, FF, 55, AA, and incrementing values; continue issuing 4 writes while full, then issue read requests; repeat filling and draining to wrap the positions multiple times.",
+      "expected": "After accepting the 16th item, full=1; writes while full do not overwrite storage; subsequent valid nonempty data matches the memory prediction based on independent input history.",
+      "sampling": "Compare according to the asynchronous, combinational, or acceptance-edge/output-valid window specified in this item; X/Z within valid windows must not be skipped.",
+      "checker": "fifo_scoreboard::write samples actual from the native ports and generates expected from input history using dvbench_model in the same file; flags are compared using four-state case equality, and data is compared point by point when nonempty and expected is known, with uvm_error on a mismatch; check_phase requires at least 200 status points and 32 valid data points.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectation/window, or self-proving/vacuous checker",
+        "1": "Legal preparation and error-detection methods exist, but the actual stimulus/windows cover only part of this obligation",
+        "2": "Empty the logical queue, keep re=0, set we and data on w_clk negative edges, and pass through 16 accepting rising edges, with data covering 00, FF, 55, AA, and incrementing values; issue 4 more writes while full, then issue read requests; repeat filling and draining so that the positions wrap around multiple times.; After accepting the 16th item, full=1; writes while full do not overwrite storage; subsequent nonempty valid data matches the memory prediction based on the independent input history.; fifo_scoreboard::write samples actual from the native ports and uses dvbench_model in the same file to generate expected from the input history; compare flags using four-state case equality, compare data point by point when nonempty and expected is known, and issue uvm_error on a mismatch; check_phase requires at least 200 state points and 32 valid data points."
+      }
+    },
+    {
+      "obligation_id": "R-dv-023-fifo-003-verification",
+      "requirement_ids": [
+        "R-dv-023-fifo-003"
+      ],
+      "description": "On each r_clk rising edge, evaluate the re request using the pre-edge empty value; when re is 1 and empty is 0, advance the logical read position by one item; otherwise, hold it. rdata combinationally reflects the data at the current logical read position; it is not registered on the r_clk edge and is not gated by re. When empty is 0 and that slot has been written, its value must equal the data from the corresponding most recent accepted write; no valid-value guarantee is made for data in the empty state or in unwritten slots.",
+      "setup": "First write each slot and hold re=0 to observe the combinational response of the first item, then apply read requests in the independent r_clk domain, including reads while empty; interleave with writes, changing we/wdata while the read position is held to observe the latest contents of the corresponding slot.",
+      "stimulus": "First write each slot and hold re=0 to observe the combinational response of the first item, then apply read requests in the independent r_clk domain, including reads while empty; interleave with writes, changing we/wdata while the read position is held to observe the latest contents of the corresponding slot.",
+      "expected": "rdata is the combinational value at the current read position; the read position moves only on an r_clk rising edge with re asserted and nonempty before the edge; reads while empty do not move the position; data in nonempty, known slots equals the prediction.",
+      "sampling": "Compare according to the asynchronous, combinational, or acceptance-edge/output-valid window specified in this item; X/Z within valid windows must not be skipped.",
+      "checker": "fifo_scoreboard::write samples actual from the native ports and generates expected from input history using dvbench_model in the same file; flags are compared using four-state case equality, and data is compared point by point when nonempty and expected is known, with uvm_error on a mismatch; check_phase requires at least 200 status points and 32 valid data points.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectation/window, or self-proving/vacuous checker",
+        "1": "Legal preparation and error-detection methods exist, but the actual stimulus/windows cover only part of this obligation",
+        "2": "First write every slot and keep re=0 to observe the combinational response of the first item, then apply read requests in the independent r_clk domain, including reads while empty; interleave with writes, changing we/wdata while the read position is held to observe the latest contents of the corresponding slot.; rdata is the combinational value at the current read position; the read position moves only on an r_clk rising edge with re asserted and a nonempty pre-edge state; reads while empty do not move the position; data in nonempty, known slots equals the prediction.; fifo_scoreboard::write samples actual from the native ports and uses dvbench_model in the same file to generate expected from the input history; compare flags using four-state case equality, compare data point by point when nonempty and expected is known, and issue uvm_error on a mismatch; check_phase requires at least 200 state points and 32 valid data points."
+      }
+    },
+    {
+      "obligation_id": "R-dv-023-fifo-004-verification",
+      "requirement_ids": [
+        "R-dv-023-fifo-004"
+      ],
+      "description": "full and empty update only on w_clk rising edges or asynchronous reset; an r_clk edge alone does not directly update either flag. When we and re are both 0, the flags hold. When only we is 1, clear empty if the write is accepted; compare this edge's candidate write position with the current read position modulo 16, set full if they are equal, and otherwise retain the original full. When only re is 1, clear full if nonempty before the edge; compare the current write position with the candidate read position calculated from pre-edge empty and re modulo 16, set empty if they are equal, and otherwise retain the original empty. Here, the candidate read position anticipates one acceptable read request, even if there is no r_clk rising edge at this time; the actual read position still advances only on r_clk rising edges.",
+      "setup": "Use a 10ns write period and a 14ns read period, drive 00, 10, and 01 requests, and include w_clk state updates without an r_clk edge; calculate both positions and pre-edge flags from the input history, processing edges in chronological order and handling coincident times.",
+      "stimulus": "Use a 10ns write period and a 14ns read period, drive 00, 10, and 01 requests, and include w_clk state updates without an r_clk edge; calculate both positions and pre-edge flags from the input history, processing edges in chronological order and handling coincident times.",
+      "expected": "1ns after every w_clk and r_clk rising edge, full/empty must match the independent model; an r_clk edge alone must not directly update flags, and the read-candidate comparison must not be mistaken for an ordinary occupancy count.",
+      "sampling": "Compare according to the asynchronous, combinational, or acceptance-edge/output-valid window specified in this item; X/Z within valid windows must not be skipped.",
+      "checker": "fifo_scoreboard::write samples actual from the native ports and generates expected from input history using dvbench_model in the same file; flags are compared using four-state case equality, and data is compared point by point when nonempty and expected is known, with uvm_error on a mismatch; check_phase requires at least 200 status points and 32 valid data points.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectation/window, or self-proving/vacuous checker",
+        "1": "Legal preparation and error-detection methods exist, but the actual stimulus/windows cover only part of this obligation",
+        "2": "Use a 10ns write period and a 14ns read period, drive 00, 10, and 01 requests, and include w_clk state updates without an r_clk edge; calculate both positions and pre-edge flags from the input history, processing edges in chronological order and handling coincident times.; 1ns after every w_clk and r_clk rising edge, full/empty must match the independent model; an r_clk edge alone must not directly update flags, and the read-candidate comparison must not be mistaken for an ordinary occupancy count.; fifo_scoreboard::write samples actual from the native ports and uses dvbench_model in the same file to generate expected from the input history; compare flags using four-state case equality, compare data point by point when nonempty and expected is known, and issue uvm_error on a mismatch; check_phase requires at least 200 state points and 32 valid data points."
+      }
+    },
+    {
+      "obligation_id": "R-dv-023-fifo-005-verification",
+      "requirement_ids": [
+        "R-dv-023-fifo-005"
+      ],
+      "description": "When we and re are both 1: if full before the edge, only the read position is allowed to advance on the r_clk edge, the write is rejected, and full is cleared on the w_clk edge; if empty before the edge, only the write position is allowed to advance on the w_clk edge, the read is rejected, and empty is cleared on the w_clk edge; if neither full nor empty, each side advances on its own rising edge, while full and empty hold. If both clocks rise simultaneously, every decision uses the pre-edge status and logical positions at that same instant, not values newly updated by the other clock at that instant.",
+      "setup": "Apply we=re=1 after each of three types of history: filled first, drained first, and partially occupied, holding continuously for 1 to 4 write cycles; the two 10ns/14ns clocks include coincident rising edges, with data 55, AA, and random values.",
+      "stimulus": "Apply we=re=1 after each of three types of history: filled first, drained first, and partially occupied, holding continuously for 1 to 4 write cycles; the two 10ns/14ns clocks include coincident rising edges, with data 55, AA, and random values.",
+      "expected": "Reject writes when full and reads when empty; between these boundaries, each side accepts on its own clock, and the w_clk state updates according to boundary priority; coincident edges use the old state without dependence on simulation ordering.",
+      "sampling": "Compare according to the asynchronous, combinational, or acceptance-edge/output-valid window specified in this item; X/Z within valid windows must not be skipped.",
+      "checker": "fifo_scoreboard::write samples actual from the native ports and generates expected from input history using dvbench_model in the same file; flags are compared using four-state case equality, and data is compared point by point when nonempty and expected is known, with uvm_error on a mismatch; check_phase requires at least 200 status points and 32 valid data points.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectation/window, or self-proving/vacuous checker",
+        "1": "Legal preparation and error-detection methods exist, but the actual stimulus/windows cover only part of this obligation",
+        "2": "Apply we=re=1 after each of three types of history: filled first, drained first, and partially occupied, holding continuously for 1 to 4 write cycles; the two 10ns/14ns clocks include coincident rising edges, with data 55, AA, and random values.; Reject writes when full and reads when empty; between these boundaries, each side accepts on its own clock, and the w_clk state updates according to boundary priority; coincident edges use the old state without dependence on simulation ordering.; fifo_scoreboard::write samples actual from the native ports and uses dvbench_model in the same file to generate expected from the input history; compare flags using four-state case equality, compare data point by point when nonempty and expected is known, and issue uvm_error on a mismatch; check_phase requires at least 200 state points and 32 valid data points."
+      }
+    },
+    {
+      "obligation_id": "R-dv-023-fifo-006-verification",
+      "requirement_ids": [
+        "R-dv-023-fifo-006"
+      ],
+      "description": "w_clk and r_clk may operate independently; inputs are stable before and after the relevant sampling edges, and port comparisons are performed after the status and combinational outputs have settled within the same time step. The behavior specified here is ideal digital timing behavior; CDC synchronization, metastability tolerance, or latency guarantees of a standard asynchronous FIFO are not required. The above update rules for full and empty apply to different frequencies, phases, and coincident rising edges.",
+      "setup": "Maintain independent 10ns and 14ns clocks throughout, drive controls on w_clk falling edges, and additionally insert asynchronous resets; randomize 400 sets of we/re/data and hold times of 1 to 4 write cycles, monitoring both types of clock edges and reset assertion each time.",
+      "stimulus": "Maintain independent 10ns and 14ns clocks throughout, drive controls on w_clk falling edges, and additionally insert asynchronous resets; randomize 400 sets of we/re/data and hold times of 1 to 4 write cycles, monitoring both types of clock edges and reset assertion each time.",
+      "expected": "Compare model-predicted flags and known valid data 1ns after each relevant event; do not backfill the model with actual DUT outputs, do not check empty/unknown data, and do not substitute coverage hits for functional comparisons.",
+      "sampling": "Compare according to the asynchronous, combinational, or acceptance-edge/output-valid window specified in this item; X/Z within valid windows must not be skipped.",
+      "checker": "fifo_scoreboard::write samples actual from the native ports and generates expected from input history using dvbench_model in the same file; flags are compared using four-state case equality, and data is compared point by point when nonempty and expected is known, with uvm_error on a mismatch; check_phase requires at least 200 status points and 32 valid data points.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectation/window, or self-proving/vacuous checker",
+        "1": "Legal preparation and error-detection methods exist, but the actual stimulus/windows cover only part of this obligation",
+        "2": "Maintain independent 10ns and 14ns clocks throughout, drive controls on w_clk falling edges, and additionally insert asynchronous resets; randomize 400 sets of we/re/data and hold times of 1 to 4 write cycles, monitoring both types of clock edges and reset assertion each time.; Compare model-predicted flags and known valid data 1ns after each relevant event; do not backfill the model with actual DUT outputs, do not check empty/unknown data, and do not substitute coverage hits for functional comparisons.; fifo_scoreboard::write samples actual from the native ports and uses dvbench_model in the same file to generate expected from the input history; compare flags using four-state case equality, compare data point by point when nonempty and expected is known, and issue uvm_error on a mismatch; check_phase requires at least 200 state points and 32 valid data points."
+      }
+    }
+  ],
+  "stimulus_criteria": {
+    "R-dv-023-fifo-001-verification": [
+      {
+        "criterion_id": "R-dv-023-fifo-001-verification-domain",
+        "description": "First write 5 items to establish a nonempty history, asynchronously assert rst during a window when both clocks are low, and hold it for at least two write/read clock periods; after reset is released, write different data and read it out. During reset, we=re=0."
+      }
+    ],
+    "R-dv-023-fifo-002-verification": [
+      {
+        "criterion_id": "R-dv-023-fifo-002-verification-domain",
+        "description": "Empty the logical queue, hold re=0, set we and data on w_clk falling edges, and pass through 16 accepting rising edges, with data covering 00, FF, 55, AA, and incrementing values; continue issuing 4 writes while full, then issue read requests; repeat filling and draining to wrap the positions multiple times."
+      }
+    ],
+    "R-dv-023-fifo-003-verification": [
+      {
+        "criterion_id": "R-dv-023-fifo-003-verification-domain",
+        "description": "First write each slot and hold re=0 to observe the combinational response of the first item, then apply read requests in the independent r_clk domain, including reads while empty; interleave with writes, changing we/wdata while the read position is held to observe the latest contents of the corresponding slot."
+      }
+    ],
+    "R-dv-023-fifo-004-verification": [
+      {
+        "criterion_id": "R-dv-023-fifo-004-verification-domain",
+        "description": "Use a 10ns write period and a 14ns read period, drive 00, 10, and 01 requests, and include w_clk state updates without an r_clk edge; calculate both positions and pre-edge flags from the input history, processing edges in chronological order and handling coincident times."
+      }
+    ],
+    "R-dv-023-fifo-005-verification": [
+      {
+        "criterion_id": "R-dv-023-fifo-005-verification-domain",
+        "description": "Apply we=re=1 after each of three types of history: filled first, drained first, and partially occupied, holding continuously for 1 to 4 write cycles; the two 10ns/14ns clocks include coincident rising edges, with data 55, AA, and random values."
+      }
+    ],
+    "R-dv-023-fifo-006-verification": [
+      {
+        "criterion_id": "R-dv-023-fifo-006-verification-domain",
+        "description": "Maintain independent 10ns and 14ns clocks throughout, drive controls on w_clk falling edges, and additionally insert asynchronous resets; randomize 400 sets of we/re/data and hold times of 1 to 4 write cycles, monitoring both types of clock edges and reset assertion each time."
+      }
+    ]
+  },
+  "issue_codes": [
+    "missing",
+    "partial",
+    "incorrect",
+    "illegal_setup",
+    "wrong_sampling",
+    "vacuous",
+    "self_oracle",
+    "contradiction",
+    "hallucination"
+  ],
+  "issue_grade_caps": {},
+  "claim_impact_components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ]
+}

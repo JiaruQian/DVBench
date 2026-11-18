@@ -1,0 +1,162 @@
+{
+  "task_id": "dv-015",
+  "dut_top": "i2c",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "i2c.sv",
+    "i2c_ctrl.sv",
+    "i2c_master.sv",
+    "package.svh"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "model_contract_policy": "native-module-v1",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "addr",
+        "direction": "In",
+        "width": 7,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 6,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "cmd",
+        "direction": "In",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "data",
+        "direction": "In",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "init",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "o_data",
+        "direction": "Out",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "rd_wr",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "rst_n",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "s_busy",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "s_done",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "scl",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "sda",
+        "direction": "InOut",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "sda_en",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "wr",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {},
+    "parser": "pyslang 12.1.0"
+  },
+  "reference_submission": "solution/reference",
+  "mutants": [
+    "m1",
+    "m10",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9"
+  ],
+  "rtl_sources": [
+    "i2c.sv",
+    "i2c_ctrl.sv",
+    "i2c_master.sv"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "i2c.sv",
+    "i2c_ctrl.sv",
+    "i2c_master.sv"
+  ]
+}

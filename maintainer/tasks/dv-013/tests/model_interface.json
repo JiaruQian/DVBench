@@ -1,0 +1,95 @@
+{
+  "top": "dvbench_model",
+  "file": "solution/s4_model/model.sv",
+  "ports": [
+    {
+      "direction": "input",
+      "name": "clk",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "reset",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "sa_dat_i",
+      "width": "Dw"
+    },
+    {
+      "direction": "input",
+      "name": "sa_sel_i",
+      "width": "SELw"
+    },
+    {
+      "direction": "input",
+      "name": "sa_addr_i",
+      "width": "Aw"
+    },
+    {
+      "direction": "input",
+      "name": "sa_tag_i",
+      "width": "TAGw"
+    },
+    {
+      "direction": "input",
+      "name": "sa_stb_i",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "sa_cyc_i",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "sa_we_i",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "sa_dat_o",
+      "width": "Dw"
+    },
+    {
+      "direction": "output",
+      "name": "sa_ack_o",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "sa_err_o",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "sa_rty_o",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "irq",
+      "width": 1
+    }
+  ],
+  "variants": [
+    {
+      "PRESCALER_WIDTH": 8,
+      "Dw": 32,
+      "Aw": 3,
+      "SELw": 4,
+      "TAGw": 3,
+      "CNTw": 32
+    },
+    {
+      "PRESCALER_WIDTH": 4,
+      "Dw": 32,
+      "Aw": 3,
+      "SELw": 4,
+      "TAGw": 3,
+      "CNTw": 8
+    }
+  ],
+  "independence": "Only driven inputs and their history; separate model replay has no DUT or golden output. s1196 uses reduced Shannon functions rather than copied gate assignments."
+}

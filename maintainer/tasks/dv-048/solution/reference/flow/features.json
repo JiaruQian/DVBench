@@ -1,0 +1,172 @@
+{
+  "features": [
+    {
+      "feature_id": "F1",
+      "requirement_ids": [
+        "R-dv-048-01"
+      ],
+      "module": "dpc_5x5",
+      "definition": "All input pixel and control values are binary. A rising clock edge samples the five unsigned 8-bit row inputs, threshold and synchronization bits. There is no ready/valid handshake and sampling continues during blanking. Number rising edges n; an input value indexed n is the value immediately before edge n, and an output indexed n is its settled value after that edge. Reset is asynchronous active low: it clears the five-column pixel history, synchronization history and both color-phase bits. Arithmetic history and o_data have no immediate reset-value guarantee. Data observations are in scope after at least sixteen consecutive released-reset edges, with binary inputs throughout; for a replacement decision using differences there must also have been at least one active difference-update edge as defined below. Prior to the first such update the data follows the bypass center history. After a later reset, the same settling rule applies. Synchronization outputs are defined during reset and clear to zero.",
+      "interface": [
+        "clk",
+        "reset_n",
+        "bayer_format",
+        "i_dpc_threshold",
+        "i_video_syn",
+        "i_data_r0",
+        "i_data_r1",
+        "i_data_r2",
+        "i_data_r3",
+        "i_data_r4",
+        "o_video_sync",
+        "o_data"
+      ],
+      "timing": "Use the pre-edge input and post-edge output convention stated in the behavior contract; no handshake stalls history.",
+      "boundary": "Binary native inputs, no parameter overrides; data comparisons obey the reset and difference-history domain."
+    },
+    {
+      "feature_id": "F2",
+      "requirement_ids": [
+        "R-dv-048-02"
+      ],
+      "module": "dpc_5x5",
+      "definition": "For each row r=0..4, define five history columns c=0..4 ordered oldest to newest immediately before an edge. Reset fills them with zero. At every released-reset edge, discard column 0, move each remaining column one position toward 0 and append i_data_r[r] at column 4. Let S(n) be the ordered nine-pixel neighborhood selected from the pre-edge history and pre-edge pixel/line phase. When the phase bits are equal, its row-major coordinates are (0,0),(0,2),(0,4),(2,0),(2,2),(2,4),(4,0),(4,2),(4,4). Otherwise they are (1,1),(0,2),(1,3),(2,0),(2,2),(2,4),(3,1),(4,2),(3,3). S index 4 is always the center. Selection occurs every edge, including blanking.",
+      "interface": [
+        "clk",
+        "reset_n",
+        "bayer_format",
+        "i_dpc_threshold",
+        "i_video_syn",
+        "i_data_r0",
+        "i_data_r1",
+        "i_data_r2",
+        "i_data_r3",
+        "i_data_r4",
+        "o_video_sync",
+        "o_data"
+      ],
+      "timing": "Use the pre-edge input and post-edge output convention stated in the behavior contract; no handshake stalls history.",
+      "boundary": "Binary native inputs, no parameter overrides; data comparisons obey the reset and difference-history domain."
+    },
+    {
+      "feature_id": "F3",
+      "requirement_ids": [
+        "R-dv-048-03"
+      ],
+      "module": "dpc_5x5",
+      "definition": "For an ordered neighborhood, subtract each of its eight neighbors from its center using a signed 9-bit mathematical difference in -255..255. Neighbor order is indices 0,1,2,3,5,6,7,8. The sign word places the first neighbor sign in bit 7 and the last in bit 0. A nonnegative difference has its ordinary magnitude; a negative difference d has magnitude -d-1. Thus -1 has magnitude zero and -255 has magnitude 254. The median is the fifth value in the ascending multiset of the nine unsigned pixel values; duplicates retain their multiplicity.",
+      "interface": [
+        "clk",
+        "reset_n",
+        "bayer_format",
+        "i_dpc_threshold",
+        "i_video_syn",
+        "i_data_r0",
+        "i_data_r1",
+        "i_data_r2",
+        "i_data_r3",
+        "i_data_r4",
+        "o_video_sync",
+        "o_data"
+      ],
+      "timing": "Use the pre-edge input and post-edge output convention stated in the behavior contract; no handshake stalls history.",
+      "boundary": "Binary native inputs, no parameter overrides; data comparisons obey the reset and difference-history domain."
+    },
+    {
+      "feature_id": "F4",
+      "requirement_ids": [
+        "R-dv-048-04"
+      ],
+      "module": "dpc_5x5",
+      "definition": "Write v(n),d(n),h(n) for i_video_syn bits 2,1,0 sampled at edge n. At edge n a difference-update is enabled by d(n-7)=1; it captures the eight differences for S(n-2). Without that enable the captured differences hold. For output edge n use the captured-difference state immediately after edge n-4, and threshold sampled at edge n-2 (a reset edge samples threshold zero). Replacement is enabled only when every one of the eight magnitudes is strictly greater than that threshold and the sign word is exactly hexadecimal 00 or 0f. Hexadecimal ff does not enable replacement. Neither output sync nor current input d additionally gates output data.",
+      "interface": [
+        "clk",
+        "reset_n",
+        "bayer_format",
+        "i_dpc_threshold",
+        "i_video_syn",
+        "i_data_r0",
+        "i_data_r1",
+        "i_data_r2",
+        "i_data_r3",
+        "i_data_r4",
+        "o_video_sync",
+        "o_data"
+      ],
+      "timing": "Use the pre-edge input and post-edge output convention stated in the behavior contract; no handshake stalls history.",
+      "boundary": "Binary native inputs, no parameter overrides; data comparisons obey the reset and difference-history domain."
+    },
+    {
+      "feature_id": "F5",
+      "requirement_ids": [
+        "R-dv-048-05"
+      ],
+      "module": "dpc_5x5",
+      "definition": "At output edge n, if the replacement condition holds, o_data is the median of S(n-6). Otherwise o_data is the center of S(n-7). This is a continuous output stream, including gaps. The two paths therefore use different source neighborhoods. A held difference history during blanking still participates in the decision, while the median and center histories continue advancing. These edge-index relations define latency; there is no implied alignment of threshold, sync and data beyond the relations stated here.",
+      "interface": [
+        "clk",
+        "reset_n",
+        "bayer_format",
+        "i_dpc_threshold",
+        "i_video_syn",
+        "i_data_r0",
+        "i_data_r1",
+        "i_data_r2",
+        "i_data_r3",
+        "i_data_r4",
+        "o_video_sync",
+        "o_data"
+      ],
+      "timing": "Use the pre-edge input and post-edge output convention stated in the behavior contract; no handshake stalls history.",
+      "boundary": "Binary native inputs, no parameter overrides; data comparisons obey the reset and difference-history domain."
+    },
+    {
+      "feature_id": "F6",
+      "requirement_ids": [
+        "R-dv-048-06"
+      ],
+      "module": "dpc_5x5",
+      "definition": "For every released-reset edge n the settled o_video_sync is the three-bit input sampled at edge n-11. Equivalently it is the twelfth stage of a shift history whose first stage receives the current sampled input. All three bits preserve order and polarity. These synchronization outputs are independent of the replacement path and do not form an output-valid guarantee for o_data.",
+      "interface": [
+        "clk",
+        "reset_n",
+        "bayer_format",
+        "i_dpc_threshold",
+        "i_video_syn",
+        "i_data_r0",
+        "i_data_r1",
+        "i_data_r2",
+        "i_data_r3",
+        "i_data_r4",
+        "o_video_sync",
+        "o_data"
+      ],
+      "timing": "Use the pre-edge input and post-edge output convention stated in the behavior contract; no handshake stalls history.",
+      "boundary": "Binary native inputs, no parameter overrides; data comparisons obey the reset and difference-history domain."
+    },
+    {
+      "feature_id": "F7",
+      "requirement_ids": [
+        "R-dv-048-07"
+      ],
+      "module": "dpc_5x5",
+      "definition": "Both color-phase bits start at zero on reset. At edge n, a line-start event means d(n-5)=0 and d(n-4)=1. On that event the pixel-phase next value becomes the complement of current bayer_format; otherwise it toggles when d(n-5)=1 and holds when zero. The line-phase next value clears to zero when v(n-5)=1 and v(n-4)=0, giving that event priority over a coincident line start; otherwise it toggles on line start and holds. Neighborhood S(n) uses phase values before these updates. bayer_format changes away from line start have no direct effect on the phase. Values 0 and 1 select this rule without assigning external named sensor layouts.",
+      "interface": [
+        "clk",
+        "reset_n",
+        "bayer_format",
+        "i_dpc_threshold",
+        "i_video_syn",
+        "i_data_r0",
+        "i_data_r1",
+        "i_data_r2",
+        "i_data_r3",
+        "i_data_r4",
+        "o_video_sync",
+        "o_data"
+      ],
+      "timing": "Use the pre-edge input and post-edge output convention stated in the behavior contract; no handshake stalls history.",
+      "boundary": "Binary native inputs, no parameter overrides; data comparisons obey the reset and difference-history domain."
+    }
+  ]
+}

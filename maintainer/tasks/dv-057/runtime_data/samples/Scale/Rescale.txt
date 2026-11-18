@@ -1,0 +1,15 @@
+// Rescale values before fixed-point conversion (Linear refers to the fully connected layer FC)
+float   Conv_M   = 0.00674869773320308;
+float   DWConv_M   = 0.028581322041294627;
+float   PWConv_M   = 0.008434688377123984;
+float   Linear_M  = 0.0003373464910192874;
+
+// Rescale values after fixed-point conversion (error relative to the M values before fixed-point conversion <1%)
+int Conv_M0 = 111;
+int Conv_n = 14;
+int DWConv_M0 = 59;
+int DWConv_n = 11;
+int PWConv_M0 = 69;
+int PWConv_n = 13;
+int Linear_M0 = 11;
+int Linear_n = 15;

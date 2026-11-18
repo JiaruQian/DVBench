@@ -1,0 +1,125 @@
+{
+  "task_id": "dv-047",
+  "dut_top": "Decryption",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "AddRoundKey.v",
+    "Decryption.v",
+    "InvShiftRows.v",
+    "InvSubBytes.v",
+    "Inv_MixColumns.v",
+    "KeyExpansion.v"
+  ],
+  "parameters": {},
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m10",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9"
+  ],
+  "uvm_test": "dvbench_test",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "Key",
+        "direction": "In",
+        "width": 256,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 255,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "counter",
+        "direction": "In",
+        "width": 6,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 5,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "in",
+        "direction": "In",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 127,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "maxRound",
+        "direction": "In",
+        "width": 6,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 5,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "out",
+        "direction": "Out",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 127,
+            "right": 0
+          }
+        ]
+      }
+    ],
+    "parameters": {},
+    "parser": "pyslang 12.1.0"
+  },
+  "rtl_sources": [
+    "AddRoundKey.v",
+    "Decryption.v",
+    "InvShiftRows.v",
+    "InvSubBytes.v",
+    "Inv_MixColumns.v",
+    "KeyExpansion.v"
+  ],
+  "submission_top": "dvbench_top",
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "AddRoundKey.v",
+    "Decryption.v",
+    "InvShiftRows.v",
+    "InvSubBytes.v",
+    "Inv_MixColumns.v",
+    "KeyExpansion.v"
+  ]
+}

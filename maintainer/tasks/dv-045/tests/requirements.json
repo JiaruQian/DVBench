@@ -1,0 +1,41 @@
+{
+  "source": "public/spec.md",
+  "requirements": [
+    {
+      "requirement_id": "R-A2A30C5F36FE-001",
+      "title": "Complete mathematical state and clock",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-A2A30C5F36FE-002",
+      "title": "Combinational output group 1",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-A2A30C5F36FE-003",
+      "title": "Combinational output group 2",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-A2A30C5F36FE-004",
+      "title": "Combinational output group 3",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-A2A30C5F36FE-005",
+      "title": "Combinational output group 4",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-A2A30C5F36FE-006",
+      "title": "Unknown initial state and valid domain",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    }
+  ]
+}

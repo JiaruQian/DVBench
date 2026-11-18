@@ -1,0 +1,2951 @@
+{
+  "ports": [
+    {
+      "name": "clock",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_brupdate_b1_mispredict_mask",
+      "direction": "In",
+      "width": 20,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 19,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_brupdate_b1_resolve_mask",
+      "direction": "In",
+      "width": 20,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 19,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_rs1_data",
+      "direction": "Out",
+      "width": 65,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 64,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_rs2_data",
+      "direction": "Out",
+      "width": 65,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 64,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_rs3_data",
+      "direction": "Out",
+      "width": 65,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 64,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_bp_debug_if",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_bp_xcpt_if",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_br_mask",
+      "direction": "Out",
+      "width": 20,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 19,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_br_tag",
+      "direction": "Out",
+      "width": 5,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 4,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_bypassable",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_csr_addr",
+      "direction": "Out",
+      "width": 12,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 11,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_ctrl_br_type",
+      "direction": "Out",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_ctrl_csr_cmd",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_ctrl_fcn_dw",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_ctrl_imm_sel",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_ctrl_is_load",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_ctrl_is_sta",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_ctrl_is_std",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_ctrl_op1_sel",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_ctrl_op2_sel",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_ctrl_op_fcn",
+      "direction": "Out",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_debug_fsrc",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_debug_inst",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_debug_pc",
+      "direction": "Out",
+      "width": 40,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 39,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_debug_tsrc",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_dst_rtype",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_edge_inst",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_exc_cause",
+      "direction": "Out",
+      "width": 64,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 63,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_exception",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_flush_on_commit",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_fp_single",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_fp_val",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_frs3_en",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_ftq_idx",
+      "direction": "Out",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_fu_code",
+      "direction": "Out",
+      "width": 10,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 9,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_imm_packed",
+      "direction": "Out",
+      "width": 20,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 19,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_inst",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_iq_type",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_is_amo",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_is_br",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_is_fence",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_is_fencei",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_is_jal",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_is_jalr",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_is_rvc",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_is_sfb",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_is_sys_pc2epc",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_is_unique",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_iw_p1_poisoned",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_iw_p2_poisoned",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_iw_state",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_ldq_idx",
+      "direction": "Out",
+      "width": 5,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 4,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_ldst",
+      "direction": "Out",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_ldst_is_rs1",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_ldst_val",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_lrs1",
+      "direction": "Out",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_lrs1_rtype",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_lrs2",
+      "direction": "Out",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_lrs2_rtype",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_lrs3",
+      "direction": "Out",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_mem_cmd",
+      "direction": "Out",
+      "width": 5,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 4,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_mem_signed",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_mem_size",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_pc_lob",
+      "direction": "Out",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_pdst",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_ppred",
+      "direction": "Out",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_ppred_busy",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_prs1",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_prs1_busy",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_prs2",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_prs2_busy",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_prs3",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_prs3_busy",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_rob_idx",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_rxq_idx",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_stale_pdst",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_stq_idx",
+      "direction": "Out",
+      "width": 5,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 4,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_taken",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_uopc",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_uses_ldq",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_uses_stq",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_xcpt_ae_if",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_xcpt_ma_if",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_bits_uop_xcpt_pf_if",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_0_valid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_rs1_data",
+      "direction": "Out",
+      "width": 65,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 64,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_rs2_data",
+      "direction": "Out",
+      "width": 65,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 64,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_rs3_data",
+      "direction": "Out",
+      "width": 65,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 64,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_bp_debug_if",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_bp_xcpt_if",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_br_mask",
+      "direction": "Out",
+      "width": 20,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 19,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_br_tag",
+      "direction": "Out",
+      "width": 5,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 4,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_bypassable",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_csr_addr",
+      "direction": "Out",
+      "width": 12,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 11,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_ctrl_br_type",
+      "direction": "Out",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_ctrl_csr_cmd",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_ctrl_fcn_dw",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_ctrl_imm_sel",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_ctrl_is_load",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_ctrl_is_sta",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_ctrl_is_std",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_ctrl_op1_sel",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_ctrl_op2_sel",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_ctrl_op_fcn",
+      "direction": "Out",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_debug_fsrc",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_debug_inst",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_debug_pc",
+      "direction": "Out",
+      "width": 40,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 39,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_debug_tsrc",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_dst_rtype",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_edge_inst",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_exc_cause",
+      "direction": "Out",
+      "width": 64,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 63,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_exception",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_flush_on_commit",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_fp_single",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_fp_val",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_frs3_en",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_ftq_idx",
+      "direction": "Out",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_fu_code",
+      "direction": "Out",
+      "width": 10,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 9,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_imm_packed",
+      "direction": "Out",
+      "width": 20,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 19,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_inst",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_iq_type",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_is_amo",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_is_br",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_is_fence",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_is_fencei",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_is_jal",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_is_jalr",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_is_rvc",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_is_sfb",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_is_sys_pc2epc",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_is_unique",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_iw_p1_poisoned",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_iw_p2_poisoned",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_iw_state",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_ldq_idx",
+      "direction": "Out",
+      "width": 5,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 4,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_ldst",
+      "direction": "Out",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_ldst_is_rs1",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_ldst_val",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_lrs1",
+      "direction": "Out",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_lrs1_rtype",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_lrs2",
+      "direction": "Out",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_lrs2_rtype",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_lrs3",
+      "direction": "Out",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_mem_cmd",
+      "direction": "Out",
+      "width": 5,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 4,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_mem_signed",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_mem_size",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_pc_lob",
+      "direction": "Out",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_pdst",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_ppred",
+      "direction": "Out",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_ppred_busy",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_prs1",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_prs1_busy",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_prs2",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_prs2_busy",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_prs3",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_prs3_busy",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_rob_idx",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_rxq_idx",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_stale_pdst",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_stq_idx",
+      "direction": "Out",
+      "width": 5,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 4,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_taken",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_uopc",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_uses_ldq",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_uses_stq",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_xcpt_ae_if",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_xcpt_ma_if",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_bits_uop_xcpt_pf_if",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_exe_reqs_1_valid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_bp_debug_if",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_bp_xcpt_if",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_br_mask",
+      "direction": "In",
+      "width": 20,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 19,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_br_tag",
+      "direction": "In",
+      "width": 5,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 4,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_bypassable",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_csr_addr",
+      "direction": "In",
+      "width": 12,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 11,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_debug_fsrc",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_debug_inst",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_debug_pc",
+      "direction": "In",
+      "width": 40,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 39,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_debug_tsrc",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_dst_rtype",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_edge_inst",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_exc_cause",
+      "direction": "In",
+      "width": 64,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 63,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_exception",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_flush_on_commit",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_fp_single",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_fp_val",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_frs3_en",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_ftq_idx",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_fu_code",
+      "direction": "In",
+      "width": 10,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 9,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_imm_packed",
+      "direction": "In",
+      "width": 20,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 19,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_inst",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_iq_type",
+      "direction": "In",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_is_amo",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_is_br",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_is_fence",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_is_fencei",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_is_jal",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_is_jalr",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_is_rvc",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_is_sfb",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_is_sys_pc2epc",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_is_unique",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_iw_state",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_ldq_idx",
+      "direction": "In",
+      "width": 5,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 4,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_ldst",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_ldst_is_rs1",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_ldst_val",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_lrs1",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_lrs1_rtype",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_lrs2",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_lrs2_rtype",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_lrs3",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_mem_cmd",
+      "direction": "In",
+      "width": 5,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 4,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_mem_signed",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_mem_size",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_pc_lob",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_pdst",
+      "direction": "In",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_ppred",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_ppred_busy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_prs1",
+      "direction": "In",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_prs1_busy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_prs2",
+      "direction": "In",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_prs2_busy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_prs3",
+      "direction": "In",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_prs3_busy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_rob_idx",
+      "direction": "In",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_rxq_idx",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_stale_pdst",
+      "direction": "In",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_stq_idx",
+      "direction": "In",
+      "width": 5,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 4,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_taken",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_uopc",
+      "direction": "In",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_0_uses_ldq",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_uses_stq",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_xcpt_ae_if",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_xcpt_ma_if",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_0_xcpt_pf_if",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_bp_debug_if",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_bp_xcpt_if",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_br_mask",
+      "direction": "In",
+      "width": 20,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 19,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_br_tag",
+      "direction": "In",
+      "width": 5,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 4,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_bypassable",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_csr_addr",
+      "direction": "In",
+      "width": 12,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 11,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_debug_fsrc",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_debug_inst",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_debug_pc",
+      "direction": "In",
+      "width": 40,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 39,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_debug_tsrc",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_dst_rtype",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_edge_inst",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_exc_cause",
+      "direction": "In",
+      "width": 64,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 63,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_exception",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_flush_on_commit",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_fp_single",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_fp_val",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_frs3_en",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_ftq_idx",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_fu_code",
+      "direction": "In",
+      "width": 10,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 9,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_imm_packed",
+      "direction": "In",
+      "width": 20,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 19,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_inst",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_iq_type",
+      "direction": "In",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_is_amo",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_is_br",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_is_fence",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_is_fencei",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_is_jal",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_is_jalr",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_is_rvc",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_is_sfb",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_is_sys_pc2epc",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_is_unique",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_iw_state",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_ldq_idx",
+      "direction": "In",
+      "width": 5,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 4,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_ldst",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_ldst_is_rs1",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_ldst_val",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_lrs1",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_lrs1_rtype",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_lrs2",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_lrs2_rtype",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_lrs3",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_mem_cmd",
+      "direction": "In",
+      "width": 5,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 4,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_mem_signed",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_mem_size",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_pc_lob",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_pdst",
+      "direction": "In",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_ppred",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_ppred_busy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_prs1",
+      "direction": "In",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_prs1_busy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_prs2",
+      "direction": "In",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_prs2_busy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_prs3",
+      "direction": "In",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_prs3_busy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_rob_idx",
+      "direction": "In",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_rxq_idx",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_stale_pdst",
+      "direction": "In",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_stq_idx",
+      "direction": "In",
+      "width": 5,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 4,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_taken",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_uopc",
+      "direction": "In",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_iss_uops_1_uses_ldq",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_uses_stq",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_xcpt_ae_if",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_xcpt_ma_if",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_uops_1_xcpt_pf_if",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_valids_0",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_iss_valids_1",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_kill",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_rf_read_ports_0_addr",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_rf_read_ports_0_data",
+      "direction": "In",
+      "width": 65,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 64,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_rf_read_ports_1_addr",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_rf_read_ports_1_data",
+      "direction": "In",
+      "width": 65,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 64,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_rf_read_ports_2_addr",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_rf_read_ports_2_data",
+      "direction": "In",
+      "width": 65,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 64,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_rf_read_ports_3_addr",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_rf_read_ports_3_data",
+      "direction": "In",
+      "width": 65,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 64,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_rf_read_ports_4_addr",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_rf_read_ports_4_data",
+      "direction": "In",
+      "width": 65,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 64,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_rf_read_ports_5_addr",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_rf_read_ports_5_data",
+      "direction": "In",
+      "width": 65,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 64,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "reset",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {}
+}

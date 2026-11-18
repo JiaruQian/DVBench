@@ -1,0 +1,112 @@
+{
+  "submission_root": "submission",
+  "sources": "sources.f",
+  "top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "access": {
+    "candidate_may_read": [
+      "instruction.md",
+      "submission_contract.json",
+      "public",
+      "environment"
+    ],
+    "candidate_may_not_read": [
+      "maintainer",
+      "other questions",
+      "old runs"
+    ],
+    "dut_interaction": "declared native ports only"
+  },
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "self_contained": true,
+    "same_file_in_D_and_scoreboard": true,
+    "interface": {
+      "ports": [
+        {
+          "name": "addr",
+          "direction": "In",
+          "width": 32,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 31,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "clk",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "rd",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "rdata",
+          "direction": "Out",
+          "width": 32,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 31,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "rst",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "wdata",
+          "direction": "In",
+          "width": 32,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 31,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "we",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        }
+      ],
+      "parameters": {},
+      "parser": "pyslang 11.0.0"
+    },
+    "preflight_policy": "native-module-v1"
+  },
+  "task_id": "dv-073",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

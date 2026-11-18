@@ -1,0 +1,1117 @@
+{
+  "task_id": "dv-080",
+  "dut_top": "axi_interconnect",
+  "submission_top": "dvbench_top",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "arbiter.v",
+    "axi_interconnect.v",
+    "priority_encoder.v"
+  ],
+  "rtl_sources": [
+    "priority_encoder.v",
+    "arbiter.v",
+    "axi_interconnect.v"
+  ],
+  "model_interface": {
+    "ports": [
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "m_axi_araddr",
+        "direction": "Out",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 127,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_arburst",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_arcache",
+        "direction": "Out",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_arid",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_arlen",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_arlock",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_arprot",
+        "direction": "Out",
+        "width": 12,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 11,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_arqos",
+        "direction": "Out",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_arready",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_arregion",
+        "direction": "Out",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_arsize",
+        "direction": "Out",
+        "width": 12,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 11,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_aruser",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_arvalid",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_awaddr",
+        "direction": "Out",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 127,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_awburst",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_awcache",
+        "direction": "Out",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_awid",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_awlen",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_awlock",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_awprot",
+        "direction": "Out",
+        "width": 12,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 11,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_awqos",
+        "direction": "Out",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_awready",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_awregion",
+        "direction": "Out",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_awsize",
+        "direction": "Out",
+        "width": 12,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 11,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_awuser",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_awvalid",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_bid",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_bready",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_bresp",
+        "direction": "In",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_buser",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_bvalid",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_rdata",
+        "direction": "In",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 127,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_rid",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_rlast",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_rready",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_rresp",
+        "direction": "In",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_ruser",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_rvalid",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_wdata",
+        "direction": "Out",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 127,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_wlast",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_wready",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_wstrb",
+        "direction": "Out",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_wuser",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_axi_wvalid",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "rst",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "s_axi_araddr",
+        "direction": "In",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 127,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_arburst",
+        "direction": "In",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_arcache",
+        "direction": "In",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_arid",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_arlen",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_arlock",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_arprot",
+        "direction": "In",
+        "width": 12,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 11,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_arqos",
+        "direction": "In",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_arready",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_arsize",
+        "direction": "In",
+        "width": 12,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 11,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_aruser",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_arvalid",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_awaddr",
+        "direction": "In",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 127,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_awburst",
+        "direction": "In",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_awcache",
+        "direction": "In",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_awid",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_awlen",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_awlock",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_awprot",
+        "direction": "In",
+        "width": 12,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 11,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_awqos",
+        "direction": "In",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_awready",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_awsize",
+        "direction": "In",
+        "width": 12,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 11,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_awuser",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_awvalid",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_bid",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_bready",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_bresp",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_buser",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_bvalid",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_rdata",
+        "direction": "Out",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 127,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_rid",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_rlast",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_rready",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_rresp",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_ruser",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_rvalid",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_wdata",
+        "direction": "In",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 127,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_wlast",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_wready",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_wstrb",
+        "direction": "In",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_wuser",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_axi_wvalid",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "S_COUNT": "4",
+      "M_COUNT": "4",
+      "DATA_WIDTH": "32",
+      "ADDR_WIDTH": "32",
+      "STRB_WIDTH": "4",
+      "ID_WIDTH": "8",
+      "AWUSER_ENABLE": "0",
+      "AWUSER_WIDTH": "1",
+      "WUSER_ENABLE": "0",
+      "WUSER_WIDTH": "1",
+      "BUSER_ENABLE": "0",
+      "BUSER_WIDTH": "1",
+      "ARUSER_ENABLE": "0",
+      "ARUSER_WIDTH": "1",
+      "RUSER_ENABLE": "0",
+      "RUSER_WIDTH": "1",
+      "FORWARD_ID": "0",
+      "M_REGIONS": "1",
+      "M_BASE_ADDR": "0",
+      "M_ADDR_WIDTH": "128'h18000000180000001800000018",
+      "M_CONNECT_READ": "16'd65535",
+      "M_CONNECT_WRITE": "16'd65535",
+      "M_SECURE": "4'b0"
+    },
+    "parser": "pyslang 11.0.0"
+  },
+  "model_contract_policy": "native-module-v1",
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m10",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "n1",
+    "n2",
+    "n3"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "priority_encoder.v",
+    "arbiter.v",
+    "axi_interconnect.v"
+  ]
+}

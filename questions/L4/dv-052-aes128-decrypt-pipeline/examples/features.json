@@ -1,0 +1,20 @@
+{
+  "features": [
+    {
+      "feature_id": "X",
+      "parent_id": null,
+      "module": "imaginary_xor",
+      "definition": "y is the XOR of p and q.",
+      "timing": "Valid after the inputs stabilize.",
+      "boundary": "p/q are single-bit, two-state.",
+      "interface": [
+        "p",
+        "q",
+        "y"
+      ],
+      "requirement_ids": [
+        "fiction-R1"
+      ]
+    }
+  ]
+}

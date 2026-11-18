@@ -1,0 +1,13 @@
+{
+  "scopes": [
+    "dvbench_top.dut0",
+    "dvbench_top.dut1"
+  ],
+  "kind": "full DUT subtree union, no model/TB",
+  "metrics": [
+    "LINE",
+    "COND",
+    "BRANCH",
+    "TOGGLE"
+  ]
+}

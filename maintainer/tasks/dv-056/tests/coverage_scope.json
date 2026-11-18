@@ -1,0 +1,10 @@
+{
+  "scope": "dvbench_top.dut",
+  "metrics": [
+    "LINE",
+    "COND",
+    "BRANCH",
+    "TOGGLE"
+  ],
+  "rule": "complete DUT descendants only"
+}

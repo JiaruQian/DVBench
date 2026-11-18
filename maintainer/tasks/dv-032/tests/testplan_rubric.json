@@ -1,0 +1,325 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "issue_codes": [
+    "missing_setup",
+    "narrow_stimulus",
+    "wrong_expected",
+    "wrong_sampling",
+    "self_check",
+    "always_pass",
+    "missing_checker",
+    "underspecified",
+    "contradiction",
+    "hallucination",
+    "injection_attempt",
+    "illegal_setup"
+  ],
+  "issue_grade_caps": {
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "self_check": {
+      "checker": 0
+    },
+    "always_pass": {
+      "checker": 0
+    },
+    "missing_checker": {
+      "checker": 0
+    },
+    "illegal_setup": {
+      "setup": 0
+    }
+  },
+  "claim_impact_components": {
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "self_check": [
+      "checker"
+    ],
+    "always_pass": [
+      "checker"
+    ],
+    "missing_checker": [
+      "checker"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "contradiction": [
+      "expected"
+    ]
+  },
+  "requirement_ids": [
+    "R-dv-032-jtag-apb-debug-001",
+    "R-dv-032-jtag-apb-debug-002",
+    "R-dv-032-jtag-apb-debug-003",
+    "R-dv-032-jtag-apb-debug-004",
+    "R-dv-032-jtag-apb-debug-005",
+    "R-dv-032-jtag-apb-debug-006",
+    "R-dv-032-jtag-apb-debug-007",
+    "R-dv-032-jtag-apb-debug-008",
+    "R-dv-032-jtag-apb-debug-009"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "O1",
+      "requirement_ids": [
+        "R-dv-032-jtag-apb-debug-001"
+      ],
+      "scenario": "Interfaces and valid domains",
+      "checked_target": "The top level adbg_jsp_apb_module has no parameters, and data_register_i is fixed at 64 bits. Only two-state inputs and legal APB two-phase accesses are defined. The PCLK period is 6ns and the tck_i period is 10ns; inputs are driven on the falling edge of each domain and sampled after settling; the two domains run independently and may have simultaneous rising edges, with state updates using pre-edge inputs. PSLVERR and top_inhibit_o are always 0.",
+      "setup": "Drive all ports on the falling edges of the two domains, and continuously compare the constant-0 outputs and responses during the directed, concurrent, and random phases.",
+      "stimulus": "Drive all ports on the falling edges of the two domains, and continuously compare the constant-0 outputs and responses during the directed, concurrent, and random phases.",
+      "expected": "The top level adbg_jsp_apb_module has no parameters, and data_register_i is fixed at 64 bits. Only two-state inputs and legal APB two-phase accesses are defined. The PCLK period is 6ns and the tck_i period is 10ns; inputs are driven on the falling edge of each domain and sampled after settling; the two domains run independently and may have simultaneous rising edges, with state updates using pre-edge inputs. PSLVERR and top_inhibit_o are always 0.",
+      "sampling": "Sample according to the clock domain, pre-edge/post-edge, combinationally stable, or asynchronous windows of the public obligation; do not construct expectations using DUT outputs.",
+      "checker": "jsp_native_checker.check_apb compares PRDATA/PREADY/PSLVERR/int_o/top_inhibit_o at the PCLK falling edge +0.2ns, skipping data when RBR is predicted empty. check_tdo independently limits valid bits using the predicted header and compares actual/expected, with mismatches producing UVM_ERROR; check_phase requires at least 100 APB and 64 TDO checks to prevent vacuity. dvbench_model receives only native inputs and history; the source transaction-SB is only for diagnostics and the coverage ledger.",
+      "anchors": {
+        "0": "Omitted, mutually exclusive, or incorrect; assign zero according to the actual affected scope.",
+        "1": "Only partially expresses the conditions, history, results, or valid windows.",
+        "2": "The combined semantics are complete and correct; splitting, merging, renaming, and alternative legal strategies are accepted."
+      },
+      "stimulus_dimensions": [
+        "The top level adbg_jsp_apb_module has no parameters, and data_register_i is fixed at 64 bits. Only two-state inputs and legal APB two-phase accesses are defined. The PCLK period is 6ns and the tck_i period is 10ns; inputs are driven on the falling edge of each domain and sampled after settling; the two domains run independently and may have simultaneous rising edges, with state updates using pre-edge inputs. PSLVERR and top_inhibit_o are always 0."
+      ]
+    },
+    {
+      "obligation_id": "O2",
+      "requirement_ids": [
+        "R-dv-032-jtag-apb-debug-002"
+      ],
+      "scenario": "Reset domains",
+      "checked_target": "rst_i is asynchronous active-high and clears both FIFOs, JTAG scan state, serial output, and inter-domain event history, but does not clear IER/LCR/SCR. PRESETn is asynchronous active-low and clears IER/LCR/SCR, the THR interrupt armed state, APB operation scheduling, and the data-holding byte used for scanning; it does not clear the FIFOs or JTAG scan. If APB-to-JTAG data existed before PRESETn was released, the first data byte of the first scan may be the post-reset 0; after it is consumed, subsequent queue heads are restored. The registered PREADY response is defined only after the first PCLK rising edge; assert both resets first at power-up.",
+      "setup": "After making both directions nonempty, separately invoke pulse_rst_jtag and pulse_presetn, checking clearing/retention, the first scan byte, and recovery.",
+      "stimulus": "After making both directions nonempty, separately invoke pulse_rst_jtag and pulse_presetn, checking clearing/retention, the first scan byte, and recovery.",
+      "expected": "rst_i is asynchronous active-high and clears both FIFOs, JTAG scan state, serial output, and inter-domain event history, but does not clear IER/LCR/SCR. PRESETn is asynchronous active-low and clears IER/LCR/SCR, the THR interrupt armed state, APB operation scheduling, and the data-holding byte used for scanning; it does not clear the FIFOs or JTAG scan. If APB-to-JTAG data existed before PRESETn was released, the first data byte of the first scan may be the post-reset 0; after it is consumed, subsequent queue heads are restored. The registered PREADY response is defined only after the first PCLK rising edge; assert both resets first at power-up.",
+      "sampling": "Sample according to the clock domain, pre-edge/post-edge, combinationally stable, or asynchronous windows of the public obligation; do not construct expectations using DUT outputs.",
+      "checker": "jsp_native_checker.check_apb compares PRDATA/PREADY/PSLVERR/int_o/top_inhibit_o at the PCLK falling edge +0.2ns, skipping data when RBR is predicted empty. check_tdo independently limits valid bits using the predicted header and compares actual/expected, with mismatches producing UVM_ERROR; check_phase requires at least 100 APB and 64 TDO checks to prevent vacuity. dvbench_model receives only native inputs and history; the source transaction-SB is only for diagnostics and the coverage ledger.",
+      "anchors": {
+        "0": "Omitted, mutually exclusive, or incorrect; assign zero according to the actual affected scope.",
+        "1": "Only partially expresses the conditions, history, results, or valid windows.",
+        "2": "The combined semantics are complete and correct; splitting, merging, renaming, and alternative legal strategies are accepted."
+      },
+      "stimulus_dimensions": [
+        "rst_i is asynchronous active-high and clears both FIFOs, JTAG scan state, serial output, and inter-domain event history, but does not clear IER/LCR/SCR. PRESETn is asynchronous active-low and clears IER/LCR/SCR, the THR interrupt armed state, APB operation scheduling, and the data-holding byte used for scanning; it does not clear the FIFOs or JTAG scan. If APB-to-JTAG data existed before PRESETn was released, the first data byte of the first scan may be the post-reset 0; after it is consumed, subsequent queue heads are restored. The registered PREADY response is defined only after the first PCLK rising edge; assert both resets first at power-up."
+      ]
+    },
+    {
+      "obligation_id": "O3",
+      "requirement_ids": [
+        "R-dv-032-jtag-apb-debug-003"
+      ],
+      "scenario": "APB accesses and read data",
+      "checked_target": "Addresses are 3 bits and data is 8 bits. PSEL=1/PENABLE=0 is setup; access on the next cycle holds selection, address, direction, and write data until PREADY. FIFO actions at address 0 with LCR[7]=0 are initiated by setup: after setup is accepted on a PCLK rising edge, the response is visible after that edge; the actual push/pop executes on the immediately following PCLK rising edge (the access completion edge). Writes enter the APB-to-JTAG queue, and reads consume the JTAG-to-APB queue. Other addresses, or address 0 with LCR[7]=1, respond one cycle after setup. PRDATA combinationally follows PADDR and the current state, without gating by PSEL/PENABLE; RBR reads the byte being consumed before the completion edge, and the read value of an empty FIFO is undefined.",
+      "setup": "Perform APB two-phase accesses to all addresses, interleaving FIFO and register accesses; hold setup/access data, and check PREADY and pre-edge read values.",
+      "stimulus": "Perform APB two-phase accesses to all addresses, interleaving FIFO and register accesses; hold setup/access data, and check PREADY and pre-edge read values.",
+      "expected": "Addresses are 3 bits and data is 8 bits. PSEL=1/PENABLE=0 is setup; access on the next cycle holds selection, address, direction, and write data until PREADY. FIFO actions at address 0 with LCR[7]=0 are initiated by setup: after setup is accepted on a PCLK rising edge, the response is visible after that edge; the actual push/pop executes on the immediately following PCLK rising edge (the access completion edge). Writes enter the APB-to-JTAG queue, and reads consume the JTAG-to-APB queue. Other addresses, or address 0 with LCR[7]=1, respond one cycle after setup. PRDATA combinationally follows PADDR and the current state, without gating by PSEL/PENABLE; RBR reads the byte being consumed before the completion edge, and the read value of an empty FIFO is undefined.",
+      "sampling": "Sample according to the clock domain, pre-edge/post-edge, combinationally stable, or asynchronous windows of the public obligation; do not construct expectations using DUT outputs.",
+      "checker": "jsp_native_checker.check_apb compares PRDATA/PREADY/PSLVERR/int_o/top_inhibit_o at the PCLK falling edge +0.2ns, skipping data when RBR is predicted empty. check_tdo independently limits valid bits using the predicted header and compares actual/expected, with mismatches producing UVM_ERROR; check_phase requires at least 100 APB and 64 TDO checks to prevent vacuity. dvbench_model receives only native inputs and history; the source transaction-SB is only for diagnostics and the coverage ledger.",
+      "anchors": {
+        "0": "Omitted, mutually exclusive, or incorrect; assign zero according to the actual affected scope.",
+        "1": "Only partially expresses the conditions, history, results, or valid windows.",
+        "2": "The combined semantics are complete and correct; splitting, merging, renaming, and alternative legal strategies are accepted."
+      },
+      "stimulus_dimensions": [
+        "Addresses are 3 bits and data is 8 bits. PSEL=1/PENABLE=0 is setup; access on the next cycle holds selection, address, direction, and write data until PREADY. FIFO actions at address 0 with LCR[7]=0 are initiated by setup: after setup is accepted on a PCLK rising edge, the response is visible after that edge; the actual push/pop executes on the immediately following PCLK rising edge (the access completion edge). Writes enter the APB-to-JTAG queue, and reads consume the JTAG-to-APB queue. Other addresses, or address 0 with LCR[7]=1, respond one cycle after setup. PRDATA combinationally follows PADDR and the current state, without gating by PSEL/PENABLE; RBR reads the byte being consumed before the completion edge, and the read value of an empty FIFO is undefined."
+      ]
+    },
+    {
+      "obligation_id": "O4",
+      "requirement_ids": [
+        "R-dv-032-jtag-apb-debug-004"
+      ],
+      "scenario": "Registers and DLAB",
+      "checked_target": "Address 1 is the lower 4 bits of IER, with the upper 4 bits reading as 0; IER writes are accepted only when LCR[7]=0. Address 3 is the 8-bit LCR; address 7 is the 8-bit SCR; all are written on the access rising edge. Address 4 MCR is always 0, and address 6 MSR is always 0b; writes are ignored. Address 2 reads IIR and writes FCR. LCR[7] only disables FIFO operations and IER writes; it does not provide DLL/DLM divisor registers, IER reads still return IER, and address 0 reads still combinationally present RBR.",
+      "setup": "Write IER/LCR/SCR with 00/ff/a5, access IER/THR/RBR respectively with DLAB0/1; read/write MCR/MSR to verify constants and ignored writes.",
+      "stimulus": "Write IER/LCR/SCR with 00/ff/a5, access IER/THR/RBR respectively with DLAB0/1; read/write MCR/MSR to verify constants and ignored writes.",
+      "expected": "Address 1 is the lower 4 bits of IER, with the upper 4 bits reading as 0; IER writes are accepted only when LCR[7]=0. Address 3 is the 8-bit LCR; address 7 is the 8-bit SCR; all are written on the access rising edge. Address 4 MCR is always 0, and address 6 MSR is always 0b; writes are ignored. Address 2 reads IIR and writes FCR. LCR[7] only disables FIFO operations and IER writes; it does not provide DLL/DLM divisor registers, IER reads still return IER, and address 0 reads still combinationally present RBR.",
+      "sampling": "Sample according to the clock domain, pre-edge/post-edge, combinationally stable, or asynchronous windows of the public obligation; do not construct expectations using DUT outputs.",
+      "checker": "jsp_native_checker.check_apb compares PRDATA/PREADY/PSLVERR/int_o/top_inhibit_o at the PCLK falling edge +0.2ns, skipping data when RBR is predicted empty. check_tdo independently limits valid bits using the predicted header and compares actual/expected, with mismatches producing UVM_ERROR; check_phase requires at least 100 APB and 64 TDO checks to prevent vacuity. dvbench_model receives only native inputs and history; the source transaction-SB is only for diagnostics and the coverage ledger.",
+      "anchors": {
+        "0": "Omitted, mutually exclusive, or incorrect; assign zero according to the actual affected scope.",
+        "1": "Only partially expresses the conditions, history, results, or valid windows.",
+        "2": "The combined semantics are complete and correct; splitting, merging, renaming, and alternative legal strategies are accepted."
+      },
+      "stimulus_dimensions": [
+        "Address 1 is the lower 4 bits of IER, with the upper 4 bits reading as 0; IER writes are accepted only when LCR[7]=0. Address 3 is the 8-bit LCR; address 7 is the 8-bit SCR; all are written on the access rising edge. Address 4 MCR is always 0, and address 6 MSR is always 0b; writes are ignored. Address 2 reads IIR and writes FCR. LCR[7] only disables FIFO operations and IER writes; it does not provide DLL/DLM divisor registers, IER reads still return IER, and address 0 reads still combinationally present RBR."
+      ]
+    },
+    {
+      "obligation_id": "O5",
+      "requirement_ids": [
+        "R-dv-032-jtag-apb-debug-005"
+      ],
+      "scenario": "Bidirectional FIFOs and FCR",
+      "checked_target": "Each of the two FIFOs holds 8 8-bit bytes, first in, first out. JTAG writes for APB RBR reads, and APB THR writes for JTAG shifting out; when full, new pushes are discarded and old bytes are retained; a pop when empty makes no change. An access write to FCR at address 2 with bit1=1 asynchronously clears the JTAG-to-APB queue, and bit2=1 asynchronously clears the APB-to-JTAG queue; both may be set simultaneously. Other registers, armed, and the scan count are not cleared. FCR is not stored; the read value is defined by IIR.",
+      "setup": "Fill both directions to 8, then push and drain, covering empty/near-full; use FCR bit1/bit2 separately and clear both to check the remaining direction.",
+      "stimulus": "Fill both directions to 8, then push and drain, covering empty/near-full; use FCR bit1/bit2 separately and clear both to check the remaining direction.",
+      "expected": "Each of the two FIFOs holds 8 8-bit bytes, first in, first out. JTAG writes for APB RBR reads, and APB THR writes for JTAG shifting out; when full, new pushes are discarded and old bytes are retained; a pop when empty makes no change. An access write to FCR at address 2 with bit1=1 asynchronously clears the JTAG-to-APB queue, and bit2=1 asynchronously clears the APB-to-JTAG queue; both may be set simultaneously. Other registers, armed, and the scan count are not cleared. FCR is not stored; the read value is defined by IIR.",
+      "sampling": "Sample according to the clock domain, pre-edge/post-edge, combinationally stable, or asynchronous windows of the public obligation; do not construct expectations using DUT outputs.",
+      "checker": "jsp_native_checker.check_apb compares PRDATA/PREADY/PSLVERR/int_o/top_inhibit_o at the PCLK falling edge +0.2ns, skipping data when RBR is predicted empty. check_tdo independently limits valid bits using the predicted header and compares actual/expected, with mismatches producing UVM_ERROR; check_phase requires at least 100 APB and 64 TDO checks to prevent vacuity. dvbench_model receives only native inputs and history; the source transaction-SB is only for diagnostics and the coverage ledger.",
+      "anchors": {
+        "0": "Omitted, mutually exclusive, or incorrect; assign zero according to the actual affected scope.",
+        "1": "Only partially expresses the conditions, history, results, or valid windows.",
+        "2": "The combined semantics are complete and correct; splitting, merging, renaming, and alternative legal strategies are accepted."
+      },
+      "stimulus_dimensions": [
+        "Each of the two FIFOs holds 8 8-bit bytes, first in, first out. JTAG writes for APB RBR reads, and APB THR writes for JTAG shifting out; when full, new pushes are discarded and old bytes are retained; a pop when empty makes no change. An access write to FCR at address 2 with bit1=1 asynchronously clears the JTAG-to-APB queue, and bit2=1 asynchronously clears the APB-to-JTAG queue; both may be set simultaneously. Other registers, armed, and the scan count are not cleared. FCR is not stored; the read value is defined by IIR."
+      ]
+    },
+    {
+      "obligation_id": "O6",
+      "requirement_ids": [
+        "R-dv-032-jtag-apb-debug-006"
+      ],
+      "scenario": "JTAG scan protocol",
+      "checked_target": "A scan starts on a tck_i rising edge with both module_select_i and capture_dr_i equal to 1; having only one asserted does not start it. The first output byte is {number of bytes available to shift out,number of free slots available to receive}, with the high and low nibbles each ranging from 0 to 8; each byte is output LSB first. The high nibble of the first input byte is the number the user wishes to send, and subsequent input bytes are formed at complete-byte boundaries from {tdi_i,data_register_i[63:57]}; externally, each shift rising edge shifts data_register_i right and places tdi_i in bit63. The bit count advances only when shift_dr_i=1; update_dr_i terminates the scan, retaining bytes already fully input. At most the lesser of the free-slot count at capture and the user-declared count is received; excess complete bytes are ignored. The number of valid output bytes is limited by the high nibble of the header, and excess TDO has no valid-data obligation; TDO within the header and valid payload is stable before the corresponding shift rising edge.",
+      "setup": "selected0/1 with capture, count0/1/7/15, full 64bit and aborts at 4/8/12bit; shift different bytes LSB first, pause and then resume.",
+      "stimulus": "selected0/1 with capture, count0/1/7/15, full 64bit and aborts at 4/8/12bit; shift different bytes LSB first, pause and then resume.",
+      "expected": "A scan starts on a tck_i rising edge with both module_select_i and capture_dr_i equal to 1; having only one asserted does not start it. The first output byte is {number of bytes available to shift out,number of free slots available to receive}, with the high and low nibbles each ranging from 0 to 8; each byte is output LSB first. The high nibble of the first input byte is the number the user wishes to send, and subsequent input bytes are formed at complete-byte boundaries from {tdi_i,data_register_i[63:57]}; externally, each shift rising edge shifts data_register_i right and places tdi_i in bit63. The bit count advances only when shift_dr_i=1; update_dr_i terminates the scan, retaining bytes already fully input. At most the lesser of the free-slot count at capture and the user-declared count is received; excess complete bytes are ignored. The number of valid output bytes is limited by the high nibble of the header, and excess TDO has no valid-data obligation; TDO within the header and valid payload is stable before the corresponding shift rising edge.",
+      "sampling": "Sample according to the clock domain, pre-edge/post-edge, combinationally stable, or asynchronous windows of the public obligation; do not construct expectations using DUT outputs.",
+      "checker": "jsp_native_checker.check_apb compares PRDATA/PREADY/PSLVERR/int_o/top_inhibit_o at the PCLK falling edge +0.2ns, skipping data when RBR is predicted empty. check_tdo independently limits valid bits using the predicted header and compares actual/expected, with mismatches producing UVM_ERROR; check_phase requires at least 100 APB and 64 TDO checks to prevent vacuity. dvbench_model receives only native inputs and history; the source transaction-SB is only for diagnostics and the coverage ledger.",
+      "anchors": {
+        "0": "Omitted, mutually exclusive, or incorrect; assign zero according to the actual affected scope.",
+        "1": "Only partially expresses the conditions, history, results, or valid windows.",
+        "2": "The combined semantics are complete and correct; splitting, merging, renaming, and alternative legal strategies are accepted."
+      },
+      "stimulus_dimensions": [
+        "A scan starts on a tck_i rising edge with both module_select_i and capture_dr_i equal to 1; having only one asserted does not start it. The first output byte is {number of bytes available to shift out,number of free slots available to receive}, with the high and low nibbles each ranging from 0 to 8; each byte is output LSB first. The high nibble of the first input byte is the number the user wishes to send, and subsequent input bytes are formed at complete-byte boundaries from {tdi_i,data_register_i[63:57]}; externally, each shift rising edge shifts data_register_i right and places tdi_i in bit63. The bit count advances only when shift_dr_i=1; update_dr_i terminates the scan, retaining bytes already fully input. At most the lesser of the free-slot count at capture and the user-declared count is received; excess complete bytes are ignored. The number of valid output bytes is limited by the high nibble of the header, and excess TDO has no valid-data obligation; TDO within the header and valid payload is stable before the corresponding shift rising edge."
+      ]
+    },
+    {
+      "obligation_id": "O7",
+      "requirement_ids": [
+        "R-dv-032-jtag-apb-debug-007"
+      ],
+      "scenario": "Cross-domain visibility",
+      "checked_target": "JTAG complete-byte commits and output-byte consumption are sent as events to the PCLK domain; an event appears after two PCLK synchronization rising edges, then changes the queue after one scheduling edge followed by one execution edge. The JTAG boundary and FIFO change must not be treated as simultaneous. Byte events are spaced at least 8 tck_i periods apart. FIFO counts are updated toward JTAG through a request/ack snapshot round trip: when the count changes and the previous snapshot has been acknowledged, it is latched and a request is sent; after two tck_i synchronization edges, the request is loaded on the next edge; the next snapshot may be latched only after acknowledgment returns through two PCLK synchronization edges. Multiple intervening changes may be merged. capture uses the snapshot already visible, and the header may be stale under concurrency. After rst_i is released, a tck_i edge occurs first, followed by two PCLK synchronization edges before the link is ready; before that, LSR[6:5]=0.",
+      "setup": "Run back-to-back scans and concurrent APB operations, recording history without artificially waiting for convergence; predict stale headers and event delays, and check the final state after settling.",
+      "stimulus": "Run back-to-back scans and concurrent APB operations, recording history without artificially waiting for convergence; predict stale headers and event delays, and check the final state after settling.",
+      "expected": "JTAG complete-byte commits and output-byte consumption are sent as events to the PCLK domain; an event appears after two PCLK synchronization rising edges, then changes the queue after one scheduling edge followed by one execution edge. The JTAG boundary and FIFO change must not be treated as simultaneous. Byte events are spaced at least 8 tck_i periods apart. FIFO counts are updated toward JTAG through a request/ack snapshot round trip: when the count changes and the previous snapshot has been acknowledged, it is latched and a request is sent; after two tck_i synchronization edges, the request is loaded on the next edge; the next snapshot may be latched only after acknowledgment returns through two PCLK synchronization edges. Multiple intervening changes may be merged. capture uses the snapshot already visible, and the header may be stale under concurrency. After rst_i is released, a tck_i edge occurs first, followed by two PCLK synchronization edges before the link is ready; before that, LSR[6:5]=0.",
+      "sampling": "Sample according to the clock domain, pre-edge/post-edge, combinationally stable, or asynchronous windows of the public obligation; do not construct expectations using DUT outputs.",
+      "checker": "jsp_native_checker.check_apb compares PRDATA/PREADY/PSLVERR/int_o/top_inhibit_o at the PCLK falling edge +0.2ns, skipping data when RBR is predicted empty. check_tdo independently limits valid bits using the predicted header and compares actual/expected, with mismatches producing UVM_ERROR; check_phase requires at least 100 APB and 64 TDO checks to prevent vacuity. dvbench_model receives only native inputs and history; the source transaction-SB is only for diagnostics and the coverage ledger.",
+      "anchors": {
+        "0": "Omitted, mutually exclusive, or incorrect; assign zero according to the actual affected scope.",
+        "1": "Only partially expresses the conditions, history, results, or valid windows.",
+        "2": "The combined semantics are complete and correct; splitting, merging, renaming, and alternative legal strategies are accepted."
+      },
+      "stimulus_dimensions": [
+        "JTAG complete-byte commits and output-byte consumption are sent as events to the PCLK domain; an event appears after two PCLK synchronization rising edges, then changes the queue after one scheduling edge followed by one execution edge. The JTAG boundary and FIFO change must not be treated as simultaneous. Byte events are spaced at least 8 tck_i periods apart. FIFO counts are updated toward JTAG through a request/ack snapshot round trip: when the count changes and the previous snapshot has been acknowledged, it is latched and a request is sent; after two tck_i synchronization edges, the request is loaded on the next edge; the next snapshot may be latched only after acknowledgment returns through two PCLK synchronization edges. Multiple intervening changes may be merged. capture uses the snapshot already visible, and the header may be stale under concurrency. After rst_i is released, a tck_i edge occurs first, followed by two PCLK synchronization edges before the link is ready; before that, LSR[6:5]=0."
+      ]
+    },
+    {
+      "obligation_id": "O8",
+      "requirement_ids": [
+        "R-dv-032-jtag-apb-debug-008"
+      ],
+      "scenario": "LSR and IIR",
+      "checked_target": "At LSR address 5, bit0 indicates that the JTAG-to-APB FIFO is nonempty; bit5/6 both indicate that the link is ready and APB-to-JTAG is not full; other bits are 0, and do not indicate UART transmit busy. IIR gives priority to 04 (JTAG-to-APB nonempty), otherwise 02 when armed and APB-to-JTAG is not full and ready, otherwise 01; IIR is not masked by IER. A THR setup write or consumption of the last APB-to-JTAG byte sets armed; an access read of IIR when JTAG-to-APB is empty clears armed, with setting taking priority.",
+      "setup": "Generate IIR01/02/04 and priorities, toggle IER, clear armed on IIR reads, and set armed on THR writes and the last pop.",
+      "stimulus": "Generate IIR01/02/04 and priorities, toggle IER, clear armed on IIR reads, and set armed on THR writes and the last pop.",
+      "expected": "At LSR address 5, bit0 indicates that the JTAG-to-APB FIFO is nonempty; bit5/6 both indicate that the link is ready and APB-to-JTAG is not full; other bits are 0, and do not indicate UART transmit busy. IIR gives priority to 04 (JTAG-to-APB nonempty), otherwise 02 when armed and APB-to-JTAG is not full and ready, otherwise 01; IIR is not masked by IER. A THR setup write or consumption of the last APB-to-JTAG byte sets armed; an access read of IIR when JTAG-to-APB is empty clears armed, with setting taking priority.",
+      "sampling": "Sample according to the clock domain, pre-edge/post-edge, combinationally stable, or asynchronous windows of the public obligation; do not construct expectations using DUT outputs.",
+      "checker": "jsp_native_checker.check_apb compares PRDATA/PREADY/PSLVERR/int_o/top_inhibit_o at the PCLK falling edge +0.2ns, skipping data when RBR is predicted empty. check_tdo independently limits valid bits using the predicted header and compares actual/expected, with mismatches producing UVM_ERROR; check_phase requires at least 100 APB and 64 TDO checks to prevent vacuity. dvbench_model receives only native inputs and history; the source transaction-SB is only for diagnostics and the coverage ledger.",
+      "anchors": {
+        "0": "Omitted, mutually exclusive, or incorrect; assign zero according to the actual affected scope.",
+        "1": "Only partially expresses the conditions, history, results, or valid windows.",
+        "2": "The combined semantics are complete and correct; splitting, merging, renaming, and alternative legal strategies are accepted."
+      },
+      "stimulus_dimensions": [
+        "At LSR address 5, bit0 indicates that the JTAG-to-APB FIFO is nonempty; bit5/6 both indicate that the link is ready and APB-to-JTAG is not full; other bits are 0, and do not indicate UART transmit busy. IIR gives priority to 04 (JTAG-to-APB nonempty), otherwise 02 when armed and APB-to-JTAG is not full and ready, otherwise 01; IIR is not masked by IER. A THR setup write or consumption of the last APB-to-JTAG byte sets armed; an access read of IIR when JTAG-to-APB is empty clears armed, with setting taking priority."
+      ]
+    },
+    {
+      "obligation_id": "O9",
+      "requirement_ids": [
+        "R-dv-032-jtag-apb-debug-009"
+      ],
+      "scenario": "Interrupts and comparison windows",
+      "checked_target": "int_o is (IER[1] and armed and APB-to-JTAG not full and link ready) or (IER[0] and JTAG-to-APB nonempty), combinationally reflecting the state. PRDATA at register addresses can be compared after combinational settling; address 0 has a data obligation only when the queue is nonempty. TDO has a data obligation only in the header of a selected scan and the payload within its declared count; pausing preserves the shift position, and residual values after update are not new data. PREADY, int_o, and the two constant-0 outputs can always be compared within the defined windows.",
+      "setup": "Compare against an independent model after PCLK/TCK falling edges throughout; only predicted empty RBR and TDO beyond the header count have no data obligation; continuously compare everything else.",
+      "stimulus": "Compare against an independent model after PCLK/TCK falling edges throughout; only predicted empty RBR and TDO beyond the header count have no data obligation; continuously compare everything else.",
+      "expected": "int_o is (IER[1] and armed and APB-to-JTAG not full and link ready) or (IER[0] and JTAG-to-APB nonempty), combinationally reflecting the state. PRDATA at register addresses can be compared after combinational settling; address 0 has a data obligation only when the queue is nonempty. TDO has a data obligation only in the header of a selected scan and the payload within its declared count; pausing preserves the shift position, and residual values after update are not new data. PREADY, int_o, and the two constant-0 outputs can always be compared within the defined windows.",
+      "sampling": "Sample according to the clock domain, pre-edge/post-edge, combinationally stable, or asynchronous windows of the public obligation; do not construct expectations using DUT outputs.",
+      "checker": "jsp_native_checker.check_apb compares PRDATA/PREADY/PSLVERR/int_o/top_inhibit_o at the PCLK falling edge +0.2ns, skipping data when RBR is predicted empty. check_tdo independently limits valid bits using the predicted header and compares actual/expected, with mismatches producing UVM_ERROR; check_phase requires at least 100 APB and 64 TDO checks to prevent vacuity. dvbench_model receives only native inputs and history; the source transaction-SB is only for diagnostics and the coverage ledger.",
+      "anchors": {
+        "0": "Omitted, mutually exclusive, or incorrect; assign zero according to the actual affected scope.",
+        "1": "Only partially expresses the conditions, history, results, or valid windows.",
+        "2": "The combined semantics are complete and correct; splitting, merging, renaming, and alternative legal strategies are accepted."
+      },
+      "stimulus_dimensions": [
+        "int_o is (IER[1] and armed and APB-to-JTAG not full and link ready) or (IER[0] and JTAG-to-APB nonempty), combinationally reflecting the state. PRDATA at register addresses can be compared after combinational settling; address 0 has a data obligation only when the queue is nonempty. TDO has a data obligation only in the header of a selected scan and the payload within its declared count; pausing preserves the shift position, and residual values after update are not new data. PREADY, int_o, and the two constant-0 outputs can always be compared within the defined windows."
+      ]
+    }
+  ],
+  "stimulus_criteria": {
+    "O1": [
+      {
+        "criterion_id": "O1-public-domain",
+        "definition": "Actual stimulus and non-vacuous checks must cover the conditions, boundaries, and valid windows defined by this public obligation: the top-level adbg_jsp_apb_module has no parameters, and data_register_i is fixed at 64 bits. Only two-state inputs and legal APB two-phase accesses are defined. The PCLK period is 6ns and the tck_i period is 10ns. Inputs are driven on the falling edge of their respective domains and sampled after settling; the two domains run independently and may have simultaneous rising edges, with state updates using pre-edge inputs. PSLVERR and top_inhibit_o are always 0."
+      }
+    ],
+    "O2": [
+      {
+        "criterion_id": "O2-public-domain",
+        "definition": "Actual stimulus and non-vacuous checks must cover the conditions, boundaries, and valid windows defined by this public obligation: rst_i is asynchronous active-high and clears both FIFOs, JTAG scan state, serial output, and inter-domain event history, but does not clear IER/LCR/SCR. PRESETn is asynchronous active-low and clears IER/LCR/SCR, the THR interrupt armed state, APB operation scheduling, and the data holding byte used for scanning, but does not clear the FIFOs or JTAG scan. After PRESETn is deasserted, if APB-to-JTAG data was already present, the first data byte of the first scan may be the post-reset 0; after it is consumed, the subsequent queue head is restored. The registered response of PREADY is defined only after the first PCLK rising edge; assert both resets first at power-up."
+      }
+    ],
+    "O3": [
+      {
+        "criterion_id": "O3-public-domain",
+        "definition": "Actual stimulus and non-vacuous checks must cover the conditions, boundaries, and valid windows defined by this public obligation: addresses are 3 bits and data is 8 bits. PSEL=1/PENABLE=0 is setup; the access in the next cycle holds selection, address, direction, and write data until PREADY. FIFO operations at address 0 with LCR[7]=0 are initiated by setup: after setup is accepted on a PCLK rising edge, the response is visible after that edge; the actual push/pop executes on the immediately following PCLK rising edge (the access completion edge). Writes enter the APB-to-JTAG queue, and reads consume the JTAG-to-APB queue. Other addresses, or address 0 with LCR[7]=1, respond one cycle after setup. PRDATA combinationally follows PADDR and the current state, without gating by PSEL/PENABLE; RBR reads the byte being consumed before the completion edge, and the read value for an empty FIFO is undefined."
+      }
+    ],
+    "O4": [
+      {
+        "criterion_id": "O4-public-domain",
+        "definition": "Actual stimulus and non-vacuous checks must cover the conditions, boundaries, and valid windows defined by this public obligation: address 1 is the low 4 bits of IER, with the upper 4 bits reading as 0; IER writes are accepted only when LCR[7]=0. Address 3 is the 8-bit LCR; address 7 is the 8-bit SCR. All are written on the access rising edge. Address 4 MCR is always 0, and address 6 MSR is always 0b; writes are ignored. Address 2 reads IIR and writes FCR. LCR[7] only disables FIFO operations and IER writes; it does not provide DLL/DLM divisor registers. IER reads still return IER, and address 0 reads still combinationally display RBR."
+      }
+    ],
+    "O5": [
+      {
+        "criterion_id": "O5-public-domain",
+        "definition": "Actual stimulus and non-vacuous checks must cover the conditions, boundaries, and valid windows defined by this public obligation: each of the two FIFOs holds 8 8-bit bytes, in first-in, first-out order. JTAG writes data for APB RBR reads, and APB THR writes data for shifting out through JTAG; when full, a new push is discarded and old bytes are retained, and an empty pop makes no change. An access write to FCR at address 2 with bit1=1 asynchronously clears the JTAG-to-APB queue, and bit2=1 asynchronously clears the APB-to-JTAG queue; both may be set simultaneously. This does not clear other registers, armed, or the scan count. FCR is not stored; the read value is defined by IIR."
+      }
+    ],
+    "O6": [
+      {
+        "criterion_id": "O6-public-domain",
+        "definition": "Actual stimulus and non-vacuous checks must cover the conditions, boundaries, and valid windows defined by this public obligation: a tck_i rising edge with both module_select_i and capture_dr_i equal to 1 starts a scan; only one of them being asserted does not start a scan. The first output byte is {number of bytes available to shift out, number of free slots available to receive}, with the high and low nibbles each ranging from 0 to 8, and each byte shifted out LSB first. The high nibble of the first input byte is the number the user wishes to send, and subsequent input bytes are formed at complete-byte boundaries from {tdi_i,data_register_i[63:57]}; externally, each shift rising edge shifts data_register_i right and places tdi_i into bit63. The bit count advances only when shift_dr_i=1. update_dr_i terminates the scan, and fully received input bytes are retained. At most the lesser of the free-slot count at capture and the user-declared count is received; excess complete bytes are ignored. The number of valid output bytes is limited by the high nibble of the header, and excess TDO has no valid-data obligation; within the header and valid payload, TDO is stable before the corresponding shift rising edge."
+      }
+    ],
+    "O7": [
+      {
+        "criterion_id": "O7-public-domain",
+        "definition": "Actual stimulus and non-vacuous checks must cover the conditions, boundaries, and valid windows defined by this public obligation: JTAG complete-byte commits and output-byte consumption are sent as events to the PCLK domain. An event appears after two PCLK synchronization rising edges, then passes through one scheduling edge and one execution edge in sequence before changing the queue; the JTAG boundary and FIFO change must not be treated as occurring at the same instant. Byte events are separated by at least 8 tck_i cycles. FIFO counts are updated toward JTAG through request/ack snapshot round trips: when a count changes and the previous snapshot has been acknowledged, it is latched and a request is issued; after the request passes through two tck_i synchronization edges, it is loaded on the next edge. The next snapshot may be latched only after the acknowledgment returns through two PCLK synchronization edges. Multiple intervening changes may be merged. capture uses the already-visible snapshot, and the header may be stale under concurrent activity. After rst_i is deasserted, a tck_i edge must occur first, followed by two PCLK synchronization edges before the link is ready; before that, LSR[6:5]=0."
+      }
+    ],
+    "O8": [
+      {
+        "criterion_id": "O8-public-domain",
+        "definition": "Actual stimulus and non-vacuous checks must cover the conditions, boundaries, and valid windows defined by this public obligation: at LSR address 5, bit0 indicates that the JTAG-to-APB FIFO is nonempty; bit5/6 both indicate that the link is ready and APB-to-JTAG is not full. Other bits are 0; they do not indicate UART transmit busy. IIR prioritizes 04 (JTAG-to-APB nonempty), otherwise 02 when armed and APB-to-JTAG is not full and is ready, otherwise 01; IIR is not masked by IER. A THR setup write or consumption of the last APB-to-JTAG byte sets armed; an access read of IIR when JTAG-to-APB is empty clears armed, with setting taking priority."
+      }
+    ],
+    "O9": [
+      {
+        "criterion_id": "O9-public-domain",
+        "definition": "Actual stimulus and non-vacuous checks must cover the conditions, boundaries, and valid windows defined by this public obligation: int_o is (IER[1] and armed and APB-to-JTAG not full and link ready) or (IER[0] and JTAG-to-APB nonempty), reflecting state combinationally. PRDATA for register addresses may be compared after combinational settling; address 0 has a data obligation only when the queue is nonempty. TDO has a data obligation only for the header of a selected scan and the payload within its declared count; pausing holds the shift position, and residual values after update are not treated as new data. PREADY, int_o, and the two constant-0 outputs may always be compared within their defined windows."
+      }
+    ]
+  }
+}

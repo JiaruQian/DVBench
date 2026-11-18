@@ -1,0 +1,9 @@
+{
+  "framework": "custom",
+  "image": "dvbench-agent:local",
+  "command_argv": ["/opt/agent/bin/agent", "--prompt-file", "/run/prompt.txt"],
+  "provider": "your-provider",
+  "model": "your-model",
+  "base_url_env": "MODEL_BASE_URL",
+  "credential_env": "MODEL_API_KEY"
+}

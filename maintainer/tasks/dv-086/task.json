@@ -1,0 +1,318 @@
+{
+  "task_id": "dv-086",
+  "dut_top": "instruction_cache",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "define.v",
+    "bin2one.v",
+    "dualportSRAM.v",
+    "fifo.v",
+    "find_first.v",
+    "fixed_pri_arb.v",
+    "get_entry_status.v",
+    "get_setid.v",
+    "input_reverse.v",
+    "instruction_cache.v",
+    "lru_matrix.v",
+    "mshr_icache.v",
+    "one2bin.v",
+    "sram_template.v",
+    "stream_fifo_pipe_true.v",
+    "tag_access_icache.v",
+    "tag_checker_icache.v"
+  ],
+  "rtl_sources": [
+    "define.v",
+    "bin2one.v",
+    "dualportSRAM.v",
+    "fifo.v",
+    "find_first.v",
+    "fixed_pri_arb.v",
+    "get_entry_status.v",
+    "get_setid.v",
+    "input_reverse.v",
+    "instruction_cache.v",
+    "lru_matrix.v",
+    "mshr_icache.v",
+    "one2bin.v",
+    "sram_template.v",
+    "stream_fifo_pipe_true.v",
+    "tag_access_icache.v",
+    "tag_checker_icache.v"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m10",
+    "n1",
+    "n2",
+    "n3"
+  ],
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "model_contract_policy": "native-module-v1",
+  "parameters": {},
+  "model_interface": {
+    "ports": [
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "core_req_addr_i",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "core_req_mask_i",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "core_req_valid_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "core_req_wid_i",
+        "direction": "In",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "core_rsp_addr_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "core_rsp_data_o",
+        "direction": "Out",
+        "width": 64,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 63,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "core_rsp_mask_o",
+        "direction": "Out",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "core_rsp_status_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "core_rsp_valid_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "core_rsp_wid_o",
+        "direction": "Out",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "flush_pipe_valid_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "flush_pipe_wid_i",
+        "direction": "In",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "invalid_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "mem_req_a_addr_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "mem_req_a_source_o",
+        "direction": "Out",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "mem_req_ready_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "mem_req_valid_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "mem_rsp_d_addr_i",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "mem_rsp_d_data_i",
+        "direction": "In",
+        "width": 64,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 63,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "mem_rsp_d_source_i",
+        "direction": "In",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "mem_rsp_ready_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "mem_rsp_valid_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "rst_n",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {}
+  },
+  "reference_submission": "solution/reference",
+  "include_directories": [
+    "."
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "define.v",
+    "bin2one.v",
+    "dualportSRAM.v",
+    "fifo.v",
+    "find_first.v",
+    "fixed_pri_arb.v",
+    "get_entry_status.v",
+    "get_setid.v",
+    "input_reverse.v",
+    "instruction_cache.v",
+    "lru_matrix.v",
+    "mshr_icache.v",
+    "one2bin.v",
+    "sram_template.v",
+    "stream_fifo_pipe_true.v",
+    "tag_access_icache.v",
+    "tag_checker_icache.v"
+  ]
+}

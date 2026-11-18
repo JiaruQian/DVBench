@@ -1,0 +1,251 @@
+{
+  "ports": [
+    {
+      "name": "clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "ctrl_alu_fn_i",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "ctrl_reg_idxw_i",
+      "direction": "In",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "ctrl_reverse_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "ctrl_wid_i",
+      "direction": "In",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "ctrl_wvd_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "ctrl_wxd_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "in1_i",
+      "direction": "In",
+      "width": 128,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 127,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "in2_i",
+      "direction": "In",
+      "width": 128,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 127,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "in3_i",
+      "direction": "In",
+      "width": 128,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 127,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "in_ready_o",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "in_valid_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "mask_i",
+      "direction": "In",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "outv_ready_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "outv_reg_idxw_o",
+      "direction": "Out",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "outv_valid_o",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "outv_warp_id_o",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "outv_wb_wxd_rd_o",
+      "direction": "Out",
+      "width": 128,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 127,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "outv_wvd_mask_o",
+      "direction": "Out",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "outv_wvd_o",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "outx_ready_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "outx_reg_idwx_o",
+      "direction": "Out",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "outx_valid_o",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "outx_warp_id_o",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "outx_wb_wxd_rd_o",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "outx_wxd_o",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "rst_n",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {}
+}

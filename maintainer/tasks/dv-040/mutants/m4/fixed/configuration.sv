@@ -1,0 +1,2 @@
+`define SYNC_PL_NO_RANDOMIZATION
+`define NO_PLI_OR_EMU

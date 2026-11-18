@@ -1,0 +1,81 @@
+{
+  "requirements": [
+    {
+      "requirement_id": "R-dv-009-001",
+      "obligation": "rst_ni low asynchronously clears the queue; it remains empty after deassertion. flush_i clears it on the rising edge of clk_i, taking priority over push/pop; flush does not take effect immediately between edges. After clearing, usage=0 and full=0; empty is still governed by the combinational fall-through rule for the current push.",
+      "rtl": "rtl/cva6_fifo_v3.sv:151-180,212-218",
+      "legal_preparation": "Legally fill the queue to a nonempty state, then stop clk_i with push/pop both 0.",
+      "domain": "Fixed DEPTH=8, FALL_THROUGH=1, DATA_WIDTH=32, dtype=logic[31:0], FPGA_EN=0, FPGA_ALTERA=0; ADDR_DEPTH=3 is a derived value. Inputs are two-state, and non-reset inputs avoid rising edges. push_i=1 is prohibited when full_o=1, and pop_i=1 is prohibited when empty_o=1; simultaneous push/pop on an empty queue is legal due to fall-through. data_o is not scored when empty_o=1. testmode_i has no observable effect. The original source did not provide a spec; the following is the observable contract of the fixed RTL.",
+      "stimulus": "Assert reset between edges; idle after deassertion; when not empty, raise flush between edges and then pass through a rising edge; apply flush simultaneously with legal push/pop.",
+      "observable_ports": [
+        "clk_i",
+        "rst_ni",
+        "flush_i",
+        "push_i",
+        "pop_i",
+        "usage_o",
+        "full_o",
+        "empty_o"
+      ],
+      "sampling": "After reset assertion and before the next clock; before the flush edge and after NBA.",
+      "independent_oracle": "solution/reference/model/model.sv"
+    },
+    {
+      "requirement_id": "R-dv-009-002",
+      "obligation": "The queue capacity is 8, and full_o is 1 when the stored entry count is 8; usage_o is the low 3 bits of the stored entry count and is 0 when full, so emptiness cannot be inferred from usage=0. A push when not full enqueues, a pop when not empty dequeues, and legal simultaneous push/pop preserves the stored entry count.",
+      "rtl": "rtl/cva6_fifo_v3.sv:64-75,105-132",
+      "legal_preparation": "Reset to an empty queue, with all operations obeying the legal full/empty domain.",
+      "domain": "Fixed DEPTH=8, FALL_THROUGH=1, DATA_WIDTH=32, dtype=logic[31:0], FPGA_EN=0, FPGA_ALTERA=0; ADDR_DEPTH=3 is a derived value. Inputs are two-state, and non-reset inputs avoid rising edges. push_i=1 is prohibited when full_o=1, and pop_i=1 is prohibited when empty_o=1; simultaneous push/pop on an empty queue is legal due to fall-through. data_o is not scored when empty_o=1. testmode_i has no observable effect. The original source did not provide a spec; the following is the observable contract of the fixed RTL.",
+      "stimulus": "Fill with 1 through 8 entries one at a time and drain one at a time; perform simultaneous push/pop at 1 and 7 entries, wrap around repeatedly, and insert idle periods.",
+      "observable_ports": [
+        "clk_i",
+        "push_i",
+        "pop_i",
+        "full_o",
+        "empty_o",
+        "usage_o",
+        "data_i"
+      ],
+      "sampling": "After combinational state changes and after the rising-edge NBA.",
+      "independent_oracle": "solution/reference/model/model.sv"
+    },
+    {
+      "requirement_id": "R-dv-009-003",
+      "obligation": "When not empty, data_o combinationally presents the oldest data not yet dequeued; push accepts data_i on the rising edge of clk_i, and pop removes the queue head on the rising edge. Without pop, the queue head is retained; repeated wraparound and simultaneous push/pop do not change FIFO order. Arbitrary changes to testmode_i do not change these behaviors.",
+      "rtl": "rtl/cva6_fifo_v3.sv:97-132,212-218",
+      "legal_preparation": "After reset, enqueue different 32-bit data values in sequence; the input mirror comes only from the driving history.",
+      "domain": "Fixed DEPTH=8, FALL_THROUGH=1, DATA_WIDTH=32, dtype=logic[31:0], FPGA_EN=0, FPGA_ALTERA=0; ADDR_DEPTH=3 is a derived value. Inputs are two-state, and non-reset inputs avoid rising edges. push_i=1 is prohibited when full_o=1, and pop_i=1 is prohibited when empty_o=1; simultaneous push/pop on an empty queue is legal due to fall-through. data_o is not scored when empty_o=1. testmode_i has no observable effect. The original source did not provide a spec; the following is the observable contract of the fixed RTL.",
+      "stimulus": "Use different data, 0/all-1/high-bit random patterns, fill/drain, multiple wraparounds, interleaved same-cycle input/output and hold cycles, and toggle testmode.",
+      "observable_ports": [
+        "clk_i",
+        "push_i",
+        "pop_i",
+        "data_i",
+        "data_o",
+        "empty_o",
+        "testmode_i"
+      ],
+      "sampling": "Stable before and after the edge when not empty; data with empty=1 is not checked.",
+      "independent_oracle": "solution/reference/model/model.sv"
+    },
+    {
+      "requirement_id": "R-dv-009-004",
+      "obligation": "When storage is empty and push_i=1, empty_o immediately becomes 0 without a clock, and data_o combinationally equals data_i. In this state, a rising edge with pop_i=0 retains the data as 1 entry; if pop_i=1, the entry is consumed through fall-through, and storage still contains 0 entries. Without push, an empty queue has empty_o=1.",
+      "rtl": "rtl/cva6_fifo_v3.sv:74,135-147",
+      "legal_preparation": "Establish an empty queue using reset or flush, and hold clk_i low.",
+      "domain": "Fixed DEPTH=8, FALL_THROUGH=1, DATA_WIDTH=32, dtype=logic[31:0], FPGA_EN=0, FPGA_ALTERA=0; ADDR_DEPTH=3 is a derived value. Inputs are two-state, and non-reset inputs avoid rising edges. push_i=1 is prohibited when full_o=1, and pop_i=1 is prohibited when empty_o=1; simultaneous push/pop on an empty queue is legal due to fall-through. data_o is not scored when empty_o=1. testmode_i has no observable effect. The original source did not provide a spec; the following is the observable contract of the fixed RTL.",
+      "stimulus": "Change push/data between edges to check fall-through, cross edges with pop0 and pop1 respectively; withdraw push after fall-through, and repeat with different data.",
+      "observable_ports": [
+        "clk_i",
+        "data_i",
+        "push_i",
+        "pop_i",
+        "data_o",
+        "empty_o",
+        "usage_o"
+      ],
+      "sampling": "When the combinational inputs are stable, do not wait for a clock; then check the stored entry count after the rising edge and the state after withdrawing push.",
+      "independent_oracle": "solution/reference/model/model.sv"
+    }
+  ]
+}

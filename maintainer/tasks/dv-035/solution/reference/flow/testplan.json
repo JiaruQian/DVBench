@@ -1,0 +1,74 @@
+{
+  "tests": [
+    {
+      "test_id": "T-001",
+      "feature_ids": [
+        "F-001"
+      ],
+      "requirement_ids": [
+        "R-dv-035-001"
+      ],
+      "stimulus": "First enqueue data so the queue is nonempty, then apply synchronous reset across an edge, checking valid clearing, ready recovery, and busy constantly zero.",
+      "expected": "rst clears both FIFOs and the valid flags on the rising edge of clk, and s_ip_hdr_ready is 0 after that edge; busy is always 0. After the next rising edge following rst deassertion, ready for the empty header path is 1. Payload input ready is 1 after reset clearing. Invalid payload/header data is unspecified.",
+      "checker": "Predict independently only from the inputs and their legal history, and compare the public outputs using four-state inequality in each valid window in expected; record mismatches as UVM_ERROR, require a nonzero actual observation/comparison count for each item, and finish after transactions have drained. Do not generate expectations from actual DUT outputs.",
+      "implementation_id": "V-001",
+      "source": "native_pkg.sv:native_sequence.body;native_pkg.sv:native_scoreboard.write;model/model.sv:dvbench_model"
+    },
+    {
+      "test_id": "T-002",
+      "feature_ids": [
+        "F-002"
+      ],
+      "requirement_ids": [
+        "R-dv-035-002"
+      ],
+      "stimulus": "With headers disabled, send various data/keep/last/user independently, interleave output backpressure, and build an independent queue based on input handshakes; determine handshakes before the edge, and check valid fields and holding after the edge.",
+      "expected": "Each time s_ip_payload_axis_tvalid and ready are both 1, one 64-bit data, 8-bit keep, last, and user are accepted; this is independent of header valid and both header ready signals. Output is in acceptance order; data with output valid equal to 0 is undefined, and all payload fields hold when valid is 1 and output ready is 0.",
+      "checker": "Predict independently only from the inputs and their legal history, and compare the public outputs using four-state inequality in each valid window in expected; record mismatches as UVM_ERROR, require a nonzero actual observation/comparison count for each item, and finish after transactions have drained. Do not generate expectations from actual DUT outputs.",
+      "implementation_id": "V-002",
+      "source": "native_pkg.sv:native_sequence.body;native_pkg.sv:native_scoreboard.write;model/model.sv:dvbench_model"
+    },
+    {
+      "test_id": "T-003",
+      "feature_ids": [
+        "F-003"
+      ],
+      "requirement_ids": [
+        "R-dv-035-003"
+      ],
+      "stimulus": "Send more than 258 beats while the output is stalled to reach the full boundary, then read and write concurrently through multiple wraparounds; independently track 256 RAM positions and two pipeline positions.",
+      "expected": "The payload RAM holds 256 64-bit beats, with two additional output pipeline positions. Data accepted into an empty queue first becomes valid at the output after the third acceptance edge. Input ready is 0 when the RAM is full, and ready recovers after output removal frees space; there is no loss, duplication, or reordering.",
+      "checker": "Predict independently only from the inputs and their legal history, and compare the public outputs using four-state inequality in each valid window in expected; record mismatches as UVM_ERROR, require a nonzero actual observation/comparison count for each item, and finish after transactions have drained. Do not generate expectations from actual DUT outputs.",
+      "implementation_id": "V-003",
+      "source": "native_pkg.sv:native_sequence.body;native_pkg.sv:native_scoreboard.write;model/model.sv:dvbench_model"
+    },
+    {
+      "test_id": "T-004",
+      "feature_ids": [
+        "F-004"
+      ],
+      "requirement_ids": [
+        "R-dv-035-004"
+      ],
+      "stimulus": "Compare four histories: header and last on the same edge, header and non-last on the same edge, last without a header, and delayed last; explicitly check that only the complete same-edge conditions cause a commit.",
+      "expected": "Header input ready is a registered signal. After a header handshake, ready is 0 on the next cycle, and subsequently recovers according to the header FIFO full status. The header is enqueued only if a payload handshake also occurs on the same acceptance edge with last equal to 1; a multibeat payload ending on a later edge does not commit an earlier header.",
+      "checker": "Predict independently only from the inputs and their legal history, and compare the public outputs using four-state inequality in each valid window in expected; record mismatches as UVM_ERROR, require a nonzero actual observation/comparison count for each item, and finish after transactions have drained. Do not generate expectations from actual DUT outputs.",
+      "implementation_id": "V-004",
+      "source": "native_pkg.sv:native_sequence.body;native_pkg.sv:native_scoreboard.write;model/model.sv:dvbench_model"
+    },
+    {
+      "test_id": "T-005",
+      "feature_ids": [
+        "F-005"
+      ],
+      "requirement_ids": [
+        "R-dv-035-005"
+      ],
+      "stimulus": "Commit different version and ihl values, field boundary values, and random values on the same edge; stall the output to fill all 9 entries, then drain and wrap around, comparing all fields against a queue of acceptance history.",
+      "expected": "All s_eth_* and s_ip_* non-payload fields are captured on the header acceptance edge that satisfies the commit conditions above, and are output unchanged in order on the corresponding m-side fields; a new header first becomes valid after the third edge following acceptance. Fields hold when output valid is asserted and ready is 0. The header RAM has 8 entries and one output position; when full, subsequent acceptance is paused.",
+      "checker": "Predict independently only from the inputs and their legal history, and compare the public outputs using four-state inequality in each valid window in expected; record mismatches as UVM_ERROR, require a nonzero actual observation/comparison count for each item, and finish after transactions have drained. Do not generate expectations from actual DUT outputs.",
+      "implementation_id": "V-005",
+      "source": "native_pkg.sv:native_sequence.body;native_pkg.sv:native_scoreboard.write;model/model.sv:dvbench_model"
+    }
+  ]
+}

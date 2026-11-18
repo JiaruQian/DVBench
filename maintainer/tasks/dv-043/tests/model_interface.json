@@ -1,0 +1,45 @@
+{
+  "ports": [
+    {
+      "name": "illegal_instr_o",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "instr_i",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "instr_o",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "is_compressed_o",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {
+    "FPU": "0",
+    "ZFINX": "0"
+  },
+  "parser": "pyslang 11.0.0"
+}

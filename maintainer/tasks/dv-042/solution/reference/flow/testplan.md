@@ -1,0 +1,65 @@
+# Verification plan
+
+## T-01
+
+Stimulus: Use the fixed eight-warp,four-thread configuration and known binary inputs stable around rising edges. Assert and release asynchronous reset and establish nonzero bank/result state only through accepted operations or dispatch edges. Initialize writable scratch CSRs and dispatch/base fields, then reset at startup, while holding a stalled result, and with a short pulse entirely between rising edges. Read back previously nonzero scratch state after the short pulse. Issue a vector or mstatus/vtype read on the first released edge and repeat after it.
+
+Expected: All reset-cleared state and result payloads become zero asynchronously; no short pulse is missed. First-edge reads see zero MPP/vtype/capacity, and later reads see MPP0x1800, vtype0x10 and vector capacity4.
+
+Checker: An independent self-contained native model predicts an abstract addressed bank map and retained result entry from input history only; no DUT output enters prediction. Separate actual and predicted wires feed four-state comparisons1ns after rising clk, asynchronous reset and any query-selector change after settling. Any difference emits UVM_ERROR; finite stimulus and mandatory sample/reset counts reject vacuity.
+
+## T-02
+
+Stimulus: Use the fixed eight-warp,four-thread configuration and known binary inputs stable around rising edges. Assert and release asynchronous reset and establish nonzero bank/result state only through accepted operations or dispatch edges. Fill and stall the entry, alter attempts while blocked, consume without replacement, and consume/replace every edge. Repeat with ctrl_csr_i zero and ctrl_wxd_i zero. Assert dispatch for the same and a different bank while a valid request is attempted and an old result is consumed.
+
+Expected: Ready follows only availability and dispatch-valid. Accepted reads and writes each produce one registered result even with wxd0; dispatch blocks both result capture and CSR writes while allowing old-result consumption. Stalls and empty cycles preserve payload snapshots.
+
+Checker: An independent self-contained native model predicts an abstract addressed bank map and retained result entry from input history only; no DUT output enters prediction. Separate actual and predicted wires feed four-state comparisons1ns after rising clk, asynchronous reset and any query-selector change after settling. Any difference emits UVM_ERROR; finite stimulus and mandatory sample/reset counts reject vacuity.
+
+## T-03
+
+Stimulus: Use the fixed eight-warp,four-thread configuration and known binary inputs stable around rising edges. Assert and release asynchronous reset and establish nonzero bank/result state only through accepted operations or dispatch edges. For every bank and every mapped address, issue read, write, set and clear operations with disjoint and overlapping bit patterns, then read back. Include unmapped0x000,0x777,0xfff and unsupported vector addresses, repeated writes, and back-to-back writes/reads to different banks.
+
+Expected: Returned data is the exact old mapped value; ordinary updates are assignment, bitwise OR or AND-NOT, never XOR or addition. Unmapped reads return zero and ignored writes preserve state. No other bank changes.
+
+Checker: An independent self-contained native model predicts an abstract addressed bank map and retained result entry from input history only; no DUT output enters prediction. Separate actual and predicted wires feed four-state comparisons1ns after rising clk, asynchronous reset and any query-selector change after settling. Any difference emits UVM_ERROR; finite stimulus and mandatory sample/reset counts reject vacuity.
+
+## T-04
+
+Stimulus: Use the fixed eight-warp,four-thread configuration and known binary inputs stable around rising edges. Assert and release asynchronous reset and establish nonzero bank/result state only through accepted operations or dispatch edges. Write all-one,one-hot,reserved-only and alternating patterns using assignment/set/clear to every machine and floating-point address in all eight banks. Read fcsr after separate frm/fflags updates and attempt to write fcsr,mtvec,vtype,dispatch metadata and rpc.
+
+Expected: Only each register's documented bits change, MPP remains3 after release, fcsr combines independently stored low-bit fields and all read-only or ignored targets preserve their defined state.
+
+Checker: An independent self-contained native model predicts an abstract addressed bank map and retained result entry from input history only; no DUT output enters prediction. Separate actual and predicted wires feed four-state comparisons1ns after rising clk, asynchronous reset and any query-selector change after settling. Any difference emits UVM_ERROR; finite stimulus and mandatory sample/reset counts reject vacuity.
+
+## T-05
+
+Stimulus: Use the fixed eight-warp,four-thread configuration and known binary inputs stable around rising edges. Assert and release asynchronous reset and establish nonzero bank/result state only through accepted operations or dispatch edges. Sweep input values0,1,3,4,5,0x80000000,0xffffffff across custom/vector combinations, CSR op0..3 and writable,print,rpc and unmapped addresses. Query RPC after each accepted custom operation, and read back addressed writable state and print.
+
+Expected: Custom returns/stores full input with priority over unsigned vector clamp; ordinary writes remain active as specified, print is suppressed only by custom, and op0 disables both special side effects and return overrides.
+
+Checker: An independent self-contained native model predicts an abstract addressed bank map and retained result entry from input history only; no DUT output enters prediction. Separate actual and predicted wires feed four-state comparisons1ns after rising clk, asynchronous reset and any query-selector change after settling. Any difference emits UVM_ERROR; finite stimulus and mandatory sample/reset counts reject vacuity.
+
+## T-06
+
+Stimulus: Use the fixed eight-warp,four-thread configuration and known binary inputs stable around rising edges. Assert and release asynchronous reset and establish nonzero bank/result state only through accepted operations or dispatch edges. Dispatch distinct metadata to all eight banks including minimum/maximum widths, nonzero tag upper bits and a tag low-bit sweep. Repeat updates with in_valid_i high, result ready low or high and every ordinary CSR op. Read all dispatch CSR addresses and inspect both complete base arrays after every update.
+
+Expected: Only wid_i dispatch state changes, narrow fields retain exactly their public width, tag upper bits are discarded, threadid is four times low-three-bit tag and LDS prefix is exact. All eight base slices preserve bank order and previous banks.
+
+Checker: An independent self-contained native model predicts an abstract addressed bank map and retained result entry from input history only; no DUT output enters prediction. Separate actual and predicted wires feed four-state comparisons1ns after rising clk, asynchronous reset and any query-selector change after settling. Any difference emits UVM_ERROR; finite stimulus and mandatory sample/reset counts reject vacuity.
+
+## T-07
+
+Stimulus: Use the fixed eight-warp,four-thread configuration and known binary inputs stable around rising edges. Assert and release asynchronous reset and establish nonzero bank/result state only through accepted operations or dispatch edges. Initialize distinct frm,RPC,tag,pds,count and base values in all banks through legal CSR/dispatch histories. Sweep each query selector independently while result traffic is stalled and idle, including selectors changed between edges; compare all three rm fields and LSU/SIMT views, then reread state to prove no query writes.
+
+Expected: Each query is the documented selected bank's stored value, unrelated selectors cannot cross-couple, base arrays stay in fixed bank order, and selector-only changes have combinational response with no state side effect.
+
+Checker: An independent self-contained native model predicts an abstract addressed bank map and retained result entry from input history only; no DUT output enters prediction. Separate actual and predicted wires feed four-state comparisons1ns after rising clk, asynchronous reset and any query-selector change after settling. Any difference emits UVM_ERROR; finite stimulus and mandatory sample/reset counts reject vacuity.
+
+## T-08
+
+Stimulus: Use the fixed eight-warp,four-thread configuration and known binary inputs stable around rising edges. Assert and release asynchronous reset and establish nonzero bank/result state only through accepted operations or dispatch edges. Capture distinct result words with register/warp indices0 and maximum and both wxd values, then perturb every request and dispatch input during stalls. Repeat identical accepted histories with only instruction bits19:0 and wxd toggled, inspect captured metadata and read back CSR state.
+
+Expected: Result tags belong to the same accepted operation and retain while stalled/empty. Ignored instruction bits never affect CSR addressing or results; wxd only changes its captured metadata bit, while result creation and CSR state updates continue.
+
+Checker: An independent self-contained native model predicts an abstract addressed bank map and retained result entry from input history only; no DUT output enters prediction. Separate actual and predicted wires feed four-state comparisons1ns after rising clk, asynchronous reset and any query-selector change after settling. Any difference emits UVM_ERROR; finite stimulus and mandatory sample/reset counts reject vacuity.

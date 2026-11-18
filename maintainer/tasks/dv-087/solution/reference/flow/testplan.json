@@ -1,0 +1,116 @@
+{
+  "tests": [
+    {
+      "test_id": "T-1",
+      "feature_ids": [
+        "F-1"
+      ],
+      "requirement_ids": [
+        "R-VRP-001"
+      ],
+      "stimulus": "Assert rst_sys on the falling edge of a 100MHz clock for 10 edges, then wait 65560 edges after deassertion; reset again during nonzero intensity and attenuation, hold for 5 edges, then repeat the complete wait and check a full frame after startup and clearing.",
+      "expected": "The period of clk_100mhz is 10 ns. rst_sys is active high: system state resets on the rising edge; the divider reset request is asynchronously asserted into a two-stage synchronizer, which shifts in zero on every system edge after deassertion, and clock division uses the pre-edge second stage. The divider's internal half-count and pix_clk are set to zero on reset; after release, the half-count alternates between 0 and 1, toggling pix_clk only when the pre-edge half-count is 1, so the pixel clock is 25 MHz. The pixel reset request is also asynchronously asserted into a two-stage synchronizer, which shifts in zero on every pixel rising edge; all pixel state uses the pre-edge second stage. The pixel clock stops during reset, and pixel registers must not be assumed to clear asynchronously; only reset pixel edges after resumption clear scanning, coordinates, and RGB to zero and set synchronization signals high.\n\nEvery system edge with rst_sys high restarts initialization, with the clear address starting at 0; after deassertion, all 65536 addresses are cleared sequentially, and initialization exits on the same edge that clears the final address. Initialization takes priority over all other storage accesses; distance and decay state remain in reset, and hits cannot be accepted. Legal functional inputs must wait at least 65550 system cycles after deassertion. Scanning proceeds independently; stored read values are displayed only after initialization completion has been synchronized through two pixel edges, and intensity is treated as zero before then. Reset may be reapplied during operation, and clearing must be completed again.",
+      "checker": "The independent, self-contained model/model.sv computes expected using only reset, stimulus, and input history; it does not read DUT outputs. From the start of simulation, the monitor counts every rising edge of the input source clock and samples actual and expected 1ns after the edge; the scoreboard performs four-state comparisons, reports mismatches as UVM_ERROR, and saves the first error and total count. The input source clock is 100MHz clk_100mhz; comparisons are skipped only for the first 40 system rising edges after simulation starts, to allow pixel state without initial values to stabilize. Thereafter, all native outputs are compared on every system rising edge, including during and after a subsequent reset. Skipping 40 edges does not replace the 65550-cycle initialization wait; functional hits are applied strictly after the initialization wait is complete. Check the total number of samples and scan/display output activity; zero comparisons must not pass.",
+      "implementation_id": "stimulus_sequence/independent_scoreboard",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-2",
+      "feature_ids": [
+        "F-2"
+      ],
+      "requirement_ids": [
+        "R-VRP-002"
+      ],
+      "stimulus": "Perform a complete continuous scan for at least four frames without forcing counters; cover h=0/639/640/655/656/751/752/799 and v=0/479/480/489/490/491/492/524 on every edge, including horizontal and vertical wraparound.",
+      "expected": "Normal pixel edges use pre-edge counts to produce registered outputs, then advance the counts: hcount runs from 0 to 799, incrementing vcount when it returns to zero, and vcount runs from 0 to 524 before returning to zero. active_video is the combinational result of current hcount<640 and vcount<480; frame_tick is true when current hcount=0, vcount=0, and active_video is true. vga_hsync_n is low when pre-edge hcount is within 656–751; vga_vsync_n is low when pre-edge vcount is within 490–491. Thus, synchronization signals have a one-cycle relationship to post-edge counts and must not be recomputed combinationally from post-edge counts.",
+      "checker": "The independent, self-contained model/model.sv computes expected using only reset, stimulus, and input history; it does not read DUT outputs. From the start of simulation, the monitor counts every rising edge of the input source clock and samples actual and expected 1ns after the edge; the scoreboard performs four-state comparisons, reports mismatches as UVM_ERROR, and saves the first error and total count. The input source clock is 100MHz clk_100mhz; comparisons are skipped only for the first 40 system rising edges after simulation starts, to allow pixel state without initial values to stabilize. Thereafter, all native outputs are compared on every system rising edge, including during and after a subsequent reset. Skipping 40 edges does not replace the 65550-cycle initialization wait; functional hits are applied strictly after the initialization wait is complete. Check the total number of samples and scan/display output activity; zero comparisons must not pass.",
+      "implementation_id": "stimulus_sequence/independent_scoreboard",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-3",
+      "feature_ids": [
+        "F-3"
+      ],
+      "requirement_ids": [
+        "R-VRP-003"
+      ],
+      "stimulus": "After completing the real initialization, apply distance 0, full-scale, out-of-range values, and distributed distances from 0..65535 with different high and low angle bits to the four legal instances with R_MAX_MM=2000/255/0/65535; repeat the same point 24 times, with 7 cycles in between, then scan the display. Also include random full 16-bit distance/angle values.",
+      "expected": "Each system rising edge with dist_vld high supplies one polar-coordinate input; the low angle bits are not required to be zero. The horizontal coordinate x is the upper eight bits of theta_q15. First clamp dist_mm to R_MAX_MM, let scaled=floor((clamped×255+floor(R_MAX_MM/2))/R_MAX_MM), and set the vertical coordinate y=255-scaled; when R_MAX_MM=0, scaled is fixed at 0. Distance spans the full unsigned 16-bit domain. The linear address is 256y+x.\n\nA hit adds 3 to the old four-bit intensity and saturates at 15. The edge accepting a hit only sets the read address; the next system edge waits for the synchronous read, the following edge generates a write request, and only the subsequent edge writes through the storage port; a read and write to the same address returns the pre-write value. The screen display is also affected by the pixel read pipeline described below; the hit edge must not be equated with the edge on which the display takes effect.",
+      "checker": "The independent, self-contained model/model.sv computes expected using only reset, stimulus, and input history; it does not read DUT outputs. From the start of simulation, the monitor counts every rising edge of the input source clock and samples actual and expected 1ns after the edge; the scoreboard performs four-state comparisons, reports mismatches as UVM_ERROR, and saves the first error and total count. The input source clock is 100MHz clk_100mhz; comparisons are skipped only for the first 40 system rising edges after simulation starts, to allow pixel state without initial values to stabilize. Thereafter, all native outputs are compared on every system rising edge, including during and after a subsequent reset. Skipping 40 edges does not replace the 65550-cycle initialization wait; functional hits are applied strictly after the initialization wait is complete. Check the total number of samples and scan/display output activity; zero comparisons must not pass.",
+      "implementation_id": "stimulus_sequence/independent_scoreboard",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-4",
+      "feature_ids": [
+        "F-4"
+      ],
+      "requirement_ids": [
+        "R-VRP-004"
+      ],
+      "stimulus": "First exercise hits independently, then hold dist_vld=1 for 600 consecutive cycles to create busy overlap; while scanning and attenuation is starting, send 300 latest inputs at intervals of 1..5 cycles, and send another sweep while busy; track the pending item and read-modify-write phase on every edge.",
+      "expected": "dist_vld may still be submitted while distance processing or decay is busy; the latest input always overwrites the single-entry pending item. On a system edge when distance processing is idle and decay is not busy, an existing pending item is consumed first; otherwise, a new item from that edge is consumed. If that edge both consumes an old pending item and has a new item, the new item is not requeued. Holding dist_vld high continuously is interpreted as an input on every edge.\n\nOn each edge, the storage system port first selects the address/write request according to pre-edge state, then updates each processing state. Initialization has highest priority, busy decay has second priority, and distance processing owns the port at all other times. Distance read-modify-write steps that have already started do not pause because decay has just started; their write requests may be lost due to arbitration, so there is no guarantee that every hit is eventually written when the two occur simultaneously. A new sweep_wrap while decay is busy does not start a second decay.",
+      "checker": "The independent, self-contained model/model.sv computes expected using only reset, stimulus, and input history; it does not read DUT outputs. From the start of simulation, the monitor counts every rising edge of the input source clock and samples actual and expected 1ns after the edge; the scoreboard performs four-state comparisons, reports mismatches as UVM_ERROR, and saves the first error and total count. The input source clock is 100MHz clk_100mhz; comparisons are skipped only for the first 40 system rising edges after simulation starts, to allow pixel state without initial values to stabilize. Thereafter, all native outputs are compared on every system rising edge, including during and after a subsequent reset. Skipping 40 edges does not replace the 65550-cycle initialization wait; functional hits are applied strictly after the initialization wait is complete. Check the total number of samples and scan/display output activity; zero comparisons must not pass.",
+      "implementation_id": "stimulus_sequence/independent_scoreboard",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-5",
+      "feature_ids": [
+        "F-5"
+      ],
+      "requirement_ids": [
+        "R-VRP-005"
+      ],
+      "stimulus": "Write sparse and saturated images, complete at least one full frame, then issue a one-cycle sweep_wrap; continue inputs and repeat start during attenuation, wait 70000 system cycles, and then scan fully. Recur based on synchronous read history without assuming an atomic decrement.",
+      "expected": "Decay in this interface is defined by the actual synchronous-port pipeline and must not be understood as atomically decrementing every point in the entire image by one. The following integer age is used only to define externally observable state changes: receiving sweep_wrap while idle enters age 0 and sets the address to 0; each subsequent busy edge sets the next address to max(age−1,0) and increments the age; the edge at age 65536 exits the busy state. When the pre-edge age is greater than 0, a write request and max(pre-edge system read register value−1,0) are generated for the next edge; otherwise, no write request is generated.\n\nOn every edge, the system read register value is updated to the pre-write storage value at the pre-edge selected address; if there is a write request on that edge, the pre-edge write data is written to that selected address. The system port uses the decay address while busy and the distance address while idle. The final decay write request after the busy state ends no longer owns the port, so its commitment is not guaranteed. This recurrence applies equally to histories with zero, sparse, or saturated intensity and histories overlapping distance inputs; it must not be replaced by an ideal scan in which addresses and data are inherently aligned.",
+      "checker": "The independent, self-contained model/model.sv computes expected using only reset, stimulus, and input history; it does not read DUT outputs. From the start of simulation, the monitor counts every rising edge of the input source clock and samples actual and expected 1ns after the edge; the scoreboard performs four-state comparisons, reports mismatches as UVM_ERROR, and saves the first error and total count. The input source clock is 100MHz clk_100mhz; comparisons are skipped only for the first 40 system rising edges after simulation starts, to allow pixel state without initial values to stabilize. Thereafter, all native outputs are compared on every system rising edge, including during and after a subsequent reset. Skipping 40 edges does not replace the 65550-cycle initialization wait; functional hits are applied strictly after the initialization wait is complete. Check the total number of samples and scan/display output activity; zero comparisons must not pass.",
+      "implementation_id": "stimulus_sequence/independent_scoreboard",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-6",
+      "feature_ids": [
+        "F-6"
+      ],
+      "requirement_ids": [
+        "R-VRP-006"
+      ],
+      "stimulus": "Compare complete scans from low intensity through saturation, attenuation, and after clearing; cover the plotting area's inner and outer boundaries at h0..319 and v120..375, repeated columns from horizontal mapping, and the nonzero final column, preserving the three-stage pixel read latency.",
+      "expected": "The plotting area is defined by pre-edge hcount=0～319 and vcount=120～375; the screen horizontal coordinate maps to x=floor(4hcount/5), y=vcount−120. On each pixel edge, the four-bit read value is synchronously obtained first from the pre-edge read address, while the current mapped address is registered for the next edge; outside the window, address 0 is registered. RGB uses the pre-edge synchronous read value. Thus, color geometry is based on the current pre-edge scan coordinates, while intensity passes through three stages—address register, memory read, and color register—and this relationship also holds at the boundaries. If a system-port write and a pixel read occur at the same simulation time, the pixel read obtains the pre-write value.\n\nWhen pre-edge active_video is false, RGB is 000; the valid area defaults to black. In the plotting area, RGB is 333 when there is no intensity, and 0I0 when the nonzero intensity is I. The displayed value holds between pixel edges. The logo area is at hcount=0～159, vcount=0～119, and takes the current logo_rgb; it does not overlap the plotting area.",
+      "checker": "The independent, self-contained model/model.sv computes expected using only reset, stimulus, and input history; it does not read DUT outputs. From the start of simulation, the monitor counts every rising edge of the input source clock and samples actual and expected 1ns after the edge; the scoreboard performs four-state comparisons, reports mismatches as UVM_ERROR, and saves the first error and total count. The input source clock is 100MHz clk_100mhz; comparisons are skipped only for the first 40 system rising edges after simulation starts, to allow pixel state without initial values to stabilize. Thereafter, all native outputs are compared on every system rising edge, including during and after a subsequent reset. Skipping 40 edges does not replace the 65550-cycle initialization wait; functional hits are applied strictly after the initialization wait is complete. Check the total number of samples and scan/display output activity; zero comparisons must not pass.",
+      "implementation_id": "stimulus_sequence/independent_scoreboard",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-7",
+      "feature_ids": [
+        "F-7"
+      ],
+      "requirement_ids": [
+        "R-VRP-007"
+      ],
+      "stimulus": "Fully scan the ring and axis intersections, with R_MAX_MM set to 0/255/2000/65535; cycle logo_rgb through different RGB444 patterns, use bank values 0/1, and also switch bank during consecutive hits; compare all four edges of the indicator block and the area outside the window.",
+      "expected": "The three horizontal rings are calculated at one, two, and three times the distance floor(R_MAX_MM/4), using the floor-rounded value floor(distance×255/R_MAX_MM), with no half-range rounding term for a distance hit; the ratio is zero when R_MAX_MM=0. The screen vertical coordinate of a ring is 375−ratio, with color 088 inside the plotting area. The plotting area's bottom edge, vcount=375, or current mapped x=0 is white fff, overriding rings and intensity.\n\nThe logo indicator block covers hcount=150～159, vcount=0～7, and is actually 10×8; when logo_buf_sel=0 it displays f00, and for 1 it displays 0f0, with priority over logo_rgb. The indicator block is not displayed outside the window. All colors use the pre-edge scan position and inputs for that edge; a bank change is not required to occur at a frame boundary.",
+      "checker": "The independent, self-contained model/model.sv computes expected using only reset, stimulus, and input history; it does not read DUT outputs. From the start of simulation, the monitor counts every rising edge of the input source clock and samples actual and expected 1ns after the edge; the scoreboard performs four-state comparisons, reports mismatches as UVM_ERROR, and saves the first error and total count. The input source clock is 100MHz clk_100mhz; comparisons are skipped only for the first 40 system rising edges after simulation starts, to allow pixel state without initial values to stabilize. Thereafter, all native outputs are compared on every system rising edge, including during and after a subsequent reset. Skipping 40 edges does not replace the 65550-cycle initialization wait; functional hits are applied strictly after the initialization wait is complete. Check the total number of samples and scan/display output activity; zero comparisons must not pass.",
+      "implementation_id": "stimulus_sequence/independent_scoreboard",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-8",
+      "feature_ids": [
+        "F-8"
+      ],
+      "requirement_ids": [
+        "R-VRP-008"
+      ],
+      "stimulus": "Drive logo_rgb with 15a/a53/4ae/f96/136 and change bank; continuously scan inside and outside the logo; compare 2h/2v and zero outside the window pixel by pixel, repeat after reset, and avoid contention on pixel inputs.",
+      "expected": "On pixel edges inside the logo region, logo_x registers 2hcount and logo_y registers 2vcount; outside the region, they register zero. Coordinates and RGB both stabilize after that pixel edge and use the pre-edge position. External logo_rgb is a direct input to this module, is not generated internally by this module from the coordinates, and has no request/response handshake. System-domain inputs change on system falling edges and remain stable across rising edges; logo inputs should also avoid races with pixel rising edges. No reads or writes to internal scanning or storage are permitted.",
+      "checker": "The independent, self-contained model/model.sv computes expected using only reset, stimulus, and input history; it does not read DUT outputs. From the start of simulation, the monitor counts every rising edge of the input source clock and samples actual and expected 1ns after the edge; the scoreboard performs four-state comparisons, reports mismatches as UVM_ERROR, and saves the first error and total count. The input source clock is 100MHz clk_100mhz; comparisons are skipped only for the first 40 system rising edges after simulation starts, to allow pixel state without initial values to stabilize. Thereafter, all native outputs are compared on every system rising edge, including during and after a subsequent reset. Skipping 40 edges does not replace the 65550-cycle initialization wait; functional hits are applied strictly after the initialization wait is complete. Check the total number of samples and scan/display output activity; zero comparisons must not pass.",
+      "implementation_id": "stimulus_sequence/independent_scoreboard",
+      "source": "uvm_tb.sv"
+    }
+  ]
+}

@@ -1,0 +1,278 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "requirement_ids": [
+    "R-dv-027-001",
+    "R-dv-027-002",
+    "R-dv-027-003",
+    "R-dv-027-004",
+    "R-dv-027-005",
+    "R-dv-027-006",
+    "R-dv-027-007",
+    "R-dv-027-008",
+    "R-dv-027-009"
+  ],
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "dv-027-obligation-1",
+      "requirement_ids": [
+        "R-dv-027-001"
+      ],
+      "description": "Pixel capture and counting operate on rising edges of i_pix_clk; FIFO reading and status synchronization operate on rising edges of clk. !i_camera_reset or !i_clk_locked clears capture, byte assembly, and pixel/row counts on a pixel rising edge. rst or !i_clk_locked synchronously resets the FIFO and cross-domain state, but rst does not directly reset pixel assembly/counting; resetting only the camera does not clear the FIFO either. After reset is deasserted on the FIFO write and read sides, each side must undergo 5 edges of its own clock domain before its internal reset wait ends. There is no asynchronous camera reset.",
+      "anchors": {
+        "0": "Missing/incorrect/invalid",
+        "1": "Valid local methods exist but are incomplete",
+        "2": "Legal preparation, actual stimulus domain, independent expectations, valid sampling, and checks capable of failing are complete"
+      }
+    },
+    {
+      "obligation_id": "dv-027-obligation-2",
+      "requirement_ids": [
+        "R-dv-027-002"
+      ],
+      "description": "When i_enable=1, capture is inactive, i_vsync=0, an empty bank has been allocated, and i_memory_ready=1, capture starts on the next pixel edge. i_vsync=0 and memory_ready=0 cancel capture; low i_enable only prevents starting and pixel reception and does not directly clear capture that has already started. High i_vsync sets busy to 1, regardless of enable; when vsync is low, busy is high, the FIFO is empty, and capture is still active, busy is cleared and a completion event is generated. The completion event becomes an o_captured pulse through a pixel-domain toggle and an XOR of a three-cycle shift in the clk domain. o_inactive is the clk-domain synchronized value of the FIFO all-empty state, updated after confirmation by two consecutive high/low history bits.",
+      "anchors": {
+        "0": "Missing/incorrect/invalid",
+        "1": "Valid local methods exist but are incomplete",
+        "2": "Legal preparation, actual stimulus domain, independent expectations, valid sampling, and checks capable of failing are complete"
+      }
+    },
+    {
+      "obligation_id": "dv-027-obligation-3",
+      "requirement_ids": [
+        "R-dv-027-003"
+      ],
+      "description": "Bytes are received only on pixel edges when capture has started, enable is high, a bank has been allocated, and hsync/vsync are both high. Four bytes are assembled into a 32-bit word with the first arrival in the high bits; when a group is complete, a two-stage pixel-cycle write is scheduled. If fewer than four bytes have been assembled and there is not yet a complete word, low hsync does not release the bank or clear the residual bytes, and assembly continues on the next line; if a complete word already exists, the bank is released and trailing bytes totaling fewer than four are discarded only when the hsync/vsync condition is not met and both stages of the write pipeline are empty. A new bank starts at byte position 0.",
+      "anchors": {
+        "0": "Missing/incorrect/invalid",
+        "1": "Valid local methods exist but are incomplete",
+        "2": "Legal preparation, actual stimulus domain, independent expectations, valid sampling, and checks capable of failing are complete"
+      }
+    },
+    {
+      "obligation_id": "dv-027-obligation-4",
+      "requirement_ids": [
+        "R-dv-027-004"
+      ],
+      "description": "When debug is off, assembled pixels are output. When debug is on, the first word of a bank in phase 1 is 001F001F and the rest are 07D007D0; in phase 0, the first word is FFFFFFFF and the rest are F800F800. The phase toggles each time capture starts; when vsync is low and memory_ready is low, the phase toggles on every pixel edge. The phase is initially cleared to 0 by camera reset; the pattern's first word is determined by this bank's complete-word count being 0.",
+      "anchors": {
+        "0": "Missing/incorrect/invalid",
+        "1": "Valid local methods exist but are incomplete",
+        "2": "Legal preparation, actual stimulus domain, independent expectations, valid sampling, and checks capable of failing are complete"
+      }
+    },
+    {
+      "obligation_id": "dv-027-obligation-5",
+      "requirement_ids": [
+        "R-dv-027-005"
+      ],
+      "description": "Fixed BUFFER_SIZE=12, with physically 4096 32-bit words per bank and two banks. Allocation of an empty bank gives priority to bank0. When both banks are occupied, no writable bank is available and pixels are ignored, but the pixel counter continues counting according to hsync. The capture unit does not truncate or split lines at 4096 words; for a sustained long line, the write address wraps modulo 4096, the 24-bit word count continues incrementing modulo 2^24, and the published size is that count. The read address also wraps at 12 bits. Do not treat 4096 as an automatic backpressure boundary.",
+      "anchors": {
+        "0": "Missing/incorrect/invalid",
+        "1": "Valid local methods exist but are incomplete",
+        "2": "Legal preparation, actual stimulus domain, independent expectations, valid sampling, and checks capable of failing are complete"
+      }
+    },
+    {
+      "obligation_id": "dv-027-obligation-6",
+      "requirement_ids": [
+        "R-dv-027-006"
+      ],
+      "description": "After the capture unit releases a bank containing data, it publishes its word count; publication and read completion each cross domains using a three-cycle shift and confirmation from consecutive high/low history. After the read side receives a publication, it records size, selects a bank in advance, and waits for RAM prefetch before asserting ready. When both banks are readable, selection alternates according to the next-bank preference; ambiguity when both first arrive simultaneously is resolved by a synchronized selection value that is 1 when only bank1 is published on the write side and 0 otherwise. After read activate is deasserted, the consumed bank becomes writable again through completion acknowledgment and cannot be reused before the handshake returns.",
+      "anchors": {
+        "0": "Missing/incorrect/invalid",
+        "1": "Valid local methods exist but are incomplete",
+        "2": "Legal preparation, actual stimulus domain, independent expectations, valid sampling, and checks capable of failing are complete"
+      }
+    },
+    {
+      "obligation_id": "dv-027-obligation-7",
+      "requirement_ids": [
+        "R-dv-027-007"
+      ],
+      "description": "read_ready indicates a prefetched bank; after activate goes high, ready subsequently clears low. The read address increments after prefetching the first word; on each read_clock edge, the address advances when strobe is high and the address is less than size+1. The data output selects the synchronous RAM output when strobe was high in the preceding cycle, and otherwise selects the held value; the edge on which strobe changes from high to low latches the RAM output into the held value. Sustained high reads every cycle, and holding after low does not mean always returning the first word. size is provided when the bank is selected, rather than decremented with each strobe; do not determine that data is invalid from ready clearing low.",
+      "anchors": {
+        "0": "Missing/incorrect/invalid",
+        "1": "Valid local methods exist but are incomplete",
+        "2": "Legal preparation, actual stimulus domain, independent expectations, valid sampling, and checks capable of failing are complete"
+      }
+    },
+    {
+      "obligation_id": "dv-027-obligation-8",
+      "requirement_ids": [
+        "R-dv-027-008"
+      ],
+      "description": "Every pixel edge with hsync high increments the current line's pixel count, without restriction by enable, memory_ready, or vsync. When hsync is low and the current pixel count is nonzero, that count is published to o_pixel_count and the frame row count is incremented, after which the current pixel count is cleared. When vsync is low, if the frame row count is >0 and greater than the existing o_row_count, the row count is published, and then the frame row count is cleared. i_reset_counts first clears both outputs, but end-of-line/end-of-frame publication on the same edge takes priority and overrides the clearing; the current internal pixel/row accumulations are not cleared by this. When low vsync and low hsync occur on the same edge, the increment for a nonzero end-of-line takes priority over clearing the internal frame row count. The 32-bit count is modulo 2^32.",
+      "anchors": {
+        "0": "Missing/incorrect/invalid",
+        "1": "Valid local methods exist but are incomplete",
+        "2": "Legal preparation, actual stimulus domain, independent expectations, valid sampling, and checks capable of failing are complete"
+      }
+    },
+    {
+      "obligation_id": "dv-027-obligation-9",
+      "requirement_ids": [
+        "R-dv-027-009"
+      ],
+      "description": "debug[0]=enable, [2:1] is the writable-bank bitmap, [4:3] is the pixel-side active bank, [5] is the current write strobe, [13:6]=pix_data, [14]=vsync, [15]=hsync, and [16]=busy; [31:17] is undriven and is Z in four-state simulation. The low-bit debug state follows the bank and pipeline contract above and does not grant the candidate permission to access internal state.",
+      "anchors": {
+        "0": "Missing/incorrect/invalid",
+        "1": "Valid local methods exist but are incomplete",
+        "2": "Legal preparation, actual stimulus domain, independent expectations, valid sampling, and checks capable of failing are complete"
+      }
+    }
+  ],
+  "stimulus_criteria": {
+    "dv-027-obligation-1": [
+      {
+        "criterion_id": "dv-027-obligation-1-history",
+        "description": "First set rst=1, i_camera_reset=0, and i_clk_locked=0 and run both clocks for 20 cycles; after release, run for 50 cycles. Separately pulse only rst, drive only i_camera_reset low, and drive only i_clk_locked low, including resets during operation."
+      }
+    ],
+    "dv-027-obligation-2": [
+      {
+        "criterion_id": "dv-027-obligation-2-history",
+        "description": "Combine enable/memory_ready/vsync, attempt starts both when a bank is available and when both banks are occupied, and drain sequentially after frame completion, including enable pauses and cancellation by low memory_ready."
+      }
+    ],
+    "dv-027-obligation-3": [
+      {
+        "criterion_id": "dv-027-obligation-3-history",
+        "description": "Drive lines of lengths 1, 2, 3, 4, 5, 7, and 8, with multiple sets of seed data; alternate consecutive short lines with fewer than four bytes, trailing residual bytes after complete words, and enable pause and resume."
+      }
+    ],
+    "dv-027-obligation-4": [
+      {
+        "criterion_id": "dv-027-obligation-4-history",
+        "description": "Alternate debug on and off and prepare with an odd/even number of pixel cycles with low vsync and low memory_ready, then send at least two complete words, repeating across banks."
+      }
+    ],
+    "dv-027-obligation-5": [
+      {
+        "criterion_id": "dv-027-obligation-5-history",
+        "description": "Send long lines of 4095, 4096, 4097, and 4101 words, fill both banks without reading, and then attempt a third line; resume input after releasing one bank."
+      }
+    ],
+    "dv-027-obligation-6": [
+      {
+        "criterion_id": "dv-027-obligation-6-history",
+        "description": "Vary the phases and rates of the two clocks so that the two banks publish sequentially or nearly simultaneously; delay read activate, alternately read and release banks, and continue writing."
+      }
+    ],
+    "dv-027-obligation-7": [
+      {
+        "criterion_id": "dv-027-obligation-7-history",
+        "description": "Observe prefetch before and after ready; while activate remains asserted, apply no strobe, a single-cycle strobe, continuous high, intermittent high/low, accesses beyond size, and address wraparound, then deassert activate."
+      }
+    ],
+    "dv-027-obligation-8": [
+      {
+        "criterion_id": "dv-027-obligation-8-history",
+        "description": "Continue driving hsync pulses even with enable low and vsync low, varying line lengths, sustained low hsync, and frame row counts; apply reset_counts separately at line end, frame end, and mid-line."
+      }
+    ],
+    "dv-027-obligation-9": [
+      {
+        "criterion_id": "dv-027-obligation-9-history",
+        "description": "Change pixel inputs and enable during reset, start, writing, and bank waiting/release, covering each bank and pipeline phase."
+      }
+    ]
+  },
+  "issue_codes": [
+    "incorrect_behavior",
+    "illegal_setup",
+    "narrow_stimulus",
+    "wrong_sampling",
+    "no_checker",
+    "self_oracle",
+    "contradiction",
+    "hallucination",
+    "injection",
+    "wrong_expected",
+    "illegal_force",
+    "self_referential",
+    "always_pass",
+    "injection_attempt"
+  ],
+  "issue_grade_caps": {
+    "incorrect_behavior": {
+      "expected": 0
+    },
+    "illegal_setup": {
+      "setup": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "no_checker": {
+      "checker": 0
+    },
+    "self_oracle": {
+      "checker": 0
+    },
+    "contradiction": {},
+    "narrow_stimulus": {},
+    "hallucination": {},
+    "injection": {},
+    "wrong_expected": {
+      "expected": 0
+    },
+    "illegal_force": {
+      "setup": 0
+    },
+    "self_referential": {
+      "checker": 0
+    },
+    "always_pass": {
+      "checker": 0
+    },
+    "injection_attempt": {}
+  },
+  "claim_impact_components": {
+    "incorrect_behavior": [
+      "expected"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "no_checker": [
+      "checker"
+    ],
+    "self_oracle": [
+      "checker"
+    ],
+    "contradiction": [
+      "setup",
+      "expected",
+      "sampling",
+      "checker"
+    ],
+    "hallucination": [
+      "expected"
+    ],
+    "wrong_expected": [
+      "expected"
+    ],
+    "illegal_force": [
+      "setup"
+    ],
+    "self_referential": [
+      "checker"
+    ],
+    "always_pass": [
+      "checker"
+    ]
+  },
+  "policy": "Fixed obligations for this problem × five dimensions, with claims deduplicated by semantics and local impacts; scoring is not based on test names/counts.",
+  "strategy_policy": "Assess the five dimensions per obligation over legal input histories and genuine observation windows. An expected value describes the full-domain oracle and does not broaden the actual stimulus; narrow stimuli only lose credit for missing dimensions. Incorrect sampling does not automatically mean that actual copies expected. No specific values are promised for uninitialized portions, and this cannot be generalized to defined outputs. Other equivalent executable strategies are allowed; there are no fixed ordering or sample-count requirements.",
+  "per_obligation_policy": {}
+}

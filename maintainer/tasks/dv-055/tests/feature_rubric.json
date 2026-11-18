@@ -1,0 +1,86 @@
+{
+  "source": "tests/requirements.json and public/spec.md, checked against selected RTL",
+  "requirement_ids": [
+    "R-dv-055-001",
+    "R-dv-055-002",
+    "R-dv-055-003",
+    "R-dv-055-004"
+  ],
+  "required_interfaces": {
+    "R-dv-055-001": [
+      "clk",
+      "m_we",
+      "m_addr",
+      "m_data"
+    ],
+    "R-dv-055-002": [
+      "clk",
+      "s_re",
+      "s_addr",
+      "s_data"
+    ],
+    "R-dv-055-003": [
+      "clk",
+      "rst",
+      "m_we",
+      "m_addr",
+      "m_data",
+      "s_re",
+      "s_addr",
+      "s_data"
+    ],
+    "R-dv-055-004": [
+      "clk",
+      "rst",
+      "m_we",
+      "m_addr",
+      "m_data",
+      "s_re",
+      "s_addr",
+      "s_data"
+    ]
+  },
+  "atoms": [
+    {
+      "atom_id": "A-FFT-001",
+      "requirement_ids": [
+        "R-dv-055-001"
+      ],
+      "source": "m_ram.v:52-58",
+      "statement": "On each rising edge of clk, m_we writes m_data to m_addr. Reset does not initialize the input memory.",
+      "positive_anchor": "Correctly identifies the write enable, edge, address/data association, and uninitialized memory behavior.",
+      "negative_anchor": "Omitting or reversing the edge, enable, or write target is incomplete or incorrect."
+    },
+    {
+      "atom_id": "A-FFT-002",
+      "requirement_ids": [
+        "R-dv-055-002"
+      ],
+      "source": "s_ram.v:120-123",
+      "statement": "s_re requests a registered read of the 32-bit output word selected by s_addr; the value updates after the rising edge and holds while s_re is low. rst does not clear the output register; disabled reads retain the previous value even while reset is high.",
+      "positive_anchor": "Correctly describes request, address capture, post-edge result, and hold behavior.",
+      "negative_anchor": "A combinational read or incorrect hold/update timing conflicts with the obligation."
+    },
+    {
+      "atom_id": "A-FFT-003",
+      "requirement_ids": [
+        "R-dv-055-003"
+      ],
+      "source": "fft_wrapper.v:4-23; clk_div.v:15-28",
+      "statement": "The fixed default profile is DIVISOR=5, N=16, Q=8, ADDR_WIDTH=5, DATA_WIDTH=16, DEPTH=32. The transform runs continuously and exposes no start, ready, or done handshake. rst is asynchronous active-high; neither input nor output RAM is initialized by reset.",
+      "positive_anchor": "Correctly identifies the fixed profile and continuous operation without an external handshake.",
+      "negative_anchor": "A different fixed profile or invented handshake is unsupported."
+    },
+    {
+      "atom_id": "A-FFT-004",
+      "requirement_ids": [
+        "R-dv-055-004"
+      ],
+      "source": "top_n.v:1830-1899; adder3_n.v:19-25",
+      "statement": "After a complete 32-word frame has been written and inputs remain stable for at least 20 rising edges, outputs follow the 32-point forward fixed-point transform in natural frequency order. The profile uses the published coefficient table, bit-reversed input order, separately truncated Q8.8 products, and 16-bit wraparound after additions and subtractions. Each output packs signed real in bits 31:16 and signed imaginary in bits 15:0. Following reset, rewrite a complete frame and wait the same settling interval before numerical comparisons.",
+      "positive_anchor": "Full support requires the legal full-frame window, transform direction/order, coefficient and fixed-point rules, wraparound, and output packing.",
+      "negative_anchor": "Omitted numerical details cap support at partial; conflicting direction, order, or arithmetic is incorrect. Partial-frame and unsettled behavior are outside this obligation."
+    }
+  ],
+  "scoring": "Fixed-atom semantic alignment; IDs and grouping are traceability only. Candidate evidence must support each judgment."
+}

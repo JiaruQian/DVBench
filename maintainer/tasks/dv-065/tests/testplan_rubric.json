@@ -1,0 +1,322 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "requirement_ids": [
+    "R-p8-cvt-001",
+    "R-p8-cvt-002",
+    "R-p8-cvt-003",
+    "R-p8-cvt-004",
+    "R-p8-cvt-005",
+    "R-p8-cvt-006",
+    "R-p8-cvt-007",
+    "R-p8-cvt-008",
+    "R-p8-cvt-009"
+  ],
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "O-01",
+      "requirement_ids": [
+        "R-p8-cvt-001"
+      ],
+      "description": "Fixed clocks and asynchronous reset",
+      "setup": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic.",
+      "stimulus": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic. Assert startup and midtraffic resets in bypass and conversion modes,including after a partly completed flush. Observe immediate output clearing and complete post-reset flush restart.",
+      "expected": "Reset immediately clears registered enable/address/data and status histories; the next released edges begin flush address0 again. No previous operation or pipeline transaction survives reset.",
+      "sampling": "1ns after every tied-clock rising edge and asynchronous reset assertion; acceptance edgeE yields bypassE+1 or conversionE+5 and pre-edge state determines flush/config decisions.",
+      "checker": "Predict outputs in an independent input-only mathematical model of operation capture,abstract timed transaction histories,signed arithmetic,padding and flush index. Separate expected/actual wires feed exact four-state comparisons1ns after rising clock and reset assertion; each mismatch is UVM_ERROR with mandatory samples/resets and finite stimulus.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-02",
+      "requirement_ids": [
+        "R-p8-cvt-002"
+      ],
+      "description": "Operation entry captures configuration once",
+      "setup": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic.",
+      "stimulus": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic. Enter operations using op_enable0-to1 and using done1-to0 while op_enable stays1. Use different scale,pad and conversion modes between operations,hold each configuration through traffic and draining,and vary unused precision/nan controls.",
+      "expected": "Each entry captures exactly the new configuration; done must prevent active state retention and permit subsequent entry. Continuous active operation uses its original captured values.",
+      "sampling": "1ns after every tied-clock rising edge and asynchronous reset assertion; acceptance edgeE yields bypassE+1 or conversionE+5 and pre-edge state determines flush/config decisions.",
+      "checker": "Predict outputs in an independent input-only mathematical model of operation capture,abstract timed transaction histories,signed arithmetic,padding and flush index. Separate expected/actual wires feed exact four-state comparisons1ns after rising clock and reset assertion; each mismatch is UVM_ERROR with mandatory samples/resets and finite stimulus.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-03",
+      "requirement_ids": [
+        "R-p8-cvt-003"
+      ],
+      "description": "Clock-enable history and fixed statistics",
+      "setup": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic.",
+      "stimulus": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic. Sweep op_enable,cvt_enable and done independently over isolated and consecutive edges while operation pipelines are idle. Vary input precision,nan controls and payloads and inspect the full statistics outputs.",
+      "expected": "The third sampled enable history emerges exactly after three registers,including done1 cycles; both32-bit statistics stay zero.",
+      "sampling": "1ns after every tied-clock rising edge and asynchronous reset assertion; acceptance edgeE yields bypassE+1 or conversionE+5 and pre-edge state determines flush/config decisions.",
+      "checker": "Predict outputs in an independent input-only mathematical model of operation capture,abstract timed transaction histories,signed arithmetic,padding and flush index. Separate expected/actual wires feed exact four-state comparisons1ns after rising clock and reset assertion; each mismatch is UVM_ERROR with mandatory samples/resets and finite stimulus.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-04",
+      "requirement_ids": [
+        "R-p8-cvt-004"
+      ],
+      "description": "Native input acceptance and metadata transport",
+      "setup": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic.",
+      "stimulus": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic. Alternate direct,image and idle cycles with distinct full-width payloads and all address bits,including consecutive transactions and gap lengths0..8. Toggle all neutral info bits independently and check both bypass and converted transaction latency after flush.",
+      "expected": "Each transaction has its own unchanged17-bit address and aligned payload at exactly E+1 or E+5 for acceptance edgeE. Neither gaps nor source changes reorder transactions; unused info bits do not affect results.",
+      "sampling": "1ns after every tied-clock rising edge and asynchronous reset assertion; acceptance edgeE yields bypassE+1 or conversionE+5 and pre-edge state determines flush/config decisions.",
+      "checker": "Predict outputs in an independent input-only mathematical model of operation capture,abstract timed transaction histories,signed arithmetic,padding and flush index. Separate expected/actual wires feed exact four-state comparisons1ns after rising clock and reset assertion; each mismatch is UVM_ERROR with mandatory samples/resets and finite stimulus.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-05",
+      "requirement_ids": [
+        "R-p8-cvt-005"
+      ],
+      "description": "Independent signed arithmetic and per-lane mean",
+      "setup": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic.",
+      "stimulus": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic. Use all eight distinct byte and mean slices,signed/unsigned byte boundaries0,127,128,255,signed offset/mean extrema,and positive,zero and negative scales. Alternate mean selection independently of unsigned selection and compare complete64-bit outputs.",
+      "expected": "Each lane follows its own signed subtraction and multiplication without lane swapping; unsigned selection changes only byte extension and mean selection changes only the subtractand.",
+      "sampling": "1ns after every tied-clock rising edge and asynchronous reset assertion; acceptance edgeE yields bypassE+1 or conversionE+5 and pre-edge state determines flush/config decisions.",
+      "checker": "Predict outputs in an independent input-only mathematical model of operation capture,abstract timed transaction histories,signed arithmetic,padding and flush index. Separate expected/actual wires feed exact four-state comparisons1ns after rising clock and reset assertion; each mismatch is UVM_ERROR with mandatory samples/resets and finite stimulus.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-06",
+      "requirement_ids": [
+        "R-p8-cvt-006"
+      ],
+      "description": "Six-bit rounding and saturation",
+      "setup": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic.",
+      "stimulus": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic. Cover shifts0,1,15,31,32,33,34,63,positive and negative half ties,values around each signed17/16/8 limit,and all four proc_precision codes. Construct products on both sides of rounding boundaries and compare every output byte at E+5.",
+      "expected": "All six shift bits matter; ties round away from zero and each saturation stage uses its stated signed bounds. Precision1 retains the low byte of the saturated16-bit result; other codes use saturated8-bit bytes.",
+      "sampling": "1ns after every tied-clock rising edge and asynchronous reset assertion; acceptance edgeE yields bypassE+1 or conversionE+5 and pre-edge state determines flush/config decisions.",
+      "checker": "Predict outputs in an independent input-only mathematical model of operation capture,abstract timed transaction histories,signed arithmetic,padding and flush index. Separate expected/actual wires feed exact four-state comparisons1ns after rising clock and reset assertion; each mismatch is UVM_ERROR with mandatory samples/resets and finite stimulus.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-07",
+      "requirement_ids": [
+        "R-p8-cvt-007"
+      ],
+      "description": "Image pad priority and retained output data",
+      "setup": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic.",
+      "stimulus": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic. Sweep all eight one-hot pad masks,alternating-bit masks and all-zero/all-one masks with distinct lane bytes and a distinct pad byte. Include bypass/conversion,direct-source masks and posttransaction idle gaps; inspect data/address every clock even when enable0.",
+      "expected": "Exactly the selected image bytes change to pad low8bits with correct latency. Direct transactions ignore padding and invalid-cycle native payloads retain their documented datapath/address relationships.",
+      "sampling": "1ns after every tied-clock rising edge and asynchronous reset assertion; acceptance edgeE yields bypassE+1 or conversionE+5 and pre-edge state determines flush/config decisions.",
+      "checker": "Predict outputs in an independent input-only mathematical model of operation capture,abstract timed transaction histories,signed arithmetic,padding and flush index. Separate expected/actual wires feed exact four-state comparisons1ns after rising clock and reset assertion; each mismatch is UVM_ERROR with mandatory samples/resets and finite stimulus.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-08",
+      "requirement_ids": [
+        "R-p8-cvt-008"
+      ],
+      "description": "8192-cycle flush address priority and completion",
+      "setup": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic.",
+      "stimulus": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic. Observe every startup write address and completion boundary,then inject traffic during and after flush with distinct normal addresses. Reset after completion and during a second flush and verify restart and all native output payloads.",
+      "expected": "Exactly8192 sequential addresses0..8191 are written per reset without stalling; completion asserts on the last write and remains high. Flush address wins coincident data traffic and normal addressing resumes after completion.",
+      "sampling": "1ns after every tied-clock rising edge and asynchronous reset assertion; acceptance edgeE yields bypassE+1 or conversionE+5 and pre-edge state determines flush/config decisions.",
+      "checker": "Predict outputs in an independent input-only mathematical model of operation capture,abstract timed transaction histories,signed arithmetic,padding and flush index. Separate expected/actual wires feed exact four-state comparisons1ns after rising clock and reset assertion; each mismatch is UVM_ERROR with mandatory samples/resets and finite stimulus.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-09",
+      "requirement_ids": [
+        "R-p8-cvt-009"
+      ],
+      "description": "Whole-interface neutrality and lane/address isolation",
+      "setup": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic.",
+      "stimulus": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic. Repeat matched operation histories while perturbing each neutral field and every inactive-source payload. Establish distinct high address bits and unique lane/mean patterns,then compare complete native vectors over active,drain,idle and reset samples.",
+      "expected": "Only stated active domains change outputs. Inactive-source payloads and neutral fields create no writes or lane/address cross-coupling; all native widths remain observable.",
+      "sampling": "1ns after every tied-clock rising edge and asynchronous reset assertion; acceptance edgeE yields bypassE+1 or conversionE+5 and pre-edge state determines flush/config decisions.",
+      "checker": "Predict outputs in an independent input-only mathematical model of operation capture,abstract timed transaction histories,signed arithmetic,padding and flush index. Separate expected/actual wires feed exact four-state comparisons1ns after rising clock and reset assertion; each mismatch is UVM_ERROR with mandatory samples/resets and finite stimulus.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    }
+  ],
+  "stimulus_criteria": {
+    "O-01": [
+      {
+        "criterion_id": "O-01-stimulus",
+        "description": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic. Assert startup and midtraffic resets in bypass and conversion modes,including after a partly completed flush. Observe immediate output clearing and complete post-reset flush restart."
+      }
+    ],
+    "O-02": [
+      {
+        "criterion_id": "O-02-stimulus",
+        "description": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic. Enter operations using op_enable0-to1 and using done1-to0 while op_enable stays1. Use different scale,pad and conversion modes between operations,hold each configuration through traffic and draining,and vary unused precision/nan controls."
+      }
+    ],
+    "O-03": [
+      {
+        "criterion_id": "O-03-stimulus",
+        "description": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic. Sweep op_enable,cvt_enable and done independently over isolated and consecutive edges while operation pipelines are idle. Vary input precision,nan controls and payloads and inspect the full statistics outputs."
+      }
+    ],
+    "O-04": [
+      {
+        "criterion_id": "O-04-stimulus",
+        "description": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic. Alternate direct,image and idle cycles with distinct full-width payloads and all address bits,including consecutive transactions and gap lengths0..8. Toggle all neutral info bits independently and check both bypass and converted transaction latency after flush."
+      }
+    ],
+    "O-05": [
+      {
+        "criterion_id": "O-05-stimulus",
+        "description": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic. Use all eight distinct byte and mean slices,signed/unsigned byte boundaries0,127,128,255,signed offset/mean extrema,and positive,zero and negative scales. Alternate mean selection independently of unsigned selection and compare complete64-bit outputs."
+      }
+    ],
+    "O-06": [
+      {
+        "criterion_id": "O-06-stimulus",
+        "description": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic. Cover shifts0,1,15,31,32,33,34,63,positive and negative half ties,values around each signed17/16/8 limit,and all four proc_precision codes. Construct products on both sides of rounding boundaries and compare every output byte at E+5."
+      }
+    ],
+    "O-07": [
+      {
+        "criterion_id": "O-07-stimulus",
+        "description": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic. Sweep all eight one-hot pad masks,alternating-bit masks and all-zero/all-one masks with distinct lane bytes and a distinct pad byte. Include bypass/conversion,direct-source masks and posttransaction idle gaps; inspect data/address every clock even when enable0."
+      }
+    ],
+    "O-08": [
+      {
+        "criterion_id": "O-08-stimulus",
+        "description": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic. Observe every startup write address and completion boundary,then inject traffic during and after flush with distinct normal addresses. Reset after completion and during a second flush and verify restart and all native output payloads."
+      }
+    ],
+    "O-09": [
+      {
+        "criterion_id": "O-09-stimulus",
+        "description": "Tie all three native clocks together; use binary inputs stable around edges,asynchronous active-low reset,mutually exclusive source enables and info low nibble0001 for transactions. Drain12clocks before any configuration change and hold each captured configuration through its traffic. Repeat matched operation histories while perturbing each neutral field and every inactive-source payload. Establish distinct high address bits and unique lane/mean patterns,then compare complete native vectors over active,drain,idle and reset samples."
+      }
+    ]
+  },
+  "issue_codes": [
+    "wrong_expected",
+    "wrong_sampling",
+    "illegal_setup",
+    "self_proof",
+    "no_checker",
+    "contradiction",
+    "hallucination",
+    "injection_attempt"
+  ],
+  "claim_impact_components": {
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "self_proof": [
+      "checker"
+    ],
+    "no_checker": [
+      "checker"
+    ],
+    "contradiction": [
+      "expected"
+    ],
+    "hallucination": [
+      "expected"
+    ],
+    "injection_attempt": [
+      "checker"
+    ]
+  },
+  "issue_grade_caps": {
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "illegal_setup": {
+      "setup": 0
+    },
+    "self_proof": {
+      "checker": 0
+    },
+    "no_checker": {
+      "checker": 0
+    },
+    "contradiction": {
+      "expected": 0
+    },
+    "hallucination": {
+      "expected": 0
+    },
+    "injection_attempt": {
+      "checker": 0
+    }
+  },
+  "anchors": {
+    "setup": {
+      "0": "Missing, illegal or wrong.",
+      "1": "Correct local subset.",
+      "2": "Complete explicit JSON evidence."
+    },
+    "stimulus": {
+      "0": "Missing, illegal or wrong.",
+      "1": "Correct local subset.",
+      "2": "Complete explicit JSON evidence."
+    },
+    "expected": {
+      "0": "Missing, illegal or wrong.",
+      "1": "Correct local subset.",
+      "2": "Complete explicit JSON evidence."
+    },
+    "sampling": {
+      "0": "Missing, illegal or wrong.",
+      "1": "Correct local subset.",
+      "2": "Complete explicit JSON evidence."
+    },
+    "checker": {
+      "0": "Missing, illegal or wrong.",
+      "1": "Correct local subset.",
+      "2": "Complete explicit JSON evidence."
+    }
+  },
+  "policy": "Fixed obligations independent of candidate feature omissions; joint evidence from different tests can complete one obligation. Do not infer stimulus from expected prose. Local false expected claims constrain their actual windows and objects. Self-proof cannot establish an independent checker."
+}

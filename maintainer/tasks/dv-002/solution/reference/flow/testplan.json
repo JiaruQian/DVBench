@@ -1,0 +1,88 @@
+{
+  "tests": [
+    {
+      "test_id": "T-1",
+      "feature_ids": [
+        "F-1"
+      ],
+      "requirement_ids": [
+        "R-dv-002-001"
+      ],
+      "stimulus": "Each vector explicitly drives all native inputs to known two-state values; items not listed herein are fixed at 0, with no dependence on reset or historical preparation. Toggle every control bit's one-hot and multi-hot combinations individually, covering all input bits all 0 and all 1; src/dst include 0000/ffff, including hold and continuous changes. Observe all four groups of outputs at 2ns and 8ns after driving. Each vector is held for 10ns and sampled at 2ns/8ns.",
+      "expected": "There is no clock, reset, or state storage; all two-state control combinations, including multi-hot combinations, are legal. Observe all outputs after the current inputs stabilize and combinational propagation completes. status supplies the old status as {V,N,Z,C}. inst_alu bits 0 through 11 are SRC_INV/INC/INC_C/ADD/AND/OR/XOR/DADD/STAT_7/STAT_F/SHIFT/EXEC_NO_WR; inst_so bits 0 through 7 are RRC/SWPB/RRA/SXT/PUSH/CALL/RETI/IRQ; inst_jmp bits 0 through 7 are JNE/JEQ/JNC/JC/JN/JGE/JL/JMP. Numerical outputs for inputs containing X/Z are unspecified; all outputs must be known for legal two-state inputs.",
+      "checker": "Compute the relationships given herein independently from the inputs; do not read DUT outputs to generate expected values. Sample all outputs at 2ns and 8ns after driving, and compare them with the dvbench_model prediction using four-state inequality; on mismatch, issue UVM_ERROR. Count comparison points, and check_phase prohibits zero comparisons.",
+      "implementation_id": "V-1",
+      "source": "bench_pkg.sv:scoreboard.write; bench_pkg.sv:driver.run_phase; bench_top.sv:predictor"
+    },
+    {
+      "test_id": "T-2",
+      "feature_ids": [
+        "F-2"
+      ],
+      "requirement_ids": [
+        "R-dv-002-002"
+      ],
+      "stimulus": "Each vector explicitly drives all native inputs to known two-state values; items not listed herein are fixed at 0, with no dependence on reset or historical preparation. Set inst_alu[3]=1 to select addition, inst_jmp=0, inst_so=0, and halt=0. Cross the 8 combinations of exec_cycle, inst_bw, and inst_alu[0]; take op_src/op_dst respectively from 0000/ffff/00ff/ff00/8000/007f, including 36 cross-pairs. Use alu_out_add and alu_out to observe that inversion precedes byte masking; clear all other ALU controls to 0. Each vector is held for 10ns and sampled at 2ns/8ns.",
+      "expected": "Invert the source operand over 16 bits only when exec_cycle and SRC_INV are both 1; subsequently, clear the high 8 bits of the shaped source and destination only when exec_cycle and inst_bw are both 1. Preserve the high 8 bits otherwise. Denote the shaped nonnegative 17-bit numbers as S/D. exec_cycle=0 does not disable the entire ALU.",
+      "checker": "Compute the relationships given herein independently from the inputs; do not read DUT outputs to generate expected values. Sample all outputs at 2ns and 8ns after driving, and compare them with the dvbench_model prediction using four-state inequality; on mismatch, issue UVM_ERROR. Count comparison points, and check_phase prohibits zero comparisons.",
+      "implementation_id": "V-2",
+      "source": "bench_pkg.sv:scoreboard.write; bench_pkg.sv:driver.run_phase; bench_top.sv:predictor"
+    },
+    {
+      "test_id": "T-3",
+      "feature_ids": [
+        "F-3"
+      ],
+      "requirement_ids": [
+        "R-dv-002-003"
+      ],
+      "stimulus": "Each vector explicitly drives all native inputs to known two-state values; items not listed herein are fixed at 0, with no dependence on reset or historical preparation. Set inst_alu[3]=1, inst_so=0, halt=0, inst_bw=0, SRC_INV=0, op_src=0010, and op_dst=1000. Iterate over all 256 values of inst_jmp, all 16 values of status, exec_cycle=0/1, and the four combinations of INC/INC_C. Compare separately alu_out_add without the increment and alu_out with exactly one increment added. Each vector is held for 10ns and sampled at 2ns/8ns.",
+      "expected": "If any asserted jump condition fails, the base addition ignores S: JNE fails at Z=1, JEQ at Z=0, JNC at C=1, JC at C=0, JN at N=0, JGE when V differs from N, and JL when V equals N. Any failure condition masks S, without exec_cycle gating; the JMP bit does not participate. The base 17-bit addition is D plus the masked S; alu_out_add always takes the low 16 bits and does not include the increment. The increment adds 1 only when exec_cycle is 1 and INC or (INC_C and old C) is true; concurrent assertions add only 1. Jumps do not mask other paths.",
+      "checker": "Compute the relationships given herein independently from the inputs; do not read DUT outputs to generate expected values. Sample all outputs at 2ns and 8ns after driving, and compare them with the dvbench_model prediction using four-state inequality; on mismatch, issue UVM_ERROR. Count comparison points, and check_phase prohibits zero comparisons.",
+      "implementation_id": "V-3",
+      "source": "bench_pkg.sv:scoreboard.write; bench_pkg.sv:driver.run_phase; bench_top.sv:predictor"
+    },
+    {
+      "test_id": "T-4",
+      "feature_ids": [
+        "F-4"
+      ],
+      "requirement_ids": [
+        "R-dv-002-004"
+      ],
+      "stimulus": "Each vector explicitly drives all native inputs to known two-state values; items not listed herein are fixed at 0, with no dependence on reset or historical preparation. In the main loop, exec_cycle=1 and inst_bw=0; only inst_alu[7]=1 selects DADD, while ADD, halt, and IRQ are all 0, and jump=0. For each target 4-bit group, iterate S/D nibbles from 0 through f and old C=0/1; set S/D above the target group to 0, and set S=9 and D=0 in all lower groups so that old C propagates group by group to the target group. Word mode covers all four groups; additionally cross exec_cycle and inst_bw, testing 9999+0001, ffff+ffff, and 0099+0001, including non-BCD nibbles and byte bit8 carry. Then set inst_jmp=3, old Z=0/1, old C=1, src=2, and dst=3, retain DADD, and cross exec=0/1 to confirm that a failed jump does not gate the DADD output. Each vector is held for 10ns and sampled at 2ns/8ns.",
+      "expected": "DADD uses old C as the carry-in for the least significant group and adds S/D in 4-bit groups from low to high. Each group first forms a 5-bit sum; if it is less than 10, retain it, otherwise add 6 within 5 bits. Result bit4 propagates to the next group; concatenate the low 4 bits of each group, with bit4 of the final group becoming bit16. All nibbles, including a through f, are legal; 5-bit arithmetic overflow is truncated; in byte execution, the low-byte carry can still reach bit8. DADD is not further gated directly by jump or exec.",
+      "checker": "Compute the relationships given herein independently from the inputs; do not read DUT outputs to generate expected values. Sample all outputs at 2ns and 8ns after driving, and compare them with the dvbench_model prediction using four-state inequality; on mismatch, issue UVM_ERROR. Count comparison points, and check_phase prohibits zero comparisons.",
+      "implementation_id": "V-4",
+      "source": "bench_pkg.sv:scoreboard.write; bench_pkg.sv:driver.run_phase; bench_top.sv:predictor"
+    },
+    {
+      "test_id": "T-5",
+      "feature_ids": [
+        "F-5"
+      ],
+      "requirement_ids": [
+        "R-dv-002-005"
+      ],
+      "stimulus": "Each vector explicitly drives all native inputs to known two-state values; items not listed herein are fixed at 0, with no dependence on reset or historical preparation. Clear ADD/DADD, halt/IRQ, and SRC_INV, and set exec_cycle=1. Iterate over all 64 selection combinations of the six paths AND/OR/XOR/SHIFT/SWPB/SXT; cross RRC, inst_bw, and old C at 0/1, and take op_src from 0000/ffff/8000/0080/0101/1234, with op_dst=55aa. Additionally, for one-hot SWPB/SXT, cross exec_cycle, SRC_INV, and byte to confirm use of the original op_src. Then with AND+SHIFT, src=dst=2, old C=1, and all other status bits 0, cross the 16 selections of ADD/DADD/IRQ/halt, distinguishing short-path OR=3, DADD=5, and addition=4, respectively. Each vector is held for 10ns and sampled at 2ns/8ns.",
+      "expected": "AND/OR/XOR use S/D; SWPB swaps the two bytes of the original op_src, and SXT extends the low byte according to the original op_src[7]. SHIFT shifts the original source right by one bit, filling bit15 with RRC?old C:(inst_bw?original bit7:original bit15); in byte mode, bit7 is also filled with this value, bit14:8 comes from original bit15:9, and bit6:0 comes from original bit7:1. The selected AND/OR/XOR/SHIFT/SWPB/SXT results are bitwise ORed; S passes through only when none is selected. IRQ or halt or ADD takes priority in selecting the base addition plus increment, followed by DADD, and finally the short paths; data priority does not change status selection bits.",
+      "checker": "Compute the relationships given herein independently from the inputs; do not read DUT outputs to generate expected values. Sample all outputs at 2ns and 8ns after driving, and compare them with the dvbench_model prediction using four-state inequality; on mismatch, issue UVM_ERROR. Count comparison points, and check_phase prohibits zero comparisons.",
+      "implementation_id": "V-5",
+      "source": "bench_pkg.sv:scoreboard.write; bench_pkg.sv:driver.run_phase; bench_top.sv:predictor"
+    },
+    {
+      "test_id": "T-6",
+      "feature_ids": [
+        "F-6"
+      ],
+      "requirement_ids": [
+        "R-dv-002-006"
+      ],
+      "stimulus": "Each vector explicitly drives all native inputs to known two-state values; items not listed herein are fixed at 0, with no dependence on reset or historical preparation. Set ADD and clear jump/IRQ/halt. Cross all 16 status values, exec_cycle, inst_bw, the two values 0/1 of STAT_F, and the 8 selection combinations of SHIFT/STAT_7/XOR. Take source/destination pairs as (0000,0000)/(ffff,0001)/(7fff,0001)/(8000,8000)/(007f,0001)/(0080,0080), covering zero/negative/carry/overflow, byte/word, and flag priority. Separately, under ADD+STAT_F, exec=1, src=1, dst=2, and status=1, toggle RRA/PUSH/CALL/RETI/JMP/EXEC_NO_WR individually to confirm that they do not additionally select an operation or suppress the write mask. Each vector is held for 10ns and sampled at 2ns/8ns.",
+      "expected": "N takes byte bit7 or word bit15 of the final alu_out; Z compares the low 8 bits for byte mode or all 16 bits for word mode. By default, C takes byte result bit8 or word internal result bit16; default V is 1 when the selected sign bits of S/D are the same and the final result sign differs. Flag priority is SHIFT>{STAT_7}>XOR>default: SHIFT gives {0,N,Z,S[0]}, STAT_7 gives {0,N,Z,!Z}, and XOR gives {S sign AND D sign,N,Z,!Z}. alu_stat_wr is 1111 only when STAT_F and exec_cycle are both 1, otherwise 0000; halt/IRQ do not provide additional gating. The RRA/PUSH/CALL/RETI/JMP/EXEC_NO_WR bits by themselves neither select an operation nor prohibit flag writes.",
+      "checker": "Compute the relationships given herein independently from the inputs; do not read DUT outputs to generate expected values. Sample all outputs at 2ns and 8ns after driving, and compare them with the dvbench_model prediction using four-state inequality; on mismatch, issue UVM_ERROR. Count comparison points, and check_phase prohibits zero comparisons.",
+      "implementation_id": "V-6",
+      "source": "bench_pkg.sv:scoreboard.write; bench_pkg.sv:driver.run_phase; bench_top.sv:predictor"
+    }
+  ]
+}

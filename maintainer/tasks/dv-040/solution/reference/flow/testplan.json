@@ -1,0 +1,102 @@
+{
+  "tests": [
+    {
+      "test_id": "T-01",
+      "feature_ids": [
+        "F-01"
+      ],
+      "requirement_ids": [
+        "R-p8-glb-001"
+      ],
+      "stimulus": "Use known binary inputs stable around rising edges. Start from independently asserted and released core/falcon resets, and establish nonempty state only through accepted request/event history. Assert both resets at startup and while events are pending; independently reset the core and falcon domains at midstream with clocks running, observe asynchronous windows, then resume requests.",
+      "expected": "Each reset clears only its stated domain immediately. Core response valid/data and logical pending state reset to zero. Falcon reset clears core_intr immediately while preserving core status for later propagation.",
+      "checker": "A self-contained native-port model predicts only from input request history, abstract mask/pending-event sets and independent clock histories. DUT and predicted outputs have separate wires. The monitor compares every output, including held response data, one nanosecond after each rising core/falcon edge and after asynchronous reset assertion. Four-state inequality produces UVM_ERROR; finite sequence and mandatory comparison/event counts reject vacuity.",
+      "implementation_id": "glb_sequence/glb_monitor/glb_scoreboard",
+      "source": "tb/glb_pkg.sv"
+    },
+    {
+      "test_id": "T-02",
+      "feature_ids": [
+        "F-02"
+      ],
+      "requirement_ids": [
+        "R-p8-glb-002"
+      ],
+      "stimulus": "Use known binary inputs stable around rising edges. Start from independently asserted and released core/falcon resets, and establish nonempty state only through accepted request/event history. Issue alternating reads and writes, posted and nonposted writes, idle gaps and back-to-back request bursts with ignored bits varied; include reads adjacent to writes.",
+      "expected": "A request accepted at one edge has its response, if required, immediately after the next core edge; read/write response type and error/data fields match the request, and no response appears for posted writes.",
+      "checker": "A self-contained native-port model predicts only from input request history, abstract mask/pending-event sets and independent clock histories. DUT and predicted outputs have separate wires. The monitor compares every output, including held response data, one nanosecond after each rising core/falcon edge and after asynchronous reset assertion. Four-state inequality produces UVM_ERROR; finite sequence and mandatory comparison/event counts reject vacuity.",
+      "implementation_id": "glb_sequence/glb_monitor/glb_scoreboard",
+      "source": "tb/glb_pkg.sv"
+    },
+    {
+      "test_id": "T-03",
+      "feature_ids": [
+        "F-03"
+      ],
+      "requirement_ids": [
+        "R-p8-glb-003"
+      ],
+      "stimulus": "Use known binary inputs stable around rising edges. Start from independently asserted and released core/falcon resets, and establish nonempty state only through accepted request/event history. Read every register, write version/default offsets and reread; sweep each implemented mask bit and reserved bits, and exercise high-address aliases and default offsets.",
+      "expected": "Version/set/default constants are exact. Mask readback equals the most recent processed full write masked by0x003f03ff, with reads at a processing edge observing pre-update register state.",
+      "checker": "A self-contained native-port model predicts only from input request history, abstract mask/pending-event sets and independent clock histories. DUT and predicted outputs have separate wires. The monitor compares every output, including held response data, one nanosecond after each rising core/falcon edge and after asynchronous reset assertion. Four-state inequality produces UVM_ERROR; finite sequence and mandatory comparison/event counts reject vacuity.",
+      "implementation_id": "glb_sequence/glb_monitor/glb_scoreboard",
+      "source": "tb/glb_pkg.sv"
+    },
+    {
+      "test_id": "T-04",
+      "feature_ids": [
+        "F-04"
+      ],
+      "requirement_ids": [
+        "R-p8-glb-004"
+      ],
+      "stimulus": "Use known binary inputs stable around rising edges. Start from independently asserted and released core/falcon resets, and establish nonempty state only through accepted request/event history. For each of twelve source bits pulse the external event, read status through the CSB pipeline, and separately software-set that bit. Exercise combined events and all status write bits.",
+      "expected": "Only mapped implemented bits become sticky; external events have one input sampling stage before accumulation, software sets act at processing, and neither mask changes nor reads clear status.",
+      "checker": "A self-contained native-port model predicts only from input request history, abstract mask/pending-event sets and independent clock histories. DUT and predicted outputs have separate wires. The monitor compares every output, including held response data, one nanosecond after each rising core/falcon edge and after asynchronous reset assertion. Four-state inequality produces UVM_ERROR; finite sequence and mandatory comparison/event counts reject vacuity.",
+      "implementation_id": "glb_sequence/glb_monitor/glb_scoreboard",
+      "source": "tb/glb_pkg.sv"
+    },
+    {
+      "test_id": "T-05",
+      "feature_ids": [
+        "F-05"
+      ],
+      "requirement_ids": [
+        "R-p8-glb-005"
+      ],
+      "stimulus": "Use known binary inputs stable around rising edges. Start from independently asserted and released core/falcon resets, and establish nonempty state only through accepted request/event history. Establish distinct pending bits, clear selected one bits while retaining others, then overlap each source event with a status-clear processing edge and check status before and after removing the event.",
+      "expected": "Cleared selected bits fall only when no same-bit event is being accumulated. Event/set wins clear; zero and reserved write bits never clear another pending bit.",
+      "checker": "A self-contained native-port model predicts only from input request history, abstract mask/pending-event sets and independent clock histories. DUT and predicted outputs have separate wires. The monitor compares every output, including held response data, one nanosecond after each rising core/falcon edge and after asynchronous reset assertion. Four-state inequality produces UVM_ERROR; finite sequence and mandatory comparison/event counts reject vacuity.",
+      "implementation_id": "glb_sequence/glb_monitor/glb_scoreboard",
+      "source": "tb/glb_pkg.sv"
+    },
+    {
+      "test_id": "T-06",
+      "feature_ids": [
+        "F-06"
+      ],
+      "requirement_ids": [
+        "R-p8-glb-006"
+      ],
+      "stimulus": "Use known binary inputs stable around rising edges. Start from independently asserted and released core/falcon resets, and establish nonempty state only through accepted request/event history. For each source set a pending bit, mask only that source, unmask it and observe independent falcon edges; hold other sources pending, vary clock phase, and independently reset the falcon domain.",
+      "expected": "Only unmasked pending sources contribute to the core launch one core edge after status/mask changes, and core_intr follows the sampled launch after exactly three falcon edges. Other unmasked sources keep the interrupt asserted.",
+      "checker": "A self-contained native-port model predicts only from input request history, abstract mask/pending-event sets and independent clock histories. DUT and predicted outputs have separate wires. The monitor compares every output, including held response data, one nanosecond after each rising core/falcon edge and after asynchronous reset assertion. Four-state inequality produces UVM_ERROR; finite sequence and mandatory comparison/event counts reject vacuity.",
+      "implementation_id": "glb_sequence/glb_monitor/glb_scoreboard",
+      "source": "tb/glb_pkg.sv"
+    },
+    {
+      "test_id": "T-07",
+      "feature_ids": [
+        "F-07"
+      ],
+      "requirement_ids": [
+        "R-p8-glb-007"
+      ],
+      "stimulus": "Use known binary inputs stable around rising edges. Start from independently asserted and released core/falcon resets, and establish nonempty state only through accepted request/event history. Toggle direct_reset_, test_mode and ignored request bits while repeating legal register/event histories, vary binary payloads, and run independent core/falcon clocks.",
+      "expected": "Ignored inputs do not alter register, response or interrupt predictions; deterministic per-clock timing remains the same throughout the legal binary domain.",
+      "checker": "A self-contained native-port model predicts only from input request history, abstract mask/pending-event sets and independent clock histories. DUT and predicted outputs have separate wires. The monitor compares every output, including held response data, one nanosecond after each rising core/falcon edge and after asynchronous reset assertion. Four-state inequality produces UVM_ERROR; finite sequence and mandatory comparison/event counts reject vacuity.",
+      "implementation_id": "glb_sequence/glb_monitor/glb_scoreboard",
+      "source": "tb/glb_pkg.sv"
+    }
+  ]
+}

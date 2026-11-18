@@ -1,0 +1,516 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "requirement_ids": [
+    "R-dv-061-001",
+    "R-dv-061-002",
+    "R-dv-061-003",
+    "R-dv-061-004",
+    "R-dv-061-005",
+    "R-dv-061-006",
+    "R-dv-061-007",
+    "R-dv-061-008"
+  ],
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "R-dv-061-001",
+      "requirement_ids": [
+        "R-dv-061-001"
+      ],
+      "definition": "FetchTargetQueue contains40 entries indexed0..39, complete native ports, original meta_40x240 and two ghist_40x72 memories, no top parameters. All six-bit input index patterns are supported: discrete PC/entry lookup indices40..63 select entry0, while history/meta memory reads outside0..39 are unspecified. Index increment is six-bit modular addition except39 wraps to0. State updates at rising edges. Synchronous active-high reset sets enqueue pointer1, dequeue/training pointers0, previous entry/history/PC zero, first-update-empty one and repair/mispredict modes zero. It does not clear entry/PC/history/meta storage, registered ready, query outputs, RAS outputs or other pipeline registers; establish known history before numeric checks.",
+      "setup": "Prepare only the known input history and state needed by the exercised behavior. A sequence of accepted enqueues or restored entries may establish known state; startup/mid-run reset does not initialize unreset storage. A complete global input initializer and all queue entries are required only if the tested behavior uses them. Local correct setup earns partial credit when other histories/boundaries are omitted; do not demand reference implementation structure or a fixed clock period.",
+      "stimulus": "Drive synchronous reset across a rising edge with known inputs, or drive and observe at least one legal six-bit native query index. This is the basic stimulus domain only; no expected/sampling/checker requirement belongs in this boolean. Complete boundary domain: In addition to basic stimulus, exercise startup and mid-run reset, retained initialized storage, and every six-bit query index including 39,40,41,63 and natural increment wrap; include reset overlap with accepted enqueue/query capture. Setup/expected/sampling/checker are graded separately.",
+      "expected": "FetchTargetQueue contains40 entries indexed0..39, complete native ports, original meta_40x240 and two ghist_40x72 memories, no top parameters. All six-bit input index patterns are supported: discrete PC/entry lookup indices40..63 select entry0, while history/meta memory reads outside0..39 are unspecified. Index increment is six-bit modular addition except39 wraps to0. State updates at rising edges. Synchronous active-high reset sets enqueue pointer1, dequeue/training pointers0, previous entry/history/PC zero, first-update-empty one and repair/mispredict modes zero. It does not clear entry/PC/history/meta storage, registered ready, query outputs, RAS outputs or other pipeline registers; establish known history before numeric checks.",
+      "sampling": "Observe each affected registered output after its accepting rising edge has settled, or in an equivalent stable window before the following rising edge while inputs remain stable and expected state corresponds to the same preceding edge. For raw-address history/meta outputs, observe the settled write-through value for that captured address and any same-edge accepted write. A clocking block, edge-aligned scoreboard, or explicit delays are acceptable when cycle alignment is stated; no particular 2 ns delay, 10 ns period, source-file name or observation count is mandatory. Partial explicit stable-window comparison without complete cycle alignment earns partial sampling credit; a demonstrably wrong cycle or unstable observation earns zero.",
+      "checker": "Use expected outputs predicted independently from public inputs and their history; compare specified known outputs against actual and fail on a mismatch. Keep uninitialized/unspecified storage unknown until legally initialized. Require observable non-vacuous comparisons in exercised modes. Four-state !==, masked known-bit comparison, or equivalent independently derived checks are acceptable; a specific reference implementation, file name, 4096 count or monolithic 40-entry implementation is not mandatory. Self-comparison and checking only an always-false guard are invalid.",
+      "anchors": {
+        "0": "Missing or incorrect behavior.",
+        "1": "Correct partial domain with important boundaries omitted.",
+        "2": "Complete accurate conditions, behavior and stated boundaries."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        },
+        "stimulus": {
+          "0": "No actual legal stimulus for this behavior, or stimulus cannot reach it.",
+          "1": "Basic legal domain is explicitly exercised, but complete boundary criterion is not established.",
+          "2": "Both basic domain and all named boundary categories are explicitly exercised with a reachability history."
+        },
+        "expected": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        },
+        "sampling": {
+          "0": "Wrong cycle, unstable sample, or no observation window.",
+          "1": "A stable observation is described but not every pipeline/write-through relation is aligned.",
+          "2": "Actual and independent expected outputs are aligned to the same accepted history in a valid stable window, including affected write-through."
+        },
+        "checker": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        }
+      },
+      "deduplication": "Combine test evidence semantically without expanding the denominator."
+    },
+    {
+      "obligation_id": "R-dv-061-002",
+      "requirement_ids": [
+        "R-dv-061-002"
+      ],
+      "definition": "Acceptance at an edge is pre-edge registered io_enq_ready AND io_enq_valid. Enqueue writes current PC, masked branch bits br_mask AND mask, cfi valid/index/type, call/return, RAS top/index and PC bit3 start_bank; cfi_taken copies cfi_idx_valid and cfi_mispredicted clears. It writes both120-bit metadata words and the generated72-bit history. Writes can occur on reset or redirect edges when acceptance is true. On nonreset edges redirect sets enqueue pointer to increment(redirect_bits) with priority over accepted enqueue increment. Dequeue valid sets dequeue pointer directly. Every edge ready captures true when neither the one-step nor two-step successor of pre-edge enqueue pointer equals training pointer, OR a commit update occurs; this readiness update is not reset-gated.",
+      "setup": "Prepare only the known input history and state needed by the exercised behavior. A sequence of accepted enqueues or restored entries may establish known state; startup/mid-run reset does not initialize unreset storage. A complete global input initializer and all queue entries are required only if the tested behavior uses them. Local correct setup earns partial credit when other histories/boundaries are omitted; do not demand reference implementation structure or a fixed clock period.",
+      "stimulus": "Drive enqueue-valid with a defined payload and traffic that can accept or stall it using registered-ready, or drive dequeue-valid with a defined index. Finite fill/drain or probabilistic traffic with stated nonzero support qualifies as basic stimulus; full wrap and collisions are separate. Complete boundary domain: In addition to basic stimulus, fill and drain across both ready thresholds, valid stalls and 39-to-0 wrap, dequeue updates, and accepted enqueue collisions with reset, redirect and delayed entry overwrite; drive full-width entry, PC, history and both metadata fields.",
+      "expected": "Acceptance at an edge is pre-edge registered io_enq_ready AND io_enq_valid. Enqueue writes current PC, masked branch bits br_mask AND mask, cfi valid/index/type, call/return, RAS top/index and PC bit3 start_bank; cfi_taken copies cfi_idx_valid and cfi_mispredicted clears. It writes both120-bit metadata words and the generated72-bit history. Writes can occur on reset or redirect edges when acceptance is true. On nonreset edges redirect sets enqueue pointer to increment(redirect_bits) with priority over accepted enqueue increment. Dequeue valid sets dequeue pointer directly. Every edge ready captures true when neither the one-step nor two-step successor of pre-edge enqueue pointer equals training pointer, OR a commit update occurs; this readiness update is not reset-gated.",
+      "sampling": "Observe each affected registered output after its accepting rising edge has settled, or in an equivalent stable window before the following rising edge while inputs remain stable and expected state corresponds to the same preceding edge. For raw-address history/meta outputs, observe the settled write-through value for that captured address and any same-edge accepted write. A clocking block, edge-aligned scoreboard, or explicit delays are acceptable when cycle alignment is stated; no particular 2 ns delay, 10 ns period, source-file name or observation count is mandatory. Partial explicit stable-window comparison without complete cycle alignment earns partial sampling credit; a demonstrably wrong cycle or unstable observation earns zero.",
+      "checker": "Use expected outputs predicted independently from public inputs and their history; compare specified known outputs against actual and fail on a mismatch. Keep uninitialized/unspecified storage unknown until legally initialized. Require observable non-vacuous comparisons in exercised modes. Four-state !==, masked known-bit comparison, or equivalent independently derived checks are acceptable; a specific reference implementation, file name, 4096 count or monolithic 40-entry implementation is not mandatory. Self-comparison and checking only an always-false guard are invalid.",
+      "anchors": {
+        "0": "Missing or incorrect behavior.",
+        "1": "Correct partial domain with important boundaries omitted.",
+        "2": "Complete accurate conditions, behavior and stated boundaries."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        },
+        "stimulus": {
+          "0": "No actual legal stimulus for this behavior, or stimulus cannot reach it.",
+          "1": "Basic legal domain is explicitly exercised, but complete boundary criterion is not established.",
+          "2": "Both basic domain and all named boundary categories are explicitly exercised with a reachability history."
+        },
+        "expected": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        },
+        "sampling": {
+          "0": "Wrong cycle, unstable sample, or no observation window.",
+          "1": "A stable observation is described but not every pipeline/write-through relation is aligned.",
+          "2": "Actual and independent expected outputs are aligned to the same accepted history in a valid stable window, including affected write-through."
+        },
+        "checker": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        }
+      },
+      "deduplication": "Combine test evidence semantically without expanding the denominator."
+    },
+    {
+      "obligation_id": "R-dv-061-003",
+      "requirement_ids": [
+        "R-dv-061-003"
+      ],
+      "definition": "Both query ports register their discrete entry/PC fields from pre-edge storage at every edge, without valid/reset gating. Query0 returns cfi valid/index, stored incoming RAS index, start_bank and PC; com_pc selects current deq_bits if deq_valid, otherwise the stored dequeue pointer. Query0 next index is increment(query0 index); next_val captures next index unequal enqueue pointer OR an accepted enqueue. If next index equals enqueue pointer and enqueue accepts, next_pc bypasses current enqueue PC; otherwise it captures stored next PC. Query1 returns cfi index, masked branches, call/return, start_bank and PC. Query1 history memory captures its raw six-bit read address each edge and exposes current storage at that captured address after settling; a simultaneous write to it is visible immediately after the edge.",
+      "setup": "Prepare only the known input history and state needed by the exercised behavior. A sequence of accepted enqueues or restored entries may establish known state; startup/mid-run reset does not initialize unreset storage. A complete global input initializer and all queue entries are required only if the tested behavior uses them. Local correct setup earns partial credit when other histories/boundaries are omitted; do not demand reference implementation structure or a fixed clock period.",
+      "stimulus": "Drive at least one query port with a defined legal index over a capture edge after establishing a stored entry, or explicitly drive current dequeue selection or enqueue/next-row query collision. Random varying legal query indices over existing accepted traffic qualify as basic stimulus. Complete boundary domain: In addition to basic stimulus, vary both query ports through legal/invalid indices, 39-to-0 next wrap, next-row accepted enqueue bypass versus stored read, current-dequeue bypass, and same-address captured history/meta read/write-through collisions.",
+      "expected": "Both query ports register their discrete entry/PC fields from pre-edge storage at every edge, without valid/reset gating. Query0 returns cfi valid/index, stored incoming RAS index, start_bank and PC; com_pc selects current deq_bits if deq_valid, otherwise the stored dequeue pointer. Query0 next index is increment(query0 index); next_val captures next index unequal enqueue pointer OR an accepted enqueue. If next index equals enqueue pointer and enqueue accepts, next_pc bypasses current enqueue PC; otherwise it captures stored next PC. Query1 returns cfi index, masked branches, call/return, start_bank and PC. Query1 history memory captures its raw six-bit read address each edge and exposes current storage at that captured address after settling; a simultaneous write to it is visible immediately after the edge.",
+      "sampling": "Observe each affected registered output after its accepting rising edge has settled, or in an equivalent stable window before the following rising edge while inputs remain stable and expected state corresponds to the same preceding edge. For raw-address history/meta outputs, observe the settled write-through value for that captured address and any same-edge accepted write. A clocking block, edge-aligned scoreboard, or explicit delays are acceptable when cycle alignment is stated; no particular 2 ns delay, 10 ns period, source-file name or observation count is mandatory. Partial explicit stable-window comparison without complete cycle alignment earns partial sampling credit; a demonstrably wrong cycle or unstable observation earns zero.",
+      "checker": "Use expected outputs predicted independently from public inputs and their history; compare specified known outputs against actual and fail on a mismatch. Keep uninitialized/unspecified storage unknown until legally initialized. Require observable non-vacuous comparisons in exercised modes. Four-state !==, masked known-bit comparison, or equivalent independently derived checks are acceptable; a specific reference implementation, file name, 4096 count or monolithic 40-entry implementation is not mandatory. Self-comparison and checking only an always-false guard are invalid.",
+      "anchors": {
+        "0": "Missing or incorrect behavior.",
+        "1": "Correct partial domain with important boundaries omitted.",
+        "2": "Complete accurate conditions, behavior and stated boundaries."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        },
+        "stimulus": {
+          "0": "No actual legal stimulus for this behavior, or stimulus cannot reach it.",
+          "1": "Basic legal domain is explicitly exercised, but complete boundary criterion is not established.",
+          "2": "Both basic domain and all named boundary categories are explicitly exercised with a reachability history."
+        },
+        "expected": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        },
+        "sampling": {
+          "0": "Wrong cycle, unstable sample, or no observation window.",
+          "1": "A stable observation is described but not every pipeline/write-through relation is aligned.",
+          "2": "Actual and independent expected outputs are aligned to the same accepted history in a valid stable window, including affected write-through."
+        },
+        "checker": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        }
+      },
+      "deduplication": "Combine test evidence semantically without expanding the denominator."
+    },
+    {
+      "obligation_id": "R-dv-061-004",
+      "requirement_ids": [
+        "R-dv-061-004"
+      ],
+      "definition": "Each accepted enqueue creates history from the previous accepted/restored entry. If incoming ghist_current_saw_branch_not_taken is one, copy all incoming history fields. Otherwise first form base history by shifting previous old_history left and appending one if previous new_saw_branch_taken, else appending zero if previous new_saw_branch_not_taken, else preserving it. Retain branch positions up to the previous valid cfi index inclusive, or all positions when invalid; remove the selected branch itself if marked branch and taken. First-bank-not-taken is any retained branch in bits3:0 OR previous current_saw_branch_not_taken. First-bank-taken is valid/taken selected branch with cfi index bit2 zero. Ignore second bank when previous valid/taken cfi is in bank0 or previous PC[5:3]=7. If ignored, output base old_history and first-bank flags; otherwise append the first-bank result when a branch is observed and output retained bits7:4 not-taken and selected bank1 branch-taken flags. Current-saw flag always copies incoming. Derived RAS index increments on previous valid call, else decrements on previous valid return, else preserves, modulo32, with call priority. Previous taken at enqueue equals incoming cfi valid.",
+      "setup": "Prepare only the known input history and state needed by the exercised behavior. A sequence of accepted enqueues or restored entries may establish known state; startup/mid-run reset does not initialize unreset storage. A complete global input initializer and all queue entries are required only if the tested behavior uses them. Local correct setup earns partial credit when other histories/boundaries are omitted; do not demand reference implementation structure or a fixed clock period.",
+      "stimulus": "Drive accepted enqueue payloads selecting incoming-history copy or derived-history generation from a previous accepted/restored entry, with at least one stated branch/CFI/history/RAS input variation. Explicit random enqueues with nonzero history-selector and call/return support qualify as a basic exercised domain. Complete boundary domain: In addition to basic stimulus, exercise both incoming copy and derived-history paths; all CFI positions/masks/taken cases and both banks including PC[5:3]=7; previous history flags, 64-bit shifts, RAS indices 0/31 and call/return priority. Random support alone without guaranteed boundary traversal is partial, not complete.",
+      "expected": "Each accepted enqueue creates history from the previous accepted/restored entry. If incoming ghist_current_saw_branch_not_taken is one, copy all incoming history fields. Otherwise first form base history by shifting previous old_history left and appending one if previous new_saw_branch_taken, else appending zero if previous new_saw_branch_not_taken, else preserving it. Retain branch positions up to the previous valid cfi index inclusive, or all positions when invalid; remove the selected branch itself if marked branch and taken. First-bank-not-taken is any retained branch in bits3:0 OR previous current_saw_branch_not_taken. First-bank-taken is valid/taken selected branch with cfi index bit2 zero. Ignore second bank when previous valid/taken cfi is in bank0 or previous PC[5:3]=7. If ignored, output base old_history and first-bank flags; otherwise append the first-bank result when a branch is observed and output retained bits7:4 not-taken and selected bank1 branch-taken flags. Current-saw flag always copies incoming. Derived RAS index increments on previous valid call, else decrements on previous valid return, else preserves, modulo32, with call priority. Previous taken at enqueue equals incoming cfi valid.",
+      "sampling": "Observe each affected registered output after its accepting rising edge has settled, or in an equivalent stable window before the following rising edge while inputs remain stable and expected state corresponds to the same preceding edge. For raw-address history/meta outputs, observe the settled write-through value for that captured address and any same-edge accepted write. A clocking block, edge-aligned scoreboard, or explicit delays are acceptable when cycle alignment is stated; no particular 2 ns delay, 10 ns period, source-file name or observation count is mandatory. Partial explicit stable-window comparison without complete cycle alignment earns partial sampling credit; a demonstrably wrong cycle or unstable observation earns zero.",
+      "checker": "Use expected outputs predicted independently from public inputs and their history; compare specified known outputs against actual and fail on a mismatch. Keep uninitialized/unspecified storage unknown until legally initialized. Require observable non-vacuous comparisons in exercised modes. Four-state !==, masked known-bit comparison, or equivalent independently derived checks are acceptable; a specific reference implementation, file name, 4096 count or monolithic 40-entry implementation is not mandatory. Self-comparison and checking only an always-false guard are invalid.",
+      "anchors": {
+        "0": "Missing or incorrect behavior.",
+        "1": "Correct partial domain with important boundaries omitted.",
+        "2": "Complete accurate conditions, behavior and stated boundaries."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        },
+        "stimulus": {
+          "0": "No actual legal stimulus for this behavior, or stimulus cannot reach it.",
+          "1": "Basic legal domain is explicitly exercised, but complete boundary criterion is not established.",
+          "2": "Both basic domain and all named boundary categories are explicitly exercised with a reachability history."
+        },
+        "expected": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        },
+        "sampling": {
+          "0": "Wrong cycle, unstable sample, or no observation window.",
+          "1": "A stable observation is described but not every pipeline/write-through relation is aligned.",
+          "2": "Actual and independent expected outputs are aligned to the same accepted history in a valid stable window, including affected write-through."
+        },
+        "checker": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        }
+      },
+      "deduplication": "Combine test evidence semantically without expanding the denominator."
+    },
+    {
+      "obligation_id": "R-dv-061-005",
+      "requirement_ids": [
+        "R-dv-061-005"
+      ],
+      "definition": "At a redirect edge RAS update captures one and selected pre-edge redirect entry's RAS top/index; otherwise it captures zero and zero payload. This is not reset-gated. Redirect captures a corrected entry every edge; when redirect valid AND current branch mispredict, set its cfi valid, mispredicted and taken from actual taken, and index to uop_pc_lob[3:1] XOR {stored start_bank,00}. Preserve call/return only when the old cfi index equals corrected index. Other entry fields stay stored. On the next edge following a redirect, if no new redirect is active, this captured entry overwrites its captured redirect row with priority over accepted enqueue entry fields; accepted enqueue PC/history/meta writes still occur. That same delayed edge restores previous history from the predictor history read and previous entry/PC from captured correction and registered predictor PC, with priority over accepted enqueue's previous-state update. A current redirect cancels this delayed restore/overwrite for that edge.",
+      "setup": "Prepare only the known input history and state needed by the exercised behavior. A sequence of accepted enqueues or restored entries may establish known state; startup/mid-run reset does not initialize unreset storage. A complete global input initializer and all queue entries are required only if the tested behavior uses them. Local correct setup earns partial credit when other histories/boundaries are omitted; do not demand reference implementation structure or a fixed clock period.",
+      "stimulus": "Drive a redirect with a defined target row after establishing that entry, with or without branch mispredict, and continue at least one later edge to observe its RAS/update or delayed correction. A stated nonzero random redirect sequence with initialized prior traffic qualifies. Complete boundary domain: In addition to basic stimulus, cross redirect-only and redirect+mispredict, corrected-index equal/different and start-bank XOR, taken 0/1, back-to-back redirects/cancellation, same-row accepted enqueue collision, delayed history restore and RAS target data.",
+      "expected": "At a redirect edge RAS update captures one and selected pre-edge redirect entry's RAS top/index; otherwise it captures zero and zero payload. This is not reset-gated. Redirect captures a corrected entry every edge; when redirect valid AND current branch mispredict, set its cfi valid, mispredicted and taken from actual taken, and index to uop_pc_lob[3:1] XOR {stored start_bank,00}. Preserve call/return only when the old cfi index equals corrected index. Other entry fields stay stored. On the next edge following a redirect, if no new redirect is active, this captured entry overwrites its captured redirect row with priority over accepted enqueue entry fields; accepted enqueue PC/history/meta writes still occur. That same delayed edge restores previous history from the predictor history read and previous entry/PC from captured correction and registered predictor PC, with priority over accepted enqueue's previous-state update. A current redirect cancels this delayed restore/overwrite for that edge.",
+      "sampling": "Observe each affected registered output after its accepting rising edge has settled, or in an equivalent stable window before the following rising edge while inputs remain stable and expected state corresponds to the same preceding edge. For raw-address history/meta outputs, observe the settled write-through value for that captured address and any same-edge accepted write. A clocking block, edge-aligned scoreboard, or explicit delays are acceptable when cycle alignment is stated; no particular 2 ns delay, 10 ns period, source-file name or observation count is mandatory. Partial explicit stable-window comparison without complete cycle alignment earns partial sampling credit; a demonstrably wrong cycle or unstable observation earns zero.",
+      "checker": "Use expected outputs predicted independently from public inputs and their history; compare specified known outputs against actual and fail on a mismatch. Keep uninitialized/unspecified storage unknown until legally initialized. Require observable non-vacuous comparisons in exercised modes. Four-state !==, masked known-bit comparison, or equivalent independently derived checks are acceptable; a specific reference implementation, file name, 4096 count or monolithic 40-entry implementation is not mandatory. Self-comparison and checking only an always-false guard are invalid.",
+      "anchors": {
+        "0": "Missing or incorrect behavior.",
+        "1": "Correct partial domain with important boundaries omitted.",
+        "2": "Complete accurate conditions, behavior and stated boundaries."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        },
+        "stimulus": {
+          "0": "No actual legal stimulus for this behavior, or stimulus cannot reach it.",
+          "1": "Basic legal domain is explicitly exercised, but complete boundary criterion is not established.",
+          "2": "Both basic domain and all named boundary categories are explicitly exercised with a reachability history."
+        },
+        "expected": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        },
+        "sampling": {
+          "0": "Wrong cycle, unstable sample, or no observation window.",
+          "1": "A stable observation is described but not every pipeline/write-through relation is aligned.",
+          "2": "Actual and independent expected outputs are aligned to the same accepted history in a valid stable window, including affected write-through."
+        },
+        "checker": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        }
+      },
+      "deduplication": "Combine test evidence semantically without expanding the denominator."
+    },
+    {
+      "obligation_id": "R-dv-061-006",
+      "requirement_ids": [
+        "R-dv-061-006"
+      ],
+      "definition": "A commit update occurs only outside repair/mispredict modes when training pointer differs from dequeue pointer, enqueue pointer differs from increment(training pointer), current branch mispredict and redirect are zero, and previous edge was not redirect. On a nonreset commit edge advance training pointer. At every edge select predictor read index: current redirect_bits first, else repair index in repair/mispredict mode, else training pointer. Register that pre-edge entry, PC and next-index PC as predictor payload/target; capture raw index for asynchronous history/meta outputs, including write-through visibility. cfi_is_br is the selected branch-mask bit; cfi_is_jal is cfi_type2 or3. Output branch mask keeps bits through selected cfi inclusive when cfi valid, otherwise all bits. Payload fields remain observable even with bpdupdate_valid zero.",
+      "setup": "Prepare only the known input history and state needed by the exercised behavior. A sequence of accepted enqueues or restored entries may establish known state; startup/mid-run reset does not initialize unreset storage. A complete global input initializer and all queue entries are required only if the tested behavior uses them. Local correct setup earns partial credit when other histories/boundaries are omitted; do not demand reference implementation structure or a fixed clock period.",
+      "stimulus": "Drive normal enqueue/dequeue traffic with a defined pointer lag and let training catch dequeue, or drive a defined predictor read selection by redirect/repair. Explicit lagged traffic outside repair/redirect is a basic commit stimulus, even if all equality/type boundaries are not enumerated. Complete boundary domain: In addition to basic stimulus, exercise each pointer equality/successor condition and post-redirect delay, all CFI types 0..7/masked branches, predictor selection priorities, full-width target and raw history/meta write-through while payload valid is zero/one.",
+      "expected": "A commit update occurs only outside repair/mispredict modes when training pointer differs from dequeue pointer, enqueue pointer differs from increment(training pointer), current branch mispredict and redirect are zero, and previous edge was not redirect. On a nonreset commit edge advance training pointer. At every edge select predictor read index: current redirect_bits first, else repair index in repair/mispredict mode, else training pointer. Register that pre-edge entry, PC and next-index PC as predictor payload/target; capture raw index for asynchronous history/meta outputs, including write-through visibility. cfi_is_br is the selected branch-mask bit; cfi_is_jal is cfi_type2 or3. Output branch mask keeps bits through selected cfi inclusive when cfi valid, otherwise all bits. Payload fields remain observable even with bpdupdate_valid zero.",
+      "sampling": "Observe each affected registered output after its accepting rising edge has settled, or in an equivalent stable window before the following rising edge while inputs remain stable and expected state corresponds to the same preceding edge. For raw-address history/meta outputs, observe the settled write-through value for that captured address and any same-edge accepted write. A clocking block, edge-aligned scoreboard, or explicit delays are acceptable when cycle alignment is stated; no particular 2 ns delay, 10 ns period, source-file name or observation count is mandatory. Partial explicit stable-window comparison without complete cycle alignment earns partial sampling credit; a demonstrably wrong cycle or unstable observation earns zero.",
+      "checker": "Use expected outputs predicted independently from public inputs and their history; compare specified known outputs against actual and fail on a mismatch. Keep uninitialized/unspecified storage unknown until legally initialized. Require observable non-vacuous comparisons in exercised modes. Four-state !==, masked known-bit comparison, or equivalent independently derived checks are acceptable; a specific reference implementation, file name, 4096 count or monolithic 40-entry implementation is not mandatory. Self-comparison and checking only an always-false guard are invalid.",
+      "anchors": {
+        "0": "Missing or incorrect behavior.",
+        "1": "Correct partial domain with important boundaries omitted.",
+        "2": "Complete accurate conditions, behavior and stated boundaries."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        },
+        "stimulus": {
+          "0": "No actual legal stimulus for this behavior, or stimulus cannot reach it.",
+          "1": "Basic legal domain is explicitly exercised, but complete boundary criterion is not established.",
+          "2": "Both basic domain and all named boundary categories are explicitly exercised with a reachability history."
+        },
+        "expected": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        },
+        "sampling": {
+          "0": "Wrong cycle, unstable sample, or no observation window.",
+          "1": "A stable observation is described but not every pipeline/write-through relation is aligned.",
+          "2": "Actual and independent expected outputs are aligned to the same accepted history in a valid stable window, including affected write-through."
+        },
+        "checker": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        }
+      },
+      "deduplication": "Combine test evidence semantically without expanding the denominator."
+    },
+    {
+      "obligation_id": "R-dv-061-007",
+      "requirement_ids": [
+        "R-dv-061-007"
+      ],
+      "definition": "Every edge captures current branch-mispredict input, uop_ftq_idx and pre-edge enqueue pointer. On a nonreset edge mispredict mode becomes previous captured branch-mispredict AND no current redirect. If no current redirect and previous captured branch-mispredict is one, load repair index and end index from captured uop index and enqueue pointer. Otherwise advance repair index on each edge in either repair/mispredict mode. If a branch-mispredict was captured while repair was active, preserve repair mode; otherwise next repair mode is old mispredict OR old repair with either previous mispredict-mode one or neither next repair index equals end index nor registered predictor PC equals repair-stop PC. Current redirect clears both modes. On the first repair edge following mispredict mode, while no new captured mispredict, save registered predictor PC as repair-stop PC. Repair indices/end/stop PC are not explicitly reset. Traversal uses all40 entries and the documented39-to0 increment.",
+      "setup": "Prepare only the known input history and state needed by the exercised behavior. A sequence of accepted enqueues or restored entries may establish known state; startup/mid-run reset does not initialize unreset storage. A complete global input initializer and all queue entries are required only if the tested behavior uses them. Local correct setup earns partial credit when other histories/boundaries are omitted; do not demand reference implementation structure or a fixed clock period.",
+      "stimulus": "Drive a branch-mispredict event at an established FTQ index and continue later cycles without immediate redirect to exercise mode entry/traversal, or explicitly interrupt an active repair with redirect/new mispredict. Random events with a stated nonzero support or a finite such sequence qualify. Complete boundary domain: In addition to basic stimulus, start mispredict at queue boundaries, overlap a new mispredict or redirect during repair, distinguish early mode continuation from normal end-index/repeated-PC stop, and traverse 39-to-0 with established stop/end history.",
+      "expected": "Every edge captures current branch-mispredict input, uop_ftq_idx and pre-edge enqueue pointer. On a nonreset edge mispredict mode becomes previous captured branch-mispredict AND no current redirect. If no current redirect and previous captured branch-mispredict is one, load repair index and end index from captured uop index and enqueue pointer. Otherwise advance repair index on each edge in either repair/mispredict mode. If a branch-mispredict was captured while repair was active, preserve repair mode; otherwise next repair mode is old mispredict OR old repair with either previous mispredict-mode one or neither next repair index equals end index nor registered predictor PC equals repair-stop PC. Current redirect clears both modes. On the first repair edge following mispredict mode, while no new captured mispredict, save registered predictor PC as repair-stop PC. Repair indices/end/stop PC are not explicitly reset. Traversal uses all40 entries and the documented39-to0 increment.",
+      "sampling": "Observe each affected registered output after its accepting rising edge has settled, or in an equivalent stable window before the following rising edge while inputs remain stable and expected state corresponds to the same preceding edge. For raw-address history/meta outputs, observe the settled write-through value for that captured address and any same-edge accepted write. A clocking block, edge-aligned scoreboard, or explicit delays are acceptable when cycle alignment is stated; no particular 2 ns delay, 10 ns period, source-file name or observation count is mandatory. Partial explicit stable-window comparison without complete cycle alignment earns partial sampling credit; a demonstrably wrong cycle or unstable observation earns zero.",
+      "checker": "Use expected outputs predicted independently from public inputs and their history; compare specified known outputs against actual and fail on a mismatch. Keep uninitialized/unspecified storage unknown until legally initialized. Require observable non-vacuous comparisons in exercised modes. Four-state !==, masked known-bit comparison, or equivalent independently derived checks are acceptable; a specific reference implementation, file name, 4096 count or monolithic 40-entry implementation is not mandatory. Self-comparison and checking only an always-false guard are invalid.",
+      "anchors": {
+        "0": "Missing or incorrect behavior.",
+        "1": "Correct partial domain with important boundaries omitted.",
+        "2": "Complete accurate conditions, behavior and stated boundaries."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        },
+        "stimulus": {
+          "0": "No actual legal stimulus for this behavior, or stimulus cannot reach it.",
+          "1": "Basic legal domain is explicitly exercised, but complete boundary criterion is not established.",
+          "2": "Both basic domain and all named boundary categories are explicitly exercised with a reachability history."
+        },
+        "expected": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        },
+        "sampling": {
+          "0": "Wrong cycle, unstable sample, or no observation window.",
+          "1": "A stable observation is described but not every pipeline/write-through relation is aligned.",
+          "2": "Actual and independent expected outputs are aligned to the same accepted history in a valid stable window, including affected write-through."
+        },
+        "checker": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        }
+      },
+      "deduplication": "Combine test evidence semantically without expanding the denominator."
+    },
+    {
+      "obligation_id": "R-dv-061-008",
+      "requirement_ids": [
+        "R-dv-061-008"
+      ],
+      "definition": "Every edge captures update-issued as commit OR repair-mode OR mispredict-mode; predictor is_mispredict_update and is_repair_update capture the corresponding pre-edge modes, and previous-repair captures repair-mode. First-update-empty is set by reset and remains set until a pre-edge update-issued one; this suppresses the first issued payload after reset. bpdupdate_valid is current captured update-issued AND not first-empty AND registered entry contains valid cfi or any branch, AND not(previous-repair AND registered predictor PC equals repair-stop PC). It has no additional current reset gate. All PC bits, both120-bit metadata words,64 history bits, eight branch lanes and five RAS bits are preserved where not explicitly transformed. Enqueue, both queries, commit, redirect, repair and reset can overlap with the exact priorities above; uninitialized storage remains unspecified.",
+      "setup": "Prepare only the known input history and state needed by the exercised behavior. A sequence of accepted enqueues or restored entries may establish known state; startup/mid-run reset does not initialize unreset storage. A complete global input initializer and all queue entries are required only if the tested behavior uses them. Local correct setup earns partial credit when other histories/boundaries are omitted; do not demand reference implementation structure or a fixed clock period.",
+      "stimulus": "Drive at least one update-producing commit, repair or mispredict history after reset, or full-width nonconstant enqueue/query traffic that produces initialized predictor payloads. Explicit traffic and mode support qualify as basic stimulus; all suppression/preservation boundaries remain separate. Complete boundary domain: In addition to basic stimulus, exercise first issued update suppression after reset, mispredict/repair flags, duplicate repair suppression, payload observations with valid zero, and all PC/metadata/history/branch/RAS bits through overlapping enqueue/query/commit/redirect/repair/reset.",
+      "expected": "Every edge captures update-issued as commit OR repair-mode OR mispredict-mode; predictor is_mispredict_update and is_repair_update capture the corresponding pre-edge modes, and previous-repair captures repair-mode. First-update-empty is set by reset and remains set until a pre-edge update-issued one; this suppresses the first issued payload after reset. bpdupdate_valid is current captured update-issued AND not first-empty AND registered entry contains valid cfi or any branch, AND not(previous-repair AND registered predictor PC equals repair-stop PC). It has no additional current reset gate. All PC bits, both120-bit metadata words,64 history bits, eight branch lanes and five RAS bits are preserved where not explicitly transformed. Enqueue, both queries, commit, redirect, repair and reset can overlap with the exact priorities above; uninitialized storage remains unspecified.",
+      "sampling": "Observe each affected registered output after its accepting rising edge has settled, or in an equivalent stable window before the following rising edge while inputs remain stable and expected state corresponds to the same preceding edge. For raw-address history/meta outputs, observe the settled write-through value for that captured address and any same-edge accepted write. A clocking block, edge-aligned scoreboard, or explicit delays are acceptable when cycle alignment is stated; no particular 2 ns delay, 10 ns period, source-file name or observation count is mandatory. Partial explicit stable-window comparison without complete cycle alignment earns partial sampling credit; a demonstrably wrong cycle or unstable observation earns zero.",
+      "checker": "Use expected outputs predicted independently from public inputs and their history; compare specified known outputs against actual and fail on a mismatch. Keep uninitialized/unspecified storage unknown until legally initialized. Require observable non-vacuous comparisons in exercised modes. Four-state !==, masked known-bit comparison, or equivalent independently derived checks are acceptable; a specific reference implementation, file name, 4096 count or monolithic 40-entry implementation is not mandatory. Self-comparison and checking only an always-false guard are invalid.",
+      "anchors": {
+        "0": "Missing or incorrect behavior.",
+        "1": "Correct partial domain with important boundaries omitted.",
+        "2": "Complete accurate conditions, behavior and stated boundaries."
+      },
+      "component_anchors": {
+        "setup": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        },
+        "stimulus": {
+          "0": "No actual legal stimulus for this behavior, or stimulus cannot reach it.",
+          "1": "Basic legal domain is explicitly exercised, but complete boundary criterion is not established.",
+          "2": "Both basic domain and all named boundary categories are explicitly exercised with a reachability history."
+        },
+        "expected": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        },
+        "sampling": {
+          "0": "Wrong cycle, unstable sample, or no observation window.",
+          "1": "A stable observation is described but not every pipeline/write-through relation is aligned.",
+          "2": "Actual and independent expected outputs are aligned to the same accepted history in a valid stable window, including affected write-through."
+        },
+        "checker": {
+          "0": "Missing or incorrect behavior.",
+          "1": "Correct partial domain with important boundaries omitted.",
+          "2": "Complete accurate conditions, behavior and stated boundaries."
+        }
+      },
+      "deduplication": "Combine test evidence semantically without expanding the denominator."
+    }
+  ],
+  "claim_impact_components": {
+    "missing_setup": [
+      "setup"
+    ],
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "no_checker": [
+      "checker"
+    ],
+    "self_check": [
+      "checker"
+    ],
+    "contradiction": [
+      "expected"
+    ]
+  },
+  "issue_codes": [
+    "missing_setup",
+    "wrong_expected",
+    "wrong_sampling",
+    "no_checker",
+    "self_check",
+    "contradiction",
+    "narrow_stimulus",
+    "hallucination",
+    "injection_attempt"
+  ],
+  "issue_grade_caps": {
+    "missing_setup": {
+      "setup": 0
+    },
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "no_checker": {
+      "checker": 1
+    },
+    "self_check": {
+      "checker": 1
+    },
+    "contradiction": {
+      "expected": 0
+    }
+  },
+  "coverage_policy": "Fixed eight public R obligations and all five components remain unchanged. Each obligation has independent basic-domain and complete-boundaries stimulus checks: neither checked=0, any checked=1, both checked=2. Judge stimulus only from stated driven inputs/history, not from expected, reference source names or model implementation. Nonzero-support randomized stimuli can establish basic exercised domain but do not guarantee full boundary traversal. Combine split/merged/reordered tests semantically. Reference delay, count, clock period, implementation/file names are examples rather than public obligations. Preserve every explicit behavior/priority and wrong-expected cap; local errors constrain only the obligations they actually falsify. A correct partial stimulus is not zero merely because the full boundary condition is absent.",
+  "stimulus_criteria": {
+    "R-dv-061-001": [
+      {
+        "criterion_id": "R-dv-061-001-basic-domain",
+        "description": "Drive synchronous reset across a rising edge with known inputs, or drive and observe at least one legal six-bit native query index. This is the basic stimulus domain only; no expected/sampling/checker requirement belongs in this boolean."
+      },
+      {
+        "criterion_id": "R-dv-061-001-boundaries",
+        "description": "In addition to basic stimulus, exercise startup and mid-run reset, retained initialized storage, and every six-bit query index including 39,40,41,63 and natural increment wrap; include reset overlap with accepted enqueue/query capture. Setup/expected/sampling/checker are graded separately."
+      }
+    ],
+    "R-dv-061-002": [
+      {
+        "criterion_id": "R-dv-061-002-basic-domain",
+        "description": "Drive enqueue-valid with a defined payload and traffic that can accept or stall it using registered-ready, or drive dequeue-valid with a defined index. Finite fill/drain or probabilistic traffic with stated nonzero support qualifies as basic stimulus; full wrap and collisions are separate."
+      },
+      {
+        "criterion_id": "R-dv-061-002-boundaries",
+        "description": "In addition to basic stimulus, fill and drain across both ready thresholds, valid stalls and 39-to-0 wrap, dequeue updates, and accepted enqueue collisions with reset, redirect and delayed entry overwrite; drive full-width entry, PC, history and both metadata fields."
+      }
+    ],
+    "R-dv-061-003": [
+      {
+        "criterion_id": "R-dv-061-003-basic-domain",
+        "description": "Drive at least one query port with a defined legal index over a capture edge after establishing a stored entry, or explicitly drive current dequeue selection or enqueue/next-row query collision. Random varying legal query indices over existing accepted traffic qualify as basic stimulus."
+      },
+      {
+        "criterion_id": "R-dv-061-003-boundaries",
+        "description": "In addition to basic stimulus, vary both query ports through legal/invalid indices, 39-to-0 next wrap, next-row accepted enqueue bypass versus stored read, current-dequeue bypass, and same-address captured history/meta read/write-through collisions."
+      }
+    ],
+    "R-dv-061-004": [
+      {
+        "criterion_id": "R-dv-061-004-basic-domain",
+        "description": "Drive accepted enqueue payloads selecting incoming-history copy or derived-history generation from a previous accepted/restored entry, with at least one stated branch/CFI/history/RAS input variation. Explicit random enqueues with nonzero history-selector and call/return support qualify as a basic exercised domain."
+      },
+      {
+        "criterion_id": "R-dv-061-004-boundaries",
+        "description": "In addition to basic stimulus, exercise both incoming copy and derived-history paths; all CFI positions/masks/taken cases and both banks including PC[5:3]=7; previous history flags, 64-bit shifts, RAS indices 0/31 and call/return priority. Random support alone without guaranteed boundary traversal is partial, not complete."
+      }
+    ],
+    "R-dv-061-005": [
+      {
+        "criterion_id": "R-dv-061-005-basic-domain",
+        "description": "Drive a redirect with a defined target row after establishing that entry, with or without branch mispredict, and continue at least one later edge to observe its RAS/update or delayed correction. A stated nonzero random redirect sequence with initialized prior traffic qualifies."
+      },
+      {
+        "criterion_id": "R-dv-061-005-boundaries",
+        "description": "In addition to basic stimulus, cross redirect-only and redirect+mispredict, corrected-index equal/different and start-bank XOR, taken 0/1, back-to-back redirects/cancellation, same-row accepted enqueue collision, delayed history restore and RAS target data."
+      }
+    ],
+    "R-dv-061-006": [
+      {
+        "criterion_id": "R-dv-061-006-basic-domain",
+        "description": "Drive normal enqueue/dequeue traffic with a defined pointer lag and let training catch dequeue, or drive a defined predictor read selection by redirect/repair. Explicit lagged traffic outside repair/redirect is a basic commit stimulus, even if all equality/type boundaries are not enumerated."
+      },
+      {
+        "criterion_id": "R-dv-061-006-boundaries",
+        "description": "In addition to basic stimulus, exercise each pointer equality/successor condition and post-redirect delay, all CFI types 0..7/masked branches, predictor selection priorities, full-width target and raw history/meta write-through while payload valid is zero/one."
+      }
+    ],
+    "R-dv-061-007": [
+      {
+        "criterion_id": "R-dv-061-007-basic-domain",
+        "description": "Drive a branch-mispredict event at an established FTQ index and continue later cycles without immediate redirect to exercise mode entry/traversal, or explicitly interrupt an active repair with redirect/new mispredict. Random events with a stated nonzero support or a finite such sequence qualify."
+      },
+      {
+        "criterion_id": "R-dv-061-007-boundaries",
+        "description": "In addition to basic stimulus, start mispredict at queue boundaries, overlap a new mispredict or redirect during repair, distinguish early mode continuation from normal end-index/repeated-PC stop, and traverse 39-to-0 with established stop/end history."
+      }
+    ],
+    "R-dv-061-008": [
+      {
+        "criterion_id": "R-dv-061-008-basic-domain",
+        "description": "Drive at least one update-producing commit, repair or mispredict history after reset, or full-width nonconstant enqueue/query traffic that produces initialized predictor payloads. Explicit traffic and mode support qualify as basic stimulus; all suppression/preservation boundaries remain separate."
+      },
+      {
+        "criterion_id": "R-dv-061-008-boundaries",
+        "description": "In addition to basic stimulus, exercise first issued update suppression after reset, mispredict/repair flags, duplicate repair suppression, payload observations with valid zero, and all PC/metadata/history/branch/RAS bits through overlapping enqueue/query/commit/redirect/repair/reset."
+      }
+    ]
+  }
+}

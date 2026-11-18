@@ -1,0 +1,444 @@
+{
+  "ports": [
+    {
+      "name": "CTA2csr_valid_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "ctrl_csr_i",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "ctrl_custom_signal_0_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "ctrl_inst_i",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "ctrl_isvec_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "ctrl_reg_idxw_i",
+      "direction": "In",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "ctrl_wid_i",
+      "direction": "In",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "ctrl_wxd_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "dispatch2cu_csr_knl_dispatch_i",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "dispatch2cu_lds_base_dispatch_i",
+      "direction": "In",
+      "width": 18,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 17,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "dispatch2cu_pds_base_dispatch_i",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "dispatch2cu_sgpr_base_dispatch_i",
+      "direction": "In",
+      "width": 11,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 10,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "dispatch2cu_vgpr_base_dispatch_i",
+      "direction": "In",
+      "width": 11,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 10,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "dispatch2cu_wf_size_dispatch_i",
+      "direction": "In",
+      "width": 10,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 9,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "dispatch2cu_wf_tag_dispatch_i",
+      "direction": "In",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "dispatch2cu_wg_id_i",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "dispatch2cu_wg_wf_count_i",
+      "direction": "In",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "dispatch2cu_wgid_x_dispatch_i",
+      "direction": "In",
+      "width": 10,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 9,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "dispatch2cu_wgid_y_dispatch_i",
+      "direction": "In",
+      "width": 10,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 9,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "dispatch2cu_wgid_z_dispatch_i",
+      "direction": "In",
+      "width": 10,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 9,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "in1_i",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "in_ready_o",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "in_valid_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "lsu_numw_o",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "lsu_pds_o",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "lsu_tid_o",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "lsu_wid_i",
+      "direction": "In",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "out_ready_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "out_valid_o",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "reg_idxw_o",
+      "direction": "Out",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "rm_o",
+      "direction": "Out",
+      "width": 9,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 8,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "rm_wid_i",
+      "direction": "In",
+      "width": 9,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 8,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "rst_n",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "sgpr_base_o",
+      "direction": "Out",
+      "width": 88,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 87,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "simt_rpc_o",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "simt_wid_i",
+      "direction": "In",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "vgpr_base_o",
+      "direction": "Out",
+      "width": 88,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 87,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "warp_id_o",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "wb_wxd_rd_o",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "wid_i",
+      "direction": "In",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "wxd_o",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {},
+  "parser": "Audited native csrexe declarations and supplied define.v widths"
+}

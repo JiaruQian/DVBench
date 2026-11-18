@@ -1,0 +1,113 @@
+# Reference testplan
+
+## T-01
+
+feature_ids: F-01
+
+requirement_ids: R-p8-cdp-cq-001
+
+stimulus: Use known binary inputs, stable around rising clock edges. Begin after an asynchronous active-low reset and its release on a falling edge; subsequent nonempty states are established by the specified accepted-write history. Assert reset between edges at startup, while occupied and while full; keep write-valid and read-ready high for three reset clocks, release on a falling edge, and send fresh data.
+
+expected: Before the next rising edge, ready is one and valid is zero. No pre-reset or reset-time write is returned after recovery; fresh writes retain their specified timing and order.
+
+checker: The self-contained native-port model derives expected outputs only from input history, a pending-word queue, a separately presented output word, and returned-credit history. The monitor sends distinct DUT and expected values to a scoreboard; case-inequality mismatches produce UVM_ERROR. Required check counts and reset windows reject vacuous execution. Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.
+
+implementation_id: cq_sequence/cq_monitor/cq_scoreboard
+
+source: tb/cq_pkg.sv
+
+## T-02
+
+feature_ids: F-02
+
+requirement_ids: R-p8-cdp-cq-002
+
+stimulus: Use known binary inputs, stable around rising clock edges. Begin after an asynchronous active-low reset and its release on a falling edge; subsequent nonempty states are established by the specified accepted-write history. Write distinguishable seven-bit patterns, with invalid writes interspersed, hold writes beyond full, then drain; repeat for multiple full-depth traversals and random backpressure.
+
+expected: An independent accepted-input queue predicts the exact ordered stream. Rejected and invalid writes never appear, including after address wrap.
+
+checker: The self-contained native-port model derives expected outputs only from input history, a pending-word queue, a separately presented output word, and returned-credit history. The monitor sends distinct DUT and expected values to a scoreboard; case-inequality mismatches produce UVM_ERROR. Required check counts and reset windows reject vacuous execution. Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.
+
+implementation_id: cq_sequence/cq_monitor/cq_scoreboard
+
+source: tb/cq_pkg.sv
+
+## T-03
+
+feature_ids: F-03
+
+requirement_ids: R-p8-cdp-cq-003
+
+stimulus: Use known binary inputs, stable around rising clock edges. Begin after an asynchronous active-low reset and its release on a falling edge; subsequent nonempty states are established by the specified accepted-write history. From empty after reset and after draining, accept a single word with downstream stalled; inspect the accepting edge and following edge, then consume it.
+
+expected: Valid remains low after acceptance and becomes high with the input word after the next edge, even while read-ready is zero.
+
+checker: The self-contained native-port model derives expected outputs only from input history, a pending-word queue, a separately presented output word, and returned-credit history. The monitor sends distinct DUT and expected values to a scoreboard; case-inequality mismatches produce UVM_ERROR. Required check counts and reset windows reject vacuous execution. Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.
+
+implementation_id: cq_sequence/cq_monitor/cq_scoreboard
+
+source: tb/cq_pkg.sv
+
+## T-04
+
+feature_ids: F-04
+
+requirement_ids: R-p8-cdp-cq-004
+
+stimulus: Use known binary inputs, stable around rising clock edges. Begin after an asynchronous active-low reset and its release on a falling edge; subsequent nonempty states are established by the specified accepted-write history. Stall a valid output for multiple cycles while continuing legal writes, then consume with and without waiting words. Read repeatedly after empty.
+
+expected: Stalled valid/data remain unchanged; replacement is the next oldest word, and the last consumption clears valid after the edge without creating duplicate data.
+
+checker: The self-contained native-port model derives expected outputs only from input history, a pending-word queue, a separately presented output word, and returned-credit history. The monitor sends distinct DUT and expected values to a scoreboard; case-inequality mismatches produce UVM_ERROR. Required check counts and reset windows reject vacuous execution. Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.
+
+implementation_id: cq_sequence/cq_monitor/cq_scoreboard
+
+source: tb/cq_pkg.sv
+
+## T-05
+
+feature_ids: F-05
+
+requirement_ids: R-p8-cdp-cq-005
+
+stimulus: Use known binary inputs, stable around rising clock edges. Begin after an asynchronous active-low reset and its release on a falling edge; subsequent nonempty states are established by the specified accepted-write history. Starting empty with downstream stalled, offer at least 300 writes, hold full for twenty cycles, then alternate read bursts and stalls with write-valid high and finally drain. Repeat this crossing three times.
+
+expected: Exactly 257 words are retained at maximum occupancy. Independent waiting occupancy and one-cycle returned-credit history predict ready on every edge, including the delayed recovery at full.
+
+checker: The self-contained native-port model derives expected outputs only from input history, a pending-word queue, a separately presented output word, and returned-credit history. The monitor sends distinct DUT and expected values to a scoreboard; case-inequality mismatches produce UVM_ERROR. Required check counts and reset windows reject vacuous execution. Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.
+
+implementation_id: cq_sequence/cq_monitor/cq_scoreboard
+
+source: tb/cq_pkg.sv
+
+## T-06
+
+feature_ids: F-06
+
+requirement_ids: R-p8-cdp-cq-006
+
+stimulus: Use known binary inputs, stable around rising clock edges. Begin after an asynchronous active-low reset and its release on a falling edge; subsequent nonempty states are established by the specified accepted-write history. Run simultaneous valid/ready for a sustained stream, mix four input handshake combinations using all seven data bits, and perform three fill/drain traversals.
+
+expected: Each edge follows pre-edge handshake decisions; output replacement sustains one word per clock when waiting data exists and all accepted words remain ordered across repeated traversal.
+
+checker: The self-contained native-port model derives expected outputs only from input history, a pending-word queue, a separately presented output word, and returned-credit history. The monitor sends distinct DUT and expected values to a scoreboard; case-inequality mismatches produce UVM_ERROR. Required check counts and reset windows reject vacuous execution. Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.
+
+implementation_id: cq_sequence/cq_monitor/cq_scoreboard
+
+source: tb/cq_pkg.sv
+
+## T-07
+
+feature_ids: F-07
+
+requirement_ids: R-p8-cdp-cq-007
+
+stimulus: Use known binary inputs, stable around rising clock edges. Begin after an asynchronous active-low reset and its release on a falling edge; subsequent nonempty states are established by the specified accepted-write history. Toggle power-input patterns zero, all ones, alternating bits, and random words during empty, active, stalled, and full operation while exercising seven-bit data values.
+
+expected: The same input-history prediction applies regardless of the power-input pattern; compare ready and valid every checked edge and compare data only when independently predicted valid.
+
+checker: The self-contained native-port model derives expected outputs only from input history, a pending-word queue, a separately presented output word, and returned-credit history. The monitor sends distinct DUT and expected values to a scoreboard; case-inequality mismatches produce UVM_ERROR. Required check counts and reset windows reject vacuous execution. Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.
+
+implementation_id: cq_sequence/cq_monitor/cq_scoreboard
+
+source: tb/cq_pkg.sv

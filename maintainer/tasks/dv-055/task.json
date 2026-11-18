@@ -1,0 +1,169 @@
+{
+  "task_id": "dv-055",
+  "dut_top": "fft_wrapper",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "adder3_n.v",
+    "butterfly2_n.v",
+    "clk_div.v",
+    "control_unit.v",
+    "fft_wrapper.v",
+    "get_negative_n.v",
+    "m_ram.v",
+    "multiplier_n.v",
+    "mux_n.v",
+    "pipling_stage_n.v",
+    "s_ram.v",
+    "top_n.v",
+    "twiddle_rom_imag_n.v",
+    "twiddle_rom_real_n.v"
+  ],
+  "parameters": {
+    "DIVISOR": 5,
+    "N": 16,
+    "Q": 8,
+    "ADDR_WIDTH": 5,
+    "DATA_WIDTH": 16,
+    "DEPTH": 32
+  },
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m7",
+    "m8",
+    "m9",
+    "m10",
+    "m11"
+  ],
+  "model_interface": {
+    "ports": [
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "m_addr",
+        "direction": "In",
+        "width": 5,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 4,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_data",
+        "direction": "In",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_we",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "rst",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "s_addr",
+        "direction": "In",
+        "width": 5,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 4,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_data",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_re",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {},
+    "fixed_dut_profile": {
+      "DIVISOR": 5,
+      "N": 16,
+      "Q": 8,
+      "ADDR_WIDTH": 5,
+      "DATA_WIDTH": 16,
+      "DEPTH": 32
+    },
+    "scope": "Self-contained model may hardcode the single fixed public DUT profile."
+  },
+  "rtl_sources": [
+    "adder3_n.v",
+    "butterfly2_n.v",
+    "clk_div.v",
+    "control_unit.v",
+    "fft_wrapper.v",
+    "get_negative_n.v",
+    "m_ram.v",
+    "multiplier_n.v",
+    "mux_n.v",
+    "pipling_stage_n.v",
+    "s_ram.v",
+    "top_n.v",
+    "twiddle_rom_imag_n.v",
+    "twiddle_rom_real_n.v"
+  ],
+  "submission_top": "dvbench_top",
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "adder3_n.v",
+    "butterfly2_n.v",
+    "clk_div.v",
+    "control_unit.v",
+    "fft_wrapper.v",
+    "get_negative_n.v",
+    "m_ram.v",
+    "multiplier_n.v",
+    "mux_n.v",
+    "pipling_stage_n.v",
+    "s_ram.v",
+    "top_n.v",
+    "twiddle_rom_imag_n.v",
+    "twiddle_rom_real_n.v"
+  ]
+}

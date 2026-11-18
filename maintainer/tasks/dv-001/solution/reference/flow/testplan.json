@@ -1,0 +1,88 @@
+{
+  "tests": [
+    {
+      "test_id": "T-1",
+      "feature_ids": [
+        "F-1"
+      ],
+      "requirement_ids": [
+        "R-dv-001-001"
+      ],
+      "stimulus": "Exercise all screen/opcode selections with changing operands and carry_in, repeated vectors, and transitions between modes. Observe after settling and verify that the same input produces the same output regardless of preceding inputs. The implemented reference enumerates all 16384 two-state input combinations in a seed-dependent order, holds each vector for 10 ns and samples at 2 ns and 8 ns.",
+      "expected": "The module top is a stateless combinational four-bit unsigned ALU with a decimal display selector. Inputs screen[1:0], opcode[2:0], A[3:0], B[3:0], and carry_in affect the outputs as specified below. There is no clock, reset or handshake. Compare outputs only after input changes have settled. All specified behavior applies to inputs containing only 0 and 1; behavior with X or Z inputs is unspecified.",
+      "checker": "Compute the relationships given herein independently from the inputs; do not read DUT outputs to generate expected values. Sample all outputs at 2ns and 8ns after driving, and compare them with the dvbench_model prediction using four-state inequality; on mismatch, issue UVM_ERROR. Count comparison points, and check_phase prohibits zero comparisons.",
+      "implementation_id": "V-1",
+      "source": "bench_pkg.sv:scoreboard.write; bench_pkg.sv:driver.run_phase; bench_top.sv:predictor"
+    },
+    {
+      "test_id": "T-2",
+      "feature_ids": [
+        "F-2"
+      ],
+      "requirement_ids": [
+        "R-dv-001-002"
+      ],
+      "stimulus": "Exercise each display selection, all opcode and operand display values, leading zeros and decimal boundaries (9/10, 99/100 and 225 where reachable), while varying inputs irrelevant to the selected display. The implemented reference enumerates all 16384 two-state input combinations in a seed-dependent order, holds each vector for 10 ns and samples at 2 ns and 8 ns.",
+      "expected": "screen=0 displays the unsigned opcode (0 through 7); screen=1 displays unsigned A; screen=2 displays unsigned B; screen=3 displays the selected ALU result. The displayed value is encoded as three packed BCD digits: bcd[11:8] is hundreds, bcd[7:4] tens, and bcd[3:0] ones. Each digit is 0 through 9 and leading zeros are retained. Operand displays cover 0 through 15; multiplication results can reach 225. Display selection does not change the error rule in R-dv-001-006.",
+      "checker": "Compute the relationships given herein independently from the inputs; do not read DUT outputs to generate expected values. Sample all outputs at 2ns and 8ns after driving, and compare them with the dvbench_model prediction using four-state inequality; on mismatch, issue UVM_ERROR. Count comparison points, and check_phase prohibits zero comparisons.",
+      "implementation_id": "V-2",
+      "source": "bench_pkg.sv:scoreboard.write; bench_pkg.sv:driver.run_phase; bench_top.sv:predictor"
+    },
+    {
+      "test_id": "T-3",
+      "feature_ids": [
+        "F-3"
+      ],
+      "requirement_ids": [
+        "R-dv-001-003"
+      ],
+      "stimulus": "Exercise addition with carry_in=0 and 1, operands 0 and 15, results below/at/above 16, and carry propagation across every operand bit. Include cases where unsigned carry differs from signed overflow. The implemented reference enumerates all 16384 two-state input combinations in a seed-dependent order, holds each vector for 10 ns and samples at 2 ns and 8 ns.",
+      "expected": "When screen=3 and opcode=0, let S=A+B+carry_in using unsigned arithmetic. Display S modulo 16; carry_out=1 exactly when S is at least 16, otherwise carry_out=0. overflow equals carry_out in this mode: it denotes unsigned four-bit addition overflow, not signed two's-complement overflow. Both carry_in values are supported, including 15+15+1=31 (display 15, carry_out=1, overflow=1).",
+      "checker": "Compute the relationships given herein independently from the inputs; do not read DUT outputs to generate expected values. Sample all outputs at 2ns and 8ns after driving, and compare them with the dvbench_model prediction using four-state inequality; on mismatch, issue UVM_ERROR. Count comparison points, and check_phase prohibits zero comparisons.",
+      "implementation_id": "V-3",
+      "source": "bench_pkg.sv:scoreboard.write; bench_pkg.sv:driver.run_phase; bench_top.sv:predictor"
+    },
+    {
+      "test_id": "T-4",
+      "feature_ids": [
+        "F-4"
+      ],
+      "requirement_ids": [
+        "R-dv-001-004"
+      ],
+      "stimulus": "Exercise subtraction with both borrow-in values, A less than/equal to/greater than B+carry_in, zero and maximum operands, and borrow propagation across the four bits. The implemented reference enumerates all 16384 two-state input combinations in a seed-dependent order, holds each vector for 10 ns and samples at 2 ns and 8 ns.",
+      "expected": "When screen=3 and opcode=1, let D=A-B-carry_in using unsigned operands and treating carry_in as borrow-in. Display the nonnegative residue D modulo 16. carry_out is the borrow-out: it is 1 exactly when A is less than B+carry_in, otherwise 0. overflow=0. For example, 0-0-1 displays 15 with borrow-out 1, while 15-0-0 displays 15 with borrow-out 0.",
+      "checker": "Compute the relationships given herein independently from the inputs; do not read DUT outputs to generate expected values. Sample all outputs at 2ns and 8ns after driving, and compare them with the dvbench_model prediction using four-state inequality; on mismatch, issue UVM_ERROR. Count comparison points, and check_phase prohibits zero comparisons.",
+      "implementation_id": "V-4",
+      "source": "bench_pkg.sv:scoreboard.write; bench_pkg.sv:driver.run_phase; bench_top.sv:predictor"
+    },
+    {
+      "test_id": "T-5",
+      "feature_ids": [
+        "F-5"
+      ],
+      "requirement_ids": [
+        "R-dv-001-005"
+      ],
+      "stimulus": "Exercise zero, one and maximum products, products above 15, 99/100 where reachable, and 15*15=225. For AND/OR/XOR, exercise equal, disjoint, overlapping, complementary, all-zero and all-one bit patterns. Repeat with both carry_in values. The implemented reference enumerates all 16384 two-state input combinations in a seed-dependent order, holds each vector for 10 ns and samples at 2 ns and 8 ns.",
+      "expected": "When screen=3, opcode=2 displays the full unsigned product A*B (0 through 225); opcode=3 displays A AND B; opcode=4 displays A OR B; opcode=5 displays A XOR B. The bitwise results are four-bit unsigned values displayed in decimal. carry_in has no effect in these four modes. carry_out=0 and overflow=0 in all four modes.",
+      "checker": "Compute the relationships given herein independently from the inputs; do not read DUT outputs to generate expected values. Sample all outputs at 2ns and 8ns after driving, and compare them with the dvbench_model prediction using four-state inequality; on mismatch, issue UVM_ERROR. Count comparison points, and check_phase prohibits zero comparisons.",
+      "implementation_id": "V-5",
+      "source": "bench_pkg.sv:scoreboard.write; bench_pkg.sv:driver.run_phase; bench_top.sv:predictor"
+    },
+    {
+      "test_id": "T-6",
+      "feature_ids": [
+        "F-6"
+      ],
+      "requirement_ids": [
+        "R-dv-001-006"
+      ],
+      "stimulus": "Exercise both invalid opcodes under every screen selection with changing operands and carry_in. Check zero result for screen=3, preserved selected displays otherwise, error deassertion on valid opcodes, and arithmetic flag clearing when leaving addition/subtraction. The implemented reference enumerates all 16384 two-state input combinations in a seed-dependent order, holds each vector for 10 ns and samples at 2 ns and 8 ns.",
+      "expected": "error=1 exactly when opcode is 6 or 7, for every screen value; error=0 for opcodes 0 through 5. When screen=3 and opcode is invalid, display zero and set carry_out=0 and overflow=0. When screen is 0, 1 or 2, carry_out=0 and overflow=0 regardless of opcode, operands and carry_in; display the opcode or operand selected by screen even if error=1. In particular, opcode=7 with screen=0 displays BCD 007 and error=1.",
+      "checker": "Compute the relationships given herein independently from the inputs; do not read DUT outputs to generate expected values. Sample all outputs at 2ns and 8ns after driving, and compare them with the dvbench_model prediction using four-state inequality; on mismatch, issue UVM_ERROR. Count comparison points, and check_phase prohibits zero comparisons.",
+      "implementation_id": "V-6",
+      "source": "bench_pkg.sv:scoreboard.write; bench_pkg.sv:driver.run_phase; bench_top.sv:predictor"
+    }
+  ]
+}

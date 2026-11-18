@@ -1,0 +1,200 @@
+{
+  "submission_root": "submission",
+  "sources": "sources.f",
+  "top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "self_contained": true,
+    "same_file_in_D_and_scoreboard": true,
+    "interface": {
+      "ports": [
+        {
+          "name": "active_video",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "clk_100mhz",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "dist_mm",
+          "direction": "In",
+          "width": 16,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 15,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "dist_vld",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "frame_tick",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "hcount",
+          "direction": "Out",
+          "width": 10,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 9,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "logo_buf_sel",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "logo_rgb",
+          "direction": "In",
+          "width": 12,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 11,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "logo_x",
+          "direction": "Out",
+          "width": 9,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 8,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "logo_y",
+          "direction": "Out",
+          "width": 8,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 7,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "pix_clk",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "rgb_plot",
+          "direction": "Out",
+          "width": 12,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 11,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "rst_sys",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "sweep_wrap",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "theta_q15",
+          "direction": "In",
+          "width": 16,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 15,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "vcount",
+          "direction": "Out",
+          "width": 10,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 9,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "vga_hsync_n",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "vga_vsync_n",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        }
+      ],
+      "parameters": {
+        "R_MAX_MM": "16'd2000",
+        "TEMP_Q15_COLD": "16'sd4096",
+        "TEMP_Q15_HOT": "16'sd16384"
+      },
+      "parser": "pyslang 12.1.0"
+    }
+  },
+  "dut_top": "vga_range_plot_top",
+  "submission_format": "public/submission_format.md",
+  "json_is_complete_fact_carrier": true,
+  "task_id": "dv-087",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

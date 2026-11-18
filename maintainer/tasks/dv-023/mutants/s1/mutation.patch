@@ -1,0 +1,11 @@
+--- golden/fifo.sv
++++ s1/fifo.sv
+@@ -91,7 +91,7 @@
+     //read
+     always_ff @(posedge r_clk or posedge rst) begin : fifo_r_ff
+         if (rst) begin
+-            rptr_reg <= 0;
++            rptr_reg <= 1;
+         end else begin
+             rptr_reg <= rptr_next;
+         end

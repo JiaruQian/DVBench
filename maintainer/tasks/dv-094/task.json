@@ -1,0 +1,189 @@
+{
+  "task_id": "dv-094",
+  "replay_adapter_id": "dv-094-apb-ntt",
+  "dut_top": "apb_ntt_wrapper",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "apb_ntt_address_generator.sv",
+    "apb_ntt_apb_if.sv",
+    "apb_ntt_butterfly.sv",
+    "apb_ntt_coefficient_memory.sv",
+    "apb_ntt_controller.sv",
+    "apb_ntt_core.sv",
+    "apb_ntt_datapath.sv",
+    "apb_ntt_modular_adder.sv",
+    "apb_ntt_modular_multiplier.sv",
+    "apb_ntt_modular_reducer.sv",
+    "apb_ntt_modular_subtractor.sv",
+    "apb_ntt_twiddle_rom.sv",
+    "apb_ntt_wrapper.sv",
+    "backfill/apb_ntt_pkg.sv"
+  ],
+  "rtl_compile_files": [
+    "backfill/apb_ntt_pkg.sv",
+    "apb_ntt_modular_reducer.sv",
+    "apb_ntt_modular_multiplier.sv",
+    "apb_ntt_modular_adder.sv",
+    "apb_ntt_modular_subtractor.sv",
+    "apb_ntt_butterfly.sv",
+    "apb_ntt_twiddle_rom.sv",
+    "apb_ntt_address_generator.sv",
+    "apb_ntt_datapath.sv",
+    "apb_ntt_controller.sv",
+    "apb_ntt_core.sv",
+    "apb_ntt_coefficient_memory.sv",
+    "apb_ntt_apb_if.sv",
+    "apb_ntt_wrapper.sv"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m10",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "n1",
+    "n2"
+  ],
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "i_ntt_paddr",
+        "direction": "In",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "i_ntt_pclk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "i_ntt_penable",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "i_ntt_presetn",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "i_ntt_psel",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "i_ntt_pstrb",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "i_ntt_pwdata",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "i_ntt_pwrite",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "o_ntt_irq",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "o_ntt_prdata",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "o_ntt_pready",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "o_ntt_pslverr",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {
+      "C_APB_DATA_WIDTH": "32",
+      "C_APB_ADDR_WIDTH": "8",
+      "N": "256",
+      "Q": "3329",
+      "ROOT": "17",
+      "COEFF_WIDTH": "16",
+      "ADDR_WIDTH": "8"
+    },
+    "parser": "pyslang 11.0.0"
+  },
+  "model_contract_policy": "native-module-v1",
+  "rtl_sources": [
+    "backfill/apb_ntt_pkg.sv",
+    "apb_ntt_modular_reducer.sv",
+    "apb_ntt_modular_multiplier.sv",
+    "apb_ntt_modular_adder.sv",
+    "apb_ntt_modular_subtractor.sv",
+    "apb_ntt_butterfly.sv",
+    "apb_ntt_twiddle_rom.sv",
+    "apb_ntt_address_generator.sv",
+    "apb_ntt_datapath.sv",
+    "apb_ntt_controller.sv",
+    "apb_ntt_core.sv",
+    "apb_ntt_coefficient_memory.sv",
+    "apb_ntt_apb_if.sv",
+    "apb_ntt_wrapper.sv"
+  ],
+  "reference_submission": "solution/reference",
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800
+}

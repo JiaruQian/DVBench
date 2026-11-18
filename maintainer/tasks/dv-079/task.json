@@ -1,0 +1,137 @@
+{
+  "task_id": "dv-079",
+  "task_mode": "A",
+  "dut_top": "pong_top",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "baud_generator.v",
+    "db_fsm.v",
+    "fifo.v",
+    "ping_pong_2_players.v",
+    "pong_top.v",
+    "uart.v",
+    "uart_rx.v",
+    "uart_tx.v",
+    "vga_sync.v"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "submission_top": "dvbench_top",
+  "reference_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_test": "dvbench_test",
+  "model_interface": {
+    "top": "dvbench_model",
+    "ports": [
+      {
+        "name": "btn",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "reset_n",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "rx",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "vga_hsync",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "vga_rgb",
+        "direction": "Out",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "vga_vsync",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {}
+  },
+  "model_contract_policy": "native-module-v1",
+  "coverage": {
+    "scope": "dvbench_top.dut",
+    "metrics": [
+      "line",
+      "cond",
+      "branch",
+      "tgl"
+    ],
+    "line_contassign": true
+  },
+  "fixed_parameters": {},
+  "data_files": [],
+  "mutants": [
+    "m1",
+    "m10",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9"
+  ],
+  "rtl_sources": [
+    "baud_generator.v",
+    "db_fsm.v",
+    "fifo.v",
+    "ping_pong_2_players.v",
+    "pong_top.v",
+    "uart.v",
+    "uart_rx.v",
+    "uart_tx.v",
+    "vga_sync.v"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "baud_generator.v",
+    "db_fsm.v",
+    "fifo.v",
+    "ping_pong_2_players.v",
+    "pong_top.v",
+    "uart.v",
+    "uart_rx.v",
+    "uart_tx.v",
+    "vga_sync.v"
+  ]
+}

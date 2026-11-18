@@ -1,0 +1,199 @@
+{
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "interface": {
+      "ports": [
+        {
+          "name": "az_addr",
+          "direction": "In",
+          "width": 22,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 21,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "az_be_n",
+          "direction": "In",
+          "width": 2,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 1,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "az_cs",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "az_data",
+          "direction": "In",
+          "width": 16,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 15,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "az_rd_n",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "az_wr_n",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "clk",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "reset_n",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "za_data",
+          "direction": "Out",
+          "width": 16,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 15,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "za_valid",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "za_waitrequest",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "zs_addr",
+          "direction": "Out",
+          "width": 12,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 11,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "zs_ba",
+          "direction": "Out",
+          "width": 2,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 1,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "zs_cas_n",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "zs_cke",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "zs_cs_n",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "zs_dq",
+          "direction": "InOut",
+          "width": 16,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 15,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "zs_dqm",
+          "direction": "Out",
+          "width": 2,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 1,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "zs_ras_n",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "zs_we_n",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        }
+      ],
+      "parameters": {}
+    }
+  },
+  "format": "public/submission_format.md",
+  "task_id": "dv-020",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

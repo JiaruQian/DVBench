@@ -1,0 +1,383 @@
+{
+  "ports": [
+    {
+      "name": "clock",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_f1_req_ghist",
+      "direction": "In",
+      "width": 64,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 63,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_f1_req_pc",
+      "direction": "In",
+      "width": 40,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 39,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_f1_req_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_f3_resp_0_bits_ctr",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_f3_resp_0_bits_u",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_f3_resp_0_valid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_f3_resp_1_bits_ctr",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_f3_resp_1_bits_u",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_f3_resp_1_valid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_f3_resp_2_bits_ctr",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_f3_resp_2_bits_u",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_f3_resp_2_valid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_f3_resp_3_bits_ctr",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_f3_resp_3_bits_u",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_f3_resp_3_valid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_update_alloc_0",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_update_alloc_1",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_update_alloc_2",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_update_alloc_3",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_update_hist",
+      "direction": "In",
+      "width": 64,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 63,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_update_mask_0",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_update_mask_1",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_update_mask_2",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_update_mask_3",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_update_old_ctr_0",
+      "direction": "In",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_update_old_ctr_1",
+      "direction": "In",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_update_old_ctr_2",
+      "direction": "In",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_update_old_ctr_3",
+      "direction": "In",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_update_pc",
+      "direction": "In",
+      "width": 40,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 39,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_update_taken_0",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_update_taken_1",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_update_taken_2",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_update_taken_3",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_update_u_0",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_update_u_1",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_update_u_2",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_update_u_3",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_update_u_mask_0",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_update_u_mask_1",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_update_u_mask_2",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_update_u_mask_3",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "reset",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {}
+}

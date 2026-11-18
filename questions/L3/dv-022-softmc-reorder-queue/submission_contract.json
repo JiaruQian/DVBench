@@ -1,0 +1,278 @@
+{
+  "dut_top": "reorder_queue",
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "interface": {
+      "ports": [
+        {
+          "name": "CLK",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "DATA",
+          "direction": "In",
+          "width": 128,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 127,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "DATA_EN",
+          "direction": "In",
+          "width": 4,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 3,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "DATA_EN_COUNT",
+          "direction": "In",
+          "width": 3,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 2,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "DONE",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "ENG_DATA",
+          "direction": "Out",
+          "width": 128,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 127,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "ERR",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "EXT_TAG",
+          "direction": "Out",
+          "width": 5,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 4,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "EXT_TAG_VALID",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "INT_TAG",
+          "direction": "In",
+          "width": 6,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 5,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "INT_TAG_VALID",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "MAIN_DATA_EN",
+          "direction": "Out",
+          "width": 36,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 35,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "MAIN_DONE",
+          "direction": "Out",
+          "width": 12,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 11,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "MAIN_ERR",
+          "direction": "Out",
+          "width": 12,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 11,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "RST",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "SG_RX_DATA_EN",
+          "direction": "Out",
+          "width": 36,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 35,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "SG_RX_DONE",
+          "direction": "Out",
+          "width": 12,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 11,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "SG_RX_ERR",
+          "direction": "Out",
+          "width": 12,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 11,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "SG_TX_DATA_EN",
+          "direction": "Out",
+          "width": 36,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 35,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "SG_TX_DONE",
+          "direction": "Out",
+          "width": 12,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 11,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "SG_TX_ERR",
+          "direction": "Out",
+          "width": 12,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 11,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "TAG",
+          "direction": "In",
+          "width": 5,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 4,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "VALID",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        }
+      ],
+      "parameters": {
+        "C_PCI_DATA_WIDTH": "9'd128",
+        "C_NUM_CHNL": "4'b1100",
+        "C_MAX_READ_REQ_BYTES": "512",
+        "C_TAG_WIDTH": "5",
+        "C_PCI_DATA_WORD": "32'd4",
+        "C_PCI_DATA_COUNT_WIDTH": "3",
+        "C_NUM_TAGS": "32",
+        "C_DW_PER_TAG": "128",
+        "C_TAG_DW_COUNT_WIDTH": "8",
+        "C_DATA_ADDR_STRIDE_WIDTH": "5",
+        "C_DATA_ADDR_WIDTH": "10"
+      },
+      "parser": "pyslang 12.1.0"
+    }
+  },
+  "task_id": "dv-022",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

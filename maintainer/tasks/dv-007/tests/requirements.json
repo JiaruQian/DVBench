@@ -1,0 +1,79 @@
+{
+  "requirements": [
+    {
+      "requirement_id": "R-dv-007-001",
+      "obligation": "On the rising edge of W0_clk, when W0_en=1 and bit i of W0_mask is 1, bit i at address W0_addr is overwritten by the corresponding bit of W0_data, with i ranging from 0 to 335; unselected bits retain their values.",
+      "rtl": "rtl/ram_2x336.sv:16-688",
+      "legal_preparation": "First write both addresses separately with a full mask to establish independent known mirror values for all bits.",
+      "domain": "All addresses are 0 or 1; controls, data, and masks are two-state and stable before and after the write edge. There is no reset. Values of storage bits that have never been written are unspecified; do not compare these bits. The all-X value when R0_en=0 is an explicitly defined four-state output and must be checked bit by bit.",
+      "stimulus": "Apply all-zero, all-one, alternating, single-bit 0/335, and walking masks for every bit to each of the two addresses; random data and masks; change data between write edges to confirm that no write is committed.",
+      "observable_ports": [
+        "W0_clk",
+        "W0_en",
+        "W0_addr",
+        "W0_data",
+        "W0_mask",
+        "R0_addr",
+        "R0_en",
+        "R0_data"
+      ],
+      "sampling": "When combinational logic is stable after the write edge; for a read of the same address, check the new value after the update.",
+      "independent_oracle": "solution/reference/model/model.sv"
+    },
+    {
+      "requirement_id": "R-dv-007-002",
+      "obligation": "When W0_en=0 or W0_mask is all zeros, storage is not modified; writing one word does not change the other word.",
+      "rtl": "rtl/ram_2x336.sv:15-688",
+      "legal_preparation": "With a full mask, write 0 to address 0 and all ones to address 1.",
+      "domain": "All addresses are 0 or 1; controls, data, and masks are two-state and stable before and after the write edge. There is no reset. Values of storage bits that have never been written are unspecified; do not compare these bits. The all-X value when R0_en=0 is an explicitly defined four-state output and must be checked bit by bit.",
+      "stimulus": "Interleave disabled writes and zero-mask writes at the two addresses, invert the data and read back both words; then update only one address.",
+      "observable_ports": [
+        "W0_clk",
+        "W0_en",
+        "W0_addr",
+        "W0_mask",
+        "R0_addr",
+        "R0_en",
+        "R0_data"
+      ],
+      "sampling": "After each write edge, read both addresses separately through combinational reads.",
+      "independent_oracle": "solution/reference/model/model.sv"
+    },
+    {
+      "requirement_id": "R-dv-007-003",
+      "obligation": "When R0_en=1, R0_data combinationally equals the word at the current R0_addr; after the read address changes or a write to the same address completes, it updates without requiring an R0_clk edge. Any change in R0_clk does not alter storage or read semantics.",
+      "rtl": "rtl/ram_2x336.sv:690",
+      "legal_preparation": "Initialize the two addresses with different patterns; R0_clk may be stopped at 0 or 1.",
+      "domain": "All addresses are 0 or 1; controls, data, and masks are two-state and stable before and after the write edge. There is no reset. Values of storage bits that have never been written are unspecified; do not compare these bits. The all-X value when R0_en=0 is an explicitly defined four-state output and must be checked bit by bit.",
+      "stimulus": "Stop R0_clk and toggle the read address and enable; perform reads after writes with the two clocks out of phase and with coincident edges; repeat the checks while toggling only R0_clk.",
+      "observable_ports": [
+        "R0_addr",
+        "R0_en",
+        "R0_clk",
+        "R0_data",
+        "W0_clk",
+        "W0_addr",
+        "W0_en",
+        "W0_data",
+        "W0_mask"
+      ],
+      "sampling": "Sample when combinational logic is stable after read input changes and after the write NBA completes, without waiting for the read clock.",
+      "independent_oracle": "solution/reference/model/model.sv"
+    },
+    {
+      "requirement_id": "R-dv-007-004",
+      "obligation": "When R0_en=0, all 336 bits of R0_data are X; it neither retains the previous data nor becomes all zeros. After re-enabling, it reads back storage.",
+      "rtl": "rtl/ram_2x336.sv:690",
+      "legal_preparation": "Initialize two words, first reading zero and nonzero patterns, respectively.",
+      "domain": "All addresses are 0 or 1; controls, data, and masks are two-state and stable before and after the write edge. There is no reset. Values of storage bits that have never been written are unspecified; do not compare these bits. The all-X value when R0_en=0 is an explicitly defined four-state output and must be checked bit by bit.",
+      "stimulus": "For both addresses, drive read enable through 1→0→1; while reads are disabled, change the address, write known patterns, and toggle R0_clk.",
+      "observable_ports": [
+        "R0_en",
+        "R0_addr",
+        "R0_data"
+      ],
+      "sampling": "After combinational logic stabilizes following each enable change, check for all X bit by bit using case equality when reading is disabled.",
+      "independent_oracle": "solution/reference/model/model.sv"
+    }
+  ]
+}

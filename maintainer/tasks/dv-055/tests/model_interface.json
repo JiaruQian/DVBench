@@ -1,0 +1,105 @@
+{
+  "validation": {
+    "report": "../reports/fft-reference-validation.json",
+    "method": "VCS U-2023.03-SP2 reference UVM compared DUT output against the independent port-level dvbench_model",
+    "seeds": [
+      1,
+      7,
+      42
+    ],
+    "checked_frames_per_seed": 4,
+    "checked_addresses_per_frame": 32,
+    "scope": "complete frame write, stable for 20 rising edges, enabled synchronous reads",
+    "not_covered": [
+      "partial frame outputs",
+      "reads before the first complete frame",
+      "mid-frame reset",
+      "unsettled frame boundary"
+    ]
+  },
+  "interface": {
+    "top": "fft_wrapper",
+    "parameters": {
+      "DIVISOR": 5,
+      "N": 16,
+      "Q": 8,
+      "ADDR_WIDTH": 5,
+      "DATA_WIDTH": 16,
+      "DEPTH": 32
+    },
+    "ports": [
+      {
+        "name": "clk",
+        "direction": "input",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "rst",
+        "direction": "input",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "m_addr",
+        "direction": "input",
+        "width": 5,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 4,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_data",
+        "direction": "input",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "m_we",
+        "direction": "input",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "s_addr",
+        "direction": "input",
+        "width": 5,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 4,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "s_re",
+        "direction": "input",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "s_data",
+        "direction": "output",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      }
+    ]
+  }
+}

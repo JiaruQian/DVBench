@@ -1,0 +1,15 @@
+### T-PM-01
+
+feature_ids: ["F-PM-01"]
+
+requirement_ids: ["R-PM-01"]
+
+stimulus: Start from the initial count=0 specified by the specification; first hold pulse=0 across two rising edges, then set pulse=1 on a falling edge, spanning only one rising edge, and set it to 0 on the next falling edge and hold for two rising edges.
+
+expected: For the first two edges, count=0; after the single pulse-active edge, count=1; it then remains 1 for the following two edges.
+
+checker: An independent 8-bit variable expected is initially 0, and (expected+pulse) modulo 256 is computed on each rising edge using only the input pulse history; read DUT count after the register update has stabilized on each edge and compare using four-state inequality; any unknown or mismatch produces UVM_ERROR, and assert that the number of comparisons is 5.
+
+implementation_id: CHK-PM-01
+
+source: tb/checker.sv:check_pulse

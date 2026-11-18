@@ -1,0 +1,60 @@
+{
+  "tests": [
+    {
+      "test_id": "T-1",
+      "feature_ids": [
+        "F-1"
+      ],
+      "requirement_ids": [
+        "R-dv-007-001"
+      ],
+      "stimulus": "First write both addresses separately with full masks to establish an independent known mirror of all bits. Apply all-zero, all-one, alternating, single-bit 0/335, and walking masks over every bit to both addresses separately; use random data and masks; change data between write edges to confirm that it is not committed.",
+      "expected": "On the rising edge of W0_clk, when W0_en=1 and bit i of W0_mask is 1, bit i at address W0_addr is overwritten by the corresponding bit of W0_data, with i ranging from 0 to 335; unselected bits retain their values.",
+      "checker": "Predict with an independent input-history model, without reading actual DUT outputs. When combinational logic is stable after the write edge; for a read of the same address, check the new value after the update. Compare actual and expected bit by bit using four-state comparisons, report UVM_ERROR on a mismatch, record the comparison count, and trigger this scenario's check at least once.",
+      "implementation_id": "V-1",
+      "source": "reference_pkg.sv:native_scoreboard.write"
+    },
+    {
+      "test_id": "T-2",
+      "feature_ids": [
+        "F-2"
+      ],
+      "requirement_ids": [
+        "R-dv-007-002"
+      ],
+      "stimulus": "Using full masks, write 0 to address 0 and all ones to address 1. Interleave disabled writes and zero-mask writes at both addresses, invert the data and then read back both words; then update only one address.",
+      "expected": "When W0_en=0 or W0_mask is all zeros, storage is not modified; writing one word does not change the other word.",
+      "checker": "Predict with an independent input-history model, without reading actual DUT outputs. After each write edge, read both addresses separately through combinational reads. Compare actual and expected bit by bit using four-state comparisons, report UVM_ERROR on a mismatch, record the comparison count, and trigger this scenario's check at least once.",
+      "implementation_id": "V-2",
+      "source": "reference_pkg.sv:native_scoreboard.write"
+    },
+    {
+      "test_id": "T-3",
+      "feature_ids": [
+        "F-3"
+      ],
+      "requirement_ids": [
+        "R-dv-007-003"
+      ],
+      "stimulus": "Initialize both addresses with different patterns; R0_clk may be stopped at 0 or 1. Stop R0_clk and switch the read address and enable; perform reads after writes with the two clocks out of phase and with coincident edges; toggle only R0_clk and repeat the checks.",
+      "expected": "When R0_en=1, R0_data combinationally equals the word at the current R0_addr; after the read address changes or a write to the same address completes, it updates without requiring an R0_clk edge. Any change in R0_clk does not alter storage or read semantics.",
+      "checker": "Predict with an independent input-history model, without reading actual DUT outputs. Sample when combinational logic is stable after read input changes and after the write NBA completes, without waiting for the read clock. Compare actual and expected bit by bit using four-state comparisons, report UVM_ERROR on a mismatch, record the comparison count, and trigger this scenario's check at least once.",
+      "implementation_id": "V-3",
+      "source": "reference_pkg.sv:native_scoreboard.write"
+    },
+    {
+      "test_id": "T-4",
+      "feature_ids": [
+        "F-4"
+      ],
+      "requirement_ids": [
+        "R-dv-007-004"
+      ],
+      "stimulus": "Initialize two words, first reading zero and nonzero patterns, respectively. For both addresses, transition the read enable 1→0→1; while reads are disabled, change the address, write known patterns, and toggle R0_clk.",
+      "expected": "When R0_en=0, all 336 bits of R0_data are X; it neither retains the previous data nor becomes all zeros. After re-enabling, it reads back storage.",
+      "checker": "Predict using an independent input-history model, without reading the DUT's actual output. After combinational settling following each enable change, use bitwise case equality to check for all X while reads are disabled. Use bitwise four-state comparison of actual and expected; report UVM_ERROR on a mismatch, record the comparison count, and trigger this scenario's check at least once.",
+      "implementation_id": "V-4",
+      "source": "reference_pkg.sv:native_scoreboard.write"
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "task_id": "dv-090",
+  "task_mode": "A",
+  "dut_top": "Controller",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "ALU32Bit.v",
+    "BranchPredictor.v",
+    "Controller.v",
+    "DataMemory.v",
+    "EX_MEM_Reg.v",
+    "ForwardingControl.v",
+    "HazardDetector.v",
+    "ID_EX_REG.v",
+    "InstructionFetchUnit.v",
+    "InstructionMemory.v",
+    "MEM_WB_REG.v",
+    "PCAdder.v",
+    "ProgramCounter.v",
+    "RegisterFile.v",
+    "if_id_reg.v",
+    "mux_16to1_32bit.v",
+    "mux_2to1_1bit.v",
+    "mux_2to1_32bit.v",
+    "mux_4to1_32bit.v",
+    "mux_4to1_5bit.v",
+    "sign_extension.v"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "submission_top": "dvbench_top",
+  "reference_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_test": "dvbench_test",
+  "model_interface": {
+    "top": "dvbench_model",
+    "ports": [
+      {
+        "name": "Clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "Reset",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "input_data",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "result_data",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "result_valid",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {}
+  },
+  "model_contract_policy": "native-module-v1",
+  "coverage": {
+    "scope": "dvbench_top.dut",
+    "metrics": [
+      "line",
+      "cond",
+      "branch",
+      "tgl"
+    ],
+    "line_contassign": true
+  },
+  "fixed_parameters": {
+    "PROGRAM_FILE": "code.txt"
+  },
+  "data_files": [
+    "code.txt",
+    "test_data.txt"
+  ],
+  "mutants": [
+    "m1",
+    "m10",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9"
+  ],
+  "rtl_sources": [
+    "ALU32Bit.v",
+    "BranchPredictor.v",
+    "Controller.v",
+    "DataMemory.v",
+    "EX_MEM_Reg.v",
+    "ForwardingControl.v",
+    "HazardDetector.v",
+    "ID_EX_REG.v",
+    "InstructionFetchUnit.v",
+    "InstructionMemory.v",
+    "MEM_WB_REG.v",
+    "PCAdder.v",
+    "ProgramCounter.v",
+    "RegisterFile.v",
+    "if_id_reg.v",
+    "mux_16to1_32bit.v",
+    "mux_2to1_1bit.v",
+    "mux_2to1_32bit.v",
+    "mux_4to1_32bit.v",
+    "mux_4to1_5bit.v",
+    "sign_extension.v"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "ALU32Bit.v",
+    "BranchPredictor.v",
+    "Controller.v",
+    "DataMemory.v",
+    "EX_MEM_Reg.v",
+    "ForwardingControl.v",
+    "HazardDetector.v",
+    "ID_EX_REG.v",
+    "InstructionFetchUnit.v",
+    "InstructionMemory.v",
+    "MEM_WB_REG.v",
+    "PCAdder.v",
+    "ProgramCounter.v",
+    "RegisterFile.v",
+    "if_id_reg.v",
+    "mux_16to1_32bit.v",
+    "mux_2to1_1bit.v",
+    "mux_2to1_32bit.v",
+    "mux_4to1_32bit.v",
+    "mux_4to1_5bit.v",
+    "sign_extension.v"
+  ]
+}

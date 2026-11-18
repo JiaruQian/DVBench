@@ -1,0 +1,40 @@
+{
+  "dut_top": "rv32i_single_cycle_core",
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "self_contained": true,
+    "parameters": {}
+  },
+  "features": {
+    "json": "flow/features.json",
+    "markdown": "flow/features.md"
+  },
+  "testplan": {
+    "json": "flow/testplan.json",
+    "markdown": "flow/testplan.md"
+  },
+  "tb_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "filelist": "sources.f",
+  "framework": "uvm-1.2",
+  "task_id": "dv-082",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

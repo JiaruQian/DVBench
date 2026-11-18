@@ -1,0 +1,263 @@
+{
+  "submission_root": "submission",
+  "sources": "sources.f",
+  "top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "self_contained": true,
+    "same_file_in_D_and_scoreboard": true,
+    "interface": {
+      "top": "dvbench_model",
+      "file": "model/model.sv",
+      "ports": [
+        {
+          "name": "aclk",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "aresetn",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "axi_m_araddr",
+          "direction": "Out",
+          "width": 32,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 31,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "axi_m_arburst",
+          "direction": "Out",
+          "width": 2,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 1,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "axi_m_arid",
+          "direction": "Out",
+          "width": 4,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 3,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "axi_m_arlen",
+          "direction": "Out",
+          "width": 8,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 7,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "axi_m_arready",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "axi_m_arsize",
+          "direction": "Out",
+          "width": 3,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 2,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "axi_m_arvalid",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "axi_m_rdata",
+          "direction": "In",
+          "width": 32,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 31,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "axi_m_rid",
+          "direction": "In",
+          "width": 4,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 3,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "axi_m_rlast",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "axi_m_rready",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "axi_m_rresp",
+          "direction": "In",
+          "width": 2,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 1,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "axi_m_rvalid",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "cmd_address",
+          "direction": "In",
+          "width": 32,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 31,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "cmd_bytes",
+          "direction": "In",
+          "width": 32,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 31,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "cmd_ready",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "cmd_valid",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "dout_tdata",
+          "direction": "Out",
+          "width": 32,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 31,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "dout_tkeep",
+          "direction": "Out",
+          "width": 4,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 3,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "dout_tlast",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "dout_tready",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "dout_tvalid",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        }
+      ],
+      "parameters": {
+        "ADDRESS_BITS": "32",
+        "LENGTH_BITS": "32",
+        "MAX_BURST": "256",
+        "STREAM_BIG_ENDIAN": "32'd1414681925",
+        "MEM_BIG_ENDIAN": "32'd1414681925"
+      }
+    }
+  },
+  "dut_top": "axi_rdma",
+  "submission_format": "public/submission_format.md",
+  "json_is_complete_fact_carrier": true,
+  "task_id": "dv-075",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

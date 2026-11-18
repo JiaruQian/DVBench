@@ -1,0 +1,641 @@
+{
+  "ports": [
+    {
+      "name": "clock",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_bpdupdate_bits_br_mask",
+      "direction": "Out",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_bpdupdate_bits_cfi_idx_bits",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_bpdupdate_bits_cfi_idx_valid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_bpdupdate_bits_cfi_is_br",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_bpdupdate_bits_cfi_is_jal",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_bpdupdate_bits_cfi_mispredicted",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_bpdupdate_bits_cfi_taken",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_bpdupdate_bits_ghist_new_saw_branch_not_taken",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_bpdupdate_bits_ghist_new_saw_branch_taken",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_bpdupdate_bits_ghist_old_history",
+      "direction": "Out",
+      "width": 64,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 63,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_bpdupdate_bits_is_mispredict_update",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_bpdupdate_bits_is_repair_update",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_bpdupdate_bits_meta_0",
+      "direction": "Out",
+      "width": 120,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 119,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_bpdupdate_bits_meta_1",
+      "direction": "Out",
+      "width": 120,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 119,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_bpdupdate_bits_pc",
+      "direction": "Out",
+      "width": 40,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 39,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_bpdupdate_bits_target",
+      "direction": "Out",
+      "width": 40,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 39,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_bpdupdate_valid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_brupdate_b2_mispredict",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_brupdate_b2_taken",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_brupdate_b2_uop_ftq_idx",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_brupdate_b2_uop_pc_lob",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_deq_bits",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_deq_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_enq_bits_bpd_meta_0",
+      "direction": "In",
+      "width": 120,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 119,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_enq_bits_bpd_meta_1",
+      "direction": "In",
+      "width": 120,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 119,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_enq_bits_br_mask",
+      "direction": "In",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_enq_bits_cfi_idx_bits",
+      "direction": "In",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_enq_bits_cfi_idx_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_enq_bits_cfi_is_call",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_enq_bits_cfi_is_ret",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_enq_bits_cfi_type",
+      "direction": "In",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_enq_bits_ghist_current_saw_branch_not_taken",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_enq_bits_ghist_new_saw_branch_not_taken",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_enq_bits_ghist_new_saw_branch_taken",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_enq_bits_ghist_old_history",
+      "direction": "In",
+      "width": 64,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 63,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_enq_bits_ghist_ras_idx",
+      "direction": "In",
+      "width": 5,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 4,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_enq_bits_mask",
+      "direction": "In",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_enq_bits_pc",
+      "direction": "In",
+      "width": 40,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 39,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_enq_bits_ras_top",
+      "direction": "In",
+      "width": 40,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 39,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_enq_idx",
+      "direction": "Out",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_enq_ready",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_enq_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_get_ftq_pc_0_com_pc",
+      "direction": "Out",
+      "width": 40,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 39,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_get_ftq_pc_0_entry_cfi_idx_bits",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_get_ftq_pc_0_entry_cfi_idx_valid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_get_ftq_pc_0_entry_ras_idx",
+      "direction": "Out",
+      "width": 5,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 4,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_get_ftq_pc_0_entry_start_bank",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_get_ftq_pc_0_ftq_idx",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_get_ftq_pc_0_next_pc",
+      "direction": "Out",
+      "width": 40,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 39,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_get_ftq_pc_0_next_val",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_get_ftq_pc_0_pc",
+      "direction": "Out",
+      "width": 40,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 39,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_get_ftq_pc_1_entry_br_mask",
+      "direction": "Out",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_get_ftq_pc_1_entry_cfi_idx_bits",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_get_ftq_pc_1_entry_cfi_is_call",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_get_ftq_pc_1_entry_cfi_is_ret",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_get_ftq_pc_1_entry_start_bank",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_get_ftq_pc_1_ftq_idx",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_get_ftq_pc_1_ghist_current_saw_branch_not_taken",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_get_ftq_pc_1_ghist_new_saw_branch_not_taken",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_get_ftq_pc_1_ghist_new_saw_branch_taken",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_get_ftq_pc_1_ghist_old_history",
+      "direction": "Out",
+      "width": 64,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 63,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_get_ftq_pc_1_ghist_ras_idx",
+      "direction": "Out",
+      "width": 5,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 4,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_get_ftq_pc_1_pc",
+      "direction": "Out",
+      "width": 40,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 39,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_ras_update",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "io_ras_update_idx",
+      "direction": "Out",
+      "width": 5,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 4,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_ras_update_pc",
+      "direction": "Out",
+      "width": 40,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 39,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_redirect_bits",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "io_redirect_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "reset",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {}
+}

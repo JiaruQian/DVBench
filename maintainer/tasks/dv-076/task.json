@@ -1,0 +1,136 @@
+{
+  "task_id": "dv-076",
+  "dut_top": "pipelined_riscv_core",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "adder.v",
+    "alu.v",
+    "branch_unit.v",
+    "control_unit.v",
+    "data_mem.v",
+    "datapath.v",
+    "hazard_ctrl_unit.v",
+    "id_stage.v",
+    "ie_stage.v",
+    "if_stage.v",
+    "im_stage.v",
+    "instr_mem.v",
+    "iwb_stage.v",
+    "pc_reg.v",
+    "pipelined_riscv_core.v",
+    "regfile.v",
+    "sign_extend.v"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "i_clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "i_rstn",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "input_data",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "result_data",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "result_valid",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {
+      "WIDTH": "32",
+      "PROGRAM_FILE": "96'h70726f6772616d332e686578"
+    }
+  },
+  "model_contract_policy": "native-module-v1",
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "mutants": [
+    "m1",
+    "m10",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9"
+  ],
+  "rtl_sources": [
+    "adder.v",
+    "alu.v",
+    "branch_unit.v",
+    "control_unit.v",
+    "data_mem.v",
+    "datapath.v",
+    "hazard_ctrl_unit.v",
+    "id_stage.v",
+    "ie_stage.v",
+    "if_stage.v",
+    "im_stage.v",
+    "instr_mem.v",
+    "iwb_stage.v",
+    "pc_reg.v",
+    "pipelined_riscv_core.v",
+    "regfile.v",
+    "sign_extend.v"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "adder.v",
+    "alu.v",
+    "branch_unit.v",
+    "control_unit.v",
+    "data_mem.v",
+    "datapath.v",
+    "hazard_ctrl_unit.v",
+    "id_stage.v",
+    "ie_stage.v",
+    "if_stage.v",
+    "im_stage.v",
+    "instr_mem.v",
+    "iwb_stage.v",
+    "pc_reg.v",
+    "pipelined_riscv_core.v",
+    "regfile.v",
+    "sign_extend.v"
+  ]
+}

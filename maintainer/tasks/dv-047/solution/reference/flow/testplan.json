@@ -1,0 +1,88 @@
+{
+  "tests": [
+    {
+      "test_id": "T1",
+      "feature_ids": [
+        "F1"
+      ],
+      "requirement_ids": [
+        "R-dv-047-001"
+      ],
+      "stimulus": "First initialize history with a valid first round; test modes 10/12/14 and all selection codes 0..63, using their respective valid key indices for the latter. Use seed1/7/42; drive when clk=0, wait 2ns to observe the pre-edge combinational output, raise clk after 1ns, wait another 2ns for post-edge observation, and lower clk after 1ns. Use 12 groups for each of the three main modes; at least one group for each selection code. Add perturbations of ignored low-order bits and data changes without rising edges.",
+      "expected": "All inputs are two-state values. counter and maxRound can both take values 0..63; the module has no internal round counter or handshake. maxRound=10 uses AES-128 key expansion of Key[255:128], =12 uses AES-192 expansion of Key[255:64], and all other values use AES-256 expansion of the full Key. Let (Nr,Nk,base)=(10,4,10), (12,6,12), and (14,8,14), respectively. The current round key is round Nr-(counter-base) of the expansion (0 is the original first 128-bit word group). The valid counter range for key selection is base..base+Nr. Key is a live input; changes between edges also affect the combinational output, and it is not latched in the first round. Unused low-order Key bits have no effect on the selected expansion. Compute expected values from input history and independent algorithmic AES key expansion and inverse round operations; never read actual DUT outputs to generate expected values.",
+      "checker": "Within the defined window, the monitor separately samples pre-edge and post-edge out and the predictions from the same dvbench_model; the scoreboard compares actual and expected using four-state inequality, and also reports an error if an expected value contains unknowns. In out-of-bounds data windows, skip only value comparisons while still maintaining state according to input history; the count for each test event and the total comparison count must be nonzero. Report mismatches as UVM_ERROR; complete after normal draining.",
+      "implementation_id": "V1",
+      "source": "tb/test_pkg.sv:aes_driver.run_phase / tb/driver_tasks.svh:exercise / aes_scoreboard.write"
+    },
+    {
+      "test_id": "T2",
+      "feature_ids": [
+        "F2"
+      ],
+      "requirement_ids": [
+        "R-dv-047-002"
+      ],
+      "stimulus": "Start from any old state; in a first round with a valid index, set in to 0, all ones, and random asymmetric blocks, change in between edges, and then save on a rising edge. Use seed1/7/42; drive when clk=0, wait 2ns to observe the pre-edge combinational output, raise clk after 1ns, wait another 2ns for post-edge observation, and lower clk after 1ns. Use 12 groups for each of the three main modes; at least one group for each selection code. Add perturbations of ignored low-order bits and data changes without rising edges.",
+      "expected": "When counter=maxRound, out directly equals in, without waiting for a clock and independently of the old state; this condition takes precedence over other output selections. The datapath for this cycle also uses in as its state source; other cycles use the inter-round state S. After inputs change, wait for combinational settling before observing. The module has no reset, and initial S is unknown; S must first be established by a first round with a valid key index and state updates enabled before relying on historical state. The first round may restart without first completing the old sequence. Compute expected values from input history and independent algorithmic AES key expansion and inverse round operations; never read actual DUT outputs to generate expected values.",
+      "checker": "Within the defined window, the monitor separately samples pre-edge and post-edge out and the predictions from the same dvbench_model; the scoreboard compares actual and expected using four-state inequality, and also reports an error if an expected value contains unknowns. In out-of-bounds data windows, skip only value comparisons while still maintaining state according to input history; the count for each test event and the total comparison count must be nonzero. Report mismatches as UVM_ERROR; complete after normal draining.",
+      "implementation_id": "V2",
+      "source": "tb/test_pkg.sv:aes_driver.run_phase / tb/driver_tasks.svh:exercise / aes_scoreboard.write"
+    },
+    {
+      "test_id": "T3",
+      "feature_ids": [
+        "F3"
+      ],
+      "requirement_ids": [
+        "R-dv-047-003"
+      ],
+      "stimulus": "Establish S with a valid first round; drive consecutive rounds, repeat the last round, jump back to an intermediate round, dwell after the final round, and return to a valid index under conditions that do not update state. Cover 32 and other wraparound thresholds. Use seed1/7/42; drive when clk=0, wait 2ns to observe the pre-edge combinational output, raise clk after 1ns, wait another 2ns for post-edge observation, and lower clk after 1ns. Use 12 groups for each of the three main modes; at least one group for each selection code. Add perturbations of ignored low-order bits and data changes without rising edges.",
+      "expected": "On each rising edge of clk, compute the next state from the pre-edge inputs and old S; save that next state when counter < ((2*maxRound) mod 64), otherwise hold S. Neither falling edges nor input changes between edges save state. The six-bit addition of maxRound wraps around; for example, at 32 the threshold is 0. Holding state does not mean holding out: the combinational output is still determined by the current inputs and key. counter may repeat, jump, or proceed in reverse order; behavior is interpreted according to actual history, not implicit automatic incrementing. Compute expected values from input history and independent algorithmic AES key expansion and inverse round operations; never read actual DUT outputs to generate expected values.",
+      "checker": "Within the defined window, the monitor separately samples pre-edge and post-edge out and the predictions from the same dvbench_model; the scoreboard compares actual and expected using four-state inequality, and also reports an error if an expected value contains unknowns. In out-of-bounds data windows, skip only value comparisons while still maintaining state according to input history; the count for each test event and the total comparison count must be nonzero. Report mismatches as UVM_ERROR; complete after normal draining.",
+      "implementation_id": "V3",
+      "source": "tb/test_pkg.sv:aes_driver.run_phase / tb/driver_tasks.svh:exercise / aes_scoreboard.write"
+    },
+    {
+      "test_id": "T4",
+      "feature_ids": [
+        "F4"
+      ],
+      "requirement_ids": [
+        "R-dv-047-004"
+      ],
+      "stimulus": "Starting from a valid first round, drive the first round, intermediate rounds, 2m-1, 2m, and the hold window one by one, then return to a valid index. Use seed1/7/42; drive when clk=0, wait 2ns to observe the pre-edge combinational output, raise clk after 1ns, wait another 2ns for post-edge observation, and lower clk after 1ns. Use 12 groups for each of the three main modes; at least one group for each selection code. Add perturbations of ignored low-order bits and data changes without rising edges.",
+      "expected": "Let A be the 128-bit result of bitwise XOR of the current state source with the current round key, and M be the AES inverse MixColumns result of A. When counter=maxRound, out=in; otherwise, when counter=((2*maxRound-1) mod 64), out=M; in all other cases, out=A. The final key index counter=2*maxRound in the conventional 10/12/14 modes still outputs A and no longer saves S. There is no additional completion pulse or output register. Compute expected values from input history and independent algorithmic AES key expansion and inverse round operations; never read actual DUT outputs to generate expected values.",
+      "checker": "Within the defined window, the monitor separately samples pre-edge and post-edge out and the predictions from the same dvbench_model; the scoreboard compares actual and expected using four-state inequality, and also reports an error if an expected value contains unknowns. In out-of-bounds data windows, skip only value comparisons while still maintaining state according to input history; the count for each test event and the total comparison count must be nonzero. Report mismatches as UVM_ERROR; complete after normal draining.",
+      "implementation_id": "V4",
+      "source": "tb/test_pkg.sv:aes_driver.run_phase / tb/driver_tasks.svh:exercise / aes_scoreboard.write"
+    },
+    {
+      "test_id": "T5",
+      "feature_ids": [
+        "F5"
+      ],
+      "requirement_ids": [
+        "R-dv-047-005"
+      ],
+      "stimulus": "For each of the three key widths, use 0, all-one, and asymmetric random keys; cover every valid index and change the live key and ignored low-order bits. Use seed1/7/42; drive when clk=0, wait 2ns to observe the pre-edge combinational output, raise clk after 1ns, wait another 2ns for post-edge observation, and lower clk after 1ns. Use 12 groups for each of the three main modes; at least one group for each selection code. Add perturbations of ignored low-order bits and data changes without rising edges.",
+      "expected": "Block bytes are numbered b0..b15 starting from the most significant byte, with AES column-major layout b[4*c+r], r,c=0..3. The initial 32-bit key words W[0..Nk-1] are arranged from the high-order to low-order bits of the selected key. Subsequent words are W[i]=W[i-Nk] XOR temp; temp initially equals W[i-1]. When i mod Nk=0, apply RotWord (rotate left by 1 byte), then SubWord, then XOR with Rcon[i/Nk]; when Nk=8 and i mod Nk=4, apply only SubWord. Rcon starts at 01 and advances by multiplication by 02 in GF(256), and is placed in the most significant byte of the word. The round q key consists of W[4q], W[4q+1], W[4q+2], W[4q+3] in high-to-low order. SubWord uses the standard AES S-box: take the inverse in GF(256) (0 maps to 0), then apply the AES affine transformation with constant 63; the finite-field modulus polynomial is x^8+x^4+x^3+x+1. Compute expected values from input history and independent algorithmic AES key expansion and inverse round operations; never read actual DUT outputs to generate expected values.",
+      "checker": "Within the defined window, the monitor separately samples pre-edge and post-edge out and the predictions from the same dvbench_model; the scoreboard compares actual and expected using four-state inequality, and also reports an error if an expected value contains unknowns. In out-of-bounds data windows, skip only value comparisons while still maintaining state according to input history; the count for each test event and the total comparison count must be nonzero. Report mismatches as UVM_ERROR; complete after normal draining.",
+      "implementation_id": "V5",
+      "source": "tb/test_pkg.sv:aes_driver.run_phase / tb/driver_tasks.svh:exercise / aes_scoreboard.write"
+    },
+    {
+      "test_id": "T6",
+      "feature_ids": [
+        "F6"
+      ],
+      "requirement_ids": [
+        "R-dv-047-006"
+      ],
+      "stimulus": "Start with a known first-round history, cover every inverse round, asymmetric blocks, and random blocks, and pass through saving edges in both first and non-first rounds. Use seed1/7/42; drive when clk=0, wait 2ns to observe the pre-edge combinational output, raise clk after 1ns, wait another 2ns for post-edge observation, and lower clk after 1ns. Use 12 groups for each of the three main modes; at least one group for each selection code. Add perturbations of ignored low-order bits and data changes without rising edges.",
+      "expected": "Inverse MixColumns multiplies the four bytes of each column by the matrix [0e,0b,0d,09;09,0e,0b,0d;0d,09,0e,0b;0b,0d,09,0e], with XOR as addition and multiplication in the same GF(256). Inverse ShiftRows takes the input at ((c-r) mod 4,r) for output position (column c,row r), after which each byte uses the standard AES inverse S-box. When pre-edge counter=maxRound, the next state is InvSubBytes(InvShiftRows(A)); otherwise it is InvSubBytes(InvShiftRows(M)). This task is not an API that completes decryption in one call, but a stateful interface with externally driven rounds. When the key index is out of bounds, data results are unspecified except for the first-round out=in bypass; if saving is triggered within this window, state must subsequently be reestablished with a valid first round. State holding can still be verified in the out-of-bounds window, and a valid index can be revisited without triggering saving to check holding. Initially unknown data is not treated as a known value for mismatch detection. Compute expected values from input history and independent algorithmic AES key expansion and inverse round operations; never read actual DUT outputs to generate expected values.",
+      "checker": "Within the defined window, the monitor separately samples pre-edge and post-edge out and the predictions from the same dvbench_model; the scoreboard compares actual and expected using four-state inequality, and also reports an error if an expected value contains unknowns. In out-of-bounds data windows, skip only value comparisons while still maintaining state according to input history; the count for each test event and the total comparison count must be nonzero. Report mismatches as UVM_ERROR; complete after normal draining.",
+      "implementation_id": "V6",
+      "source": "tb/test_pkg.sv:aes_driver.run_phase / tb/driver_tasks.svh:exercise / aes_scoreboard.write"
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "tests": [
+    {
+      "test_id": "T1",
+      "feature_ids": [
+        "F1"
+      ],
+      "requirement_ids": [
+        "R-dv-017-sram-arbiter-001"
+      ],
+      "stimulus": "The three configurations run in parallel. After clean_reset, drive low-/high-index single-port requests, two-port contention, and continuous writes from all ports for 3*N cycles, then run 1200 random cycles, replacing requests and payload every N cycles; sample #1 after driving at each negedge.",
+      "expected": "sram_req_o combinationally equals the OR of all bits of req_i. When there are no requests, gnt_o is all zeros; when there are requests, exactly one bit is set and its corresponding request is valid. After reset, the lowest index has priority. After each rising edge of clk_i with a request present, the next selection first considers requests at higher indices following the current winner; if there are none, it wraps around to the lowest index. Idle edges retain the next priority. The read/write type does not change arbitration priority. There is no SRAM ready or backpressure; one command is issued on every rising edge with a request present. Requests may change between acceptance edges, and remaining high allows commands to be formed repeatedly on subsequent edges.",
+      "checker": "sram_monitor.run_phase captures actual and the independent dvbench_model output #1 after driving at negedge; sram_scoreboard.write uses !== to compare grant/request/responsevalid field by field, compares addr/write/wdata/wmask for valid commands, and compares all data/error broadcasts on every cycle. The model uses only native inputs and their history. Mismatches produce UVM_ERROR, with at most 30 error messages but a complete server error count; check_phase requires samples>=1200, nonzero command and return counts, hits for a first-cycle read and full pop/push, and final draining.",
+      "implementation_id": "sram_sequence.body + sram_scoreboard.write + sram_scoreboard.check_phase",
+      "source": "tb/sram_uvm.sv"
+    },
+    {
+      "test_id": "T2",
+      "feature_ids": [
+        "F2"
+      ],
+      "requirement_ids": [
+        "R-dv-017-sram-arbiter-002"
+      ],
+      "stimulus": "Sequentially drive port0 with addresses 0/fff, data 0/all ones, and masks 0/all ones, then use addresses 123/321, 55AA33CC/CC33AA55, and 00FF0FF0/FF00F00F; the read/write types and payloads differ for two-port contention. Execute in all three configurations.",
+      "expected": "During a valid command window in which sram_req_o is 1, sram_addr_o, sram_write_o, and sram_wdata_o equal the granted port's req_addr_i, req_write_i, and req_wdata_i, respectively. When EnMask=1, sram_wmask_o equals the granted port's req_wmask_i; when EnMask=0, sram_wmask_o for a valid command is all ones. When there is no request, the command payload does not belong to a valid command, and no functional requirements apply to these payload fields.",
+      "checker": "sram_monitor.run_phase captures actual and the independent dvbench_model output #1 after driving at negedge; sram_scoreboard.write uses !== to compare grant/request/responsevalid field by field, compares addr/write/wdata/wmask for valid commands, and compares all data/error broadcasts on every cycle. The model uses only native inputs and their history. Mismatches produce UVM_ERROR, with at most 30 error messages but a complete server error count; check_phase requires samples>=1200, nonzero command and return counts, hits for a first-cycle read and full pop/push, and final draining.",
+      "implementation_id": "sram_sequence.body + sram_scoreboard.write + sram_scoreboard.check_phase",
+      "source": "tb/sram_uvm.sv"
+    },
+    {
+      "test_id": "T3",
+      "feature_ids": [
+        "F3"
+      ],
+      "requirement_ids": [
+        "R-dv-017-sram-arbiter-003"
+      ],
+      "stimulus": "After reset warm-up, issue reads from ports 0 and 1 in sequence, return distinct data consecutively, and then provide an additional return with an empty queue; also, after reading A on the first cycle after deassertion and B on the next cycle, provide returns and check that the first owner is B and valid is subsequently 0. The 1200 random cycles provide a new read and a return in the same cycle with an empty queue.",
+      "expected": "Only read commands retain the granted port as an outstanding read owner; write commands do not retain an owner. Except for the first edge after reset deassertion and windows in which capacity is full, read owners are added to an ordered queue on the rising edge of clk_i. When the queue is nonempty and sram_rvalid_i is 1, rsp_rvalid_o combinationally equals the one-hot vector of the oldest owner, and that owner is removed on that rising edge; when sram_rvalid_i is 0, rsp_rvalid_o is all zeros. An empty queue does not produce a port valid even if sram_rvalid_i is 1. Issuing a new read and receiving a return in the same cycle with an empty queue does not bypass the new owner; the new owner can become the queue head only after the acceptance edge.",
+      "checker": "sram_monitor.run_phase captures actual and the independent dvbench_model output #1 after driving at negedge; sram_scoreboard.write uses !== to compare grant/request/responsevalid field by field, compares addr/write/wdata/wmask for valid commands, and compares all data/error broadcasts on every cycle. The model uses only native inputs and their history. Mismatches produce UVM_ERROR, with at most 30 error messages but a complete server error count; check_phase requires samples>=1200, nonzero command and return counts, hits for a first-cycle read and full pop/push, and final draining.",
+      "implementation_id": "sram_sequence.body + sram_scoreboard.write + sram_scoreboard.check_phase",
+      "source": "tb/sram_uvm.sv"
+    },
+    {
+      "test_id": "T4",
+      "feature_ids": [
+        "F4"
+      ],
+      "requirement_ids": [
+        "R-dv-017-sram-arbiter-004"
+      ],
+      "stimulus": "Fill with four reads without returns, then issue an additional read, then set rv=1 simultaneously with a new read, followed by a non-full pop/push, and finally five returns; compare all returned valids cycle by cycle.",
+      "expected": "At most four outstanding read owners are retained. Read commands issued when four entries are already present still receive a grant and an SRAM request, but the new owner is discarded, with neither backpressure nor a dedicated error signal. Acceptance capacity is determined from the occupancy before the rising edge: if the queue was full and an old read returns in the same cycle as a new read is issued, the old owner is removed but the new owner is still discarded; if the queue was neither full nor empty, a simultaneous return and new read preserve occupancy, appending the new owner to the tail.",
+      "checker": "sram_monitor.run_phase captures actual and the independent dvbench_model output #1 after driving at negedge; sram_scoreboard.write uses !== to compare grant/request/responsevalid field by field, compares addr/write/wdata/wmask for valid commands, and compares all data/error broadcasts on every cycle. The model uses only native inputs and their history. Mismatches produce UVM_ERROR, with at most 30 error messages but a complete server error count; check_phase requires samples>=1200, nonzero command and return counts, hits for a first-cycle read and full pop/push, and final draining.",
+      "implementation_id": "sram_sequence.body + sram_scoreboard.write + sram_scoreboard.check_phase",
+      "source": "tb/sram_uvm.sv"
+    },
+    {
+      "test_id": "T5",
+      "feature_ids": [
+        "F5"
+      ],
+      "requirement_ids": [
+        "R-dv-017-sram-arbiter-005"
+      ],
+      "stimulus": "Traverse all four error codes when rv=0, with rd equal to 13579BDF XORed with different patterns; also change data/error during normal returns, empty returns, and reset returns, comparing all N outputs.",
+      "expected": "rsp_rdata_o of every port always combinationally equals sram_rdata_i, and rsp_error_o of every port always combinationally equals sram_rerror_i; all four two-bit error codes propagate unchanged. This broadcast relationship holds regardless of which owner is valid, whether any reads are outstanding, whether the returned valid is high or low, or whether reset is asserted. This module does not implement SRAM storage contents or correct error codes.",
+      "checker": "sram_monitor.run_phase captures actual and the independent dvbench_model output #1 after driving at negedge; sram_scoreboard.write uses !== to compare grant/request/responsevalid field by field, compares addr/write/wdata/wmask for valid commands, and compares all data/error broadcasts on every cycle. The model uses only native inputs and their history. Mismatches produce UVM_ERROR, with at most 30 error messages but a complete server error count; check_phase requires samples>=1200, nonzero command and return counts, hits for a first-cycle read and full pop/push, and final draining.",
+      "implementation_id": "sram_sequence.body + sram_scoreboard.write + sram_scoreboard.check_phase",
+      "source": "tb/sram_uvm.sv"
+    },
+    {
+      "test_id": "T6",
+      "feature_ids": [
+        "F6"
+      ],
+      "requirement_ids": [
+        "R-dv-017-sram-arbiter-006"
+      ],
+      "stimulus": "After holding reset low for two cycles, drive read A on the first cycle after deassertion and a different owner B on the next cycle, then provide returns; additionally, create two outstanding reads, assert reset low at negedge while maintaining nonzero requests and returns, deassert with requests present, and resume returns.",
+      "expected": "A low rst_ni asserts asynchronous reset, clearing all read owners and restoring the next priority to the lowest index. Reset does not mask combinational requests or grant; a nonzero req_i during reset still produces sram_req_o and a one-hot gnt_o, but no read owner is retained. The first rising edge of clk_i after deassertion performs arbitration and advances priority, but does not accept a read owner; normal owner retention starts only at the second rising edge. Reset discards previously outstanding reads, and a return to an empty queue after reset does not produce a port valid.",
+      "checker": "sram_monitor.run_phase captures actual and the independent dvbench_model output #1 after driving at negedge; sram_scoreboard.write uses !== to compare grant/request/responsevalid field by field, compares addr/write/wdata/wmask for valid commands, and compares all data/error broadcasts on every cycle. The model uses only native inputs and their history. Mismatches produce UVM_ERROR, with at most 30 error messages but a complete server error count; check_phase requires samples>=1200, nonzero command and return counts, hits for a first-cycle read and full pop/push, and final draining.",
+      "implementation_id": "sram_sequence.body + sram_scoreboard.write + sram_scoreboard.check_phase",
+      "source": "tb/sram_uvm.sv"
+    },
+    {
+      "test_id": "T7",
+      "feature_ids": [
+        "F7"
+      ],
+      "requirement_ids": [
+        "R-dv-017-sram-arbiter-007"
+      ],
+      "stimulus": "Instantiate N4PPC0, N4PPC1, and N2BINTREE1 in parallel at the top level, with model parameters identical to those of the DUT. Each executes the full sequence and 1200 random cycles; the final eight cycles consist of four returns followed by four idle cycles.",
+      "expected": "This problem includes three configurations: N=4, SramAw=12, SramDw=32, ArbiterImpl set to PPC, EnMask=0 (default); the same widths with N=4, PPC, EnMask=1; and N=2, the same address and data widths, BINTREE, EnMask=1. Both arbitration implementations follow the same round-robin and response contract, with masks handled according to EnMask. Other parameter points are outside the domain of this problem. Inputs are known two-state values and are stable around the accepting rising edge; combinational relationships are observable after stable inputs have propagated. The return stream is consumed in retained-owner order, without identifying the source from the data.",
+      "checker": "sram_monitor.run_phase captures actual and the independent dvbench_model output #1 after driving at negedge; sram_scoreboard.write uses !== to compare grant/request/responsevalid field by field, compares addr/write/wdata/wmask for valid commands, and compares all data/error broadcasts on every cycle. The model uses only native inputs and their history. Mismatches produce UVM_ERROR, with at most 30 error messages but a complete server error count; check_phase requires samples>=1200, nonzero command and return counts, hits for a first-cycle read and full pop/push, and final draining.",
+      "implementation_id": "sram_sequence.body + sram_scoreboard.write + sram_scoreboard.check_phase",
+      "source": "tb/sram_uvm.sv"
+    }
+  ]
+}

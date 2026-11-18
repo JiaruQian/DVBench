@@ -1,0 +1,20 @@
+# TOPpipelined Behavioral Specification
+
+This problem uses the original TOPpipelined and the complete decryption subtree. Its fixed implementation behavior is governed by this specification; the interface is ciphertext/key10/rst/clk/plaintext. Inputs are two-state.
+
+### dv-052-R01 — Asynchronous Reset
+
+rst is active-low. After any falling edge of rst, without waiting for clk, plaintext is cleared to zero, and all abstract input history and key-valid history are cleared to zero; the output remains 0 while rst is held at 0. After reset is released, the pipeline resumes from the cleared history.
+
+### dv-052-R02 — Byte Mathematics
+
+Bytes are arranged starting with the most significant byte, with four bytes per column. Multiplication is performed in GF(256) using the polynomial x^8+x^4+x^3+x+1. The forward S-box takes the multiplicative inverse of a nonzero byte (0 maps to 0), XORs it with its rotations left by 1/2/3/4 bits, and then XORs with 0x63; the inverse S-box XORs the input rotated left by 1/3/6 bits, then XORs with 0x05, and finally takes the multiplicative inverse. Inverse row shifting takes output (c,r) from input ((c-r) modulo 4,r), and then applies the inverse S-box byte by byte. The first row of coefficients for inverse column mixing is 14/11/13/9; the remaining rows are cyclic right rotations of this coefficient row.
+
+### dv-052-R03 — Inverse Key Schedule
+
+key10 is the currently supplied final-round key, not the initial key0. For the four 32-bit words w0/w1/w2/w3 ordered from high to low, each reverse step yields v3=w3 XOR w2, v2=w2 XOR w1, v1=w1 XOR w0, and v0=w0 XOR SubWord(RotWord(v3)) XOR (Rcon shifted left by 24 bits). RotWord cyclically rotates the four bytes of a word left by one byte. For ten consecutive steps, Rcon is 36/1b/80/40/20/10/08/04/02/01 (hexadecimal), respectively producing key9 through key0.
+
+### dv-052-R04 — Pipeline History
+
+This is the continuous pipeline behavior of the fixed implementation; ciphertext and key10 may change every cycle, with no valid/ready gating. Define 59 abstract data delay positions numbered 0..58 and a depth-3 key10 input history; this describes only the external functional history. At each rising edge, updates occur simultaneously: position 0 accepts ciphertext XOR key10; each remaining position advances from the pre-edge value of the preceding position. Positions whose index modulo 6 is 1 perform inverse row shifting and the inverse S-box; positions whose index modulo 6 is 4 XOR with the reverse-derived key for that round (round number = index integer-divided by 6 + 1), with the key sourced from key10 sampled three cycles earlier; positions whose index modulo 6 is 5 perform inverse column mixing; the remaining positions are direct delays. plaintext equals position 58. The final round has no column mixing. After reset, all of the above delay histories are 0, and output during filling also follows these rules; a changing key10 must not be treated as a constant key carried in its entirety with a single ciphertext. The key delay additionally carries reset-valid history: on the first three rising edges after reset release, the key XOR terms for all rounds remain 0; only from the fourth edge onward are the reverse-derived values from key10 three cycles earlier used.
+

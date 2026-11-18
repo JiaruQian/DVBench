@@ -1,0 +1,312 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "requirement_ids": [
+    "R-dv-029-001",
+    "R-dv-029-002",
+    "R-dv-029-003",
+    "R-dv-029-004",
+    "R-dv-029-005",
+    "R-dv-029-006",
+    "R-dv-029-007",
+    "R-dv-029-008",
+    "R-dv-029-009"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "O-001",
+      "requirement_ids": [
+        "R-dv-029-001"
+      ],
+      "description": "i_nRst is synchronous active-low; only source rising edges clear active state, beat count, busy flag, bank/index, write stencil, etc. Colors, addresses, read caches, and masks that are not reset must be established by legal transactions before use. fifoFull/fifoComplete are undriven and constantly Z in functional simulation; they do not indicate the existence of a command FIFO.",
+      "setup": "With all requests low, ack low, and saveBGBlock=0, first cross 2 effective reset edges.",
+      "stimulus": "Change the active-low reset between edges to confirm that it does not clear state immediately, then cross an edge; operate after legal cache/color writes respectively, and observe Z on the undriven FIFO outputs.",
+      "expected": "Synchronous control reset; do not assume unreset storage is cleared to 0, and do not check its data values before legal establishment.",
+      "sampling": "Bus outputs are combinational functions of the current state/inputs and may be sampled before the edge after inputs have been stable for 1ns; sequential state updates on the gpuClk edge.",
+      "checker": "Predict using independent protocol state and input history; perform four-state actual/expected comparisons in legally valid windows; report errors for X/Z valid data, and require the two undriven FIFO outputs to be Z.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-002",
+      "requirement_ids": [
+        "R-dv-029-002"
+      ],
+      "description": "When idle, initiate a request only when ack_i=0, prioritizing nonzero memoryWriteCommand, then a saveBGBlock transition from 0 to nonzero with a value of 2/3 or 1 with blending, then CLUT, and finally TEX. On the first beat, req=1; the command address is command21:7 shifted left by 5, the CLUT address is shifted left by 5, and TEX selects the L address, otherwise R, shifted left by 3; the first background beat address is 0. On the first beat, wrt_o=0; cnt for command 1 is 0, for other legal commands and BG/CLUT it is 7, and for TEX it is 1.",
+      "setup": "Apply synchronous reset and clear all requests, with ack low.",
+      "stimulus": "Assert the four request types individually and simultaneously; with idle ack high/low, compare the first-beat address, cnt, and direction; hold the command and then clear it.",
+      "expected": "Use independent priority and byte-alignment calculations; do not assume BG write priority or FIFO queuing based on source-code comments.",
+      "sampling": "Request selection is the combinational value before the edge; the rising edge latches the active transaction; subsequent cnt defaults to 0.",
+      "checker": "Predict using independent protocol state and input history; perform four-state actual/expected comparisons in legally valid windows; report errors for X/Z valid data, and require the two undriven FIFO outputs to be Z.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-003",
+      "requirement_ids": [
+        "R-dv-029-003"
+      ],
+      "description": "After entering the active state, each edge with ack_i=1 advances the beat index, and req remains 1; when ack_i=0, req is low in that cycle and a return to idle or the subsequent BG phase is scheduled for the next edge. Low ack ends the transaction rather than waiting indefinitely. The low bits of the active address follow beat×4; the low 3 beat bits wrap modulo 8, with no automatic length-based stop.",
+      "setup": "A transaction has already been selected on the first beat with ack low and has entered the active state across an edge.",
+      "stimulus": "Hold ack high for 1/2/8/9 consecutive beats, changing dat_i each beat, then hold ack low across an edge; verify early termination and index wraparound.",
+      "expected": "Count and terminate according to the input ack history; do not construct expectations from DUT req feedback.",
+      "sampling": "Stabilize ack during the low phase first; check the current beat address before the edge and the advanced outputs after the edge; cnt has length meaning only on the first beat.",
+      "checker": "Predict using independent protocol state and input history; perform four-state actual/expected comparisons in legally valid windows; report errors for X/Z valid data, and require the two undriven FIFO outputs to be Z.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-004",
+      "requirement_ids": [
+        "R-dv-029-004"
+      ],
+      "description": "A command with low 3 bits equal to 1 is a pixel-pair write: field 55:40 is the low 16-bit color, 39:24 is the high 16-bit color, 23:22 gives the validity of the two halfwords, and 6:4 is the pair index; the active write address is the latched block address plus pair×4, and data is {high color,low color}. Command 2 fills 8 words, replicating color 55:40 into both halfwords, with the mask fully valid and the active address advancing by beat×4. Each halfword mask expands into two sel bits.",
+      "setup": "With idle ack low, clear other requests.",
+      "stimulus": "Issue command 1 at each mask/pair boundary, and issue fill command 2; change the command color while active, and observe each beat with ack high.",
+      "expected": "Decode colors/masks/byte addresses independently; write data must equal the latched fields.",
+      "sampling": "Colors and masks are latched on the initiation edge; while active with ack high, wrt=1; the first beat still uses the default read-direction value.",
+      "checker": "Predict using independent protocol state and input history; perform four-state actual/expected comparisons in legally valid windows; report errors for X/Z valid data, and require the two undriven FIFO outputs to be Z.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-005",
+      "requirement_ids": [
+        "R-dv-029-005"
+      ],
+      "description": "The TEX address prioritizes L, while the completion side latches the R request bit at initiation: when both requests are high, the address may be L while completion is for R. Active beat 0 with ack high latches dat_i as the low 32 bits; beat 1 and subsequent beats with a nonzero low-3-bit index assert the selected completion side. TexCacheWrite is generated in the termination cycle when ack goes low; the high half of the 64-bit value is the current dat_i, and the low half is the value latched on the first beat; adrTexCacheWrite is the initiating byte address shifted right by 3.",
+      "setup": "Clear other requests; after the first beat, hold the address request until activity ends.",
+      "stimulus": "For L/R/dual requests respectively, hold ack high for 2 beats and provide different data on each, then provide a third value on the terminating low beat; check completion and writeback in each window.",
+      "expected": "Independently record the initiating side and beat 0; concatenate the current high half with the first-beat low half for termination data.",
+      "sampling": "The completion side and TexCacheWrite occupy different windows; the high data half follows dat_i directly; sample 1ns into the termination cycle.",
+      "checker": "Predict using independent protocol state and input history; perform four-state actual/expected comparisons in legally valid windows; report errors for X/Z valid data, and require the two undriven FIFO outputs to be Z.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-006",
+      "requirement_ids": [
+        "R-dv-029-006"
+      ],
+      "description": "The CLUT first beat has cnt7; the active address uses the current adrClutCacheUpdate and the low 3 beat bits×4. When ack is high, an internal cache write intent is issued; ClutCacheWrite and ClutWriteIndex are registered on the source edge, while ClutCacheData always passes dat_i through directly; at beat7, the completion output is 1.",
+      "setup": "With no higher-priority requests and idle ack low, issue CLUT.",
+      "stimulus": "Provide 8 distinct dat_i values, sample separately before and after the edge, and confirm the pipeline-tail write flag after termination; test early termination after 1 beat.",
+      "expected": "Use an independent beat and one-beat write-index pipeline, with data passing directly from the current input.",
+      "sampling": "Check pre-edge address/completion separately from post-edge write flag/index; the data itself has no corresponding register.",
+      "checker": "Predict using independent protocol state and input history; perform four-state actual/expected comparisons in legally valid windows; report errors for X/Z valid data, and require the two undriven FIFO outputs to be Z.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-007",
+      "requirement_ids": [
+        "R-dv-029-007"
+      ],
+      "description": "Only a saveBGBlock transition from 0 to nonzero triggers an operation. 1 reads the background only with blending; 2/3 first write 8 words, taking data and masks directly from the corresponding beat of the current exported block. Write termination generates resetMask; with blending and a value other than 3, issue another read first beat and read loadAdr; otherwise, terminate and generate a pipeline reset pulse. Read termination issues an import pulse and pipeline reset; the imported block is arranged as 8 32-bit dat_i values.",
+      "setup": "First hold saveBGBlock at 0 across an edge; establish available data from a complete 8-beat background read.",
+      "stimulus": "For all block/blending combinations respectively, check the write mask and active address, write termination and the subsequent read phase; after completion, keep the value nonzero, then return it to 0 to retrigger.",
+      "expected": "Use independent edge history, a block queue, and an 8-word array; do not backfill from actual imported values.",
+      "sampling": "The first beat sets busy, and the final termination edge clears busy; the background cache is valid only after a legal read history, and the source keeps save/load/export stable until completion.",
+      "checker": "Predict using independent protocol state and input history; perform four-state actual/expected comparisons in legally valid windows; report errors for X/Z valid data, and require the two undriven FIFO outputs to be Z.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-008",
+      "requirement_ids": [
+        "R-dv-029-008"
+      ],
+      "description": "Command 3 reads 8 words into one of two banks, each containing 8 32-bit words; the bank is command3. The corresponding 16-bit pixel mask comes from 55:40; when command22 is 1, clear the other bank's mask. The cache and masks are not fully reset; both banks must first be legally loaded separately before use.",
+      "setup": "Apply synchronous reset; first perform an 8-beat read command 3 for each of the two banks.",
+      "stimulus": "Load both banks word by word with different dat_i values, covering mask modes and clear-other respectively, then observe using subsequent command 4.",
+      "expected": "Use independent arrays of 16 halfwords for each of the two banks and pixel masks; the read cache itself has no public direct port and is verified through writeback.",
+      "sampling": "The read-bank cache is written through a pipeline of active beats and their indices; use the writeback command only after termination.",
+      "checker": "Predict using independent protocol state and input history; perform four-state actual/expected comparisons in legally valid windows; report errors for X/Z valid data, and require the two undriven FIFO outputs to be Z.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-009",
+      "requirement_ids": [
+        "R-dv-029-009"
+      ],
+      "description": "Command 4 writes back 8 words. bank=command3, VVIndex=27:24; the pixel source starting point rotates forward by bank×16+VVIndex 16-bit pixels modulo 32, then advances by 2 pixels per beat; the two halfwords come from this cyclic pixel sequence. command4 forces the most significant bit of each halfword to 1. When command5 is 1, only pixels whose corresponding stencil bit is 0 are written, and the source pixel mask must still be valid. stencil comes from 55:40, with two bits selected according to the current beat. After termination, command23:22 selects clearing the bank0/1 mask.",
+      "setup": "Both banks have been filled by legal reads of different data, and both masks have been established.",
+      "stimulus": "Iterate over VVIndex, bank, and force/check, with alternating stencil and all-0/1 stencil; after clearing the bank at the end, issue writeback again to observe mask clearing.",
+      "expected": "Use an independent circular array of 32 16-bit pixels, assembling words using arithmetic indices; use independent Boolean operations for mask and stencil.",
+      "sampling": "bank, rotation, stencil, force/check, and bank-clear controls are latched on the first beat; observe each active beat with ack high.",
+      "checker": "Predict using independent protocol state and input history; perform four-state actual/expected comparisons in legally valid windows; report errors for X/Z valid data, and require the two undriven FIFO outputs to be Z.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    }
+  ],
+  "stimulus_criteria": {
+    "O-001": [
+      {
+        "criterion_id": "O-001-domain",
+        "description": "Change the active-low reset between edges to confirm that it does not clear state immediately, then cross an edge; operate after legal cache/color writes respectively, and observe Z on the undriven FIFO outputs."
+      },
+      {
+        "criterion_id": "O-001-history",
+        "description": "With all requests low, ack low, and saveBGBlock=0, first cross 2 effective reset edges."
+      }
+    ],
+    "O-002": [
+      {
+        "criterion_id": "O-002-domain",
+        "description": "Assert the four request types individually and simultaneously; with idle ack high/low, compare the first-beat address, cnt, and direction; hold the command and then clear it."
+      },
+      {
+        "criterion_id": "O-002-history",
+        "description": "Apply synchronous reset and clear all requests, with ack low."
+      }
+    ],
+    "O-003": [
+      {
+        "criterion_id": "O-003-domain",
+        "description": "Hold ack high for 1/2/8/9 consecutive beats, changing dat_i each beat, then hold ack low across an edge; verify early termination and index wraparound."
+      },
+      {
+        "criterion_id": "O-003-history",
+        "description": "A transaction has already been selected on the first beat with ack low and has entered the active state across an edge."
+      }
+    ],
+    "O-004": [
+      {
+        "criterion_id": "O-004-domain",
+        "description": "Issue command 1 at each mask/pair boundary, and issue fill command 2; change the command color while active, and observe each beat with ack high."
+      },
+      {
+        "criterion_id": "O-004-history",
+        "description": "With idle ack low, clear other requests."
+      }
+    ],
+    "O-005": [
+      {
+        "criterion_id": "O-005-domain",
+        "description": "For L/R/dual requests respectively, hold ack high for 2 beats and provide different data on each, then provide a third value on the terminating low beat; check completion and writeback in each window."
+      },
+      {
+        "criterion_id": "O-005-history",
+        "description": "Clear other requests; after the first beat, hold the address request until activity ends."
+      }
+    ],
+    "O-006": [
+      {
+        "criterion_id": "O-006-domain",
+        "description": "Provide 8 distinct dat_i values, sample separately before and after the edge, and confirm the pipeline-tail write flag after termination; test early termination after 1 beat."
+      },
+      {
+        "criterion_id": "O-006-history",
+        "description": "With no higher-priority requests and idle ack low, issue CLUT."
+      }
+    ],
+    "O-007": [
+      {
+        "criterion_id": "O-007-domain",
+        "description": "For all block/blending combinations respectively, check the write mask and active address, write termination and the subsequent read phase; after completion, keep the value nonzero, then return it to 0 to retrigger."
+      },
+      {
+        "criterion_id": "O-007-history",
+        "description": "First hold saveBGBlock at 0 across an edge; establish available data from a complete 8-beat background read."
+      }
+    ],
+    "O-008": [
+      {
+        "criterion_id": "O-008-domain",
+        "description": "Load both banks word by word with different dat_i values, covering mask modes and clear-other respectively, then observe using subsequent command 4."
+      },
+      {
+        "criterion_id": "O-008-history",
+        "description": "Apply synchronous reset; first perform an 8-beat read command 3 for each of the two banks."
+      }
+    ],
+    "O-009": [
+      {
+        "criterion_id": "O-009-domain",
+        "description": "Iterate over VVIndex, bank, and force/check, with alternating stencil and all-0/1 stencil; after clearing the bank at the end, issue writeback again to observe mask clearing."
+      },
+      {
+        "criterion_id": "O-009-history",
+        "description": "Both banks have been filled by legal reads of different data, and both masks have been established."
+      }
+    ]
+  },
+  "issue_codes": [
+    "missing_setup",
+    "narrow_stimulus",
+    "wrong_expected",
+    "wrong_sampling",
+    "no_checker",
+    "self_proof",
+    "illegal_setup",
+    "contradiction",
+    "hallucination",
+    "prompt_injection"
+  ],
+  "issue_grade_caps": {},
+  "claim_impact_components": {
+    "missing_setup": [
+      "setup"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "no_checker": [
+      "checker"
+    ],
+    "self_proof": [
+      "checker"
+    ],
+    "contradiction": [
+      "setup",
+      "expected",
+      "sampling",
+      "checker"
+    ],
+    "hallucination": [
+      "expected"
+    ],
+    "narrow_stimulus": [],
+    "prompt_injection": []
+  }
+}

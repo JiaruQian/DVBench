@@ -1,0 +1,104 @@
+{
+  "task_id": "dv-057",
+  "requirements": [
+    {
+      "requirement_id": "R-MCNN-001",
+      "title": "Interface, initialization, and sampling",
+      "text": "The clk period is 10 ns; rst_b is active-low and asynchronously resets control and arithmetic register state. Startup must hold rst_b=0 and en=0 for at least two complete clock cycles to allow fixed parameter storage to finish initialization, then deassert reset on a falling edge. mem is an ascending packed vector [0:2399], representing 30×10 signed eight-bit pixels in row-major order; pixel (row,col) occupies mem[(row×10+col)×8 +:8], with a range of −128 to 127 and no input floating-point conversion. All inputs are driven on falling edges, and outputs are sampled after they stabilize following rising edges. valid is zero during reset; when valid=0, no numerical guarantee is made for the floating-point data, including old outputs during reset.",
+      "interfaces": [
+        "clk",
+        "en",
+        "float_out0",
+        "float_out1",
+        "mem",
+        "rst_b",
+        "valid"
+      ]
+    },
+    {
+      "requirement_id": "R-MCNN-002",
+      "title": "Image capture and input history",
+      "text": "Starting from reset deassertion, count rising edges with en=1; non-enabled edges do not increment this count. On every 288th enabled edge, atomically capture mem at that edge; changes in mem at all other times do not affect image storage, and mem is allowed to change every cycle. Reset clears the previously captured image to all zeros. Continuous operation has no per-frame ready or acceptance signal.\n\nEach capture edge produces one eventual result to be output, using the previously captured image A and the current image B. The main mathematics is the computation of the network below on A, with an exception for depthwise convolution input channel 31 corresponding to pooling position 8: its convolution patches for depthwise convolution rows 16 and 17 are computed from B. All other depthwise convolution rows/channels come from A; in particular, position 7 still uses A, and position 7 must not be changed as a side effect of first replacing the last four rows of the complete convolution tensor. A for the first capture is the reset zero image. This boundary mixing is part of the definition of this problem and naturally reduces to the complete mathematical network when the same image is maintained; transition outputs must not be ignored.",
+      "interfaces": [
+        "clk",
+        "en",
+        "float_out0",
+        "float_out1",
+        "mem",
+        "rst_b",
+        "valid"
+      ]
+    },
+    {
+      "requirement_id": "R-MCNN-003",
+      "title": "First-layer convolution and fixed-point activation",
+      "text": "Conv_Weight is ordered by output channel, kernel row, and kernel column, 32×11×7; Conv_Bias has one entry per channel. The image has no padding and a stride of one, producing 20×4 values per channel: the bias plus the sum of the corresponding 11×7 signed products. Fixed-point activation is defined as first multiplying the sum by the given multiplier and truncating to signed 32 bits, then arithmetically right-shifting by the given number of bits, and finally clamping to 0–127; there is no rounding. The first-layer multiplier is 111 and the shift is 14. All accumulations and multiplications retain the low 32 bits; pixels and weights are interpreted as eight-bit two's complement, and biases as signed 32-bit values. Integers in the parameter files are the corresponding signed values.",
+      "interfaces": [
+        "clk",
+        "en",
+        "float_out0",
+        "float_out1",
+        "mem",
+        "rst_b",
+        "valid"
+      ]
+    },
+    {
+      "requirement_id": "R-MCNN-004",
+      "title": "Depthwise convolution, pointwise convolution, and pooling",
+      "text": "The order of DWConv_Weight is input channel, then 3×3 kernel row/column, with one DWConv_Bias entry per channel. For each channel, apply unpadded 3×3 convolution with stride one to the first-layer 20×4, obtaining 18×2; the activation multiplier is 59 and the shift is 11. Only the channels/rows specified by R-MCNN-002 use B's first-layer convolution patches.\n\nThe order of PWConv_Weight is output channel, then input channel, 32×32; PWConv_Bias has one entry per output channel. At each spatial point, sum the products over 32 input channels and add the bias, with activation multiplier 69 and shift 13, producing 32×18×2. For each channel, non-overlapping 2×2 max pooling forms nine values; positions p=0–8 use rows 2p and 2p+1 and two columns. All pooled values are nonnegative eight-bit values, with flattened index channel×9+p. A position-major weight flattening order must not be used.",
+      "interfaces": [
+        "clk",
+        "en",
+        "float_out0",
+        "float_out1",
+        "mem",
+        "rst_b",
+        "valid"
+      ]
+    },
+    {
+      "requirement_id": "R-MCNN-005",
+      "title": "Fully connected layer, truncation, and table lookup",
+      "text": "Linear_Weight is ordered by output class and flattened index, 2×288; Linear_Bias has one entry per class. Each class logit is the bias plus the sum of products of 288 pooled values and their corresponding signed weights, retaining signed 32 bits. Multiply the logit by 11, truncate to 32 bits, arithmetically right-shift by 15, and then retain only the low eight bits as the LUT address. These eight bits use truncation wraparound, with no additional saturation: for example, even if the arithmetic right-shift result is outside −128 to 127, the low eight bits are still taken. The 256 entries in sigmoid_lookup_table.txt are arranged by unsigned eight-bit address, with positive-value addresses first and negative-value addresses following in two's-complement bit-pattern order; float_out0/1 must match the corresponding 32-bit hexadecimal data bit for bit.",
+      "interfaces": [
+        "clk",
+        "en",
+        "float_out0",
+        "float_out1",
+        "mem",
+        "rst_b",
+        "valid"
+      ]
+    },
+    {
+      "requirement_id": "R-MCNN-006",
+      "title": "Latency, valid, and pauses",
+      "text": "The 51th enabled rising edge after a capture edge outputs the corresponding result and sets valid to one; other enabled edges set valid to zero. Therefore, the first valid occurs at the 339th enabled edge, with subsequent intervals of 288 enabled edges. When en=0, control, the arithmetic pipeline, and valid hold; if paused when valid=1, valid remains one and its valid data holds, and it must not be re-pulsed according to wall-clock cycles. The output LUT read enable comes from its final-stage index and is not further ANDed with en: when paused at the boundary where the final-stage final index is ready but valid has not yet been set to one, the data bits may update before valid, but no numerical guarantee is still made when valid=0. The value, order, and enabled-edge latency of the first valid result after a pause must be preserved.",
+      "interfaces": [
+        "clk",
+        "en",
+        "float_out0",
+        "float_out1",
+        "mem",
+        "rst_b",
+        "valid"
+      ]
+    },
+    {
+      "requirement_id": "R-MCNN-007",
+      "title": "Repetition, reset recovery, and fixed data",
+      "text": "Arbitrary consecutive image captures, repeated images, full-range signed pixels, arbitrary finite pauses, and reset during operation are all legal. Reset discards unfinished results, restarts the enabled-edge count, and restores A=zero image; fixed weights/biases/LUT do not change with reset, en, or mem. After a reset during operation, the initialization preparation must be satisfied again. A stable image must propagate through the history; its first valid window is still computed according to the explicit A/B relationship. The CNN has no runtime parameter loading port; candidates must not change the fixed data or read internal SRAM. The numerical values defined by the public attachment data may be used for independent model constants or authorized data reading.",
+      "interfaces": [
+        "clk",
+        "en",
+        "float_out0",
+        "float_out1",
+        "mem",
+        "rst_b",
+        "valid"
+      ]
+    }
+  ],
+  "source": "Reviewed fixed repaired RTL and native experiments"
+}

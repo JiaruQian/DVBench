@@ -1,0 +1,121 @@
+{
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "interface": {
+      "ports": [
+        {
+          "name": "btnL",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "btnR",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "btnU",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "btuD",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "clk",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "fnd_com",
+          "direction": "Out",
+          "width": 4,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 3,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "fnd_data",
+          "direction": "Out",
+          "width": 8,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 7,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "led",
+          "direction": "Out",
+          "width": 8,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 7,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "rst",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "sw",
+          "direction": "In",
+          "width": 3,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 2,
+              "right": 0
+            }
+          ]
+        }
+      ],
+      "parameters": {}
+    },
+    "self_contained": true
+  },
+  "format": "public/submission_format.md",
+  "top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "dut_top": "top_stopwatch_watch",
+  "submission_format": "public/submission_format.md",
+  "json_is_complete_fact_carrier": true,
+  "task_id": "dv-021",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

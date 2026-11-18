@@ -1,0 +1,36 @@
+interface dvbench_if;
+logic clk_i;
+logic rst_ni;
+logic instr_req_i;
+logic instr_gnt_o;
+logic [31:0] instr_addr_i;
+logic instr_rvalid_o;
+logic [31:0] instr_rdata_o;
+logic flush_i;
+logic flush_ack_o;
+logic mem_req_valid_o;
+logic [31:0] mem_req_addr_o;
+logic [7:0] mem_req_len_o;
+logic [2:0] mem_req_size_o;
+logic mem_req_ack_i;
+logic mem_rsp_valid_i;
+logic [255:0] mem_rsp_data_i;
+logic mem_rsp_last_i;
+logic miss_o;
+logic miss_event_o;
+logic exp_instr_gnt_o;
+logic exp_instr_rvalid_o;
+logic [31:0] exp_instr_rdata_o;
+logic exp_flush_ack_o;
+logic exp_mem_req_valid_o;
+logic [31:0] exp_mem_req_addr_o;
+logic [7:0] exp_mem_req_len_o;
+logic [2:0] exp_mem_req_size_o;
+logic exp_miss_o;
+logic exp_miss_event_o;
+logic [293:0] pins;logic [80:0] actual,expected;
+assign {rst_ni,instr_req_i,instr_addr_i,flush_i,mem_req_ack_i,mem_rsp_valid_i,mem_rsp_data_i,mem_rsp_last_i}=pins;
+assign actual={instr_gnt_o,instr_rvalid_o,instr_rdata_o,flush_ack_o,mem_req_valid_o,mem_req_addr_o,mem_req_len_o,mem_req_size_o,miss_o,miss_event_o};
+assign expected={exp_instr_gnt_o,exp_instr_rvalid_o,exp_instr_rdata_o,exp_flush_ack_o,exp_mem_req_valid_o,exp_mem_req_addr_o,exp_mem_req_len_o,exp_mem_req_size_o,exp_miss_o,exp_miss_event_o};
+initial begin clk_i=0;forever #5 clk_i=~clk_i;end
+endinterface

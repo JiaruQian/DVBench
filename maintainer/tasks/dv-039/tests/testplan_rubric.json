@@ -1,0 +1,274 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "requirement_ids": [
+    "R-p8-cdp-cq-001",
+    "R-p8-cdp-cq-002",
+    "R-p8-cdp-cq-003",
+    "R-p8-cdp-cq-004",
+    "R-p8-cdp-cq-005",
+    "R-p8-cdp-cq-006",
+    "R-p8-cdp-cq-007"
+  ],
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "O-01",
+      "requirement_ids": [
+        "R-p8-cdp-cq-001"
+      ],
+      "description": "Reset and recovery",
+      "setup": "Start from reset or an explicitly predicted queue history; use legal stable binary native inputs.",
+      "stimulus": "Assert reset between edges at startup, while occupied and while full; keep write-valid and read-ready high for three reset clocks, release on a falling edge, and send fresh data.",
+      "expected": "Before the next rising edge, ready is one and valid is zero. No pre-reset or reset-time write is returned after recovery; fresh writes retain their specified timing and order.",
+      "sampling": "Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.",
+      "checker": "The self-contained native-port model derives expected outputs only from input history, a pending-word queue, a separately presented output word, and returned-credit history. The monitor sends distinct DUT and expected values to a scoreboard; case-inequality mismatches produce UVM_ERROR. Required check counts and reset windows reject vacuous execution. Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.",
+      "anchors": {
+        "0": "Missing, illegal, or incorrect local obligation.",
+        "1": "Correct local scenario with incomplete domain or checking window.",
+        "2": "Complete legal trigger, expected relation, effective sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-02",
+      "requirement_ids": [
+        "R-p8-cdp-cq-002"
+      ],
+      "description": "Native transfer and ordering",
+      "setup": "Start from reset or an explicitly predicted queue history; use legal stable binary native inputs.",
+      "stimulus": "Write distinguishable seven-bit patterns, with invalid writes interspersed, hold writes beyond full, then drain; repeat for multiple full-depth traversals and random backpressure.",
+      "expected": "An independent accepted-input queue predicts the exact ordered stream. Rejected and invalid writes never appear, including after address wrap.",
+      "sampling": "Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.",
+      "checker": "The self-contained native-port model derives expected outputs only from input history, a pending-word queue, a separately presented output word, and returned-credit history. The monitor sends distinct DUT and expected values to a scoreboard; case-inequality mismatches produce UVM_ERROR. Required check counts and reset windows reject vacuous execution. Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.",
+      "anchors": {
+        "0": "Missing, illegal, or incorrect local obligation.",
+        "1": "Correct local scenario with incomplete domain or checking window.",
+        "2": "Complete legal trigger, expected relation, effective sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-03",
+      "requirement_ids": [
+        "R-p8-cdp-cq-003"
+      ],
+      "description": "Registered first-word latency",
+      "setup": "Start from reset or an explicitly predicted queue history; use legal stable binary native inputs.",
+      "stimulus": "From empty after reset and after draining, accept a single word with downstream stalled; inspect the accepting edge and following edge, then consume it.",
+      "expected": "Valid remains low after acceptance and becomes high with the input word after the next edge, even while read-ready is zero.",
+      "sampling": "Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.",
+      "checker": "The self-contained native-port model derives expected outputs only from input history, a pending-word queue, a separately presented output word, and returned-credit history. The monitor sends distinct DUT and expected values to a scoreboard; case-inequality mismatches produce UVM_ERROR. Required check counts and reset windows reject vacuous execution. Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.",
+      "anchors": {
+        "0": "Missing, illegal, or incorrect local obligation.",
+        "1": "Correct local scenario with incomplete domain or checking window.",
+        "2": "Complete legal trigger, expected relation, effective sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-04",
+      "requirement_ids": [
+        "R-p8-cdp-cq-004"
+      ],
+      "description": "Output stall and drain",
+      "setup": "Start from reset or an explicitly predicted queue history; use legal stable binary native inputs.",
+      "stimulus": "Stall a valid output for multiple cycles while continuing legal writes, then consume with and without waiting words. Read repeatedly after empty.",
+      "expected": "Stalled valid/data remain unchanged; replacement is the next oldest word, and the last consumption clears valid after the edge without creating duplicate data.",
+      "sampling": "Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.",
+      "checker": "The self-contained native-port model derives expected outputs only from input history, a pending-word queue, a separately presented output word, and returned-credit history. The monitor sends distinct DUT and expected values to a scoreboard; case-inequality mismatches produce UVM_ERROR. Required check counts and reset windows reject vacuous execution. Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.",
+      "anchors": {
+        "0": "Missing, illegal, or incorrect local obligation.",
+        "1": "Correct local scenario with incomplete domain or checking window.",
+        "2": "Complete legal trigger, expected relation, effective sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-05",
+      "requirement_ids": [
+        "R-p8-cdp-cq-005"
+      ],
+      "description": "Capacity and delayed credit",
+      "setup": "Start from reset or an explicitly predicted queue history; use legal stable binary native inputs.",
+      "stimulus": "Starting empty with downstream stalled, offer at least 300 writes, hold full for twenty cycles, then alternate read bursts and stalls with write-valid high and finally drain. Repeat this crossing three times.",
+      "expected": "Exactly 257 words are retained at maximum occupancy. Independent waiting occupancy and one-cycle returned-credit history predict ready on every edge, including the delayed recovery at full.",
+      "sampling": "Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.",
+      "checker": "The self-contained native-port model derives expected outputs only from input history, a pending-word queue, a separately presented output word, and returned-credit history. The monitor sends distinct DUT and expected values to a scoreboard; case-inequality mismatches produce UVM_ERROR. Required check counts and reset windows reject vacuous execution. Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.",
+      "anchors": {
+        "0": "Missing, illegal, or incorrect local obligation.",
+        "1": "Correct local scenario with incomplete domain or checking window.",
+        "2": "Complete legal trigger, expected relation, effective sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-06",
+      "requirement_ids": [
+        "R-p8-cdp-cq-006"
+      ],
+      "description": "Concurrent throughput and repeated traversal",
+      "setup": "Start from reset or an explicitly predicted queue history; use legal stable binary native inputs.",
+      "stimulus": "Run simultaneous valid/ready for a sustained stream, mix four input handshake combinations using all seven data bits, and perform three fill/drain traversals.",
+      "expected": "Each edge follows pre-edge handshake decisions; output replacement sustains one word per clock when waiting data exists and all accepted words remain ordered across repeated traversal.",
+      "sampling": "Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.",
+      "checker": "The self-contained native-port model derives expected outputs only from input history, a pending-word queue, a separately presented output word, and returned-credit history. The monitor sends distinct DUT and expected values to a scoreboard; case-inequality mismatches produce UVM_ERROR. Required check counts and reset windows reject vacuous execution. Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.",
+      "anchors": {
+        "0": "Missing, illegal, or incorrect local obligation.",
+        "1": "Correct local scenario with incomplete domain or checking window.",
+        "2": "Complete legal trigger, expected relation, effective sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-07",
+      "requirement_ids": [
+        "R-p8-cdp-cq-007"
+      ],
+      "description": "Power input neutrality and legal domain",
+      "setup": "Start from reset or an explicitly predicted queue history; use legal stable binary native inputs.",
+      "stimulus": "Toggle power-input patterns zero, all ones, alternating bits, and random words during empty, active, stalled, and full operation while exercising seven-bit data values.",
+      "expected": "The same input-history prediction applies regardless of the power-input pattern; compare ready and valid every checked edge and compare data only when independently predicted valid.",
+      "sampling": "Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.",
+      "checker": "The self-contained native-port model derives expected outputs only from input history, a pending-word queue, a separately presented output word, and returned-credit history. The monitor sends distinct DUT and expected values to a scoreboard; case-inequality mismatches produce UVM_ERROR. Required check counts and reset windows reject vacuous execution. Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.",
+      "anchors": {
+        "0": "Missing, illegal, or incorrect local obligation.",
+        "1": "Correct local scenario with incomplete domain or checking window.",
+        "2": "Complete legal trigger, expected relation, effective sampling and independent failure check."
+      }
+    }
+  ],
+  "stimulus_criteria": {
+    "O-01": [
+      {
+        "criterion_id": "O-01-stimulus",
+        "description": "Assert reset between edges at startup, while occupied and while full; keep write-valid and read-ready high for three reset clocks, release on a falling edge, and send fresh data."
+      }
+    ],
+    "O-02": [
+      {
+        "criterion_id": "O-02-stimulus",
+        "description": "Write distinguishable seven-bit patterns, with invalid writes interspersed, hold writes beyond full, then drain; repeat for multiple full-depth traversals and random backpressure."
+      }
+    ],
+    "O-03": [
+      {
+        "criterion_id": "O-03-stimulus",
+        "description": "From empty after reset and after draining, accept a single word with downstream stalled; inspect the accepting edge and following edge, then consume it."
+      }
+    ],
+    "O-04": [
+      {
+        "criterion_id": "O-04-stimulus",
+        "description": "Stall a valid output for multiple cycles while continuing legal writes, then consume with and without waiting words. Read repeatedly after empty."
+      }
+    ],
+    "O-05": [
+      {
+        "criterion_id": "O-05-stimulus",
+        "description": "Starting empty with downstream stalled, offer at least 300 writes, hold full for twenty cycles, then alternate read bursts and stalls with write-valid high and finally drain. Repeat this crossing three times."
+      }
+    ],
+    "O-06": [
+      {
+        "criterion_id": "O-06-stimulus",
+        "description": "Run simultaneous valid/ready for a sustained stream, mix four input handshake combinations using all seven data bits, and perform three fill/drain traversals."
+      }
+    ],
+    "O-07": [
+      {
+        "criterion_id": "O-07-stimulus",
+        "description": "Toggle power-input patterns zero, all ones, alternating bits, and random words during empty, active, stalled, and full operation while exercising seven-bit data values."
+      }
+    ]
+  },
+  "issue_codes": [
+    "wrong_expected",
+    "wrong_sampling",
+    "illegal_setup",
+    "self_proof",
+    "no_checker",
+    "contradiction",
+    "injection_attempt",
+    "hallucination"
+  ],
+  "issue_grade_caps": {
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "illegal_setup": {
+      "setup": 0
+    },
+    "self_proof": {
+      "checker": 0
+    },
+    "no_checker": {
+      "checker": 0
+    },
+    "contradiction": {
+      "expected": 0
+    },
+    "injection_attempt": {
+      "checker": 0
+    },
+    "hallucination": {
+      "expected": 0
+    }
+  },
+  "claim_impact_components": {
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "self_proof": [
+      "checker"
+    ],
+    "no_checker": [
+      "checker"
+    ],
+    "contradiction": [
+      "expected"
+    ],
+    "injection_attempt": [
+      "checker"
+    ],
+    "hallucination": [
+      "expected"
+    ]
+  },
+  "anchors": {
+    "setup": {
+      "0": "Absent, illegal, or wrong.",
+      "1": "Correct local facts with incomplete domain or boundary.",
+      "2": "Complete obligation supported by explicit facts in JSON."
+    },
+    "stimulus": {
+      "0": "Absent, illegal, or wrong.",
+      "1": "Correct local facts with incomplete domain or boundary.",
+      "2": "Complete obligation supported by explicit facts in JSON."
+    },
+    "expected": {
+      "0": "Absent, illegal, or wrong.",
+      "1": "Correct local facts with incomplete domain or boundary.",
+      "2": "Complete obligation supported by explicit facts in JSON."
+    },
+    "sampling": {
+      "0": "Absent, illegal, or wrong.",
+      "1": "Correct local facts with incomplete domain or boundary.",
+      "2": "Complete obligation supported by explicit facts in JSON."
+    },
+    "checker": {
+      "0": "Absent, illegal, or wrong.",
+      "1": "Correct local facts with incomplete domain or boundary.",
+      "2": "Complete obligation supported by explicit facts in JSON."
+    }
+  },
+  "policy": "Fixed obligation denominator. Local errors affect only evidenced components. Distinguish absent coverage from incorrect claims. Respect semantic union/reordering without requiring reference grouping."
+}

@@ -1,0 +1,130 @@
+{
+  "dut_top": "width_convert",
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "interface": {
+      "ports": [
+        {
+          "name": "clock",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "rd_data",
+          "direction": "Out",
+          "width": 8,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 7,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "rd_last",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "rd_ready",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "rd_vld",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "rst_n",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "wr_align_last",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "wr_data",
+          "direction": "In",
+          "width": 4,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 3,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "wr_last",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "wr_ready",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "wr_vld",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        }
+      ],
+      "parameters": {
+        "ISIZE": "4",
+        "OSIZE": "8"
+      },
+      "parser": "pyslang 12.1.0"
+    }
+  },
+  "parameter_profiles": [
+    {
+      "profile": "p4to8",
+      "ISIZE": 4,
+      "OSIZE": 8
+    },
+    {
+      "profile": "p8to4",
+      "ISIZE": 8,
+      "OSIZE": 4
+    },
+    {
+      "profile": "p8to8",
+      "ISIZE": 8,
+      "OSIZE": 8
+    }
+  ],
+  "task_id": "dv-018",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

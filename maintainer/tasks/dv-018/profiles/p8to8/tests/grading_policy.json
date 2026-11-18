@@ -1,0 +1,18 @@
+{
+  "feature_denominator": [
+    "dv-018/R01",
+    "dv-018/R02",
+    "dv-018/R03",
+    "dv-018/R04",
+    "dv-018/R05"
+  ],
+  "testplan_denominator": [
+    "O-01",
+    "O-02",
+    "O-03",
+    "O-04",
+    "O-05"
+  ],
+  "current_formula": "feature_judge.py and testplan_judge.py current scoring; no cross-capability aggregate",
+  "hidden_rtl": true
+}

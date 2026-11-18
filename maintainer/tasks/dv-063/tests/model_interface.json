@@ -1,0 +1,84 @@
+{
+  "top": "dvbench_model",
+  "ports": [
+    {
+      "name": "clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "iBlock",
+      "direction": "In",
+      "width": 128,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 127,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "idle",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "iv",
+      "direction": "In",
+      "width": 128,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 127,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "key",
+      "direction": "In",
+      "width": 128,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 127,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "load",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "oBlock",
+      "direction": "Out",
+      "width": 128,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 127,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "rst",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "start",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {}
+}

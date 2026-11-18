@@ -1,0 +1,17 @@
+{
+  "deployment": "2026-11-17-public",
+  "cli_max_turns": 300,
+  "delivery_reminder_cli_turn": 250,
+  "task_wall_seconds": null,
+  "deadline_unix": null,
+  "total_token_limit": null,
+  "total_cost_limit": null,
+  "responses_max_output_tokens": 128000,
+  "feedback_calls": 50,
+  "compile_timeout_seconds": 900,
+  "golden_simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "feedback_transport_timeout_seconds": 3660,
+  "notes": "Task content and scoring obligations inherit the published task. Trusted feedback supports every declared native parameter instance and authorized PROGRAM_FILE software data. Public waveform aliases flatten native packed/unpacked ports in SystemVerilog streaming order without DUT internal signals.",
+  "request_timeout_seconds": 3600
+}

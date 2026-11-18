@@ -1,0 +1,170 @@
+# features
+
+## F-1
+
+requirement_ids: ["R-dv-089-001"]
+
+module: cpu_core
+
+definition: cpu_core has no parameters. clk_i is the only clock, and all state updates on its rising edge. rst_i is an active-high synchronous reset; hold it through at least one rising edge to clear all registers, counters, instruction-fetch addresses, pipeline transactions, halt state, and trace state to zero. Short reset pulses between edges cannot clear state asynchronously. After reset, the instruction-fetch request may be valid, with address 0, and the instruction-fetch response is not ready. Reset cancels old transactions, and the peer must clear old responses. Use only known two-state inputs; state before reset is undefined. All valid bits and halted_o are valid every cycle; the instruction address always gives the next instruction-fetch address; request payloads are compared only when the corresponding request is valid, and trace/cause/badaddr are compared only when the corresponding event is valid.
+
+interface: ["clk_i", "rst_i", "i_req_valid_o", "i_req_addr_o", "i_rsp_ready_o", "halted_o", "trap_o", "retire_valid_o"]
+
+timing: Handshakes use pre-rising-edge values; stably sample valid outputs 1ns after the edge; synchronous reset takes effect only at rising edges.
+
+boundary: Legal encodings, input domains, and exceptions follow this item's definition, and all predictions are independent of actual DUT outputs.
+
+## F-2
+
+requirement_ids: ["R-dv-089-002"]
+
+module: cpu_core
+
+definition: Each instruction fetch is accepted when valid and ready are both 1 at the same rising edge. The core has at most one unanswered request and one returned-instruction buffer; no new request is generated when either exists or the core is halted. On request acceptance, its address is retained and the next sequential address is incremented by 4; response ready is asserted while waiting for a response. The peer may provide a response no earlier than the next cycle after acceptance, and must hold valid/data/error until the response handshake; responses without requests are prohibited. Arbitrary finite request backpressure and response latency are allowed. After a response is taken, it first enters a one-stage buffer, moves to the execute position at the next available rising edge, and then moves to the commit position at a subsequent rising edge; an ordinary non-memory-access instruction produces retire at the edge following its arrival at the commit position. The data channel is independent.
+
+interface: ["clk_i", "i_req_valid_o", "i_req_ready_i", "i_req_addr_o", "i_rsp_valid_i", "i_rsp_ready_o", "i_rsp_rdata_i", "i_rsp_error_i", "retire_valid_o"]
+
+timing: Handshakes use pre-rising-edge values; stably sample valid outputs 1ns after the edge; synchronous reset takes effect only at rising edges.
+
+boundary: Legal encodings, input domains, and exceptions follow this item's definition, and all predictions are independent of actual DUT outputs.
+
+## F-3
+
+requirement_ids: ["R-dv-089-003"]
+
+module: cpu_core
+
+definition: The upper 6 bits [31:26] of a 32-bit instruction are the opcode; there are 16 32-bit registers r0..r15, with r0 always 0 and writes to it discarded. ALU-R opcode=0, rd=[25:22], rs1=[21:18], rs2=[17:14], function=[13:8], and the low 8 bits must be 0. Functions 0..14 are ADD, SUB, NEG, MUL, AND, OR, XOR, NOT, SLL, SRL, SRA, SLT, SLTU, SEQ, and SNE, respectively; NEG/NOT additionally require rs2=0. All operations are truncated to 32 bits, shift amounts use the low 5 bits of the second operand, and MUL takes the low 32 bits; SLT is signed and SLTU is unsigned, and comparison results are 32-bit 0 or 1. ALU-I opcode=1, rd/rs1 are as above, subop=[17:15], and imm=[14:0] is sign-extended; subops 0..6 are ADD, AND, OR, XOR, SLL, SRL, and SRA; for shifts, [14:5] must be 0, and other subops are illegal. LUI opcode=2, rd is as above, the immediate [21:6] is shifted left by 16 bits, and the low 6 bits must be 0.
+
+interface: ["i_rsp_rdata_i", "i_req_addr_o", "d_req_wdata_o", "retire_valid_o", "retire_pc_o", "retire_instruction_o"]
+
+timing: Handshakes use pre-rising-edge values; stably sample valid outputs 1ns after the edge; synchronous reset takes effect only at rising edges.
+
+boundary: Legal encodings, input domains, and exceptions follow this item's definition, and all predictions are independent of actual DUT outputs.
+
+## F-4
+
+requirement_ids: ["R-dv-089-004"]
+
+module: cpu_core
+
+definition: LOAD opcode=3, STORE opcode=4; rs1=[21:18] is the base address, to which the sign-extended low 15 bits are added to obtain a 32-bit byte address. For LOAD, rd=[25:22], and subop=[17:15] values 0/1/2/3/4 specify signed byte, unsigned byte, signed halfword, unsigned halfword, and full word, respectively; all others are illegal. For STORE, the source register=[25:22], and subops 0/2/4 specify byte/halfword/full word; all others are illegal. A read returns 32-bit data containing the enclosing aligned word: extract the byte or halfword in little-endian order, then sign-extend/zero-extend it. The STORE byte strobe is 1 shifted left by the low 2 address bits, and the halfword strobe is 3 shifted left by the low 2 address bits; write data is shifted left by the same byte offset. For a full word, the strobe is 1111 and write data is not shifted. The address output retains the original byte address.
+
+interface: ["i_rsp_rdata_i", "d_req_addr_o", "d_req_write_o", "d_req_wdata_o", "d_req_wstrb_o", "d_rsp_rdata_i"]
+
+timing: Handshakes use pre-rising-edge values; stably sample valid outputs 1ns after the edge; synchronous reset takes effect only at rising edges.
+
+boundary: Legal encodings, input domains, and exceptions follow this item's definition, and all predictions are independent of actual DUT outputs.
+
+## F-5
+
+requirement_ids: ["R-dv-089-005"]
+
+module: cpu_core
+
+definition: When a data request is valid, its payload comes from the memory-access instruction awaiting commit; it is held while ready is 0, and after one acceptance, request valid is deasserted and response ready is asserted. The memory access blocks commit until the response completes; the peer must provide and hold exactly one response no earlier than the next cycle after the accepted request. Subsequent instructions cannot bypass a blocking memory access. Adjacent register dependencies must use the latest completed value, and a data-load result may be used by subsequent execution on the same rising edge that accepts the response. A system instruction at the commit position prevents younger instructions from advancing, even if it completes in the current cycle.
+
+interface: ["d_req_valid_o", "d_req_ready_i", "d_rsp_valid_i", "d_rsp_ready_o", "d_req_addr_o", "d_req_wdata_o", "retire_valid_o"]
+
+timing: Handshakes use pre-rising-edge values; stably sample valid outputs 1ns after the edge; synchronous reset takes effect only at rising edges.
+
+boundary: Legal encodings, input domains, and exceptions follow this item's definition, and all predictions are independent of actual DUT outputs.
+
+## F-6
+
+requirement_ids: ["R-dv-089-006"]
+
+module: cpu_core
+
+definition: BRANCH opcode=5, rs2=[25:22], rs1=[21:18], subop=[17:15], with 0..5 specifying EQ/NE/signed LT/GE/unsigned LT/GE; all others are illegal; the target is this instruction's PC plus the sign-extended low 15 bits, then multiplied by 4. J/JAL opcode=6/7, the target is this PC plus the sign-extended low 22 bits, then multiplied by 4, rd=[25:22], J requires rd=0, and JAL requires nonzero rd and writes PC+4. JR/JALR opcode=8/9, the target is rs1 plus the sign-extended low 15 bits, subop must be 0, rd must be zero/nonzero, respectively, and JALR writes PC+4; the low target bits are not automatically cleared, and misalignment must cause an exception.
+
+interface: ["i_rsp_rdata_i", "i_req_addr_o", "retire_pc_o", "retire_instruction_o", "d_req_wdata_o", "trap_o"]
+
+timing: Handshakes use pre-rising-edge values; stably sample valid outputs 1ns after the edge; synchronous reset takes effect only at rising edges.
+
+boundary: Legal encodings, input domains, and exceptions follow this item's definition, and all predictions are independent of actual DUT outputs.
+
+## F-7
+
+requirement_ids: ["R-dv-089-007"]
+
+module: cpu_core
+
+definition: When executing a valid jump/taken branch, younger buffered or executing instructions are cleared, and the next instruction-fetch address is changed to the target; an already accepted old instruction-fetch request is not canceled, and the core must wait for its response and discard that stale return before continuing. Synchronous exceptions, HALT, MRET, and interrupts also invalidate younger instructions. At most one instruction commits per cycle; retire_valid_o is 1 on non-exceptional completion, and the PC and instruction are those of that instruction; an excepting instruction does not retire. Consecutive completions may have valid=1 in consecutive cycles. After an event ends, the trace payload retains its previous value, but obligations apply only when valid is 1.
+
+interface: ["i_req_addr_o", "i_rsp_ready_o", "i_rsp_valid_i", "retire_valid_o", "retire_pc_o", "retire_instruction_o", "trap_o", "halted_o"]
+
+timing: Handshakes use pre-rising-edge values; stably sample valid outputs 1ns after the edge; synchronous reset takes effect only at rising edges.
+
+boundary: Legal encodings, input domains, and exceptions follow this item's definition, and all predictions are independent of actual DUT outputs.
+
+## F-8
+
+requirement_ids: ["R-dv-089-008"]
+
+module: cpu_core
+
+definition: Illegal opcodes, the reserved encodings above, and invalid CSR accesses produce cause=1 and badaddr=the original instruction; an instruction-fetch error produces cause=3 and badaddr=that instruction's PC. A legal LOAD with a halfword address whose low bit is 1 or a full-word address whose low 2 bits are nonzero produces cause=4; the corresponding misalignment for a legal STORE produces cause=6, with badaddr equal to the effective byte address and no data transaction issued. A misaligned legal JR/JALR produces cause=2 and badaddr equal to the target. When the instruction reaches the commit position, the exception is reported as a single-cycle trap_o, the exception PC is saved, and execution is redirected to tvec. If an instruction-fetch error also carries a legal misaligned memory access/jump or a legal system-trap encoding, the latter cause overrides the instruction-fetch error.
+
+interface: ["i_rsp_error_i", "i_rsp_rdata_i", "trap_o", "trap_cause_o", "trap_badaddr_o", "retire_valid_o", "d_req_valid_o", "i_req_addr_o"]
+
+timing: Handshakes use pre-rising-edge values; stably sample valid outputs 1ns after the edge; synchronous reset takes effect only at rising edges.
+
+boundary: Legal encodings, input domains, and exceptions follow this item's definition, and all predictions are independent of actual DUT outputs.
+
+## F-9
+
+requirement_ids: ["R-dv-089-009"]
+
+module: cpu_core
+
+definition: When an accepted LOAD/STORE request receives an error response, a synchronous trap is generated at the response-completion edge; LOAD cause=5, STORE cause=7, badaddr is the original effective address, and EPC is that instruction's PC; the excepting instruction neither retires nor writes a register. The core cannot retract an accepted external write; the peer determines whether an erroneous write transaction changes external memory.
+
+interface: ["d_rsp_valid_i", "d_rsp_error_i", "d_rsp_ready_o", "trap_o", "trap_cause_o", "trap_badaddr_o", "retire_valid_o"]
+
+timing: Handshakes use pre-rising-edge values; stably sample valid outputs 1ns after the edge; synchronous reset takes effect only at rising edges.
+
+boundary: Legal encodings, input domains, and exceptions follow this item's definition, and all predictions are independent of actual DUT outputs.
+
+## F-10
+
+requirement_ids: ["R-dv-089-010"]
+
+module: cpu_core
+
+definition: SYSTEM opcode=10, sysop=[25:20]. 0/1/2/4/7/8 specify NOP/HALT/EBREAK/MRET/EI/DI, and the low 20 bits must be 0. 3 is TRAP; the rd field [19:16] and CSR field [15:8] must be 0, and the low 8 bits are the immediate. 5 is CSRR, rd=[19:16], CSR=[15:8], and the low 8 bits must be 0. 6 is CSRW; the rd field must be 0, the upper 4 bits of the low 8 bits must be 0, and the low 4 bits specify the source register. Other sysops are illegal. CSR read addresses 00..0A are status, pending, EPC, cause, tvec, badaddr, cycle low/high, instret low/high, and scratch, respectively; other read addresses are illegal. Only write addresses 00/02/04/0A are allowed, and the low 2 bits of EPC/tvec are cleared. status retains only the low 2 bits; pending={external,timer}; cycle increments by 1 at every non-reset edge, and instret increments by 1 on every successful completion, including HALT and MRET. CSRR reads the count from before its commit edge. All data is manifested through subsequent register use.
+
+interface: ["i_rsp_rdata_i", "timer_irq_i", "external_irq_i", "d_req_wdata_o", "retire_valid_o", "trap_o"]
+
+timing: Handshakes use pre-rising-edge values; stably sample valid outputs 1ns after the edge; synchronous reset takes effect only at rising edges.
+
+boundary: Legal encodings, input domains, and exceptions follow this item's definition, and all predictions are independent of actual DUT outputs.
+
+## F-11
+
+requirement_ids: ["R-dv-089-011"]
+
+module: cpu_core
+
+definition: A synchronous trap saves EPC, cause, and badaddr, clearing the low 2 bits of EPC; bit31 of cause is 0, the low 8 bits hold the cause, and all other bits are 0. EBREAK cause=9, badaddr=the original instruction, and EPC is this PC; TRAP cause=8, badaddr=the zero-extended immediate, and EPC is PC+4. Trap entry copies IE(bit0) of status to MPIE(bit1) and clears IE. MRET restores IE to the old MPIE and sets MPIE to 1, with EPC as the target. EI/DI set/clear IE, respectively. State-update priority is trap entry, MRET, then ordinary CSR/EI/DI; a trap or return does not simultaneously perform an ordinary CSR write.
+
+interface: ["i_rsp_rdata_i", "trap_o", "trap_cause_o", "trap_badaddr_o", "i_req_addr_o", "d_req_wdata_o", "retire_valid_o"]
+
+timing: Handshakes use pre-rising-edge values; stably sample valid outputs 1ns after the edge; synchronous reset takes effect only at rising edges.
+
+boundary: Legal encodings, input domains, and exceptions follow this item's definition, and all predictions are independent of actual DUT outputs.
+
+## F-12
+
+requirement_ids: ["R-dv-089-012"]
+
+module: cpu_core
+
+definition: An interrupt may be accepted when IE is asserted and either interrupt level is asserted: synchronous exceptions, MRET, and HALT completion take priority and prevent an interrupt in the current cycle; otherwise, an interrupt may be accepted when halted, when there is no instruction awaiting commit, or when an ordinary non-system instruction completes in the current cycle. external has priority over timer, with the low 8 bits of cause being 17/16, respectively; saved CSR cause bit31=1, while the public trap_cause_o outputs only the low 8 bits; badaddr is 0. EPC is selected in the following order: halt-recovery PC, PC of the oldest not-yet-executed instruction, buffered instruction PC, PC of an unanswered instruction fetch from the current generation, next instruction-fetch PC. An interrupt takes the core out of halt and redirects it to tvec. Ordinary instruction completion and an interrupt may occur in the same cycle, and retire_valid_o and trap_o may both be 1. After HALT successfully retires, halted_o is set, new instruction fetches are suppressed, and this PC+4 is saved as the recovery PC; when IE is 0, interrupt levels do not wake the core.
+
+interface: ["timer_irq_i", "external_irq_i", "halted_o", "trap_o", "trap_cause_o", "trap_badaddr_o", "retire_valid_o", "i_req_valid_o", "i_req_addr_o", "d_req_wdata_o"]
+
+timing: Handshakes use pre-rising-edge values; stably sample valid outputs 1ns after the edge; synchronous reset takes effect only at rising edges.
+
+boundary: Legal encodings, input domains, and exceptions follow this item's definition, and all predictions are independent of actual DUT outputs.
+

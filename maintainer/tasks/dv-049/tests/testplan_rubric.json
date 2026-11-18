@@ -1,0 +1,430 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "requirement_ids": [
+    "R-2dbefb593c6f-001",
+    "R-2dbefb593c6f-002",
+    "R-2dbefb593c6f-003",
+    "R-2dbefb593c6f-004",
+    "R-2dbefb593c6f-005",
+    "R-2dbefb593c6f-006",
+    "R-2dbefb593c6f-007",
+    "R-2dbefb593c6f-008"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "reset",
+      "requirement_ids": [
+        "R-2dbefb593c6f-001"
+      ],
+      "scenario": "First run for more than 40 cycles, then assert nreset=0 on a falling edge and compare before the edge and after the next rising edge; release reset after holding it for 4 cycles, then run for 70 cycles. Also repeat reset near phases 31/32.",
+      "checked_target": "nreset is an active-low synchronous reset. Only when it is 0 at a rising edge of clk are all 58 scrambler-history bits set to 1 and phase p set to 0; assertion between edges does not immediately reset them. The fragment register contents are not cleared by reset, and fragments are still captured on every rising edge (including reset edges) according to the pre-edge phase and scrambled value. The initial state is defined only after at least one rising edge with reset asserted.",
+      "anchors": {
+        "setup": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "First run for more than 40 cycles, then assert nreset=0 on a falling edge and compare before the edge and after the next rising edge; release reset after holding it for 4 cycles, then run for 70 cycles. Also repeat reset near phases 31/32."
+        },
+        "stimulus": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "First run for more than 40 cycles, then assert nreset=0 on a falling edge and compare before the edge and after the next rising edge; release reset after holding it for 4 cycles, then run for 70 cycles. Also repeat reset near phases 31/32."
+        },
+        "expected": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "nreset is an active-low synchronous reset. Only when it is 0 at a rising edge of clk are all 58 scrambler-history bits set to 1 and phase p set to 0; assertion between edges does not immediately reset them. The fragment register contents are not cleared by reset, and fragments are still captured on every rising edge (including reset edges) according to the pre-edge phase and scrambled value. The initial state is defined only after at least one rising edge with reset asserted."
+        },
+        "sampling": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "Drive signals to be stable after the falling edge; sample 1ns before the next rising edge and 1ns after the rising-edge NBA, respectively. The UVM monitor samples #1step before the rising edge, and the model and actual use the same input history and the same phase window."
+        },
+        "checker": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "The independent input-history model reads only reset and inputs, not DUT outputs; the monitor obtains actual from public ports. Compare ready at each point, and compare data bits bit by bit where the independent expected value is 0/1; X in actual must also be reported as UVM_ERROR. Count expected X bits separately. Any mismatch causes failure. Require at least 100 comparison cycles and 1000 valid data bits; otherwise the non-vacuity check fails. End after a fixed number of cycles."
+        }
+      }
+    },
+    {
+      "obligation_id": "decode",
+      "requirement_ids": [
+        "R-2dbefb593c6f-002"
+      ],
+      "scenario": "Establish a deterministic history from reset, iterate over c=0..255, and for each c drive a 64-bit word with distinct values by byte index. Separately change the byte selected by m to 07/fd/fe/other values; also place these values in unselected positions of the same byte as controls.",
+      "checked_target": "Byte j is xgmii_txd_i[8j+7:8j], with j=0 being the least significant byte. Let c be the 8-bit xgmii_txc_i and m=(-c) modulo 256; if m=0, the selected byte b is 0; otherwise, b is the input byte corresponding to the index of the highest set bit in m. The idle condition is c[7]=1 and b=07, and the term condition is c[7]=1 and b=fd. All 256 values of c and the full 64-bit input data are within the fixed interface scope; this is not an interpretation of the standard Ethernet protocol.",
+      "anchors": {
+        "setup": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "Establish a deterministic history from reset, iterate over c=0..255, and for each c drive a 64-bit word with distinct values by byte index. Separately change the byte selected by m to 07/fd/fe/other values; also place these values in unselected positions of the same byte as controls."
+        },
+        "stimulus": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "Establish a deterministic history from reset, iterate over c=0..255, and for each c drive a 64-bit word with distinct values by byte index. Separately change the byte selected by m to 07/fd/fe/other values; also place these values in unselected positions of the same byte as controls."
+        },
+        "expected": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "Byte j is xgmii_txd_i[8j+7:8j], with j=0 being the least significant byte. Let c be the 8-bit xgmii_txc_i and m=(-c) modulo 256; if m=0, the selected byte b is 0; otherwise, b is the input byte corresponding to the index of the highest set bit in m. The idle condition is c[7]=1 and b=07, and the term condition is c[7]=1 and b=fd. All 256 values of c and the full 64-bit input data are within the fixed interface scope; this is not an interpretation of the standard Ethernet protocol."
+        },
+        "sampling": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "Drive signals to be stable after the falling edge; sample 1ns before the next rising edge and 1ns after the rising-edge NBA, respectively. The UVM monitor samples #1step before the rising edge, and the model and actual use the same input history and the same phase window."
+        },
+        "checker": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "The independent input-history model reads only reset and inputs, not DUT outputs; the monitor obtains actual from public ports. Compare ready at each point, and compare data bits bit by bit where the independent expected value is 0/1; X in actual must also be reported as UVM_ERROR. Count expected X bits separately. Any mismatch causes failure. Require at least 100 comparison cycles and 1000 valid data bits; otherwise the non-vacuity check fails. End after a fixed number of cycles."
+        }
+      }
+    },
+    {
+      "obligation_id": "start",
+      "requirement_ids": [
+        "R-2dbefb593c6f-003"
+      ],
+      "scenario": "Set byte 0/4 to fb individually, both to fb, or neither to fb, combined with c=00/01/10/80/ff; hold each case for 35 cycles, independently encode and compare the serial output, covering the presence or absence of data control and high control-bit gating.",
+      "checked_target": "The valid start0 condition is c[7]=0, byte 0=fb, and byte 4 not equal to fb. Byte 4=fb suppresses start0; the byte-4 start indication is truncated in the top-level connection and cannot generate block type 33. Even when c[0]=0, the start0 condition is still determined only by the data described above and c[7].",
+      "anchors": {
+        "setup": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "Set byte 0/4 to fb individually, both to fb, or neither to fb, combined with c=00/01/10/80/ff; hold each case for 35 cycles, independently encode and compare the serial output, covering the presence or absence of data control and high control-bit gating."
+        },
+        "stimulus": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "Set byte 0/4 to fb individually, both to fb, or neither to fb, combined with c=00/01/10/80/ff; hold each case for 35 cycles, independently encode and compare the serial output, covering the presence or absence of data control and high control-bit gating."
+        },
+        "expected": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "The valid start0 condition is c[7]=0, byte 0=fb, and byte 4 not equal to fb. Byte 4=fb suppresses start0; the byte-4 start indication is truncated in the top-level connection and cannot generate block type 33. Even when c[0]=0, the start0 condition is still determined only by the data described above and c[7]."
+        },
+        "sampling": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "Drive signals to be stable after the falling edge; sample 1ns before the next rising edge and 1ns after the rising-edge NBA, respectively. The UVM monitor samples #1step before the rising edge, and the model and actual use the same input history and the same phase window."
+        },
+        "checker": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "The independent input-history model reads only reset and inputs, not DUT outputs; the monitor obtains actual from public ports. Compare ready at each point, and compare data bits bit by bit where the independent expected value is 0/1; X in actual must also be reported as UVM_ERROR. Count expected X bits separately. Any mismatch causes failure. Require at least 100 comparison cycles and 1000 valid data bits; otherwise the non-vacuity check fails. End after a fixed number of cycles."
+        }
+      }
+    },
+    {
+      "obligation_id": "encode",
+      "requirement_ids": [
+        "R-2dbefb593c6f-004"
+      ],
+      "scenario": "Drive idle, error, ordinary data, start, and term; combine term with all 64 low-6-bit k values and high-bit gating, distinguishing reachable codes from unknown codes. Use all-0/all-1/walking-bit words to cover retention of the upper 56 bits and clearing on idle.",
+      "checked_target": "Let k be the low 6 bits of c zero-extended to 8 bits, and q=k+1; for q=1/2/4/8/16/32/64, the termination codes are respectively 87/99/aa/b4/cc/d2/e1, and termination codes for other q values are unknown; q=128 is unreachable under the fixed connections. The block type is the bitwise OR of the idle contribution 1e, the term contribution of the termination code, and the start0 contribution 78 (an inactive contribution is 0); err does not contribute to the block type. When c is nonzero, the low 8 bits of the encoded word are the block type; when c=0, the original low 8 bits are retained. The high 56 bits of the encoded word are 0 during idle; otherwise, the high 56 input bits are retained. The synchronization header is 01 when c=0 and 10 when c is nonzero; the header is not scrambled.",
+      "anchors": {
+        "setup": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "Drive idle, error, ordinary data, start, and term; combine term with all 64 low-6-bit k values and high-bit gating, distinguishing reachable codes from unknown codes. Use all-0/all-1/walking-bit words to cover retention of the upper 56 bits and clearing on idle."
+        },
+        "stimulus": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "Drive idle, error, ordinary data, start, and term; combine term with all 64 low-6-bit k values and high-bit gating, distinguishing reachable codes from unknown codes. Use all-0/all-1/walking-bit words to cover retention of the upper 56 bits and clearing on idle."
+        },
+        "expected": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "Let k be the low 6 bits of c zero-extended to 8 bits, and q=k+1; for q=1/2/4/8/16/32/64, the termination codes are respectively 87/99/aa/b4/cc/d2/e1, and termination codes for other q values are unknown; q=128 is unreachable under the fixed connections. The block type is the bitwise OR of the idle contribution 1e, the term contribution of the termination code, and the start0 contribution 78 (an inactive contribution is 0); err does not contribute to the block type. When c is nonzero, the low 8 bits of the encoded word are the block type; when c=0, the original low 8 bits are retained. The high 56 bits of the encoded word are 0 during idle; otherwise, the high 56 input bits are retained. The synchronization header is 01 when c=0 and 10 when c is nonzero; the header is not scrambled."
+        },
+        "sampling": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "Drive signals to be stable after the falling edge; sample 1ns before the next rising edge and 1ns after the rising-edge NBA, respectively. The UVM monitor samples #1step before the rising edge, and the model and actual use the same input history and the same phase window."
+        },
+        "checker": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "The independent input-history model reads only reset and inputs, not DUT outputs; the monitor obtains actual from public ports. Compare ready at each point, and compare data bits bit by bit where the independent expected value is 0/1; X in actual must also be reported as UVM_ERROR. Count expected X bits separately. Any mismatch causes failure. Require at least 100 comparison cycles and 1000 valid data bits; otherwise the non-vacuity check fails. End after a fixed number of cycles."
+        }
+      }
+    },
+    {
+      "obligation_id": "scramble",
+      "requirement_ids": [
+        "R-2dbefb593c6f-005"
+      ],
+      "scenario": "After reset, continuously drive all-0, all-1, walking-1, and at least 100 random full words, spanning at least 3 phase wraps of 33 cycles; change the input at phase 32 and then hold it, calculate scrambling bit by bit from the input history, and check freezing/resumption.",
+      "checked_target": "Process each encoded word from bit 0 through bit 63, with current output bit = current encoded bit XOR the 39th preceding scrambled bit XOR the 58th preceding scrambled bit. The 58-bit history is initially all ones. After each bit is computed, that output bit is shifted into the temporary history for computing subsequent bits of this word; the history after the entire word is committed only at rising edges where the pre-edge phase p is not 32 and nreset=1. When p=32, the history is held, but the combinational scrambled result still changes with the current input.",
+      "anchors": {
+        "setup": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "After reset, continuously drive all-0, all-1, walking-1, and at least 100 random full words, spanning at least 3 phase wraps of 33 cycles; change the input at phase 32 and then hold it, calculate scrambling bit by bit from the input history, and check freezing/resumption."
+        },
+        "stimulus": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "After reset, continuously drive all-0, all-1, walking-1, and at least 100 random full words, spanning at least 3 phase wraps of 33 cycles; change the input at phase 32 and then hold it, calculate scrambling bit by bit from the input history, and check freezing/resumption."
+        },
+        "expected": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "Process each encoded word from bit 0 through bit 63, with current output bit = current encoded bit XOR the 39th preceding scrambled bit XOR the 58th preceding scrambled bit. The 58-bit history is initially all ones. After each bit is computed, that output bit is shifted into the temporary history for computing subsequent bits of this word; the history after the entire word is committed only at rising edges where the pre-edge phase p is not 32 and nreset=1. When p=32, the history is held, but the combinational scrambled result still changes with the current input."
+        },
+        "sampling": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "Drive signals to be stable after the falling edge; sample 1ns before the next rising edge and 1ns after the rising-edge NBA, respectively. The UVM monitor samples #1step before the rising edge, and the model and actual use the same input history and the same phase window."
+        },
+        "checker": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "The independent input-history model reads only reset and inputs, not DUT outputs; the monitor obtains actual from public ports. Compare ready at each point, and compare data bits bit by bit where the independent expected value is 0/1; X in actual must also be reported as UVM_ERROR. Count expected X bits separately. Any mismatch causes failure. Require at least 100 comparison cycles and 1000 valid data bits; otherwise the non-vacuity check fails. End after a fixed number of cycles."
+        }
+      }
+    },
+    {
+      "obligation_id": "ready",
+      "requirement_ids": [
+        "R-2dbefb593c6f-006"
+      ],
+      "scenario": "Count clocks independently starting at reset release, run for at least 132 cycles, and check ready on every cycle; alternately hold and change the input at expected p=31/32/0, and also reset around p=32. Do not use DUT ready as the basis for the predictor's count.",
+      "checked_target": "The phase after reset is p=0. Each rising edge of clk with nreset=1 advances p cyclically through 0,1,...,32,0. ready_o is 0 when p=32 and 1 otherwise, independently of the input word and control value. Reset changes the phase only at rising edges; ready_o is not combinationally gated by nreset. Inputs may change while ready_o is low, but the scrambler history is not committed; the upstream logic may choose to hold the inputs, and data_o is not required to remain unchanged during a backpressure cycle.",
+      "anchors": {
+        "setup": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "Count clocks independently starting at reset release, run for at least 132 cycles, and check ready on every cycle; alternately hold and change the input at expected p=31/32/0, and also reset around p=32. Do not use DUT ready as the basis for the predictor's count."
+        },
+        "stimulus": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "Count clocks independently starting at reset release, run for at least 132 cycles, and check ready on every cycle; alternately hold and change the input at expected p=31/32/0, and also reset around p=32. Do not use DUT ready as the basis for the predictor's count."
+        },
+        "expected": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "The phase after reset is p=0. Each rising edge of clk with nreset=1 advances p cyclically through 0,1,...,32,0. ready_o is 0 when p=32 and 1 otherwise, independently of the input word and control value. Reset changes the phase only at rising edges; ready_o is not combinationally gated by nreset. Inputs may change while ready_o is low, but the scrambler history is not committed; the upstream logic may choose to hold the inputs, and data_o is not required to remain unchanged during a backpressure cycle."
+        },
+        "sampling": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "Drive signals to be stable after the falling edge; sample 1ns before the next rising edge and 1ns after the rising-edge NBA, respectively. The UVM monitor samples #1step before the rising edge, and the model and actual use the same input history and the same phase window."
+        },
+        "checker": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "The independent input-history model reads only reset and inputs, not DUT outputs; the monitor obtains actual from public ports. Compare ready at each point, and compare data bits bit by bit where the independent expected value is 0/1; X in actual must also be reported as UVM_ERROR. Count expected X bits separately. Any mismatch causes failure. Require at least 100 comparison cycles and 1000 valid data bits; otherwise the non-vacuity check fails. End after a fixed number of cycles."
+        }
+      }
+    },
+    {
+      "obligation_id": "fragment",
+      "requirement_ids": [
+        "R-2dbefb593c6f-007"
+      ],
+      "scenario": "At every phase of at least two complete 0..32 phase wraps, change data and control after the falling edge, first take a stable sample before the next rising edge, then sample after the rising-edge NBA; specifically check header positions, complete fragments, and known bit widths at the p=0/1/31/32 transitions.",
+      "checked_target": "Let s be the 64-bit scrambled word computed from the current input and the pre-edge history. Every rising edge, without gating by ready or reset, captures the highest L bits of s into the low L bits of the fragment register, with the remaining high bits unknown, where L=2*((pre-edge p) modulo 32)+2. When the current p=0, data_o combinationally outputs {s[61:0],synchronization header[1:0]}; when p=1..32, it outputs the entire captured fragment register. This is whole-word selection; the current data must not be spliced bitwise with the old fragment. When p=0, an input change within the same cycle can combinationally change data_o; when p is nonzero, it changes only at the next capture edge.",
+      "anchors": {
+        "setup": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "At every phase of at least two complete 0..32 phase wraps, change data and control after the falling edge, first take a stable sample before the next rising edge, then sample after the rising-edge NBA; specifically check header positions, complete fragments, and known bit widths at the p=0/1/31/32 transitions."
+        },
+        "stimulus": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "At every phase of at least two complete 0..32 phase wraps, change data and control after the falling edge, first take a stable sample before the next rising edge, then sample after the rising-edge NBA; specifically check header positions, complete fragments, and known bit widths at the p=0/1/31/32 transitions."
+        },
+        "expected": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "Let s be the 64-bit scrambled word computed from the current input and the pre-edge history. Every rising edge, without gating by ready or reset, captures the highest L bits of s into the low L bits of the fragment register, with the remaining high bits unknown, where L=2*((pre-edge p) modulo 32)+2. When the current p=0, data_o combinationally outputs {s[61:0],synchronization header[1:0]}; when p=1..32, it outputs the entire captured fragment register. This is whole-word selection; the current data must not be spliced bitwise with the old fragment. When p=0, an input change within the same cycle can combinationally change data_o; when p is nonzero, it changes only at the next capture edge."
+        },
+        "sampling": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "Drive signals to be stable after the falling edge; sample 1ns before the next rising edge and 1ns after the rising-edge NBA, respectively. The UVM monitor samples #1step before the rising edge, and the model and actual use the same input history and the same phase window."
+        },
+        "checker": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "The independent input-history model reads only reset and inputs, not DUT outputs; the monitor obtains actual from public ports. Compare ready at each point, and compare data bits bit by bit where the independent expected value is 0/1; X in actual must also be reported as UVM_ERROR. Count expected X bits separately. Any mismatch causes failure. Require at least 100 comparison cycles and 1000 valid data bits; otherwise the non-vacuity check fails. End after a fixed number of cycles."
+        }
+      }
+    },
+    {
+      "obligation_id": "defined",
+      "requirement_ids": [
+        "R-2dbefb593c6f-008"
+      ],
+      "scenario": "After a clean random history, inject words with c=fe/fc/f8/f0/e0 and the selected byte equal to fd, and continuously observe the known-bit mask and subsequent contamination; then reset and send 70 known data words to resume comparison. Count comparison cycles and known bits, requiring at least 100 cycles and 1000 data bits.",
+      "checked_target": "Inputs are required to be known 0/1, with fixed XGMII_DATA_W=64; the output contains explicitly unknown bits: the unfilled high bits of the fragment and bits propagated through the scrambler history from illegal termination codes. Only data_o bits whose independent expected values are known 0/1 are constrained; bits with unknown expected values have no prescribed value. A known expected value must not be skipped because actual is X. ready_o must have a known, exact value after the first effective reset. Unknown termination codes may contaminate subsequent scrambler history, and reset restores the all-ones history; do not narrow the input control-word or byte ranges to avoid this situation.",
+      "anchors": {
+        "setup": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "After a clean random history, inject words with c=fe/fc/f8/f0/e0 and the selected byte equal to fd, and continuously observe the known-bit mask and subsequent contamination; then reset and send 70 known data words to resume comparison. Count comparison cycles and known bits, requiring at least 100 cycles and 1000 data bits."
+        },
+        "stimulus": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "After a clean random history, inject words with c=fe/fc/f8/f0/e0 and the selected byte equal to fd, and continuously observe the known-bit mask and subsequent contamination; then reset and send 70 known data words to resume comparison. Count comparison cycles and known bits, requiring at least 100 cycles and 1000 data bits."
+        },
+        "expected": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "Inputs are required to be known 0/1, with fixed XGMII_DATA_W=64; the output contains explicitly unknown bits: the unfilled high bits of the fragment and bits propagated through the scrambler history from illegal termination codes. Only data_o bits whose independent expected values are known 0/1 are constrained; bits with unknown expected values have no prescribed value. A known expected value must not be skipped because actual is X. ready_o must have a known, exact value after the first effective reset. Unknown termination codes may contaminate subsequent scrambler history, and reset restores the all-ones history; do not narrow the input control-word or byte ranges to avoid this situation."
+        },
+        "sampling": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "Drive signals to be stable after the falling edge; sample 1ns before the next rising edge and 1ns after the rising-edge NBA, respectively. The UVM monitor samples #1step before the rising edge, and the model and actual use the same input history and the same phase window."
+        },
+        "checker": {
+          "0": "Missing/incorrect/vacuous",
+          "1": "Partially specific",
+          "2": "The independent input-history model reads only reset and inputs, not DUT outputs; the monitor obtains actual from public ports. Compare ready at each point, and compare data bits bit by bit where the independent expected value is 0/1; X in actual must also be reported as UVM_ERROR. Count expected X bits separately. Any mismatch causes failure. Require at least 100 comparison cycles and 1000 valid data bits; otherwise the non-vacuity check fails. End after a fixed number of cycles."
+        }
+      }
+    }
+  ],
+  "issue_codes": [
+    "wrong_expected",
+    "wrong_sampling",
+    "vacuous_checker",
+    "self_oracle",
+    "contradiction",
+    "document_conflict",
+    "narrow_stimulus"
+  ],
+  "issue_grade_caps": {
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "contradiction": {
+      "expected": 0
+    }
+  },
+  "claim_impact_components": {
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "self_oracle": [
+      "checker"
+    ],
+    "vacuous_checker": [
+      "checker"
+    ],
+    "contradiction": [
+      "expected"
+    ]
+  },
+  "decision_order": [
+    "Fixed obligation denominator; C uses the candidate's own features",
+    "Combine actual preparation/stimulus/independent expectations/windows/checks across multiple tests; expected must not substitute for stimulus",
+    "Treat mutually exclusive facts under the same conditions in the two documents as incorrect, limit this to the obligations actually affected, and retain unrelated scopes"
+  ],
+  "stimulus_criteria": {
+    "reset": [
+      {
+        "criterion_id": "reset-1",
+        "definition": "After running for more than 40 cycles, assert reset between edges and check before and after the next rising edge"
+      },
+      {
+        "criterion_id": "reset-2",
+        "definition": "Hold reset for 4 cycles, then release it and run for 70 cycles, and repeat near phase 31/32"
+      }
+    ],
+    "decode": [
+      {
+        "criterion_id": "decode-1",
+        "definition": "Iterate through all 256 values of c with distinguishable data bytes"
+      },
+      {
+        "criterion_id": "decode-2",
+        "definition": "Place 07/fd/fe/other values at selected and unselected positions respectively and compare outputs"
+      }
+    ],
+    "start": [
+      {
+        "criterion_id": "start-1",
+        "definition": "Byte 0 and byte 4 are fb individually/simultaneously, and neither is fb"
+      },
+      {
+        "criterion_id": "start-2",
+        "definition": "Combine with c=00/01/10/80/ff, holding each for 35 cycles and comparing"
+      }
+    ],
+    "encode": [
+      {
+        "criterion_id": "encode-1",
+        "definition": "Drive idle/error/ordinary data/start/term and check the payload and header"
+      },
+      {
+        "criterion_id": "encode-2",
+        "definition": "For term, cover all 64 values of the low 6 bits of k and high-bit gating"
+      },
+      {
+        "criterion_id": "encode-3",
+        "definition": "Use all-0/all-1/walking-bit inputs to cover preservation of the upper 56 bits and clearing to zero for idle"
+      }
+    ],
+    "scramble": [
+      {
+        "criterion_id": "scramble-1",
+        "definition": "After reset, use all-0/all-1/walking-1 and at least 100 random words across 3 phase wraps"
+      },
+      {
+        "criterion_id": "scramble-2",
+        "definition": "Change and hold the input at phase 32, and independently check freezing/resumption of the scrambling history"
+      }
+    ],
+    "ready": [
+      {
+        "criterion_id": "ready-1",
+        "definition": "Independently count clocks for at least 132 cycles and compare ready on every cycle"
+      },
+      {
+        "criterion_id": "ready-2",
+        "definition": "Hold/change inputs at expected p=31/32/0 and reset before and after p32"
+      }
+    ],
+    "fragment": [
+      {
+        "criterion_id": "fragment-1",
+        "definition": "During two complete phase wraps, change data and control between edges at every phase and sample before/after the edges"
+      },
+      {
+        "criterion_id": "fragment-2",
+        "definition": "Independently compare synchronization headers, fragments, and known bit widths for p=0/1/31/32"
+      }
+    ],
+    "defined": [
+      {
+        "criterion_id": "defined-1",
+        "definition": "After cleaning the history, inject fe/fc/f8/f0/e0 with fd in selected bytes and check unknown contamination"
+      },
+      {
+        "criterion_id": "defined-2",
+        "definition": "After reset, resume comparison after 70 known words, counting at least 100 comparison cycles and 1000 known data bits"
+      }
+    ]
+  }
+}

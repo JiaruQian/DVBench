@@ -1,0 +1,111 @@
+## T-110-001
+
+feature_ids: F-110-001
+
+requirement_ids: R-N110-001
+
+stimulus: Enumerate all 65536 low 16-bit values and vary the high 16 bits; additionally randomize 32-bit values with the low 2 bits fixed at 11. After combinational settling, independently compare dispatch, pass-through, and the absence of any effect from the high bits.
+
+expected: Fix FPU=0 and ZFINX=0. Purely combinational module, with no clock, reset, handshake, or state; observe after ensuring that the input combination has settled. When the low 2 bits of instr_i=11, instr_o equals all 32 bits of instr_i bit for bit, is_compressed=0, and illegal=0; the legality of the 32-bit instruction is not checked. For other low 2-bit values, is_compressed=1; only the low 16 bits participate in decoding, and the high 16 bits have no effect. When illegal=1, instr_o is outside the checking contract.
+
+checker: After each change to instr_i, wait at least 1ns for combinational propagation to settle before sampling the current outputs; do not depend on the previous input. For illegal inputs, check only is_compressed_o/illegal_instr_o; for legal inputs, also compare instr_o. The input-history-independent predictor maintains only inputs, previously stored state, and transaction counts, and the monitor only reads actual ports; perform bitwise four-state comparison of actual/expected and report UVM_ERROR on mismatches; count comparisons and output changes, report missing comparisons as errors as well, and do not generate expected from actual.
+
+implementation_id: native_sequence.body/native_monitor.run_phase/native_scoreboard.write
+
+source: tb.sv:native_sequence.body; native_monitor.run_phase; native_scoreboard.write; model/model.sv
+
+## T-110-002
+
+feature_ids: F-110-002
+
+requirement_ids: R-N110-002
+
+stimulus: In Q0, enumerate the destination/base prime registers and all immediate fields, including zero ADDI4SPN and reserved funct3; independently encode ADDI/LW/SW to check all fields.
+
+expected: A prime on a compressed register denotes x8..x15. Q0=00, funct3=000: C.ADDI4SPN expands to ADDI rd',x2,imm, with imm[9:6]=c[10:7], [5:4]=c[12:11], [3]=c[5], [2]=c[6], and the low 2 bits zero; imm=0 is illegal. funct3=010/110 is LW/SW, with rs1'=c[9:7]+8, rd'/rs2'=c[4:2]+8, and offset [6]=c[5], [5:3]=c[12:10], [2]=c[6], and the low 2 bits zero. funct3=100 is reserved and illegal.
+
+checker: After each change to instr_i, wait at least 1ns for combinational propagation to settle before sampling the current outputs; do not depend on the previous input. For illegal inputs, check only is_compressed_o/illegal_instr_o; for legal inputs, also compare instr_o. The input-history-independent predictor maintains only inputs, previously stored state, and transaction counts, and the monitor only reads actual ports; perform bitwise four-state comparison of actual/expected and report UVM_ERROR on mismatches; count comparisons and output changes, report missing comparisons as errors as well, and do not generate expected from actual.
+
+implementation_id: native_sequence.body/native_monitor.run_phase/native_scoreboard.write
+
+source: tb.sv:native_sequence.body; native_monitor.run_phase; native_scoreboard.write; model/model.sv
+
+## T-110-003
+
+feature_ids: F-110-003
+
+requirement_ids: R-N110-003
+
+stimulus: Iterate over the three Q1 immediate classes, all rd values, and 6-bit immediates, especially rd0/rd2, positive and negative extremes, and zero; compare against independent I/U encodings and check hint and illegal classifications.
+
+expected: Q1=01. funct3=000 is ADDI rd,rd,sext(c12,c6:2); 010 is ADDI rd,x0,sext(c12,c6:2), namely LI. 011 with all 6 immediate bits zero is illegal; otherwise, rd=x2 is ADDI16SP, with imm[9]=c12, [8:7]=c4:3, [6]=c5, [5]=c2, [4]=c6, and the low 4 bits zero, sign-extended; other rd values give LUI, whose U immediate is sext(c12,c6:2)<<12. ADDI/LI/LUI with rd=0 and zero ADDI are legal hints.
+
+checker: After each change to instr_i, wait at least 1ns for combinational propagation to settle before sampling the current outputs; do not depend on the previous input. For illegal inputs, check only is_compressed_o/illegal_instr_o; for legal inputs, also compare instr_o. The input-history-independent predictor maintains only inputs, previously stored state, and transaction counts, and the monitor only reads actual ports; perform bitwise four-state comparison of actual/expected and report UVM_ERROR on mismatches; count comparisons and output changes, report missing comparisons as errors as well, and do not generate expected from actual.
+
+implementation_id: native_sequence.body/native_monitor.run_phase/native_scoreboard.write
+
+source: tb.sv:native_sequence.body; native_monitor.run_phase; native_scoreboard.write; model/model.sv
+
+## T-110-004
+
+feature_ids: F-110-004
+
+requirement_ids: R-N110-004
+
+stimulus: Iterate over the four subgroups, prime registers, all shift amounts/signed immediates, both c12 values, and the four ALU operations; independently construct I/R encodings, including zero-shift hints and RV64 illegal cases.
+
+expected: For Q1 funct3=100, c11:10=00/01 is SRLI/SRAI, operating on c9:7+8 with shift amount c6:2; c12=1 is illegal, and a zero shift is legal; 10 is ANDI using a signed 6-bit immediate; for 11 and c12=0, expand to SUB/XOR/OR/AND according to c6:5=00/01/10/11, with rs2=c4:2+8. 11 with c12=1 is reserved for RV64; all are illegal.
+
+checker: After each change to instr_i, wait at least 1ns for combinational propagation to settle before sampling the current outputs; do not depend on the previous input. For illegal inputs, check only is_compressed_o/illegal_instr_o; for legal inputs, also compare instr_o. The input-history-independent predictor maintains only inputs, previously stored state, and transaction counts, and the monitor only reads actual ports; perform bitwise four-state comparison of actual/expected and report UVM_ERROR on mismatches; count comparisons and output changes, report missing comparisons as errors as well, and do not generate expected from actual.
+
+implementation_id: native_sequence.body/native_monitor.run_phase/native_scoreboard.write
+
+source: tb.sv:native_sequence.body; native_monitor.run_phase; native_scoreboard.write; model/model.sv
+
+## T-110-005
+
+feature_ids: F-110-005
+
+requirement_ids: R-N110-005
+
+stimulus: Exhaustively enumerate all CJ/CB offset fields and branch registers; independently calculate the signed byte offset first, then re-encode using standard J/B encoders; cover positive and negative offsets, single-bit offsets, and maximum/minimum offsets.
+
+expected: Q1 funct3=001/101 is JAL x1/x0, with CJ offset [11]=c12, [10]=c8, [9:8]=c10:9, [7]=c6, [6]=c7, [5]=c2, [4]=c11, [3:1]=c5:3, and bit0=0, sign-extended. 110/111 is BEQ/BNE rs1',x0, with CB offset [8]=c12, [7:6]=c6:5, [5]=c2, [4:3]=c11:10, [2:1]=c4:3, and bit0=0, sign-extended into B format.
+
+checker: After each change to instr_i, wait at least 1ns for combinational propagation to settle before sampling the current outputs; do not depend on the previous input. For illegal inputs, check only is_compressed_o/illegal_instr_o; for legal inputs, also compare instr_o. The input-history-independent predictor maintains only inputs, previously stored state, and transaction counts, and the monitor only reads actual ports; perform bitwise four-state comparison of actual/expected and report UVM_ERROR on mismatches; count comparisons and output changes, report missing comparisons as errors as well, and do not generate expected from actual.
+
+implementation_id: native_sequence.body/native_monitor.run_phase/native_scoreboard.write
+
+source: tb.sv:native_sequence.body; native_monitor.run_phase; native_scoreboard.write; model/model.sv
+
+## T-110-006
+
+feature_ids: F-110-006
+
+requirement_ids: R-N110-006
+
+stimulus: Enumerate the four Q2 integer groups, all rd/rs2 values, stack offsets, and c12; separately list JR with a zero source, LWSP with a zero destination, EBREAK, JALR, and MV/ADD hints; compare using independent standard encoders.
+
+expected: Q2=10. funct3=000 is SLLI rd,rd,c6:2; c12=1 is illegal, and rd0/zero shift are legal hints. 010 is LW rd,imm(x2), with offset [7:6]=c3:2, [5]=c12, [4:2]=c6:4, and the low 2 bits zero; rd0 is illegal. 110 is SW rs2,imm(x2), with rs2=c6:2, offset [7:6]=c8:7, [5:2]=c12:9, and the low 2 bits zero. Group 100: when c12=0 and rs2=0, JR=JALR x0,rd,0, and rd0 is illegal; when c12=0 and rs2 is nonzero, MV=ADD rd,x0,rs2; when c12=1, rs2=0, and rd0, it is EBREAK=00100073, otherwise JALR x1,rd,0; when c12=1 and rs2 is nonzero, it is ADD rd,rd,rs2. rd0 for MV/ADD is a legal hint.
+
+checker: After each change to instr_i, wait at least 1ns for combinational propagation to settle before sampling the current outputs; do not depend on the previous input. For illegal inputs, check only is_compressed_o/illegal_instr_o; for legal inputs, also compare instr_o. The input-history-independent predictor maintains only inputs, previously stored state, and transaction counts, and the monitor only reads actual ports; perform bitwise four-state comparison of actual/expected and report UVM_ERROR on mismatches; count comparisons and output changes, report missing comparisons as errors as well, and do not generate expected from actual.
+
+implementation_id: native_sequence.body/native_monitor.run_phase/native_scoreboard.write
+
+source: tb.sv:native_sequence.body; native_monitor.run_phase; native_scoreboard.write; model/model.sv
+
+## T-110-007
+
+feature_ids: F-110-007
+
+requirement_ids: R-N110-007
+
+stimulus: Separately iterate over the four floating-point funct3 values and the other bits in Q0/Q2, alternating with Q1 with the same funct3 and 32-bit pass-through; check that illegality depends only on the current quadrant and parameters; sample after combinational settling each time.
+
+expected: Under the default parameters, funct3=001/011/101/111 in Q0 and Q2 are all illegal, with no expansion of floating-point memory accesses; the same funct3 values in Q1 still follow their integer definitions. Illegal compressed encodings still have is_compressed=1. There is no reset or dependence on the previous input; rapid alternation between legal/illegal inputs should yield the respective results after settling.
+
+checker: After each change to instr_i, wait at least 1ns for combinational propagation to settle before sampling the current outputs; do not depend on the previous input. For illegal inputs, check only is_compressed_o/illegal_instr_o; for legal inputs, also compare instr_o. The input-history-independent predictor maintains only inputs, previously stored state, and transaction counts, and the monitor only reads actual ports; perform bitwise four-state comparison of actual/expected and report UVM_ERROR on mismatches; count comparisons and output changes, report missing comparisons as errors as well, and do not generate expected from actual.
+
+implementation_id: native_sequence.body/native_monitor.run_phase/native_scoreboard.write
+
+source: tb.sv:native_sequence.body; native_monitor.run_phase; native_scoreboard.write; model/model.sv

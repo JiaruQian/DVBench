@@ -1,0 +1,114 @@
+{
+  "task_id": "dv-011",
+  "dut_top": "VGASyncModule_TopLevel",
+  "rtl_root": "rtl",
+  "mutant_root": "mutants/{variant}",
+  "rtl_files": [
+    "rtl.hdl/Verilog/generated/VGASyncModule/VGASyncModule_TopLevel.v"
+  ],
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "reference_sources": [
+    "model/model.sv",
+    "uvm_tb.sv"
+  ],
+  "mutants": [
+    "m1",
+    "m10",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9"
+  ],
+  "coverage": {
+    "vcs_compile": "-cm line+cond+tgl+branch+fsm -cm_dir build/simv.vdb",
+    "urg": "urg -full64 -dir build/simv.vdb -report build/urg"
+  },
+  "model_contract_policy": "native-module-v1",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "Clock",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "Enabled",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "OutBP",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "OutCounter",
+        "direction": "Out",
+        "width": 10,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 9,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "OutFP",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "OutMax",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "OutSP",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "OutVisible",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "Reset",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {},
+    "parser": "pyslang 11.0.0"
+  },
+  "rtl_sources": [
+    "rtl.hdl/Verilog/generated/VGASyncModule/VGASyncModule_TopLevel.v"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "rtl.hdl/Verilog/generated/VGASyncModule/VGASyncModule_TopLevel.v"
+  ]
+}

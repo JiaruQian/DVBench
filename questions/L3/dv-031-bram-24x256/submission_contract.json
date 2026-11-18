@@ -1,0 +1,169 @@
+{
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "interface": {
+      "ports": [
+        {
+          "name": "addra",
+          "direction": "In",
+          "width": 8,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 7,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "addrb",
+          "direction": "In",
+          "width": 8,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 7,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "clka",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "clkb",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "dina",
+          "direction": "In",
+          "width": 24,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 23,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "dinb",
+          "direction": "In",
+          "width": 24,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 23,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "douta",
+          "direction": "Out",
+          "width": 24,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 23,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "doutb",
+          "direction": "Out",
+          "width": 24,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 23,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "rsta",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "rsta_busy",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "rstb",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "rstb_busy",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "wea",
+          "direction": "In",
+          "width": 1,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 0,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "web",
+          "direction": "In",
+          "width": 1,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 0,
+              "right": 0
+            }
+          ]
+        }
+      ],
+      "parameters": {}
+    },
+    "self_contained": true
+  },
+  "format": "public/submission_format.md",
+  "top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "dut_top": "BRAM_TDP_24w_256d",
+  "submission_format": "public/submission_format.md",
+  "json_is_complete_fact_carrier": true,
+  "task_id": "dv-031",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

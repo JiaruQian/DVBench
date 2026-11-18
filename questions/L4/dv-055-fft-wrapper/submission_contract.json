@@ -1,0 +1,132 @@
+{
+  "submission_root": "submission",
+  "top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "dut_top": "fft_wrapper",
+  "access": {
+    "candidate_may_read": [
+      "instruction.md",
+      "submission_contract.json",
+      "public",
+      "environment"
+    ],
+    "candidate_may_not_read": [
+      "maintainer",
+      "other questions",
+      "old runs"
+    ],
+    "dut_interaction": "declared native ports only"
+  },
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "self_contained": true,
+    "same_file_in_D_and_scoreboard": true,
+    "interface": {
+      "top": "fft_wrapper",
+      "parameters": {
+        "DIVISOR": 5,
+        "N": 16,
+        "Q": 8,
+        "ADDR_WIDTH": 5,
+        "DATA_WIDTH": 16,
+        "DEPTH": 32
+      },
+      "ports": [
+        {
+          "name": "clk",
+          "direction": "input",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "rst",
+          "direction": "input",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "m_addr",
+          "direction": "input",
+          "width": 5,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 4,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "m_data",
+          "direction": "input",
+          "width": 16,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 15,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "m_we",
+          "direction": "input",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "s_addr",
+          "direction": "input",
+          "width": 5,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 4,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "s_re",
+          "direction": "input",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "s_data",
+          "direction": "output",
+          "width": 32,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 31,
+              "right": 0
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "submission_format": "public/submission_format.md",
+  "json_is_complete_fact_carrier": true,
+  "task_id": "dv-055",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

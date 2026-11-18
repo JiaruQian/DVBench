@@ -1,0 +1,145 @@
+# testplan
+
+## T1
+
+test_id: T1
+
+feature_ids: ["F1"]
+
+requirement_ids: ["R-dv-051-001"]
+
+stimulus: Initialize all native inputs, drive at falling edges, generate a 10ns clock and sample after propagation settles. Independently model the four physical rows, prior-edge write address, two pipeline stages and two bypass records solely from input history; retain unknowns before initialization. Assert reset on multiple edges, deassert and observe the complete 2048-edge sweep with valid requests and delayed updates continuing through reset; compare valid and payload separately.
+
+expected: The full BIMBranchPredictorBank root and source-supplied data_2048x8 dependency are in scope. There are four prediction slots, no top parameters and no backpressure. Every native input bit pattern is legal. All state updates on rising edges; reset is synchronous active high. Uninitialized values remain unspecified until captured or written; do not assign invented numeric startup values. Reset controls the sweep and bypass replacement selector only; request, update and output pipeline state continue capturing through reset.
+
+checker: Drive inputs at falling clock edges and sample all native actual and independent model outputs after 2 ns. Model state updates only at rising edges. Compare with four-state !==, require 4096 observations and fail on every mismatch or empty run. Numerical uninitialized payload is not assigned an invented value; preserve four-state unknowns until an accepted capture initializes it.
+
+implementation_id: aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard
+
+source: tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv
+
+## T2
+
+test_id: T2
+
+feature_ids: ["F2"]
+
+requirement_ids: ["R-dv-051-002"]
+
+stimulus: Initialize all native inputs, drive at falling edges, generate a 10ns clock and sample after propagation settles. Independently model the four physical rows, prior-edge write address, two pipeline stages and two bypass records solely from input history; retain unknowns before initialization. Vary all upstream f1/f2/f3 payload bits independently including high PC bits, predicted-valid zero, f0-valid bubbles and reset; check exact continuous copies.
+
+expected: For every slot, all f1 outputs continuously copy the corresponding io_resp_in_0_f1 fields, including taken. At f2 and f3, is_br, is_jal, predicted_pc_valid and all 40 predicted_pc_bits continuously copy their corresponding same-phase upstream inputs without delay, reset gating or f0-valid gating. The f2/f3 taken fields are instead predicted as described below. All bits remain observable when a predicted_pc_valid or f0_valid input is zero.
+
+checker: Drive inputs at falling clock edges and sample all native actual and independent model outputs after 2 ns. Model state updates only at rising edges. Compare with four-state !==, require 4096 observations and fail on every mismatch or empty run. Numerical uninitialized payload is not assigned an invented value; preserve four-state unknowns until an accepted capture initializes it.
+
+implementation_id: aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard
+
+source: tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv
+
+## T3
+
+test_id: T3
+
+feature_ids: ["F3"]
+
+requirement_ids: ["R-dv-051-003"]
+
+stimulus: Initialize all native inputs, drive at falling edges, generate a 10ns clock and sample after propagation settles. Independently model the four physical rows, prior-edge write address, two pipeline stages and two bypass records solely from input history; retain unknowns before initialization. Read colliding and noncolliding folded addresses, toggle ignored PC bits, alternate valid/bubbles and change addresses every edge; include read/write collisions and sample the two captures in their proper phases.
+
+expected: The supplied memory has four eight-bit rows, not 2048 independent rows. For an 11-bit address A, row h(A)=A[1:0] XOR A[5:4] XOR A[9:8]; other bits do not affect the row. At a rising edge it captures the current f0 read enable and h(pc[14:4]). Its read output after settling is the current contents of that captured row if captured enable is one, and eight unknown bits otherwise. A separate prediction stage captures the pre-edge memory read output at every edge, regardless of valid. Request valid advances through two registers every edge.
+
+checker: Drive inputs at falling clock edges and sample all native actual and independent model outputs after 2 ns. Model state updates only at rising edges. Compare with four-state !==, require 4096 observations and fail on every mismatch or empty run. Numerical uninitialized payload is not assigned an invented value; preserve four-state unknowns until an accepted capture initializes it.
+
+implementation_id: aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard
+
+source: tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv
+
+## T4
+
+test_id: T4
+
+feature_ids: ["F4"]
+
+requirement_ids: ["R-dv-051-004"]
+
+stimulus: Initialize all native inputs, drive at falling edges, generate a 10ns clock and sample after propagation settles. Independently model the four physical rows, prior-edge write address, two pipeline stages and two bypass records solely from input history; retain unknowns before initialization. Create different lane counter MSBs, change request valid and sweep state, compare f2 and one-edge-later f3 taken; compare every metadata bit with distinct lane counters including invalid cycles.
+
+expected: Each f2 taken continuously equals the second request-valid register AND bit1 of that slot's captured two-bit counter AND not sweeping. Each f3 taken captures the pre-edge f2 taken at every rising edge, without an extra reset. io_f3_meta captures the pre-edge four-counter byte every edge, lane0 in bits1:0 through lane3 in bits7:6; bits119:8 are always zero. Metadata capture is independent of valid and sweeping, so unknown counters can remain visible on invalid cycles.
+
+checker: Drive inputs at falling clock edges and sample all native actual and independent model outputs after 2 ns. Model state updates only at rising edges. Compare with four-state !==, require 4096 observations and fail on every mismatch or empty run. Numerical uninitialized payload is not assigned an invented value; preserve four-state unknowns until an accepted capture initializes it.
+
+implementation_id: aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard
+
+source: tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv
+
+## T5
+
+test_id: T5
+
+feature_ids: ["F5"]
+
+requirement_ids: ["R-dv-051-005"]
+
+stimulus: Initialize all native inputs, drive at falling edges, generate a 10ns clock and sample after propagation settles. Independently model the four physical rows, prior-edge write address, two pipeline stages and two bypass records solely from input history; retain unknowns before initialization. Trace sweep indices0/1/2046/2047 and completion, repeat reset while sweep active and after completion, and cross writes/read collisions with the one-edge-old folded write address.
+
+expected: A reset edge sets sweeping one and sweep index zero. Every following nonreset edge increments the 11-bit index while the pre-edge sweep flag is one; the edge seeing index2047 ends sweeping. Prediction taken is suppressed throughout sweeping. While the pre-edge sweep flag is one, every counter lane is written with value two. The memory captures a folded write address each edge but performs that edge's masked write using the previously captured write row. The current address is sweep index while sweeping and the delayed update pc[14:4] otherwise. Reset itself does not directly clear memory or bypass records; writes use the pre-edge controls, including on reset edges.
+
+checker: Drive inputs at falling clock edges and sample all native actual and independent model outputs after 2 ns. Model state updates only at rising edges. Compare with four-state !==, require 4096 observations and fail on every mismatch or empty run. Numerical uninitialized payload is not assigned an invented value; preserve four-state unknowns until an accepted capture initializes it.
+
+implementation_id: aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard
+
+source: tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv
+
+## T6
+
+test_id: T6
+
+feature_ids: ["F6"]
+
+requirement_ids: ["R-dv-051-006"]
+
+stimulus: Initialize all native inputs, drive at falling edges, generate a 10ns clock and sample after propagation settles. Independently model the four physical rows, prior-edge write address, two pipeline stages and two bypass records solely from input history; retain unknowns before initialization. Cross update valid, every suppressor, each branch-mask bit, selected-index valid/bits, branch/jump/taken; exercise all counter starting values0..3, saturation endpoints, masked preservation and delayed acceptance.
+
+expected: Every update field is captured at each rising edge even when io_update_valid is zero. The following edge can train only when the captured update valid is one and captured is_mispredict_update, is_repair_update and every btb_mispredicts bit are zero. Slot j is write-selected when captured br_mask[j] is one OR captured cfi_idx_valid with cfi_idx_bits=j. Its direction is taken only when selected cfi_idx_valid and slot match and either cfi_is_jal is one, or cfi_is_br AND br_mask[j] AND cfi_taken are one. Each selected counter saturates upward toward three for taken or downward toward zero otherwise. During sweep the physical memory receives twos instead of training data. Unselected memory counter lanes retain their prior bits.
+
+checker: Drive inputs at falling clock edges and sample all native actual and independent model outputs after 2 ns. Model state updates only at rising edges. Compare with four-state !==, require 4096 observations and fail on every mismatch or empty run. Numerical uninitialized payload is not assigned an invented value; preserve four-state unknowns until an accepted capture initializes it.
+
+implementation_id: aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard
+
+source: tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv
+
+## T7
+
+test_id: T7
+
+feature_ids: ["F7"]
+
+requirement_ids: ["R-dv-051-007"]
+
+stimulus: Initialize all native inputs, drive at falling edges, generate a 10ns clock and sample after propagation settles. Independently model the four physical rows, prior-edge write address, two pipeline stages and two bypass records solely from input history; retain unknowns before initialization. Repeat same-tag training with stale supplied meta, alternate two tags then insert a third to evict, include distinct full tags sharing a memory row and partial masks; train during sweep and reset to check record preservation and selector behavior.
+
+expected: Training uses one complete four-counter byte from a matching bypass record before using supplied meta bits7:0. Record tags compare the full delayed pc[14:4], independently of physical-row aliasing; record0 has priority if both match. Matches are disabled while sweeping. A valid nonsuppressed update with any selected slot updates all four counter values of the matching record, including unselected slots. On a miss it replaces the record selected by a one-bit round-robin selector, writes that full tag and all four computed counters, and flips the selector unless reset is active. Reset sets the selector zero but preserves existing tags/data. Even during sweep eligible updates can populate bypass records, although memory writes use twos. The physical memory write mask alone restricts which selected lanes are written.
+
+checker: Drive inputs at falling clock edges and sample all native actual and independent model outputs after 2 ns. Model state updates only at rising edges. Compare with four-state !==, require 4096 observations and fail on every mismatch or empty run. Numerical uninitialized payload is not assigned an invented value; preserve four-state unknowns until an accepted capture initializes it.
+
+implementation_id: aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard
+
+source: tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv
+
+## T8
+
+test_id: T8
+
+feature_ids: ["F8"]
+
+requirement_ids: ["R-dv-051-008"]
+
+stimulus: Initialize all native inputs, drive at falling edges, generate a 10ns clock and sample after propagation settles. Independently model the four physical rows, prior-edge write address, two pipeline stages and two bypass records solely from input history; retain unknowns before initialization. Change all ignored high/low PC bits and upper112 meta bits independently; use distinct four-lane counters and full-width upstream PC patterns to check bit preservation and no lane swapping.
+
+expected: Only update meta bits7:0 supply counter values; meta bits119:8 do not affect any output. The update PC uses bits14:4 for tags and memory folding; other bits are ignored. Lookup PC uses bits14:4 for folding, with the documented ignored folding bits. Upstream response fields remain independent from update data, reset and predicted counter data. Every slot retains its own two-bit counter and lane position across training, lookup and metadata; changing one lane's write mask cannot exchange another lane's bits.
+
+checker: Drive inputs at falling clock edges and sample all native actual and independent model outputs after 2 ns. Model state updates only at rising edges. Compare with four-state !==, require 4096 observations and fail on every mismatch or empty run. Numerical uninitialized payload is not assigned an invented value; preserve four-state unknowns until an accepted capture initializes it.
+
+implementation_id: aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard
+
+source: tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv

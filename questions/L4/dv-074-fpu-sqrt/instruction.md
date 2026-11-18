@@ -1,0 +1,31 @@
+# dv-074-fpu-sqrt: Build a Complete UVM Verification Environment
+
+Read `public/spec.md`, `public/ports.md`, `public/submission_format.md`, and `submission_contract.json`, together with `public/debug_feedback.md`. The native DUT top is `fpu_sqrt`. Use the fixed native fpu_sqrt configuration with no parameters, rising-edge clk, and asynchronous active-low reset. Preserve the native pre-normalization datapath scope and the result-valid windows in public/spec.md. The RTL implementation is hidden.
+
+Submit `flow/features.md`, `flow/features.json`, `flow/testplan.md`, `flow/testplan.json`, a self-contained `model/model.sv`, complete UVM sources, and `sources.f` at the submission root. Features describe what to verify; the testplan explains legal preparation and stimulus, independent expectations, valid sampling, and failure detection. Each JSON document must carry all facts in full, and its Markdown partner must express the same IDs, references, facts, and methods. Markdown cannot fill omissions in JSON; follow the types, references, and paired format examples in `public/submission_format.md`.
+
+`flow/features.json` uses a nonempty `features` array with `feature_id`, `requirement_ids`, `module`, `definition`, `interface`, `timing`, and `boundary`. `flow/testplan.json` uses a nonempty `tests` array with `test_id`, `feature_ids`, `requirement_ids`, `stimulus`, `expected`, `checker`, `implementation_id`, and `source`. Use nonempty strings for text and locator fields, and nonempty arrays of distinct strings for requirement, feature, and interface references. Use unique IDs, public requirement references, relevant native ports, and references to your own features and actual checking code. Reasonable splitting and merging are allowed. Describe preparation, drive timing, the actual stimulus domain, expected relationships and windows, and independent comparisons that can report a failure; naming or file existence alone does not establish checking.
+
+Use UVM 1.2, top `dvbench_top`, and test `dvbench_test`. Provide the sequence, driver, monitor, agent/environment, predictor, scoreboard, checker required by the public submission format. Connect the independent model to the scoreboard and compare separately observed actual and predicted values. Report errors through `UVM_ERROR`/`UVM_FATAL`. After stimulus and checking finish, in-flight transactions drain, objections are released, and ERROR/FATAL counts are zero, output `DVBench_COMPLETED` once.
+
+When the public runtime supplies its launcher and client, submit an ordinary-file snapshot using `python3 environment/feedback_client.py simulate --submission /submission --output /tmp/feedback-01.json`. The output is a JSON file; use a fresh path outside the submission. The feedback JSON identifies available diagnostics and artifact names; the debugging protocol below describes retrieval. The same A submission supplies the candidate features, plan, model, and UVM for subsequent evaluation.
+
+Interact only through native DUT ports and preserve their names, directions, widths, packed/unpacked indices, clocks, resets, inouts, and contracted parameter profile. Preserve in_sig[23:0], exp_half[7:0], rounding_mode[2:0], sqrt_proNorm_sig[26:0], sqrt_proNorm_exp[7:0], and all scalar ports. Instantiate the native DUT directly once in dvbench_top, as the public submission format requires. List one relative `.sv`/`.v` path per line in `sources.f`, in dependency order, including `model/model.sv` and all required UVM HDL. Do not list compilation options, absolute paths, parent paths, wildcards, or a DUT implementation. Keep the model file self-contained. Follow the public restrictions on internal hierarchical access, force/release/bind, DPI, and file/system/network probing; obtain permitted diagnostics through the feedback client.
+
+## Mandatory Independent Model Entry Point
+
+`model/model.sv` must define a self-contained SystemVerilog module `dvbench_model` with the native port names, directions, widths, index directions, and parameter profile in `public/ports.md` and `submission_contract.json`. It must not depend on UVM, includes, or other submission sources. Classes, packages, or functions alone do not satisfy the module entry point. Use this identical file for independent model evaluation and for predictions actually compared against DUT observations in the TB scoreboard. Generate predictions only from reset, inputs and their history. Do not instantiate the DUT, copy its implementation, or derive expected values from DUT actual outputs.
+
+## Debugging
+
+Read `public/debug_feedback.md`. Submit a snapshot with `bash /public/environment/run.sh simulate --submission /submission --output /tmp/feedback-01.json`. Keep feedback outside the submission directory. The service uses the golden design and seed 1; mutation results are available only after the submission is frozen.
+
+## Execution budget and completion
+
+You have at most **300 cumulative agent decision turns**, with a delivery reminder at turn **250**. The budget persists across compaction and recovery of the same run. There is no whole-task wall-time or cumulative token limit. Compilation, simulation, and individual model requests have separate limits; read `public/deployment_budget.json`.
+
+Read failed feedback and its listed compiler logs, simulation logs, and public-interface waveforms. Repair the submission and rerun while budget remains. A golden PASS is a debugging milestone: complete every required document, the independent model, and the UVM environment, and address known failures before finishing. Save the complete submission and report its actual verification status. Do not use subagents.
+
+Use the framework's native file-editing tools. In Codex and OpenCode, `apply_patch` is a tool call, not a shell command; Claude Code uses `Write` and `Edit`. Use the framework's shell tool for commands. If required tools are unavailable, report an execution-environment failure instead of pretending that a tool call succeeded.
+
+Run `bash /public/environment/run.sh simulate --submission /submission --output /tmp/feedback-01.json`, choosing a new output filename for each attempt. Read `public/debug_feedback.md` for artifact retrieval. Keep feedback outside `/submission`. Use the same self-contained `model/model.sv` for independent model evaluation and scoreboard predictions.

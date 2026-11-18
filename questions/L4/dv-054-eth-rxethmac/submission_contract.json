@@ -1,0 +1,274 @@
+{
+  "dut_top": "eth_rxethmac",
+  "top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "self_contained": true,
+    "interface": {
+      "top": "dvbench_model",
+      "dut_top": "eth_rxethmac",
+      "ports": [
+        {
+          "name": "AddressMiss",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "ByteCnt",
+          "direction": "Out",
+          "width": 16,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 15,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "ByteCntEq0",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "ByteCntGreat2",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "ByteCntMaxFrame",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "ControlFrmAddressOK",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "CrcError",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "DlyCrcEn",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "HugEn",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "MAC",
+          "direction": "In",
+          "width": 48,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 47,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "MRxClk",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "MRxD",
+          "direction": "In",
+          "width": 4,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 3,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "MRxDV",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "MaxFL",
+          "direction": "In",
+          "width": 16,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 15,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "PassAll",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "Reset",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "RxAbort",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "RxData",
+          "direction": "Out",
+          "width": 8,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 7,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "RxEndFrm",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "RxStartFrm",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "RxValid",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "StateData",
+          "direction": "Out",
+          "width": 2,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 1,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "StateIdle",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "StatePreamble",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "StateSFD",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "Transmitting",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "r_Bro",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "r_HASH0",
+          "direction": "In",
+          "width": 32,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 31,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "r_HASH1",
+          "direction": "In",
+          "width": 32,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 31,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "r_IFG",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "r_Pro",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        }
+      ],
+      "parameters": {},
+      "comparison": "four-state exact comparison of all native outputs after each edge and asynchronous reset; defined known 0/1 histories"
+    }
+  },
+  "parameters": {},
+  "submission_format": "public/submission_format.md",
+  "json_is_complete_fact_carrier": true,
+  "task_id": "dv-054",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

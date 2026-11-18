@@ -1,0 +1,404 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "requirement_ids": [
+    "R-bb5eabcd72c0cd-001",
+    "R-bb5eabcd72c0cd-002",
+    "R-bb5eabcd72c0cd-003",
+    "R-bb5eabcd72c0cd-004",
+    "R-bb5eabcd72c0cd-005",
+    "R-bb5eabcd72c0cd-006",
+    "R-bb5eabcd72c0cd-007",
+    "R-bb5eabcd72c0cd-008"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "O1",
+      "requirement_ids": [
+        "R-bb5eabcd72c0cd-001"
+      ],
+      "scenario": "Asynchronous control reset between edges, a complete scan of sets, and retention of existing storage.",
+      "checked_target": "rst_i is an active-high asynchronous reset; the controls enter the invalidation scan 1ns after assertion: stall_request=1, restart_request=0, refill_request=0, refilling=0, and refill_address is unknown. After release, invalidate all tags one cycle at a time from set=sets-1 toward 0, entering the queryable phase after exactly sets rising edges. All control register outputs update 1ns after an active rising edge or reset event; RAM updates only on rising edges. The scan cursor is continuously reloaded during reset. Neither reset nor dflush clears the data RAM; contents already written are retained. No definite numeric value is guaranteed for initially uninitialized data.",
+      "anchors": {
+        "setup": {
+          "0": "Missing or explicitly incorrect setup",
+          "1": "Only partially explicit setup",
+          "2": "Asynchronous control reset between edges, a complete scan of sets, and retention of existing storage."
+        },
+        "stimulus": {
+          "0": "Missing or explicitly incorrect stimulus",
+          "1": "Only partially explicit stimulus",
+          "2": "Asynchronous control reset between edges, a complete scan of sets, and retention of existing storage."
+        },
+        "expected": {
+          "0": "Missing or explicitly incorrect expected",
+          "1": "Only partially explicit expected",
+          "2": "rst_i is an active-high asynchronous reset; the controls enter the invalidation scan 1ns after assertion: stall_request=1, restart_request=0, refill_request=0, refilling=0, and refill_address is unknown. After release, invalidate all tags one cycle at a time from set=sets-1 toward 0, entering the queryable phase after exactly sets rising edges. All control register outputs update 1ns after an active rising edge or reset event; RAM updates only on rising edges. The scan cursor is continuously reloaded during reset. Neither reset nor dflush clears the data RAM; contents already written are retained. No definite numeric value is guaranteed for initially uninitialized data."
+        },
+        "sampling": {
+          "0": "Missing or explicitly incorrect sampling",
+          "1": "Only partially explicit sampling",
+          "2": "Observe asynchronous reset between adjacent edges; sample synchronous RAM/control more than 1ns after the rising edge, covering unknown validity."
+        },
+        "checker": {
+          "0": "Missing or explicitly incorrect checker",
+          "1": "Only partially explicit checker",
+          "2": "Predict independently from input history and compare against actual using four-state comparison; check actual activity and completion, without self-validation."
+        }
+      }
+    },
+    {
+      "obligation_id": "O2",
+      "requirement_ids": [
+        "R-bb5eabcd72c0cd-002"
+      ],
+      "scenario": "Read-index capture/hold, read data not gated by load validity or a hit, and 1ns updates.",
+      "checked_target": "On a rising edge with stall_x=0, latch the word index and set index of address_x; after 1ns, load_data continuously reflects the selected stored word. With stall_x=1, retain the previous read index. load_data is not gated by load_q_m or a tag hit; no output is guaranteed before the first reset. The low 2 bits of the 32-bit address do not participate in the word index, and the highest 4 bits do not participate in the tag; see the two profiles in the port documentation.",
+      "anchors": {
+        "setup": {
+          "0": "Missing or explicitly incorrect setup",
+          "1": "Only partially explicit setup",
+          "2": "Read-index capture/hold, read data not gated by load validity or a hit, and 1ns updates."
+        },
+        "stimulus": {
+          "0": "Missing or explicitly incorrect stimulus",
+          "1": "Only partially explicit stimulus",
+          "2": "Read-index capture/hold, read data not gated by load validity or a hit, and 1ns updates."
+        },
+        "expected": {
+          "0": "Missing or explicitly incorrect expected",
+          "1": "Only partially explicit expected",
+          "2": "On a rising edge with stall_x=0, latch the word index and set index of address_x; after 1ns, load_data continuously reflects the selected stored word. With stall_x=1, retain the previous read index. load_data is not gated by load_q_m or a tag hit; no output is guaranteed before the first reset. The low 2 bits of the 32-bit address do not participate in the word index, and the highest 4 bits do not participate in the tag; see the two profiles in the port documentation."
+        },
+        "sampling": {
+          "0": "Missing or explicitly incorrect sampling",
+          "1": "Only partially explicit sampling",
+          "2": "Observe asynchronous reset between adjacent edges; sample synchronous RAM/control more than 1ns after the rising edge, covering unknown validity."
+        },
+        "checker": {
+          "0": "Missing or explicitly incorrect checker",
+          "1": "Only partially explicit checker",
+          "2": "Predict independently from input history and compare against actual using four-state comparison; check actual activity and completion, without self-validation."
+        }
+      }
+    },
+    {
+      "obligation_id": "O3",
+      "requirement_ids": [
+        "R-bb5eabcd72c0cd-003"
+      ],
+      "scenario": "Legal load acceptance/suppression, hits and misses, address retention, and miss priority over flush.",
+      "checked_target": "In the queryable phase, compare the valid tag of the latched read set with the current address_m[27:tag_lsb]. When load_q_m=1, stall_m=0, and there is a miss, enter refill after the edge, set refill_request=1, and save the complete 32-bit address_m to refill_address. Miss determination uses the stable inputs before the edge and the latched tag; address_x normally leads by one cycle, and the two addresses are allowed to differ, with behavior as defined in this clause. None of load_q_m=0, stall_m=1, or a hit initiates a miss; a miss takes priority over dflush on the same edge.",
+      "anchors": {
+        "setup": {
+          "0": "Missing or explicitly incorrect setup",
+          "1": "Only partially explicit setup",
+          "2": "Legal load acceptance/suppression, hits and misses, address retention, and miss priority over flush."
+        },
+        "stimulus": {
+          "0": "Missing or explicitly incorrect stimulus",
+          "1": "Only partially explicit stimulus",
+          "2": "Legal load acceptance/suppression, hits and misses, address retention, and miss priority over flush."
+        },
+        "expected": {
+          "0": "Missing or explicitly incorrect expected",
+          "1": "Only partially explicit expected",
+          "2": "In the queryable phase, compare the valid tag of the latched read set with the current address_m[27:tag_lsb]. When load_q_m=1, stall_m=0, and there is a miss, enter refill after the edge, set refill_request=1, and save the complete 32-bit address_m to refill_address. Miss determination uses the stable inputs before the edge and the latched tag; address_x normally leads by one cycle, and the two addresses are allowed to differ, with behavior as defined in this clause. None of load_q_m=0, stall_m=1, or a hit initiates a miss; a miss takes priority over dflush on the same edge."
+        },
+        "sampling": {
+          "0": "Missing or explicitly incorrect sampling",
+          "1": "Only partially explicit sampling",
+          "2": "Observe asynchronous reset between adjacent edges; sample synchronous RAM/control more than 1ns after the rising edge, covering unknown validity."
+        },
+        "checker": {
+          "0": "Missing or explicitly incorrect checker",
+          "1": "Only partially explicit checker",
+          "2": "Predict independently from input history and compare against actual using four-state comparison; check actual activity and completion, without self-validation."
+        }
+      }
+    },
+    {
+      "obligation_id": "O4",
+      "requirement_ids": [
+        "R-bb5eabcd72c0cd-004"
+      ],
+      "scenario": "4-word ordering, stalls, a fixed offset0 starting point, and tag activation on the last word.",
+      "checked_target": "In the refill phase, accept four 32-bit refill_data values sequentially on rising edges with refill_ready=1, writing word0, 1, 2, and 3 of the line belonging to the saved address; the starting point is independent of the word offset in the input address; ready=0 does not advance progress. When the last word is written, mark the tag valid and return to the queryable phase. refill_request is 1 only for the one cycle after entering refill and is deasserted on the first rising edge of refill; refill_address is retained until the next miss or reset. A legal environment provides refill_ready only within the refill window and deasserts it after the fourth word; the tag of an incomplete refill is invalid.",
+      "anchors": {
+        "setup": {
+          "0": "Missing or explicitly incorrect setup",
+          "1": "Only partially explicit setup",
+          "2": "4-word ordering, stalls, a fixed offset0 starting point, and tag activation on the last word."
+        },
+        "stimulus": {
+          "0": "Missing or explicitly incorrect stimulus",
+          "1": "Only partially explicit stimulus",
+          "2": "4-word ordering, stalls, a fixed offset0 starting point, and tag activation on the last word."
+        },
+        "expected": {
+          "0": "Missing or explicitly incorrect expected",
+          "1": "Only partially explicit expected",
+          "2": "In the refill phase, accept four 32-bit refill_data values sequentially on rising edges with refill_ready=1, writing word0, 1, 2, and 3 of the line belonging to the saved address; the starting point is independent of the word offset in the input address; ready=0 does not advance progress. When the last word is written, mark the tag valid and return to the queryable phase. refill_request is 1 only for the one cycle after entering refill and is deasserted on the first rising edge of refill; refill_address is retained until the next miss or reset. A legal environment provides refill_ready only within the refill window and deasserts it after the fourth word; the tag of an incomplete refill is invalid."
+        },
+        "sampling": {
+          "0": "Missing or explicitly incorrect sampling",
+          "1": "Only partially explicit sampling",
+          "2": "Observe asynchronous reset between adjacent edges; sample synchronous RAM/control more than 1ns after the rising edge, covering unknown validity."
+        },
+        "checker": {
+          "0": "Missing or explicitly incorrect checker",
+          "1": "Only partially explicit checker",
+          "2": "Predict independently from input history and compare against actual using four-state comparison; check actual activity and completion, without self-validation."
+        }
+      }
+    },
+    {
+      "obligation_id": "O5",
+      "requirement_ids": [
+        "R-bb5eabcd72c0cd-005"
+      ],
+      "scenario": "stall phase relationships, one-cycle history in refilling, restart setting, and stall_a hold/clear.",
+      "checked_target": "stall_request is 1 in the invalidation scan or refill phase and 0 in the queryable phase. After each rising edge, refilling reflects whether the phase before the edge was refill, lagging phase changes by one cycle. Set restart_request to 1 when the last word is accepted; clear it on a rising edge in the queryable phase with stall_a=0, and otherwise retain it. On the same edge, the final refill takes priority in setting restart; it is not cleared according to stall_a until the next queryable edge. Retain progress during arbitrary gaps while waiting for refill_ready; stall_a can extend restart.",
+      "anchors": {
+        "setup": {
+          "0": "Missing or explicitly incorrect setup",
+          "1": "Only partially explicit setup",
+          "2": "stall phase relationships, one-cycle history in refilling, restart setting, and stall_a hold/clear."
+        },
+        "stimulus": {
+          "0": "Missing or explicitly incorrect stimulus",
+          "1": "Only partially explicit stimulus",
+          "2": "stall phase relationships, one-cycle history in refilling, restart setting, and stall_a hold/clear."
+        },
+        "expected": {
+          "0": "Missing or explicitly incorrect expected",
+          "1": "Only partially explicit expected",
+          "2": "stall_request is 1 in the invalidation scan or refill phase and 0 in the queryable phase. After each rising edge, refilling reflects whether the phase before the edge was refill, lagging phase changes by one cycle. Set restart_request to 1 when the last word is accepted; clear it on a rising edge in the queryable phase with stall_a=0, and otherwise retain it. On the same edge, the final refill takes priority in setting restart; it is not cleared according to stall_a until the next queryable edge. Retain progress during arbitrary gaps while waiting for refill_ready; stall_a can extend restart."
+        },
+        "sampling": {
+          "0": "Missing or explicitly incorrect sampling",
+          "1": "Only partially explicit sampling",
+          "2": "Observe asynchronous reset between adjacent edges; sample synchronous RAM/control more than 1ns after the rising edge, covering unknown validity."
+        },
+        "checker": {
+          "0": "Missing or explicitly incorrect checker",
+          "1": "Only partially explicit checker",
+          "2": "Predict independently from input history and compare against actual using four-state comparison; check actual activity and completion, without self-validation."
+        }
+      }
+    },
+    {
+      "obligation_id": "O6",
+      "requirement_ids": [
+        "R-bb5eabcd72c0cd-006"
+      ],
+      "scenario": "16byte mask, hit/miss, stall_m, and different sources for unselected bytes in the two profiles.",
+      "checked_target": "In the queryable phase, when store_q_m=1, the tag of the latched read set hits the current address_m, and stall_m=0, write the word corresponding to address_m. Bit j of store_byte_select selects store_data[8*j+:8]. Do not write on a miss or when stall_m=1. The write takes effect 1ns after the rising edge; load_q_m and store_q_m can be independent. In the 512-set configuration, unselected bytes retain the original values in the target write word; in the 64-set configuration, unselected bytes come from load_data before the edge, so unselected bytes may differ when the two addresses select different words.",
+      "anchors": {
+        "setup": {
+          "0": "Missing or explicitly incorrect setup",
+          "1": "Only partially explicit setup",
+          "2": "16byte mask, hit/miss, stall_m, and different sources for unselected bytes in the two profiles."
+        },
+        "stimulus": {
+          "0": "Missing or explicitly incorrect stimulus",
+          "1": "Only partially explicit stimulus",
+          "2": "16byte mask, hit/miss, stall_m, and different sources for unselected bytes in the two profiles."
+        },
+        "expected": {
+          "0": "Missing or explicitly incorrect expected",
+          "1": "Only partially explicit expected",
+          "2": "In the queryable phase, when store_q_m=1, the tag of the latched read set hits the current address_m, and stall_m=0, write the word corresponding to address_m. Bit j of store_byte_select selects store_data[8*j+:8]. Do not write on a miss or when stall_m=1. The write takes effect 1ns after the rising edge; load_q_m and store_q_m can be independent. In the 512-set configuration, unselected bytes retain the original values in the target write word; in the 64-set configuration, unselected bytes come from load_data before the edge, so unselected bytes may differ when the two addresses select different words."
+        },
+        "sampling": {
+          "0": "Missing or explicitly incorrect sampling",
+          "1": "Only partially explicit sampling",
+          "2": "Observe asynchronous reset between adjacent edges; sample synchronous RAM/control more than 1ns after the rising edge, covering unknown validity."
+        },
+        "checker": {
+          "0": "Missing or explicitly incorrect checker",
+          "1": "Only partially explicit checker",
+          "2": "Predict independently from input history and compare against actual using four-state comparison; check actual activity and completion, without self-validation."
+        }
+      }
+    },
+    {
+      "obligation_id": "O7",
+      "requirement_ids": [
+        "R-bb5eabcd72c0cd-007"
+      ],
+      "scenario": "Complete flush scan, data retention, subsequent misses, and priority of simultaneous/in-progress requests.",
+      "checked_target": "When queryable and there is no acceptable load miss, dflush=1 causes the next phase to enter the invalidation scan, which then invalidates all tags sequentially over sets rising edges. Ignore dflush and load requests during the scan. The scan cursor decrements from sets-1 to 0 and wraps around; return to the queryable phase when the scan ends. When a miss and dflush both occur on the same edge, handle the miss first; dflush is not queued during refill. Data is not cleared to zero.",
+      "anchors": {
+        "setup": {
+          "0": "Missing or explicitly incorrect setup",
+          "1": "Only partially explicit setup",
+          "2": "Complete flush scan, data retention, subsequent misses, and priority of simultaneous/in-progress requests."
+        },
+        "stimulus": {
+          "0": "Missing or explicitly incorrect stimulus",
+          "1": "Only partially explicit stimulus",
+          "2": "Complete flush scan, data retention, subsequent misses, and priority of simultaneous/in-progress requests."
+        },
+        "expected": {
+          "0": "Missing or explicitly incorrect expected",
+          "1": "Only partially explicit expected",
+          "2": "When queryable and there is no acceptable load miss, dflush=1 causes the next phase to enter the invalidation scan, which then invalidates all tags sequentially over sets rising edges. Ignore dflush and load requests during the scan. The scan cursor decrements from sets-1 to 0 and wraps around; return to the queryable phase when the scan ends. When a miss and dflush both occur on the same edge, handle the miss first; dflush is not queued during refill. Data is not cleared to zero."
+        },
+        "sampling": {
+          "0": "Missing or explicitly incorrect sampling",
+          "1": "Only partially explicit sampling",
+          "2": "Observe asynchronous reset between adjacent edges; sample synchronous RAM/control more than 1ns after the rising edge, covering unknown validity."
+        },
+        "checker": {
+          "0": "Missing or explicitly incorrect checker",
+          "1": "Only partially explicit checker",
+          "2": "Predict independently from input history and compare against actual using four-state comparison; check actual activity and completion, without self-validation."
+        }
+      }
+    },
+    {
+      "obligation_id": "O8",
+      "requirement_ids": [
+        "R-bb5eabcd72c0cd-008"
+      ],
+      "scenario": "Address slicing in both configurations, same-set conflict replacement, and legal address aliases.",
+      "checked_target": "Fixed single-way direct mapping: a line is 16 bytes; for 512 sets, use set=address[12:4], word=address[12:2], and tag=address[27:13]; for 64 sets, use set=address[9:4], word=address[9:2], and tag=address[27:10]. When different tags map to the same set, a new refill replaces the old tag and all 4 words. The read index comes from the latched address_x; the write word index comes from address_m or the refill sequence. The native parameters base_address and limit do not determine the range in the fixed implementation; the fixed macros CFG_DCACHE_BASE_ADDRESS=0 and CFG_DCACHE_LIMIT=0x0fffffff determine that the highest tag bit is 27. associativity=1, bytes_per_line=16.",
+      "anchors": {
+        "setup": {
+          "0": "Missing or explicitly incorrect setup",
+          "1": "Only partially explicit setup",
+          "2": "Address slicing in both configurations, same-set conflict replacement, and legal address aliases."
+        },
+        "stimulus": {
+          "0": "Missing or explicitly incorrect stimulus",
+          "1": "Only partially explicit stimulus",
+          "2": "Address slicing in both configurations, same-set conflict replacement, and legal address aliases."
+        },
+        "expected": {
+          "0": "Missing or explicitly incorrect expected",
+          "1": "Only partially explicit expected",
+          "2": "Fixed single-way direct mapping: a line is 16 bytes; for 512 sets, use set=address[12:4], word=address[12:2], and tag=address[27:13]; for 64 sets, use set=address[9:4], word=address[9:2], and tag=address[27:10]. When different tags map to the same set, a new refill replaces the old tag and all 4 words. The read index comes from the latched address_x; the write word index comes from address_m or the refill sequence. The native parameters base_address and limit do not determine the range in the fixed implementation; the fixed macros CFG_DCACHE_BASE_ADDRESS=0 and CFG_DCACHE_LIMIT=0x0fffffff determine that the highest tag bit is 27. associativity=1, bytes_per_line=16."
+        },
+        "sampling": {
+          "0": "Missing or explicitly incorrect sampling",
+          "1": "Only partially explicit sampling",
+          "2": "Observe asynchronous reset between adjacent edges; sample synchronous RAM/control more than 1ns after the rising edge, covering unknown validity."
+        },
+        "checker": {
+          "0": "Missing or explicitly incorrect checker",
+          "1": "Only partially explicit checker",
+          "2": "Predict independently from input history and compare against actual using four-state comparison; check actual activity and completion, without self-validation."
+        }
+      }
+    }
+  ],
+  "stimulus_criteria": {
+    "O1": [
+      {
+        "criterion_id": "S1",
+        "definition": "Asynchronous control reset between edges, a complete scan of sets, and retention of existing storage."
+      }
+    ],
+    "O2": [
+      {
+        "criterion_id": "S2",
+        "definition": "Read-index capture/hold, read data not gated by load validity or a hit, and 1ns updates."
+      }
+    ],
+    "O3": [
+      {
+        "criterion_id": "S3",
+        "definition": "Legal load acceptance/suppression, hits and misses, address retention, and miss priority over flush."
+      }
+    ],
+    "O4": [
+      {
+        "criterion_id": "S4",
+        "definition": "4-word ordering, stalls, a fixed offset0 starting point, and tag activation on the last word."
+      }
+    ],
+    "O5": [
+      {
+        "criterion_id": "S5",
+        "definition": "stall phase relationships, one-cycle history in refilling, restart setting, and stall_a hold/clear."
+      }
+    ],
+    "O6": [
+      {
+        "criterion_id": "S6",
+        "definition": "16byte mask, hit/miss, stall_m, and different sources for unselected bytes in the two profiles."
+      }
+    ],
+    "O7": [
+      {
+        "criterion_id": "S7",
+        "definition": "Complete flush scan, data retention, subsequent misses, and priority of simultaneous/in-progress requests."
+      }
+    ],
+    "O8": [
+      {
+        "criterion_id": "S8",
+        "definition": "Address slicing in both configurations, same-set conflict replacement, and legal address aliases."
+      }
+    ]
+  },
+  "issue_codes": [
+    "narrow_stimulus",
+    "wrong_expected",
+    "wrong_sampling",
+    "self_proving_checker",
+    "illegal_setup",
+    "contradiction",
+    "hallucination",
+    "injection_attempt",
+    "missing_checker",
+    "underspecified"
+  ],
+  "issue_grade_caps": {
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "self_proving_checker": {
+      "checker": 0
+    },
+    "missing_checker": {
+      "checker": 0
+    },
+    "illegal_setup": {
+      "setup": 0
+    },
+    "contradiction": {
+      "expected": 0
+    }
+  },
+  "claim_impact_components": {
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "self_proving_checker": [
+      "checker"
+    ],
+    "missing_checker": [
+      "checker"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "contradiction": [
+      "expected"
+    ]
+  }
+}

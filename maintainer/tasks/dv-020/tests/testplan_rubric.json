@@ -1,0 +1,284 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "requirement_ids": [
+    "R-dv-020-001",
+    "R-dv-020-002",
+    "R-dv-020-003",
+    "R-dv-020-004",
+    "R-dv-020-005",
+    "R-dv-020-006",
+    "R-dv-020-007",
+    "R-dv-020-008"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "O-001",
+      "requirement_ids": [
+        "R-dv-020-001"
+      ],
+      "description": "reset_n is an active-low asynchronous reset: queue occupancy is cleared to 0, in-flight requests and read returns are canceled, za_valid/data=0, command 1111, address/bank/mask=0, DQ is high-impedance, and cke is constantly 1. External memory contents are not cleared; read and write operations must remain inactive while reset is low.",
+      "setup": "First complete initialization and enqueue requests.",
+      "stimulus": "Apply reset between edges, hold reset across edges, and apply reset with outstanding read/write entries, respectively; resend after release.",
+      "expected": "Cancel only in-flight transactions internal to the controller; asynchronous ports reset immediately, followed by full initialization.",
+      "sampling": "Assertion between edges takes effect immediately; after deassertion, the complete initialization sequence is performed again.",
+      "checker": "An independent transaction queue/event calendar generates expectations; valid outputs are compared using four-state comparison, including both write drive and undriven Z; mismatches report UVM_ERROR, and transaction draining is required.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-002",
+      "requirement_ids": [
+        "R-dv-020-002"
+      ],
+      "description": "One entry is accepted on each rising edge when (!az_wr_n or !az_rd_n) and waitrequest=0 before the edge; az_cs does not gate acceptance, and acceptance is also allowed during initialization/refresh. Both operations low simultaneously encode a write. waitrequest indicates only that the two-entry FIFO is full; when full, no new entry is accepted even if a dequeue occurs on the same edge. When full, the source holds its request until it is accepted.",
+      "setup": "Reset is released, with operations inactive.",
+      "stimulus": "Continuously enqueue during initialization until both entries are full, hold the third entry until full deasserts, and cover dequeueing on an edge when full; separately toggle az_cs and exercise simultaneous operations.",
+      "expected": "An independent two-entry queue processes items in first-in, first-out order, with write priority and no loss or duplication of accepted items.",
+      "sampling": "Acceptance is determined by the full flag before the edge; enqueuing does not mean that SDRAM has completed the operation, and there is no combinational bypass for an empty queue.",
+      "checker": "An independent transaction queue/event calendar generates expectations; valid outputs are compared using four-state comparison, including both write drive and undriven Z; mismatches report UVM_ERROR, and transaction draining is required.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-003",
+      "requirement_ids": [
+        "R-dv-020-003"
+      ],
+      "description": "The 22-bit word address maps to bank={addr21,addr8}, row=addr20:9, and column=addr7:0. ACT outputs the row and bank, and the upper 4 address bits of column commands are 0. The write mask is az_be_n, with 1 indicating that the corresponding byte is masked; the read command mask is 00.",
+      "setup": "Complete natural initialization, with space available in the queue.",
+      "stimulus": "Enqueue reads and writes one by one across bank/row/column boundaries, and apply all four write masks.",
+      "expected": "Independently split the address arithmetically; commands correspond to the row, column, bank, and mask, without making determinations based on DUT internal signals.",
+      "sampling": "Command/address/mask take effect as registered values after the source rising edge; sample at least 1ns later.",
+      "checker": "An independent transaction queue/event calendar generates expectations; valid outputs are compared using four-state comparison, including both write drive and undriven Z; mismatches report UVM_ERROR, and transaction draining is required.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-004",
+      "requirement_ids": [
+        "R-dv-020-004"
+      ],
+      "description": "Count natural clock edges after reset deassertion: after edge 5003, issue precharge-all command 0010; after edges 5005 and 5009, issue one refresh 0001 each; after edge 5013, issue mode set 0000 with address 030, with NOP0111 in between; before these, issue INHIBIT1111. Main scheduling begins at edge 5018. Initialization does not clear enqueued requests.",
+      "setup": "Assert asynchronous reset, with operations inactive or at most two entries filling the queue.",
+      "stimulus": "After release, run for at least 5020 complete edges, recording PRE, two REF commands, MRS, and the earliest main scheduling time.",
+      "expected": "An independent edge-count calendar predicts all initialization commands and the MRS address.",
+      "sampling": "Edge 1 is the first rising edge after reset_n deassertion; the command is the value after that edge. During initialization, the address changes to fff on the first edge; MRS030 lasts only one command cycle, followed by fff.",
+      "checker": "An independent transaction queue/event calendar generates expectations; valid outputs are compared using four-state comparison, including both write drive and undriven Z; mismatches report UVM_ERROR, and transaction draining is required.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-005",
+      "requirement_ids": [
+        "R-dv-020-005"
+      ],
+      "description": "The edge after the main controller fetches the first entry outputs ACT0011, the next edge outputs NOP, and the next edge outputs the first READ0101 or WRITE0100. The corresponding data is driven during a write command; at all other times, the bus is high-impedance. For the same direction/bank/row, column commands can be consecutive on every edge; after the prefetched tail entry is consumed, the final entry must not be issued again.",
+      "setup": "Complete initialization and hold legal requests until accepted.",
+      "stimulus": "Perform consecutive column writes/reads in the same direction within the same row, insert gaps, and drain the queue tail; use distinct write data to distinguish active/the next entry.",
+      "expected": "An independent queue and command schedule predict ACT→NOP→column, per-item data and addresses, and no duplicated tail item.",
+      "sampling": "The interval from enqueue to fetch is affected by initialization, the queue, refresh, and preceding entries, so there is no fixed total latency; use the main fetch edge or an observable ACT as the timing anchor.",
+      "checker": "An independent transaction queue/event calendar generates expectations; valid outputs are compared using four-state comparison, including both write drive and undriven Z; mismatches report UVM_ERROR, and transaction draining is required.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-006",
+      "requirement_ids": [
+        "R-dv-020-006"
+      ],
+      "description": "After draining, keep the row open and issue NOP; subsequent requests with the same direction/bank/row issue column commands directly, without a new ACT. A direction, row, or bank mismatch goes through recovery NOP, precharge-all with address fff, and a wait, then fetches again and issues ACT; only one open-row context is retained.",
+      "setup": "Use the first transaction to establish an open row and wait for draining.",
+      "stimulus": "After an idle interval, hit the same row, then change direction/bank/row, and compare the complete command sequence and column transactions.",
+      "expected": "Matching continuation omits ACT; a mismatch requires PRE before ACT, without losing queued items.",
+      "sampling": "An empty queue does not initiate precharge on its own; a new matching request performs a column access on the edge after it is fetched.",
+      "checker": "An independent transaction queue/event calendar generates expectations; valid outputs are compared using four-state comparison, including both write drive and undriven Z; mismatches report UVM_ERROR, and transaction draining is required.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-007",
+      "requirement_ids": [
+        "R-dv-020-007"
+      ],
+      "description": "Using the first READ output after edge E as the anchor, after edge E+4, za_valid is 1 and za_data equals DQ before edge E+4; consecutive READs correspond to consecutive valid cycles. za_data still samples DQ when invalid, but is not treated as a response. There is no response ready; the consumer must accept every valid response.",
+      "setup": "Complete initialization; the external-port fixture supplies independent known read data.",
+      "stimulus": "Drive distinct read-return data, covering consecutive and intermittent READ commands, and assert asynchronous reset while the pipeline is occupied.",
+      "expected": "An independent READ event queue delays by 4 edges, without using DUT za_valid/data as the expectation.",
+      "sampling": "External read values on DQ must be stable before the sampling edge and must not conflict with the controller's write drive; compare responses 1ns after the edge.",
+      "checker": "An independent transaction queue/event calendar generates expectations; valid outputs are compared using four-state comparison, including both write drive and undriven Z; mismatches report UVM_ERROR, and transaction draining is required.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-008",
+      "requirement_ids": [
+        "R-dv-020-008"
+      ],
+      "description": "After the startup count of 5000, refresh becomes due steadily once every 782 edges; the first operational refresh request is generated on edge 5783 after deassertion and remains asserted until serviced. When idle, prioritize precharge-all followed by REF; after refresh, wait for 3 WAIT execution edges before scheduling again. A read stream exits for refresh using 2 WAIT edges, a write stream uses 1, and the row-retention state uses 1. Refresh does not clear the FIFO, and enqueuing is still restricted only by full status.",
+      "setup": "Run naturally for more than 5783 edges, keeping requests in the same direction and same row continuously present in the queue near expiration.",
+      "stimulus": "Naturally cross a refresh while idle, during a read stream, during a write stream, and while holding a row open, respectively; hold source requests, then drain.",
+      "expected": "Use an independent periodic calendar and pending service requests to check PRE/REF and wait lengths, with all accepted items resuming in order.",
+      "sampling": "The request is registered on the due edge and is seen by control on the next edge; servicing reads the old ack, and request/ack must not be cleared on the same edge.",
+      "checker": "An independent transaction queue/event calendar generates expectations; valid outputs are compared using four-state comparison, including both write drive and undriven Z; mismatches report UVM_ERROR, and transaction draining is required.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    }
+  ],
+  "stimulus_criteria": {
+    "O-001": [
+      {
+        "criterion_id": "O-001-domain",
+        "description": "Apply reset between edges, hold reset across edges, and apply reset with outstanding read/write entries, respectively; resend after release."
+      },
+      {
+        "criterion_id": "O-001-history",
+        "description": "First complete initialization and enqueue requests."
+      }
+    ],
+    "O-002": [
+      {
+        "criterion_id": "O-002-domain",
+        "description": "Continuously enqueue during initialization until both entries are full, hold the third entry until full deasserts, and cover dequeueing on an edge when full; separately toggle az_cs and exercise simultaneous operations."
+      },
+      {
+        "criterion_id": "O-002-history",
+        "description": "Reset is released, with operations inactive."
+      }
+    ],
+    "O-003": [
+      {
+        "criterion_id": "O-003-domain",
+        "description": "Enqueue reads and writes one by one across bank/row/column boundaries, and apply all four write masks."
+      },
+      {
+        "criterion_id": "O-003-history",
+        "description": "Complete natural initialization, with space available in the queue."
+      }
+    ],
+    "O-004": [
+      {
+        "criterion_id": "O-004-domain",
+        "description": "After release, run for at least 5020 complete edges, recording PRE, two REF commands, MRS, and the earliest main scheduling time."
+      },
+      {
+        "criterion_id": "O-004-history",
+        "description": "Assert asynchronous reset, with operations inactive or at most two entries filling the queue."
+      }
+    ],
+    "O-005": [
+      {
+        "criterion_id": "O-005-domain",
+        "description": "Perform consecutive column writes/reads in the same direction within the same row, insert gaps, and drain the queue tail; use distinct write data to distinguish active/the next entry."
+      },
+      {
+        "criterion_id": "O-005-history",
+        "description": "Complete initialization and hold legal requests until accepted."
+      }
+    ],
+    "O-006": [
+      {
+        "criterion_id": "O-006-domain",
+        "description": "After an idle interval, hit the same row, then change direction/bank/row, and compare the complete command sequence and column transactions."
+      },
+      {
+        "criterion_id": "O-006-history",
+        "description": "Use the first transaction to establish an open row and wait for draining."
+      }
+    ],
+    "O-007": [
+      {
+        "criterion_id": "O-007-domain",
+        "description": "Drive distinct read-return data, covering consecutive and intermittent READ commands, and assert asynchronous reset while the pipeline is occupied."
+      },
+      {
+        "criterion_id": "O-007-history",
+        "description": "Complete initialization; the external-port fixture supplies independent known read data."
+      }
+    ],
+    "O-008": [
+      {
+        "criterion_id": "O-008-domain",
+        "description": "Naturally cross a refresh while idle, during a read stream, during a write stream, and while holding a row open, respectively; hold source requests, then drain."
+      },
+      {
+        "criterion_id": "O-008-history",
+        "description": "Run naturally for more than 5783 edges, keeping requests in the same direction and same row continuously present in the queue near expiration."
+      }
+    ]
+  },
+  "issue_codes": [
+    "missing_setup",
+    "narrow_stimulus",
+    "wrong_expected",
+    "wrong_sampling",
+    "no_checker",
+    "self_proof",
+    "illegal_setup",
+    "contradiction",
+    "hallucination",
+    "prompt_injection"
+  ],
+  "issue_grade_caps": {},
+  "claim_impact_components": {
+    "missing_setup": [
+      "setup"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "no_checker": [
+      "checker"
+    ],
+    "self_proof": [
+      "checker"
+    ],
+    "contradiction": [
+      "setup",
+      "expected",
+      "sampling",
+      "checker"
+    ],
+    "hallucination": [
+      "expected"
+    ],
+    "narrow_stimulus": [],
+    "prompt_injection": []
+  }
+}

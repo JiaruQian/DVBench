@@ -1,0 +1,111 @@
+## F1
+
+requirement_ids: ["R-dv-077-01"]
+
+module: logic_hash
+
+definition: Inputs are binary and sampled on rising clk edges. reset_n is synchronous active low. A sampled reset clears all three output-valid flags and flushes pending packet decisions and queues; payload and metadata have no reset value while valid is low. The tables are automatically cleared to hash=0 and serial=0 by a scan of 4097 released-reset edges. During that scan table initialization overrides software writes. Wait 4100 released-reset edges before traffic or writes requiring a persistent entry. A later reset starts the same scan.
+
+interface: ["clk", "reset_n", "ecdsa_lh_wr", "ecdsa_lh_waddr", "ecdsa_lh_wdata", "ecdsa_lh_sn_wdata", "ecdsa_lh_ppl_wdata", "irl_lh_valid", "irl_lh_hdr_data", "irl_lh_meta_data", "irl_lh_sop", "irl_lh_eop", "ecdsa_lh_ready", "lh_ecdsa_hash_valid", "lh_ecdsa_hash_data", "lh_pp_valid", "lh_pp_hdr_data", "lh_pp_meta_data", "lh_pp_sop", "lh_pp_eop", "lh_ecdsa_valid", "lh_ecdsa_hdr_data", "lh_ecdsa_meta_data", "lh_ecdsa_sop", "lh_ecdsa_eop"]
+
+timing: All specified edge intervals refer to settled rising-edge observations and the input history described in this feature.
+
+boundary: Only the valid output windows and legal packet/capacity domain stated in the public specification are obligations.
+
+## F2
+
+requirement_ids: ["R-dv-077-02"]
+
+module: logic_hash
+
+definition: ecdsa_lh_wr captures the 12-bit address, 256-bit hash, 64-bit serial and 6-bit PPL together. Outside initialization that update commits on the next rising edge; ecdsa_lh_ready never gates it or packet reads. Consecutive writes are accepted. Read/write collision uses the pre-write table contents. At non-type3 SOP the fid selects the stored hash; type1 also selects the serial. The packet serial is the low 64 bits of the SOP header. PPL is stored but has no observable effect at these output ports.
+
+interface: ["clk", "reset_n", "ecdsa_lh_wr", "ecdsa_lh_waddr", "ecdsa_lh_wdata", "ecdsa_lh_sn_wdata", "ecdsa_lh_ppl_wdata", "ecdsa_lh_ready", "irl_lh_valid", "irl_lh_hdr_data", "irl_lh_meta_data", "irl_lh_sop", "irl_lh_eop"]
+
+timing: All specified edge intervals refer to settled rising-edge observations and the input history described in this feature.
+
+boundary: Only the valid output windows and legal packet/capacity domain stated in the public specification are obligations.
+
+## F3
+
+requirement_ids: ["R-dv-077-03"]
+
+module: logic_hash
+
+definition: Each valid input beat contains a 128-bit header, SOP/EOP and native metadata. There is no input ready. SOP establishes type3, with type3 taking precedence over type1; otherwise type1 or ordinary type2 is selected. That class persists across valid gaps until the accepted EOP. Metadata is carried per beat, and class/fid must be stable throughout one packet. Well-formed nonoverlapping packets of 1..62 beats are supported; do not exceed 64 buffered beats on either payload path or two pending non-type3 lookup results. Output payload/metadata/SOP/EOP are observed only with their valid flag; invalid-cycle values are unspecified.
+
+interface: ["clk", "reset_n", "ecdsa_lh_wr", "ecdsa_lh_waddr", "ecdsa_lh_wdata", "ecdsa_lh_sn_wdata", "ecdsa_lh_ppl_wdata", "irl_lh_valid", "irl_lh_hdr_data", "irl_lh_meta_data", "irl_lh_sop", "irl_lh_eop", "ecdsa_lh_ready", "lh_ecdsa_hash_valid", "lh_ecdsa_hash_data", "lh_pp_valid", "lh_pp_hdr_data", "lh_pp_meta_data", "lh_pp_sop", "lh_pp_eop", "lh_ecdsa_valid", "lh_ecdsa_hdr_data", "lh_ecdsa_meta_data", "lh_ecdsa_sop", "lh_ecdsa_eop"]
+
+timing: All specified edge intervals refer to settled rising-edge observations and the input history described in this feature.
+
+boundary: Only the valid output windows and legal packet/capacity domain stated in the public specification are obligations.
+
+## F4
+
+requirement_ids: ["R-dv-077-04"]
+
+module: logic_hash
+
+definition: For type3 packets, every valid beat reaches PP unchanged, preserving SOP/EOP, all PP metadata fields and per-path order. No ECDSA data or generated-hash transaction belongs to a type3 packet. This also applies when type1 and type3 are both set. With no competing PP traffic the first beat appears four rising-edge intervals after its input sample; gaps in valid do not become output beats.
+
+interface: ["clk", "reset_n", "ecdsa_lh_wr", "ecdsa_lh_waddr", "ecdsa_lh_wdata", "ecdsa_lh_sn_wdata", "ecdsa_lh_ppl_wdata", "irl_lh_valid", "irl_lh_hdr_data", "irl_lh_meta_data", "irl_lh_sop", "irl_lh_eop", "ecdsa_lh_ready", "lh_ecdsa_hash_valid", "lh_ecdsa_hash_data", "lh_pp_valid", "lh_pp_hdr_data", "lh_pp_meta_data", "lh_pp_sop", "lh_pp_eop", "lh_ecdsa_valid", "lh_ecdsa_hdr_data", "lh_ecdsa_meta_data", "lh_ecdsa_sop", "lh_ecdsa_eop"]
+
+timing: All specified edge intervals refer to settled rising-edge observations and the input history described in this feature.
+
+boundary: Only the valid output windows and legal packet/capacity domain stated in the public specification are obligations.
+
+## F5
+
+requirement_ids: ["R-dv-077-05"]
+
+module: logic_hash
+
+definition: When the accepted hash classification permits normal handling, type1 with a different stored serial emits all original beats and all ECDSA metadata fields to ECDSA, preserving SOP/EOP. A matching serial routes to PP and removes the first four beats, with new SOP on input beat index 4 and EOP on the original last beat; indices start at zero. A shorter packet retains its last beat even when its index is below four, and that retained beat has SOP=0. Surviving PP metadata is preserved, including type1. A length-five matching packet produces one PP beat with both SOP/EOP set.
+
+interface: ["clk", "reset_n", "ecdsa_lh_wr", "ecdsa_lh_waddr", "ecdsa_lh_wdata", "ecdsa_lh_sn_wdata", "ecdsa_lh_ppl_wdata", "irl_lh_valid", "irl_lh_hdr_data", "irl_lh_meta_data", "irl_lh_sop", "irl_lh_eop", "ecdsa_lh_ready", "lh_ecdsa_hash_valid", "lh_ecdsa_hash_data", "lh_pp_valid", "lh_pp_hdr_data", "lh_pp_meta_data", "lh_pp_sop", "lh_pp_eop", "lh_ecdsa_valid", "lh_ecdsa_hdr_data", "lh_ecdsa_meta_data", "lh_ecdsa_sop", "lh_ecdsa_eop"]
+
+timing: All specified edge intervals refer to settled rising-edge observations and the input history described in this feature.
+
+boundary: Only the valid output windows and legal packet/capacity domain stated in the public specification are obligations.
+
+## F6
+
+requirement_ids: ["R-dv-077-06"]
+
+module: logic_hash
+
+definition: For an ordinary non-type3, non-type1 packet, PP output beat i before the tail concatenates input beat i bits 111:0 with input beat i+1 bits 127:112. SOP is on the first resulting beat. The last input beat also produces a tail: its upper 112 output bits equal that last input bits 111:0, EOP is set, and the final low sixteen bits are unspecified. For length N>=2 this produces N PP beats. A one-beat type2 packet produces an extra leading beat before the tail: its upper112 bits and SOP are the previously retained alignment history (initially unspecified, not reset); its low16 bits are that input header bits127:112, and EOP=0. Its subsequent tail has EOP=1 and the specified last-input upper112 relation. Metadata on aligned beats comes from the lookahead beat; the tail uses metadata held/available after the last payload read. Stable per-packet metadata removes that distinction.
+
+interface: ["clk", "reset_n", "ecdsa_lh_wr", "ecdsa_lh_waddr", "ecdsa_lh_wdata", "ecdsa_lh_sn_wdata", "ecdsa_lh_ppl_wdata", "irl_lh_valid", "irl_lh_hdr_data", "irl_lh_meta_data", "irl_lh_sop", "irl_lh_eop", "ecdsa_lh_ready", "lh_ecdsa_hash_valid", "lh_ecdsa_hash_data", "lh_pp_valid", "lh_pp_hdr_data", "lh_pp_meta_data", "lh_pp_sop", "lh_pp_eop", "lh_ecdsa_valid", "lh_ecdsa_hdr_data", "lh_ecdsa_meta_data", "lh_ecdsa_sop", "lh_ecdsa_eop"]
+
+timing: All specified edge intervals refer to settled rising-edge observations and the input history described in this feature.
+
+boundary: Only the valid output windows and legal packet/capacity domain stated in the public specification are obligations.
+
+## F7
+
+requirement_ids: ["R-dv-077-07"]
+
+module: logic_hash
+
+definition: The generator produces constant zero, rather than a cryptographic digest. Every valid non-type3 EOP produces a registered generated-hash result, and consuming a non-type3 SOP reports that generated value on lh_ecdsa_hash_data with lh_ecdsa_hash_valid. Hash and serial lookup results become available two and three rising-edge intervals after SOP respectively; buffered payload first becomes available three intervals after the input. The comparison is registered and treats either unavailable hash operand as a match. Consequently a nonzero stored hash alone does not guarantee discard: a normal class can latch before the generated value is available. Non-type3 reads are enabled one interval after their registered EOP result and continue through the last beat. When a head SOP sees a registered mismatch, discard handling suppresses all but its last beat and sets type3/discard in PP metadata. The pinned discard state clears on completion of a type1-to-PP conversion; reset also clears it. Do not replace this early-availability behavior by an ideal whole-packet hash comparison.
+
+interface: ["clk", "reset_n", "ecdsa_lh_wr", "ecdsa_lh_waddr", "ecdsa_lh_wdata", "ecdsa_lh_sn_wdata", "ecdsa_lh_ppl_wdata", "irl_lh_valid", "irl_lh_hdr_data", "irl_lh_meta_data", "irl_lh_sop", "irl_lh_eop", "ecdsa_lh_ready", "lh_ecdsa_hash_valid", "lh_ecdsa_hash_data", "lh_pp_valid", "lh_pp_hdr_data", "lh_pp_meta_data", "lh_pp_sop", "lh_pp_eop", "lh_ecdsa_valid", "lh_ecdsa_hdr_data", "lh_ecdsa_meta_data", "lh_ecdsa_sop", "lh_ecdsa_eop"]
+
+timing: All specified edge intervals refer to settled rising-edge observations and the input history described in this feature.
+
+boundary: Only the valid output windows and legal packet/capacity domain stated in the public specification are obligations.
+
+## F8
+
+requirement_ids: ["R-dv-077-08"]
+
+module: logic_hash
+
+definition: PP arbitrates the bypass and normal paths at packet boundaries. After reset the normal path owns PP; an empty normal path releases it to bypass. Bypass keeps ownership through its EOP; when a normal PP class is waiting it hands over at bypass EOP or when bypass becomes empty. A normal PP EOP hands ownership to a nonempty bypass path. ECDSA type1 forwarding can proceed independently of PP ownership. Outputs have no reverse handshake and ecdsa_lh_ready is ignored. Preserve each output stream order without assuming input-order interleaving across paths or a common fixed non-type3 latency. Compare settled outputs after the rising edge; check exact defined fields, counts and bounded drain, and ignore only the explicitly unspecified type2 tail low sixteen bits.
+
+interface: ["clk", "reset_n", "ecdsa_lh_wr", "ecdsa_lh_waddr", "ecdsa_lh_wdata", "ecdsa_lh_sn_wdata", "ecdsa_lh_ppl_wdata", "irl_lh_valid", "irl_lh_hdr_data", "irl_lh_meta_data", "irl_lh_sop", "irl_lh_eop", "ecdsa_lh_ready", "lh_ecdsa_hash_valid", "lh_ecdsa_hash_data", "lh_pp_valid", "lh_pp_hdr_data", "lh_pp_meta_data", "lh_pp_sop", "lh_pp_eop", "lh_ecdsa_valid", "lh_ecdsa_hdr_data", "lh_ecdsa_meta_data", "lh_ecdsa_sop", "lh_ecdsa_eop"]
+
+timing: All specified edge intervals refer to settled rising-edge observations and the input history described in this feature.
+
+boundary: Only the valid output windows and legal packet/capacity domain stated in the public specification are obligations.

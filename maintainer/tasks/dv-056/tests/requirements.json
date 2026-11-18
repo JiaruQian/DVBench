@@ -1,0 +1,66 @@
+{
+  "requirements": [
+    {
+      "requirement_id": "R-bb8eef11f6a971-001",
+      "title": "Reset and transaction domain",
+      "definition": "rst_n is an active-low asynchronous reset that clears dec_done, trigger_dec, total_bits_consumed, and all RGB outputs to zero; reset cancels in-flight transactions. dec_start is high for only one rising edge while idle; the three bitstreams, lengths, and block_num remain stable from acceptance through completion. Lengths are 0..1024, and all read indices must be within 1024 bits; each stream contains no more than 64 run/amplitude records (EOB also counts as one record), expanding to no more than 64 coefficients. No completion or numerical guarantees are made for records exceeding capacity, illegal codes, overlapping starts, or unstable streams.",
+      "boundary": "Reset may be asserted between clock edges, with a fresh start after deassertion; complete tasks are serialized."
+    },
+    {
+      "requirement_id": "R-bb8eef11f6a971-002",
+      "title": "Huffman and amplitudes",
+      "definition": "The three streams are each read bit by bit starting at bs_*[0], with the first bit read serving as the most significant bit of the codeword. Match the first complete code using the fixed code table below. The upper 4 bits of symbol are run, and the lower 4 bits are category. 0x00 is EOB; 0xf0 represents 16 zeros. For category>0, continue reading category bits to form an 8-bit shift buffer v (retaining the last 8 bits when more than 8 bits are read), with mask being the low 8 bits of (2^category-1); for category1..8, take v&mask if bit category-1 of v is 1; otherwise take the low 8 bits of (v&mask)-mask and interpret them as signed. category9/10 follows the else branch because the index is outside 8 bits.",
+      "boundary": "The code table defines the symbol facts; input lengths may end at code boundaries, and unfilled coefficients are 0."
+    },
+    {
+      "requirement_id": "R-bb8eef11f6a971-003",
+      "title": "RLE and inverse scan",
+      "definition": "run indicates the number of zeros inserted before the amplitude; decoding ends when a decoded record has run=0 and its truncated 8-bit amplitude is 0 (including EOB, and also category9/10 that becomes exactly 0 after truncation), with the remaining coefficients zero-filled; Huffman continues reading according to its own bitstream, and stopped RLE never resumes. 0xf0 inserts 15 zeros and then writes one zero; each stream is arranged into 8x8 row-major coefficients according to the zigzag-to-raster index table below, with the low byte being raster0.",
+      "boundary": "8-bit coefficients use signed two's complement; record and expansion capacities both follow the transaction domain."
+    },
+    {
+      "requirement_id": "R-bb8eef11f6a971-004",
+      "title": "Steganographic trigger",
+      "definition": "When the Y block with block_num=0 has raster diagonal entries 0/9/18/27/36/45/54/63 equal in order to -127,84,94,35,30,10,13,10, trigger_dec is set to 1; before that, if the block is not block 0 or does not match, it retains its previous value. Once set to 1, it remains set until reset.",
+      "boundary": "The trigger takes effect after the Y inverse scan ends, affecting the current and subsequent transactions; Cb/Cr do not participate in triggering."
+    },
+    {
+      "requirement_id": "R-bb8eef11f6a971-005",
+      "title": "Y payload correction",
+      "definition": "When trigger_dec is active, add 1 to every Y coefficient, except that an original value of 127 remains 127; for other values, add 1 as an 8-bit signed value. When trigger_dec is inactive, Y is unchanged. Cb/Cr are never modified.",
+      "boundary": "The current Y block that matches the trigger is also modified; the trigger is no longer carried over after reset."
+    },
+    {
+      "requirement_id": "R-bb8eef11f6a971-006",
+      "title": "Dequantization",
+      "definition": "Each raster entry in the three streams is multiplied by the unsigned 8-bit constant at the same index in the Q table below; coefficients are interpreted as signed 8-bit values, and the product is a signed 16-bit value.",
+      "boundary": "The Q table is the same for Y/Cb/Cr, and all 64 coefficients participate."
+    },
+    {
+      "requirement_id": "R-bb8eef11f6a971-007",
+      "title": "Fixed integer two-dimensional transform",
+      "definition": "First apply the one-dimensional T(w=16) below to each column, retaining each result as a signed 25-bit value; then apply T(w=25) to each row, also retaining each result as 25 bits. Arithmetically right-shift the second-pass results by 6, take a signed 9-bit value, then add 128 and clamp to 0..255.",
+      "boundary": "wrap_w means retaining the low w bits and interpreting them as signed; right shifts are arithmetic shifts, and no floating-point IDCT substitution is allowed."
+    },
+    {
+      "requirement_id": "R-bb8eef11f6a971-008",
+      "title": "RGB conversion",
+      "definition": "For each pixel, R=clip((256*Y+359*(Cr-128))>>>8), G=clip((256*Y-88*(Cb-128)-183*(Cr-128))>>>8), B=clip((256*Y+454*(Cb-128))>>>8), where clip clamps to 0..255. The low output byte corresponds to raster0.",
+      "boundary": "All multiplications and additions are within the signed 20-bit range; whole-block numerical guarantees for RGB apply only during the dec_done=1 window, and partial outputs during conversion need not be compared."
+    },
+    {
+      "requirement_id": "R-bb8eef11f6a971-009",
+      "title": "Completion and consumed bit count",
+      "definition": "dec_done is a completion pulse lasting one rising-edge update cycle. total_bits_consumed is the number of bits actually read by the Y channel, including Huffman codes and amplitudes, and including the EOB code; after being updated, it holds until the next Y decoding completes or reset.",
+      "boundary": "Cb/Cr lengths may differ; completion must wait until all three channels have reconstructed their pixels, and must not be lost because Y finishes first."
+    },
+    {
+      "requirement_id": "R-bb8eef11f6a971-010",
+      "title": "Native timing",
+      "definition": "The acceptance edge is age0. For each channel, h is 2 times the total number of Huffman code bits read, plus category+2 for each record with category>0, plus 1 for EOB; add another 2 if the length is exhausted without EOB. r is the sum of run+1 for each nonzero-termination record before RLE stops, plus 2; if no record with run=0 and 8-bit amplitude=0 occurs, likewise add 2 when the records are exhausted. Let i=h+r+2; completion is then at age=max(iY+225,iCb+160,iCr+160)+66, the Y bit count is updated at age=hY+1, and the trigger match is updated at age=iY+1.",
+      "boundary": "This timing is guaranteed only for legal, complete bitstreams within the transaction domain; asynchronous reset need not wait for completion."
+    }
+  ],
+  "oracle": "fixed hashed original RTL",
+  "scope": "full decoder_top and all dependencies"
+}

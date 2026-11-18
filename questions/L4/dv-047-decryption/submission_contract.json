@@ -1,0 +1,119 @@
+{
+  "submission_root": "submission",
+  "top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "dut_top": "Decryption",
+  "access": {
+    "candidate_may_read": [
+      "instruction.md",
+      "submission_contract.json",
+      "public",
+      "environment"
+    ],
+    "candidate_may_not_read": [
+      "maintainer",
+      "other questions",
+      "old runs"
+    ],
+    "dut_interaction": "declared native ports only"
+  },
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "self_contained": true,
+    "same_file_in_D_and_scoreboard": true,
+    "interface": {
+      "top": "Decryption",
+      "parameters": {},
+      "ports": [
+        {
+          "name": "in",
+          "direction": "input",
+          "width": 128,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 127,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "Key",
+          "direction": "input",
+          "width": 256,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 255,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "counter",
+          "direction": "input",
+          "width": 6,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 5,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "clk",
+          "direction": "input",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "out",
+          "direction": "output",
+          "width": 128,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 127,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "maxRound",
+          "direction": "input",
+          "width": 6,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 5,
+              "right": 0
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "submission_format": "public/submission_format.md",
+  "json_is_complete_fact_carrier": true,
+  "task_id": "dv-047",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

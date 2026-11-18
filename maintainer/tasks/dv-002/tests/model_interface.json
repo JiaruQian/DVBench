@@ -1,0 +1,144 @@
+{
+  "ports": [
+    {
+      "name": "alu_out",
+      "direction": "Out",
+      "width": 16,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 15,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "alu_out_add",
+      "direction": "Out",
+      "width": 16,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 15,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "alu_stat",
+      "direction": "Out",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "alu_stat_wr",
+      "direction": "Out",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "dbg_halt_st",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "exec_cycle",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "inst_alu",
+      "direction": "In",
+      "width": 12,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 11,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "inst_bw",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "inst_jmp",
+      "direction": "In",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "inst_so",
+      "direction": "In",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "op_dst",
+      "direction": "In",
+      "width": 16,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 15,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "op_src",
+      "direction": "In",
+      "width": 16,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 15,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "status",
+      "direction": "In",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    }
+  ],
+  "parameters": {},
+  "parser": "pyslang 12.1.0"
+}

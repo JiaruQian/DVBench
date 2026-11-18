@@ -1,0 +1,204 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "requirement_ids": [
+    "R-dv-030-001",
+    "R-dv-030-002",
+    "R-dv-030-003",
+    "R-dv-030-004",
+    "R-dv-030-005",
+    "R-dv-030-006",
+    "R-dv-030-007"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "R-dv-030-001-verification",
+      "requirement_ids": [
+        "R-dv-030-001"
+      ],
+      "description": "Low KEY_0 asynchronously locks and restores password 1122, with lock=0, lock_c=0, and HEX0 all ones; LCD_ON and LCD_BLON are always 1, and LCD_RW is always 0. LCD reset outputs are RS=0, EN=0, DATA=0x38. After KEY_0 is released, the original divider phase is retained.",
+      "setup": "First change the inputs and operating state, then assert KEY_0 between edges and check before the source edge; after release, predict updates using the divider phase that was not reset.",
+      "stimulus": "First change the inputs and operating state, then assert KEY_0 between edges and check before the source edge; after release, predict updates using the divider phase that was not reset.",
+      "expected": "Low KEY_0 asynchronously locks and restores password 1122, with lock=0, lock_c=0, and HEX0 all ones; LCD_ON and LCD_BLON are always 1, and LCD_RW is always 0. LCD reset outputs are RS=0, EN=0, DATA=0x38. After KEY_0 is released, the original divider phase is retained.",
+      "sampling": "Respect this item's asynchronous/combinational/pre-handshake-edge and post-output-edge windows respectively; do not skip valid X/Z.",
+      "checker": "Independent input-history oracle or independent relational comparison; must be capable of failing and have a nonzero trigger count.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectations/windows, or vacuous checker",
+        "1": "Correct setup and method, but only partial coverage of the actual domain or boundaries",
+        "2": "First change the inputs and operating state, then assert KEY_0 between edges and check before the source edge; after release, predict updates using the divider phase that was not reset."
+      }
+    },
+    {
+      "obligation_id": "R-dv-030-002-verification",
+      "requirement_ids": [
+        "R-dv-030-002"
+      ],
+      "description": "After reset is released, when key_valid=1 and not in blocked, HEX0 combinationally displays the current keypad_input: 0 through 9 use standard active-low seven-segment patterns, and 10 displays C (1000110); other values and key_valid=0 display all ones; during blocked, it is all ones. There is no need to wait for an FSM cycle.",
+      "setup": "Between adjacent source edges, sequentially drive 0 through 15 and key_valid 0/1, comparing immediately against an independent seven-segment table; legally reach blocked and repeat.",
+      "stimulus": "Between adjacent source edges, sequentially drive 0 through 15 and key_valid 0/1, comparing immediately against an independent seven-segment table; legally reach blocked and repeat.",
+      "expected": "After reset is released, when key_valid=1 and not in blocked, HEX0 combinationally displays the current keypad_input: 0 through 9 use standard active-low seven-segment patterns, and 10 displays C (1000110); other values and key_valid=0 display all ones; during blocked, it is all ones. There is no need to wait for an FSM cycle.",
+      "sampling": "Respect this item's asynchronous/combinational/pre-handshake-edge and post-output-edge windows respectively; do not skip valid X/Z.",
+      "checker": "Independent input-history oracle or independent relational comparison; must be capable of failing and have a nonzero trigger count.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectations/windows, or vacuous checker",
+        "1": "Correct setup and method, but only partial coverage of the actual domain or boundaries",
+        "2": "Between adjacent source edges, sequentially drive 0 through 15 and key_valid 0/1, comparing immediately against an independent seven-segment table; legally reach blocked and repeat."
+      }
+    },
+    {
+      "obligation_id": "R-dv-030-003-verification",
+      "requirement_ids": [
+        "R-dv-030-003"
+      ],
+      "description": "One valid digit is accepted on each FSM rising edge, even when key_valid remains continuously high; 1122 enters unlock after the fourth digit, and lock is not set to 1 until the next FSM edge. An incorrect password enters wrong, and lock=0 on the next edge; both the first three digits and the fourth digit must match.",
+      "setup": "With native clock division, send correct sequences, sequences with a single error at each position, and repeated-digit sequences with a prolonged high level; check that the state after the fourth digit corresponds to an unlocking delay until the next cycle.",
+      "stimulus": "With native clock division, send correct sequences, sequences with a single error at each position, and repeated-digit sequences with a prolonged high level; check that the state after the fourth digit corresponds to an unlocking delay until the next cycle.",
+      "expected": "One valid digit is accepted on each FSM rising edge, even when key_valid remains continuously high; 1122 enters unlock after the fourth digit, and lock is not set to 1 until the next FSM edge. An incorrect password enters wrong, and lock=0 on the next edge; both the first three digits and the fourth digit must match.",
+      "sampling": "Respect this item's asynchronous/combinational/pre-handshake-edge and post-output-edge windows respectively; do not skip valid X/Z.",
+      "checker": "Independent input-history oracle or independent relational comparison; must be capable of failing and have a nonzero trigger count.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectations/windows, or vacuous checker",
+        "1": "Correct setup and method, but only partial coverage of the actual domain or boundaries",
+        "2": "With native clock division, send correct sequences, sequences with a single error at each position, and repeated-digit sequences with a prolonged high level; check that the state after the fourth digit corresponds to an unlocking delay until the next cycle."
+      }
+    },
+    {
+      "obligation_id": "R-dv-030-004-verification",
+      "requirement_ids": [
+        "R-dv-030-004"
+      ],
+      "description": "While digit entry is incomplete, four consecutive FSM cycles without a valid digit bring the idle count to 4, and one more cycle without a valid digit returns to idle; a valid digit takes priority over timeout. The error state returns to idle after remaining for five FSM cycles; three accumulated errors enter blocked, and blocked returns to idle after 101 FSM cycles and clears the error count. A successful password clears the error count.",
+      "setup": "At each input prefix, wait 4/5 cycles and supply a digit at the boundary; after three failures, continuously supply keys and wait 101 cycles. Verify blocking using seven-segment blank and whether unlocking is subsequently possible, interspersing successes to verify error-count clearing.",
+      "stimulus": "At each input prefix, wait 4/5 cycles and supply a digit at the boundary; after three failures, continuously supply keys and wait 101 cycles. Verify blocking using seven-segment blank and whether unlocking is subsequently possible, interspersing successes to verify error-count clearing.",
+      "expected": "While digit entry is incomplete, four consecutive FSM cycles without a valid digit bring the idle count to 4, and one more cycle without a valid digit returns to idle; a valid digit takes priority over timeout. The error state returns to idle after remaining for five FSM cycles; three accumulated errors enter blocked, and blocked returns to idle after 101 FSM cycles and clears the error count. A successful password clears the error count.",
+      "sampling": "Respect this item's asynchronous/combinational/pre-handshake-edge and post-output-edge windows respectively; do not skip valid X/Z.",
+      "checker": "Independent input-history oracle or independent relational comparison; must be capable of failing and have a nonzero trigger count.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectations/windows, or vacuous checker",
+        "1": "Correct setup and method, but only partial coverage of the actual domain or boundaries",
+        "2": "At each input prefix, wait 4/5 cycles and supply a digit at the boundary; after three failures, continuously supply keys and wait 101 cycles. Verify blocking using seven-segment blank and whether unlocking is subsequently possible, interspersing successes to verify error-count clearing."
+      }
+    },
+    {
+      "obligation_id": "R-dv-030-005-verification",
+      "requirement_ids": [
+        "R-dv-030-005"
+      ],
+      "description": "Without a C command, the unlock state returns to idle and locks after running for 11 FSM edges. C is valid only in unlock and enters the password-change wait; lock remains unlocked until the corresponding password-change completion, failure, or timeout path.",
+      "setup": "After successful unlocking, wait 10/11 unlock cycles respectively, and enter C before the deadline; independently count the boundaries and check lock.",
+      "stimulus": "After successful unlocking, wait 10/11 unlock cycles respectively, and enter C before the deadline; independently count the boundaries and check lock.",
+      "expected": "Without a C command, the unlock state returns to idle and locks after running for 11 FSM edges. C is valid only in unlock and enters the password-change wait; lock remains unlocked until the corresponding password-change completion, failure, or timeout path.",
+      "sampling": "Respect this item's asynchronous/combinational/pre-handshake-edge and post-output-edge windows respectively; do not skip valid X/Z.",
+      "checker": "Independent input-history oracle or independent relational comparison; must be capable of failing and have a nonzero trigger count.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectations/windows, or vacuous checker",
+        "1": "Correct setup and method, but only partial coverage of the actual domain or boundaries",
+        "2": "After successful unlocking, wait 10/11 unlock cycles respectively, and enter C before the deadline; independently count the boundaries and check lock."
+      }
+    },
+    {
+      "obligation_id": "R-dv-030-006-verification",
+      "requirement_ids": [
+        "R-dv-030-006"
+      ],
+      "description": "After unlock accepts C, enter the four digits of the old password, then use one additional FSM cycle to check it; if correct, lock_c is set to 1 and new-password collection begins. After four new digits are received, the password is replaced atomically and lock and lock_c are cleared to 0. If the old password is incorrect, the error count is incremented and wrong is entered; a timeout in any digit-entry stage of password change locks and clears lock_c to 0. Reset restores 1122.",
+      "setup": "1122 unlock, C, old password 1122, an empty checking cycle, and a new password such as 3478; then verify that the old password fails and the new password succeeds, and test an incorrect old password, stage timeouts, and reset restoration.",
+      "stimulus": "1122 unlock, C, old password 1122, an empty checking cycle, and a new password such as 3478; then verify that the old password fails and the new password succeeds, and test an incorrect old password, stage timeouts, and reset restoration.",
+      "expected": "After unlock accepts C, enter the four digits of the old password, then use one additional FSM cycle to check it; if correct, lock_c is set to 1 and new-password collection begins. After four new digits are received, the password is replaced atomically and lock and lock_c are cleared to 0. If the old password is incorrect, the error count is incremented and wrong is entered; a timeout in any digit-entry stage of password change locks and clears lock_c to 0. Reset restores 1122.",
+      "sampling": "Respect this item's asynchronous/combinational/pre-handshake-edge and post-output-edge windows respectively; do not skip valid X/Z.",
+      "checker": "Independent input-history oracle or independent relational comparison; must be capable of failing and have a nonzero trigger count.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectations/windows, or vacuous checker",
+        "1": "Correct setup and method, but only partial coverage of the actual domain or boundaries",
+        "2": "1122 unlock, C, old password 1122, an empty checking cycle, and a new password such as 3478; then verify that the old password fails and the new password succeeds, and test an incorrect old password, stage timeouts, and reset restoration."
+      }
+    },
+    {
+      "obligation_id": "R-dv-030-007-verification",
+      "requirement_ids": [
+        "R-dv-030-007"
+      ],
+      "description": "The LCD source divider first produces an internal rising edge on source cycle 1, then on cycle 25002, and then every 50001 cycles. After reset, alternating between high-EN action and low-EN hold, it sends eight initialization commands 38/38/38/38/08/01/06/0C, followed by HOME=80, 16 first-line characters, LINE2=C0, and 16 second-line characters, and repeats. RS is 0 for commands and 1 for characters. Each line is padded with spaces to 16 ASCII bytes: idle has ENTER PASSWORD on the first line and a blank second line; unlock has DOOR UNLOCKED on the first line and AUTO Lock Soon.. on the second line; wrong has WRONG PASSWORD! on the first line and Try Again on the second line; timeout has TIMEOUT ERROR on the first line and Start Again on the second line; all password-change stages have CHANGE PASSWORD on the first line and Enter New Code on the second line; blocked has four spaces followed by BLOCKED on the first line and a blank second line. idle displays timeout when the idle count reaches 4, as do incomplete ordinary password-entry stages. Each character uses the state at the time it is sent; whole-frame atomicity is not guaranteed.",
+      "setup": "Using the actual source clock, wait for complete LCD initialization and multiple refreshes. At each EN rising edge, check commands, addresses, RS, two lines of 16 bytes, and state changes against an independent text table; do not force the internal clock.",
+      "stimulus": "Using the actual source clock, wait for complete LCD initialization and multiple refreshes. At each EN rising edge, check commands, addresses, RS, two lines of 16 bytes, and state changes against an independent text table; do not force the internal clock.",
+      "expected": "The LCD source divider first produces an internal rising edge on source cycle 1, then on cycle 25002, and then every 50001 cycles. After reset, alternating between high-EN action and low-EN hold, it sends eight initialization commands 38/38/38/38/08/01/06/0C, followed by HOME=80, 16 first-line characters, LINE2=C0, and 16 second-line characters, and repeats. RS is 0 for commands and 1 for characters. Each line is padded with spaces to 16 ASCII bytes: idle has ENTER PASSWORD on the first line and a blank second line; unlock has DOOR UNLOCKED on the first line and AUTO Lock Soon.. on the second line; wrong has WRONG PASSWORD! on the first line and Try Again on the second line; timeout has TIMEOUT ERROR on the first line and Start Again on the second line; all password-change stages have CHANGE PASSWORD on the first line and Enter New Code on the second line; blocked has four spaces followed by BLOCKED on the first line and a blank second line. idle displays timeout when the idle count reaches 4, as do incomplete ordinary password-entry stages. Each character uses the state at the time it is sent; whole-frame atomicity is not guaranteed.",
+      "sampling": "Respect this item's asynchronous/combinational/pre-handshake-edge and post-output-edge windows respectively; do not skip valid X/Z.",
+      "checker": "Independent input-history oracle or independent relational comparison; must be capable of failing and have a nonzero trigger count.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectations/windows, or vacuous checker",
+        "1": "Correct setup and method, but only partial coverage of the actual domain or boundaries",
+        "2": "Using the actual source clock, wait for complete LCD initialization and multiple refreshes. At each EN rising edge, check commands, addresses, RS, two lines of 16 bytes, and state changes against an independent text table; do not force the internal clock."
+      }
+    }
+  ],
+  "stimulus_criteria": {
+    "R-dv-030-001-verification": [
+      {
+        "criterion_id": "R-dv-030-001-verification-domain",
+        "description": "First change the inputs and operating state, then assert KEY_0 between edges and check before the source edge; after release, predict updates using the divider phase that was not reset."
+      }
+    ],
+    "R-dv-030-002-verification": [
+      {
+        "criterion_id": "R-dv-030-002-verification-domain",
+        "description": "Between adjacent source edges, sequentially drive 0 through 15 and key_valid 0/1, comparing immediately against an independent seven-segment table; legally reach blocked and repeat."
+      }
+    ],
+    "R-dv-030-003-verification": [
+      {
+        "criterion_id": "R-dv-030-003-verification-domain",
+        "description": "With native clock division, send correct sequences, sequences with a single error at each position, and repeated-digit sequences with a prolonged high level; check that the state after the fourth digit corresponds to an unlocking delay until the next cycle."
+      }
+    ],
+    "R-dv-030-004-verification": [
+      {
+        "criterion_id": "R-dv-030-004-verification-domain",
+        "description": "At each input prefix, wait 4/5 cycles and supply a digit at the boundary; after three failures, continuously supply keys and wait 101 cycles. Verify blocking using seven-segment blank and whether unlocking is subsequently possible, interspersing successes to verify error-count clearing."
+      }
+    ],
+    "R-dv-030-005-verification": [
+      {
+        "criterion_id": "R-dv-030-005-verification-domain",
+        "description": "After successful unlocking, wait 10/11 unlock cycles respectively, and enter C before the deadline; independently count the boundaries and check lock."
+      }
+    ],
+    "R-dv-030-006-verification": [
+      {
+        "criterion_id": "R-dv-030-006-verification-domain",
+        "description": "1122 unlock, C, old password 1122, an empty checking cycle, and a new password such as 3478; then verify that the old password fails and the new password succeeds, and test an incorrect old password, stage timeouts, and reset restoration."
+      }
+    ],
+    "R-dv-030-007-verification": [
+      {
+        "criterion_id": "R-dv-030-007-verification-domain",
+        "description": "Using the actual source clock, wait for complete LCD initialization and multiple refreshes. At each EN rising edge, check commands, addresses, RS, two lines of 16 bytes, and state changes against an independent text table; do not force the internal clock."
+      }
+    ]
+  },
+  "claim_impact_components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "issue_codes": [
+    "missing",
+    "partial",
+    "incorrect",
+    "illegal_setup",
+    "wrong_sampling",
+    "vacuous",
+    "self_oracle",
+    "contradiction",
+    "hallucination"
+  ],
+  "issue_grade_caps": {},
+  "aggregation": "five-component minimum; current semantic deduplicated claim precision"
+}

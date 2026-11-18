@@ -1,0 +1,188 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "requirement_ids": [
+    "R-bba53466-001",
+    "R-bba53466-002",
+    "R-bba53466-003",
+    "R-bba53466-004",
+    "R-bba53466-005",
+    "R-bba53466-006"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "O1",
+      "requirement_ids": [
+        "R-bba53466-001"
+      ],
+      "description": "Computation advances on the rising edge of clock_i; resetb_i is active-low and asynchronously returns to idle and clears the logical round number and block count to zero. When computation is enabled, state zeroing by reset is overwritten by the computation write in the same event; the state is guaranteed to be zero only when the enable is off during idle or wait periods. Reset does not clear already-defined end_o, cipher_valid_o, or the external-state selection history. start_i=1 starts operation only when idle; start_i is ignored when busy; state_i, key_i, and data_i are not latched as a whole at startup; their current port values are used in the computation windows described below. Coverage targets: First hold reset low for two cycles, then run 16 sets of random state/key, each with start for one cycle followed by data_valid continuously for 120 cycles and a 5-cycle gap; abort with a two-cycle reset at cycles 1, 6, 11 through 66 after acceptance, and observe for 3 cycles after release; finish with 600 cycles of random valid and start every 37 cycles, followed by 100 cycles of valid.",
+      "anchors": {
+        "0": "Not legally triggered or unable to independently detect errors",
+        "1": "Only partial input history/results/timing",
+        "2": "Legal history, stimulus, independent expectations, valid sampling, and a checker capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O2",
+      "requirement_ids": [
+        "R-bba53466-002"
+      ],
+      "description": "The state consists of five 64-bit words, with state_i[0] as the most significant packed word. Initialization executes rounds 0 through 11; after the last round, the upper 64 bits of key_i are XORed into word 3 and the lower 64 bits into word 4; the first round uses state_i at the time of computation, and subsequent rounds use the previous mathematical state. Each round consists of constant injection, a 5-bit S-box, and per-word rotate-right XOR operations; see below for the complete mathematical definition and startup timing. Coverage targets: Complete full sessions for 16 sets of random 320-bit initial states, 128-bit keys, and 64-bit data; reset aborts and restarts as well as random valid histories also cover every round boundary.",
+      "anchors": {
+        "0": "Not legally triggered or unable to independently detect errors",
+        "1": "Only partial input history/results/timing",
+        "2": "Legal history, stimulus, independent expectations, valid sampling, and a checker capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O3",
+      "requirement_ids": [
+        "R-bba53466-003"
+      ],
+      "description": "After initialization, wait for data_valid_i=1, then enter the associated-data window. This window XORs the current data_i into word 0 and executes rounds 6 through 11; the last round only inverts the least significant bit of word 4 for domain separation and does not XOR in the key. The mathematical state is held during waits; data_valid_i outside wait windows does not start a new block. Coverage targets: Continuous valid after start in each set covers the earliest associated data; random valid produces different associated-data wait gaps; reinitialize after reset at computation abort points.",
+      "anchors": {
+        "0": "Not legally triggered or unable to independently detect errors",
+        "1": "Only partial input history/results/timing",
+        "2": "Legal history, stimulus, independent expectations, valid sampling, and a checker capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O4",
+      "requirement_ids": [
+        "R-bba53466-004"
+      ],
+      "description": "After associated data, enter plaintext wait with the block count at 0. Every rising edge while in plaintext wait increments the 2-bit block count by one, wrapping modulo 4, including the edge that accepts data_valid_i. During the one cycle in which cipher_valid_o is 1 after acceptance, cipher_o is the current mathematical state word 0 xor the current data_i; rounds 6 through 11 are then executed, and cipher_valid_o returns to 0. Finalization wait is entered only if the block count equals 3 when the last round completes; otherwise, return to plaintext wait. The number of wait cycles affects exit, so it must not be assumed that there are always 3 plaintext blocks. Coverage targets: 16 continuous-valid sessions cover three-block exit; 600 cycles of random valid produce stalls, different count remainders, and wraparound; start pulses while busy do not change the input-history schedule.",
+      "anchors": {
+        "0": "Not legally triggered or unable to independently detect errors",
+        "1": "Only partial input history/results/timing",
+        "2": "Legal history, stimulus, independent expectations, valid sampling, and a checker capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O5",
+      "requirement_ids": [
+        "R-bba53466-005"
+      ],
+      "description": "Finalization wait enters the first finalization round only after data_valid_i=1; the first round XORs data_i into word 0 and the upper and lower halves of key_i into words 1 and 2, respectively; at the same time, cipher_valid_o is 1 and cipher_o is word 0 xor data_i. Rounds 0 through 11 are then executed, with valid at 0 from the second round onward; the last round XORs the upper and lower halves of the current key_i into words 3 and 4, respectively. On completion, end_o is set to 1 and tag_o is {mathematical state word 3,mathematical state word 4}; return to idle in the next cycle. Coverage targets: All 16 complete random sessions go through finalization; random valid histories cover finalization wait, with reset aborts near finalization; check the 128-bit tag each time against the mathematical result of the full 12 rounds.",
+      "anchors": {
+        "0": "Not legally triggered or unable to independently detect errors",
+        "1": "Only partial input history/results/timing",
+        "2": "Legal history, stimulus, independent expectations, valid sampling, and a checker capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O6",
+      "requirement_ids": [
+        "R-bba53466-006"
+      ],
+      "description": "end_o is undefined before the first completion and remains 1 after completion; neither subsequent starts nor resets clear it; cipher_valid_o is undefined before the first plaintext window; thereafter, it is set to 1 only in the first round of plaintext or finalization and cleared to 0 in the next round, and is held in all other phases. After end_o=1, tag_o continuously reflects the current mathematical state words 3 and 4, so it can change in a new session; it does not permanently latch the first tag. A numerical value is required for cipher_o only when the predicted cipher_valid_o=1, and for tag_o only when the predicted end_o=1 and the mathematical bits are defined. The idle round number may reach 12 through 15; out-of-range constants and their mathematical bits that have not yet been overwritten by new initialization are undefined. No particular X pattern is required, nor may the mask be determined from actual values. Coverage targets: After a complete session, continue idle for 5 cycles and start again, repeating 16 times without reset; reset after computation and restart with random valid/start, ensuring coverage of tag changes under sticky end and undefined transient windows.",
+      "anchors": {
+        "0": "Not legally triggered or unable to independently detect errors",
+        "1": "Only partial input history/results/timing",
+        "2": "Legal history, stimulus, independent expectations, valid sampling, and a checker capable of failing are jointly complete"
+      }
+    }
+  ],
+  "stimulus_criteria": {
+    "O1": [
+      {
+        "criterion_id": "S1",
+        "description": "First apply low reset for two cycles, then run 16 sets of random state/key, each with start for one cycle followed by data_valid continuously for 120 cycles and a 5-cycle gap; abort with a two-cycle reset at cycles 1, 6, 11 through 66 after acceptance, and observe for 3 cycles after release; finish with 600 cycles of random valid and start every 37 cycles, followed by 100 cycles of valid."
+      }
+    ],
+    "O2": [
+      {
+        "criterion_id": "S2",
+        "description": "16 sets of random 320-bit initial state, 128-bit key, and 64-bit data complete full sessions; reset aborts and restarts as well as random valid histories also cover every round boundary."
+      }
+    ],
+    "O3": [
+      {
+        "criterion_id": "S3",
+        "description": "Continuous valid after start in each set covers the earliest associated data; random valid creates different associated-data wait gaps; reinitialize after reset at computation abort points."
+      }
+    ],
+    "O4": [
+      {
+        "criterion_id": "S4",
+        "description": "16 continuous-valid sessions cover the three-block exit; 600 cycles of random valid create stalls, different count remainders, and wraparound; start pulses while busy do not change the input-history schedule."
+      }
+    ],
+    "O5": [
+      {
+        "criterion_id": "S5",
+        "description": "All 16 complete random sessions go through finalization; random valid histories cover the finalization wait state, with abort resets near finalization; check the 128-bit tag against the mathematical result of the full 12 rounds each time."
+      }
+    ],
+    "O6": [
+      {
+        "criterion_id": "S6",
+        "description": "After a complete session, remain idle for 5 cycles and start again, repeating 16 times without reset; reset after computation and restart with random valid/start to ensure coverage of tag changes under sticky end and temporary undefined windows."
+      }
+    ]
+  },
+  "issue_codes": [
+    "wrong_expected",
+    "wrong_sampling",
+    "self_checker",
+    "illegal_setup",
+    "contradiction",
+    "narrow_stimulus",
+    "injection_attempt",
+    "missing_checker",
+    "hallucination"
+  ],
+  "issue_grade_caps": {
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "self_checker": {
+      "checker": 0
+    },
+    "missing_checker": {
+      "checker": 0
+    },
+    "illegal_setup": {
+      "setup": 0
+    },
+    "contradiction": {
+      "expected": 0
+    }
+  },
+  "claim_impact_components": {
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "self_checker": [
+      "checker"
+    ],
+    "missing_checker": [
+      "checker"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "contradiction": [
+      "expected"
+    ]
+  },
+  "anchors": {
+    "setup": "Reach the target through legal input history; illegal hierarchical modification scores 0",
+    "stimulus": "Calculated from the actual stimulus scope of each item",
+    "expected": "Predict according to the published permutation mathematics and input history; do not fix the plaintext block count at three, forcibly clear end, or permanently latch tag",
+    "sampling": "Observe valid windows after signals have settled following both clock edges; observe asynchronous reset separately",
+    "checker": "Compare actual outputs against independent expectations, with the ability to fail on a mismatch; actual=expected self-validation is not allowed"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "ports": [
+    {
+      "name": "block",
+      "direction": "In",
+      "width": 512,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 511,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "digest",
+      "direction": "Out",
+      "width": 256,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 255,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "digest_valid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "init",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "mode",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "next",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "ready",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "reset_n",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {},
+  "parser": "pyslang 11.0.0",
+  "top": "sha256_core",
+  "scope": "fixed native RTL declaration; parser-sorted ports"
+}

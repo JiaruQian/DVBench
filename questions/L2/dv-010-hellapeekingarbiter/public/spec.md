@@ -1,0 +1,23 @@
+# HellaPeekingArbiter behavioral specification
+
+The target is the complete fixed native module HellaPeekingArbiter. It has no parameters or required defines. All inputs and fields are unsigned; use known 0/1 inputs. No external TileLink semantics beyond this specification are assumed. Input payload may change between clock edges, including while stalled; the module has no payload storage.
+
+### R-p8-hpa-001 — Initialization and synchronous reset
+
+The only clock is clock. A rising edge with reset=1 discards any packet ownership and returns to unlocked arbitration, taking priority over an otherwise accepted beat. Reset is active high and synchronous: changing reset between rising edges does not itself alter ownership. Outputs remain combinational during reset and are not forced low. Apply at least one reset edge before observing specified behavior; power-up state before that edge is unspecified.
+
+### R-p8-hpa-002 — Unlocked arbitration and combinational ready/valid
+
+When no packet owns the arbiter, input 1 is selected whenever io_in_1_valid=1; otherwise input 4 is selected, including when both valids are zero. Thus input 1 wins simultaneous requests. io_out_valid equals the selected input valid, independently of io_out_ready. The selected input ready equals io_out_ready and the other ready is zero, even when the selected valid is zero. Selection and ready/valid respond combinationally with no registered data latency.
+
+### R-p8-hpa-003 — Packet ownership and release
+
+A beat is accepted at a rising edge exactly when io_out_ready and the selected input valid are both one. An accepted beat whose selected last bit is zero grants or retains packet ownership for that input. An accepted beat whose last bit is one releases ownership after that edge, allowing unlocked priority selection immediately thereafter. The beat being accepted uses the ownership and selection that existed before the edge. A one-beat packet does not leave ownership active.
+
+### R-p8-hpa-004 — Stalls and pauses preserve ownership
+
+Without an accepted beat, ownership does not change, regardless of either last bit. While owned, the same input stays selected even if its valid becomes zero or the competing input becomes valid. A paused owner therefore yields io_out_valid=0, while its ready still follows io_out_ready and the competing ready stays zero. Backpressure io_out_ready=0 forces both ready outputs low and cannot acquire, release, or switch ownership. Payload is not buffered by this module; current selected input fields remain the source of the combinational outputs.
+
+### R-p8-hpa-005 — Payload routing and channel identity
+
+For a selected input, opcode, param, size, source, data, corrupt, union and last pass through to the corresponding io_out_bits fields without arithmetic, truncation or registration. Selection of input 1 produces io_out_bits_chanId=3 and io_out_bits_address=0; selection of input 4 produces io_out_bits_chanId=0 and forwards io_in_4_bits_address. Every bit pattern in each declared field is in scope. These combinational values are defined even when io_out_valid=0, after a reset edge has initialized ownership.

@@ -1,0 +1,128 @@
+{
+  "ports": [
+    {
+      "name": "btn",
+      "direction": "In",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "i_vid_VDE",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "i_vid_data",
+      "direction": "In",
+      "width": 24,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 23,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "i_vid_hsync",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "i_vid_vsync",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "led",
+      "direction": "Out",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "n_rst",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "o_vid_VDE",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "o_vid_data",
+      "direction": "Out",
+      "width": 24,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 23,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "o_vid_hsync",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "o_vid_vsync",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "sw",
+      "direction": "In",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    }
+  ],
+  "parameters": {
+    "DATA_WIDTH": "24",
+    "IMAGE_WIDTH": "384",
+    "IMAGE_HEIGHT": "64",
+    "BLINK_RATE": "26'd6",
+    "DEBOUNCE_LIMIT": "22'd2500000"
+  },
+  "parser": "pyslang 12.1.0",
+  "ignored_unnamed_ast_ports": [],
+  "source_default_parameters": {
+    "DATA_WIDTH": "24",
+    "IMAGE_WIDTH": "1920",
+    "IMAGE_HEIGHT": "1080",
+    "BLINK_RATE": "26'd62500000",
+    "DEBOUNCE_LIMIT": "22'd2500000"
+  }
+}

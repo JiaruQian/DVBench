@@ -1,0 +1,287 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "requirement_ids": [
+    "R-p8-biom-001",
+    "R-p8-biom-002",
+    "R-p8-biom-003",
+    "R-p8-biom-004",
+    "R-p8-biom-005",
+    "R-p8-biom-006"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "R-p8-biom-001",
+      "requirement_ids": [
+        "R-p8-biom-001"
+      ],
+      "description": "The controller has phases IDLE, ACCESS, WAIT_ACK and RESPONSE. io_req_ready is high exactly in IDLE, io_mem_access_valid exactly in ACCESS, and io_resp_valid exactly in RESPONSE for a returning command. At a rising edge, IDLE accepts io_req_valid and enters ACCESS; ACCESS enters WAIT_ACK only when io_mem_access_ready is high; WAIT_ACK enters RESPONSE only when io_mem_ack_valid is high. RESPONSE returns to IDLE on io_resp_ready for returning commands, or unconditionally for nonreturning commands. Otherwise the phase holds. There is no same-edge bypass, second outstanding transaction or pending-request buffer. Request valid and payload while busy do not replace the accepted request. Acknowledgments outside WAIT_ACK have no effect, including an acknowledgment on the ACCESS acceptance edge. Response backpressure preserves a returning response and blocks new requests.",
+      "setup": "Apply a reset edge, then establish the named reachable phase and the captured request/W history independently using native handshakes. Never accept command7 into a busy nonreset history.",
+      "stimulus": "Apply reset at a rising edge. For every permitted command transact through request acceptance, two ACCESS stalled cycles, access fire, two WAIT_ACK delay cycles, ack acceptance, two RESPONSE stalled cycles for returning commands and completion. Drive req_valid and unrelated randomized payload throughout busy phases. Pulse ack in IDLE after completion and on explicit busy non-WAIT phases; show the pulse is ignored and a later valid ack is needed. Run returning/nonreturning commands with both response-ready values.",
+      "expected": "The controller has phases IDLE, ACCESS, WAIT_ACK and RESPONSE. io_req_ready is high exactly in IDLE, io_mem_access_valid exactly in ACCESS, and io_resp_valid exactly in RESPONSE for a returning command. At a rising edge, IDLE accepts io_req_valid and enters ACCESS; ACCESS enters WAIT_ACK only when io_mem_access_ready is high; WAIT_ACK enters RESPONSE only when io_mem_ack_valid is high. RESPONSE returns to IDLE on io_resp_ready for returning commands, or unconditionally for nonreturning commands. Otherwise the phase holds. There is no same-edge bypass, second outstanding transaction or pending-request buffer. Request valid and payload while busy do not replace the accepted request. Acknowledgments outside WAIT_ACK have no effect, including an acknowledgment on the ACCESS acceptance edge. Response backpressure preserves a returning response and blocks new requests.",
+      "sampling": "Compare settled combinational fields before rising edges and after state updates; sample reset pulses between edges. Honor unspecified values before their defining capture.",
+      "checker": "Predict independently from input/history only, compare distinct actual/expected outputs with explicit mismatch failure and nonzero observations.",
+      "anchors": {
+        "0": "Absent or incorrect.",
+        "1": "Correct incomplete subset.",
+        "2": "Complete explicit JSON evidence."
+      },
+      "scenario": "Apply a reset edge, then establish the named reachable phase and the captured request/W history independently using native handshakes. Never accept command7 into a busy nonreset history. Apply reset at a rising edge. For every permitted command transact through request acceptance, two ACCESS stalled cycles, access fire, two WAIT_ACK delay cycles, ack acceptance, two RESPONSE stalled cycles for returning commands and completion. Drive req_valid and unrelated randomized payload throughout busy phases. Pulse ack in IDLE after completion and on explicit busy non-WAIT phases; show the pulse is ignored and a later valid ack is needed. Run returning/nonreturning commands with both response-ready values.",
+      "checked_target": "The controller has phases IDLE, ACCESS, WAIT_ACK and RESPONSE. io_req_ready is high exactly in IDLE, io_mem_access_valid exactly in ACCESS, and io_resp_valid exactly in RESPONSE for a returning command. At a rising edge, IDLE accepts io_req_valid and enters ACCESS; ACCESS enters WAIT_ACK only when io_mem_access_ready is high; WAIT_ACK enters RESPONSE only when io_mem_ack_valid is high. RESPONSE returns to IDLE on io_resp_ready for returning commands, or unconditionally for nonreturning commands. Otherwise the phase holds. There is no same-edge bypass, second outstanding transaction or pending-request buffer. Request valid and payload while busy do not replace the accepted request. Acknowledgments outside WAIT_ACK have no effect, including an acknowledgment on the ACCESS acceptance edge. Response backpressure preserves a returning response and blocks new requests."
+    },
+    {
+      "obligation_id": "R-p8-biom-002",
+      "requirement_ids": [
+        "R-p8-biom-002"
+      ],
+      "description": "At every rising edge with pre-edge IDLE and io_req_valid high, capture all io_req_bits_uop fields, io_req_bits_addr, io_req_bits_data and io_req_bits_is_hella. This capture is independent of reset. Every io_resp_bits_uop field equals the corresponding captured request field at all times after capture, including mem_size and mem_cmd. io_resp_bits_is_hella equals its captured request value. Busy changes to any request field do not alter the captured transaction. The captured request registers are not cleared by reset. Before first capture their output-derived values are unspecified.",
+      "setup": "Apply a reset edge, then establish the named reachable phase and the captured request/W history independently using native handshakes. Never accept command7 into a busy nonreset history.",
+      "stimulus": "Apply a reset edge and capture an idle request, varying every uop field, is_hella, request data and address independently over zero, all ones and full-width seeded values. Deliberately replace live request payload on busy cycles. Compare every captured uop and is_hella continuously after capture through access, wait, response and reset, including invalid-response phases.",
+      "expected": "At every rising edge with pre-edge IDLE and io_req_valid high, capture all io_req_bits_uop fields, io_req_bits_addr, io_req_bits_data and io_req_bits_is_hella. This capture is independent of reset. Every io_resp_bits_uop field equals the corresponding captured request field at all times after capture, including mem_size and mem_cmd. io_resp_bits_is_hella equals its captured request value. Busy changes to any request field do not alter the captured transaction. The captured request registers are not cleared by reset. Before first capture their output-derived values are unspecified.",
+      "sampling": "Compare settled combinational fields before rising edges and after state updates; sample reset pulses between edges. Honor unspecified values before their defining capture.",
+      "checker": "Predict independently from input/history only, compare distinct actual/expected outputs with explicit mismatch failure and nonzero observations.",
+      "anchors": {
+        "0": "Absent or incorrect.",
+        "1": "Correct incomplete subset.",
+        "2": "Complete explicit JSON evidence."
+      },
+      "scenario": "Apply a reset edge, then establish the named reachable phase and the captured request/W history independently using native handshakes. Never accept command7 into a busy nonreset history. Apply a reset edge and capture an idle request, varying every uop field, is_hella, request data and address independently over zero, all ones and full-width seeded values. Deliberately replace live request payload on busy cycles. Compare every captured uop and is_hella continuously after capture through access, wait, response and reset, including invalid-response phases.",
+      "checked_target": "At every rising edge with pre-edge IDLE and io_req_valid high, capture all io_req_bits_uop fields, io_req_bits_addr, io_req_bits_data and io_req_bits_is_hella. This capture is independent of reset. Every io_resp_bits_uop field equals the corresponding captured request field at all times after capture, including mem_size and mem_cmd. io_resp_bits_is_hella equals its captured request value. Busy changes to any request field do not alter the captured transaction. The captured request registers are not cleared by reset. Before first capture their output-derived values are unspecified."
+    },
+    {
+      "obligation_id": "R-p8-biom-003",
+      "requirement_ids": [
+        "R-p8-biom-003"
+      ],
+      "description": "Use the captured five-bit numeric mem_cmd. Returning commands are {0,4,6,7,8,9,10,11,12,13,14,15,16}; all others are nonreturning. Atomic commands are {4,8,9,10,11,12,13,14,15}. The A (opcode,param) translation is: 0/6/7/16 -> (4,0); 4 -> (3,3); 8 -> (2,4); 9/10/11 -> (3,0/1/2); 12/13/14/15 -> (2,0/1/2/3); every other command -> (0,0). A data is the captured64-bit request data duplicated into both128-bit halves for atomic and nonreturning commands, and zero for returning nonatomics. The numeric command7 translation is specified for captured idle/reset values; normal busy histories with command7 are prohibited by the legal domain.",
+      "setup": "Apply a reset edge, then establish the named reachable phase and the captured request/W history independently using native handshakes. Never accept command7 into a busy nonreset history.",
+      "stimulus": "After reset execute every command0..31 except7, every size0..3 and both sign bits through a complete request/access/ack/response-or-silent-return history. Use independently varying data over zero, all ones and random64-bit patterns. Compare opcode,param,128-bit data and returning versus silent completion. Also capture command7 during a reset edge with phase held IDLE, inspect its translation, then replace it with a permitted command before entering busy.",
+      "expected": "Use the captured five-bit numeric mem_cmd. Returning commands are {0,4,6,7,8,9,10,11,12,13,14,15,16}; all others are nonreturning. Atomic commands are {4,8,9,10,11,12,13,14,15}. The A (opcode,param) translation is: 0/6/7/16 -> (4,0); 4 -> (3,3); 8 -> (2,4); 9/10/11 -> (3,0/1/2); 12/13/14/15 -> (2,0/1/2/3); every other command -> (0,0). A data is the captured64-bit request data duplicated into both128-bit halves for atomic and nonreturning commands, and zero for returning nonatomics. The numeric command7 translation is specified for captured idle/reset values; normal busy histories with command7 are prohibited by the legal domain.",
+      "sampling": "Compare settled combinational fields before rising edges and after state updates; sample reset pulses between edges. Honor unspecified values before their defining capture.",
+      "checker": "Predict independently from input/history only, compare distinct actual/expected outputs with explicit mismatch failure and nonzero observations.",
+      "anchors": {
+        "0": "Absent or incorrect.",
+        "1": "Correct incomplete subset.",
+        "2": "Complete explicit JSON evidence."
+      },
+      "scenario": "Apply a reset edge, then establish the named reachable phase and the captured request/W history independently using native handshakes. Never accept command7 into a busy nonreset history. After reset execute every command0..31 except7, every size0..3 and both sign bits through a complete request/access/ack/response-or-silent-return history. Use independently varying data over zero, all ones and random64-bit patterns. Compare opcode,param,128-bit data and returning versus silent completion. Also capture command7 during a reset edge with phase held IDLE, inspect its translation, then replace it with a permitted command before entering busy.",
+      "checked_target": "Use the captured five-bit numeric mem_cmd. Returning commands are {0,4,6,7,8,9,10,11,12,13,14,15,16}; all others are nonreturning. Atomic commands are {4,8,9,10,11,12,13,14,15}. The A (opcode,param) translation is: 0/6/7/16 -> (4,0); 4 -> (3,3); 8 -> (2,4); 9/10/11 -> (3,0/1/2); 12/13/14/15 -> (2,0/1/2/3); every other command -> (0,0). A data is the captured64-bit request data duplicated into both128-bit halves for atomic and nonreturning commands, and zero for returning nonatomics. The numeric command7 translation is specified for captured idle/reset values; normal busy histories with command7 are prohibited by the legal domain."
+    },
+    {
+      "obligation_id": "R-p8-biom-004",
+      "requirement_ids": [
+        "R-p8-biom-004"
+      ],
+      "description": "A source is always decimal9. A size is the captured two-bit mem_size zero extended to four bits. A address is captured request address bits32:0; bits39:33 are discarded. For each of the16 byte lanes, mask bit lane is one exactly when floor(lane/2^size) equals floor(captured_address[3:0]/2^size). Thus the mask selects the aligned size block containing the low address nibble, even for an unaligned address. The current live request cannot alter these captured-field functions. After request capture these access fields are combinationally defined even when A valid is low, and remain stable throughout ACCESS backpressure.",
+      "setup": "Apply a reset edge, then establish the named reachable phase and the captured request/W history independently using native handshakes. Never accept command7 into a busy nonreset history.",
+      "stimulus": "After reset and request capture, cross each size0..3 with every address low nibble0..15 and both signs; vary all40 address bits including bit32 and discarded39:33. Observe mask, source9, zero-extended size and truncated address before/after edges, during ACCESS stalls and invalid phases. Subsequent busy request changes must not alter expected fields.",
+      "expected": "A source is always decimal9. A size is the captured two-bit mem_size zero extended to four bits. A address is captured request address bits32:0; bits39:33 are discarded. For each of the16 byte lanes, mask bit lane is one exactly when floor(lane/2^size) equals floor(captured_address[3:0]/2^size). Thus the mask selects the aligned size block containing the low address nibble, even for an unaligned address. The current live request cannot alter these captured-field functions. After request capture these access fields are combinationally defined even when A valid is low, and remain stable throughout ACCESS backpressure.",
+      "sampling": "Compare settled combinational fields before rising edges and after state updates; sample reset pulses between edges. Honor unspecified values before their defining capture.",
+      "checker": "Predict independently from input/history only, compare distinct actual/expected outputs with explicit mismatch failure and nonzero observations.",
+      "anchors": {
+        "0": "Absent or incorrect.",
+        "1": "Correct incomplete subset.",
+        "2": "Complete explicit JSON evidence."
+      },
+      "scenario": "Apply a reset edge, then establish the named reachable phase and the captured request/W history independently using native handshakes. Never accept command7 into a busy nonreset history. After reset and request capture, cross each size0..3 with every address low nibble0..15 and both signs; vary all40 address bits including bit32 and discarded39:33. Observe mask, source9, zero-extended size and truncated address before/after edges, during ACCESS stalls and invalid phases. Subsequent busy request changes must not alter expected fields.",
+      "checked_target": "A source is always decimal9. A size is the captured two-bit mem_size zero extended to four bits. A address is captured request address bits32:0; bits39:33 are discarded. For each of the16 byte lanes, mask bit lane is one exactly when floor(lane/2^size) equals floor(captured_address[3:0]/2^size). Thus the mask selects the aligned size block containing the low address nibble, even for an unaligned address. The current live request cannot alter these captured-field functions. After request capture these access fields are combinationally defined even when A valid is low, and remain stable throughout ACCESS backpressure."
+    },
+    {
+      "obligation_id": "R-p8-biom-005",
+      "requirement_ids": [
+        "R-p8-biom-005"
+      ],
+      "description": "At a rising edge in WAIT_ACK with ack valid and a returning command, capture the selected64-bit half of the128-bit ack: lower half when captured address bit3 is zero, upper half otherwise. Nonreturning acknowledgments do not update this stored word. From the stored word W select U32 as W bits63:32 when address bit2 is one, otherwise bits31:0; select U16 as U32 bits31:16 when bit1 is one, otherwise bits15:0; select U8 as U16 bits15:8 when bit0 is one, otherwise bits7:0. Response data is sign/zero extended U8 for size0; for size1 it is {48 sign bits,U16[15:8],U8}; for size2 {32 sign bits,U32[31:16],U16[15:8],U8}; for size3 {W[63:32],U32[31:16],U16[15:8],U8}. Sign bits are the selected byte/half/word high bit AND captured mem_signed. These expressions intentionally cover all unaligned low addresses. Before the first returning acknowledgment W-derived bits are unspecified; afterward they remain defined during invalid phases and reset and may be reinterpreted by a later captured request.",
+      "setup": "Apply a reset edge, then establish the named reachable phase and the captured request/W history independently using native handshakes. Never accept command7 into a busy nonreset history.",
+      "stimulus": "After reset execute returning requests with all4 sizes x16 low nibbles x2 sign bits. Provide independently randomized128-bit ack halves, including sign-bit zero and one through seeded patterns; accept only in WAIT_ACK. Check exact unaligned byte/half/word assembly and sign extension at the acknowledgment edge and during response stalls. Interleave nonreturning commands and verify they do not replace stored W. Exercise early/late ack pulses outside WAIT_ACK and reset coincident with a returning ack.",
+      "expected": "At a rising edge in WAIT_ACK with ack valid and a returning command, capture the selected64-bit half of the128-bit ack: lower half when captured address bit3 is zero, upper half otherwise. Nonreturning acknowledgments do not update this stored word. From the stored word W select U32 as W bits63:32 when address bit2 is one, otherwise bits31:0; select U16 as U32 bits31:16 when bit1 is one, otherwise bits15:0; select U8 as U16 bits15:8 when bit0 is one, otherwise bits7:0. Response data is sign/zero extended U8 for size0; for size1 it is {48 sign bits,U16[15:8],U8}; for size2 {32 sign bits,U32[31:16],U16[15:8],U8}; for size3 {W[63:32],U32[31:16],U16[15:8],U8}. Sign bits are the selected byte/half/word high bit AND captured mem_signed. These expressions intentionally cover all unaligned low addresses. Before the first returning acknowledgment W-derived bits are unspecified; afterward they remain defined during invalid phases and reset and may be reinterpreted by a later captured request.",
+      "sampling": "Compare settled combinational fields before rising edges and after state updates; sample reset pulses between edges. Honor unspecified values before their defining capture.",
+      "checker": "Predict independently from input/history only, compare distinct actual/expected outputs with explicit mismatch failure and nonzero observations.",
+      "anchors": {
+        "0": "Absent or incorrect.",
+        "1": "Correct incomplete subset.",
+        "2": "Complete explicit JSON evidence."
+      },
+      "scenario": "Apply a reset edge, then establish the named reachable phase and the captured request/W history independently using native handshakes. Never accept command7 into a busy nonreset history. After reset execute returning requests with all4 sizes x16 low nibbles x2 sign bits. Provide independently randomized128-bit ack halves, including sign-bit zero and one through seeded patterns; accept only in WAIT_ACK. Check exact unaligned byte/half/word assembly and sign extension at the acknowledgment edge and during response stalls. Interleave nonreturning commands and verify they do not replace stored W. Exercise early/late ack pulses outside WAIT_ACK and reset coincident with a returning ack.",
+      "checked_target": "At a rising edge in WAIT_ACK with ack valid and a returning command, capture the selected64-bit half of the128-bit ack: lower half when captured address bit3 is zero, upper half otherwise. Nonreturning acknowledgments do not update this stored word. From the stored word W select U32 as W bits63:32 when address bit2 is one, otherwise bits31:0; select U16 as U32 bits31:16 when bit1 is one, otherwise bits15:0; select U8 as U16 bits15:8 when bit0 is one, otherwise bits7:0. Response data is sign/zero extended U8 for size0; for size1 it is {48 sign bits,U16[15:8],U8}; for size2 {32 sign bits,U32[31:16],U16[15:8],U8}; for size3 {W[63:32],U32[31:16],U16[15:8],U8}. Sign bits are the selected byte/half/word high bit AND captured mem_signed. These expressions intentionally cover all unaligned low addresses. Before the first returning acknowledgment W-derived bits are unspecified; afterward they remain defined during invalid phases and reset and may be reinterpreted by a later captured request."
+    },
+    {
+      "obligation_id": "R-p8-biom-006",
+      "requirement_ids": [
+        "R-p8-biom-006"
+      ],
+      "description": "Known binary inputs are admitted. Apply a rising edge with active-high reset to initialize the phase. Reset has priority over every phase transition and sets IDLE; a short pulse entirely between rising edges does not change phase. Reset does not asynchronously gate outputs or clear captured request/W registers. Capture of an idle valid request still occurs on a reset edge. A returning acknowledgment in pre-edge WAIT_ACK still updates W on a reset edge, while phase resets and the pending response is abandoned. Capturing command7 while reset keeps IDLE is permitted, but replace it with a permitted command before any nonreset edge in a busy phase: a nonreset busy phase carrying command7 terminates simulation. No alignment restriction, external TileLink semantics or command-name assumptions are imposed. All unsigned native fields retain their exact width. Inputs may change while busy, including ack pulses outside WAIT_ACK; their ignored behavior is part of the contract.",
+      "setup": "Apply a reset edge, then establish the named reachable phase and the captured request/W history independently using native handshakes. Never accept command7 into a busy nonreset history.",
+      "stimulus": "Initialize with a reset edge, then reset independently from ACCESS, WAIT_ACK and RESPONSE. Verify immediate post-edge IDLE and abandonment of pending transaction while captured fields persist. Capture a new request on an idle reset edge. Capture command7 only with reset asserted and replace it before a busy nonreset edge. Pulse reset wholly between rising edges during each busy phase and sample outputs while high to establish synchronous-only phase effect. Include reset coincident with a returning WAIT_ACK acknowledgment to verify W capture survives while phase resets.",
+      "expected": "Known binary inputs are admitted. Apply a rising edge with active-high reset to initialize the phase. Reset has priority over every phase transition and sets IDLE; a short pulse entirely between rising edges does not change phase. Reset does not asynchronously gate outputs or clear captured request/W registers. Capture of an idle valid request still occurs on a reset edge. A returning acknowledgment in pre-edge WAIT_ACK still updates W on a reset edge, while phase resets and the pending response is abandoned. Capturing command7 while reset keeps IDLE is permitted, but replace it with a permitted command before any nonreset edge in a busy phase: a nonreset busy phase carrying command7 terminates simulation. No alignment restriction, external TileLink semantics or command-name assumptions are imposed. All unsigned native fields retain their exact width. Inputs may change while busy, including ack pulses outside WAIT_ACK; their ignored behavior is part of the contract.",
+      "sampling": "Compare settled combinational fields before rising edges and after state updates; sample reset pulses between edges. Honor unspecified values before their defining capture.",
+      "checker": "Predict independently from input/history only, compare distinct actual/expected outputs with explicit mismatch failure and nonzero observations.",
+      "anchors": {
+        "0": "Absent or incorrect.",
+        "1": "Correct incomplete subset.",
+        "2": "Complete explicit JSON evidence."
+      },
+      "scenario": "Apply a reset edge, then establish the named reachable phase and the captured request/W history independently using native handshakes. Never accept command7 into a busy nonreset history. Initialize with a reset edge, then reset independently from ACCESS, WAIT_ACK and RESPONSE. Verify immediate post-edge IDLE and abandonment of pending transaction while captured fields persist. Capture a new request on an idle reset edge. Capture command7 only with reset asserted and replace it before a busy nonreset edge. Pulse reset wholly between rising edges during each busy phase and sample outputs while high to establish synchronous-only phase effect. Include reset coincident with a returning WAIT_ACK acknowledgment to verify W capture survives while phase resets.",
+      "checked_target": "Known binary inputs are admitted. Apply a rising edge with active-high reset to initialize the phase. Reset has priority over every phase transition and sets IDLE; a short pulse entirely between rising edges does not change phase. Reset does not asynchronously gate outputs or clear captured request/W registers. Capture of an idle valid request still occurs on a reset edge. A returning acknowledgment in pre-edge WAIT_ACK still updates W on a reset edge, while phase resets and the pending response is abandoned. Capturing command7 while reset keeps IDLE is permitted, but replace it with a permitted command before any nonreset edge in a busy phase: a nonreset busy phase carrying command7 terminates simulation. No alignment restriction, external TileLink semantics or command-name assumptions are imposed. All unsigned native fields retain their exact width. Inputs may change while busy, including ack pulses outside WAIT_ACK; their ignored behavior is part of the contract."
+    }
+  ],
+  "issue_codes": [
+    "missing_detail",
+    "narrow_stimulus",
+    "wrong_reset",
+    "wrong_expected",
+    "wrong_sampling",
+    "illegal_setup",
+    "vacuous_checker",
+    "self_oracle",
+    "contradiction",
+    "hallucination",
+    "injection_attempt",
+    "document_conflict",
+    "explicit_exclusion",
+    "negative_override"
+  ],
+  "stimulus_criteria": {
+    "R-p8-biom-001": [
+      {
+        "criterion_id": "R-p8-biom-001-S1",
+        "definition": "Apply reset at a rising edge. For every permitted command transact through request acceptance, two ACCESS stalled cycles, access fire, two WAIT_ACK delay cycles, ack acceptance, two RESPONSE stalled cycles for returning commands and completion. Drive req_valid and unrelated randomized payload throughout busy phases. Pulse ack in IDLE after completion and on explicit busy non-WAIT phases; show the pulse is ignored and a later valid ack is needed. Run returning/nonreturning commands with both response-ready values."
+      }
+    ],
+    "R-p8-biom-002": [
+      {
+        "criterion_id": "R-p8-biom-002-S1",
+        "definition": "Apply a reset edge and capture an idle request, varying every uop field, is_hella, request data and address independently over zero, all ones and full-width seeded values. Deliberately replace live request payload on busy cycles. Compare every captured uop and is_hella continuously after capture through access, wait, response and reset, including invalid-response phases."
+      }
+    ],
+    "R-p8-biom-003": [
+      {
+        "criterion_id": "R-p8-biom-003-S1",
+        "definition": "After reset execute every command0..31 except7, every size0..3 and both sign bits through a complete request/access/ack/response-or-silent-return history. Use independently varying data over zero, all ones and random64-bit patterns. Compare opcode,param,128-bit data and returning versus silent completion. Also capture command7 during a reset edge with phase held IDLE, inspect its translation, then replace it with a permitted command before entering busy."
+      }
+    ],
+    "R-p8-biom-004": [
+      {
+        "criterion_id": "R-p8-biom-004-S1",
+        "definition": "After reset and request capture, cross each size0..3 with every address low nibble0..15 and both signs; vary all40 address bits including bit32 and discarded39:33. Observe mask, source9, zero-extended size and truncated address before/after edges, during ACCESS stalls and invalid phases. Subsequent busy request changes must not alter expected fields."
+      }
+    ],
+    "R-p8-biom-005": [
+      {
+        "criterion_id": "R-p8-biom-005-S1",
+        "definition": "After reset execute returning requests with all4 sizes x16 low nibbles x2 sign bits. Provide independently randomized128-bit ack halves, including sign-bit zero and one through seeded patterns; accept only in WAIT_ACK. Check exact unaligned byte/half/word assembly and sign extension at the acknowledgment edge and during response stalls. Interleave nonreturning commands and verify they do not replace stored W. Exercise early/late ack pulses outside WAIT_ACK and reset coincident with a returning ack."
+      }
+    ],
+    "R-p8-biom-006": [
+      {
+        "criterion_id": "R-p8-biom-006-S1",
+        "definition": "Initialize with a reset edge, then reset independently from ACCESS, WAIT_ACK and RESPONSE. Verify immediate post-edge IDLE and abandonment of pending transaction while captured fields persist. Capture a new request on an idle reset edge. Capture command7 only with reset asserted and replace it before a busy nonreset edge. Pulse reset wholly between rising edges during each busy phase and sample outputs while high to establish synchronous-only phase effect. Include reset coincident with a returning WAIT_ACK acknowledgment to verify W capture survives while phase resets."
+      }
+    ]
+  },
+  "claim_impact_components": {
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_reset": [
+      "expected",
+      "sampling"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "vacuous_checker": [
+      "checker"
+    ],
+    "self_oracle": [
+      "checker"
+    ],
+    "contradiction": [
+      "expected"
+    ],
+    "hallucination": [
+      "expected"
+    ],
+    "document_conflict": [
+      "expected"
+    ],
+    "explicit_exclusion": [
+      "expected"
+    ],
+    "negative_override": [
+      "expected"
+    ]
+  },
+  "issue_grade_caps": {
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_reset": {
+      "expected": 0,
+      "sampling": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "illegal_setup": {
+      "setup": 0
+    },
+    "vacuous_checker": {
+      "checker": 0
+    },
+    "self_oracle": {
+      "checker": 0
+    },
+    "contradiction": {
+      "expected": 0
+    },
+    "hallucination": {
+      "expected": 0
+    },
+    "document_conflict": {
+      "expected": 0
+    },
+    "explicit_exclusion": {
+      "expected": 0
+    },
+    "negative_override": {
+      "expected": 0
+    }
+  },
+  "anchors": {
+    "setup": {
+      "0": "Missing or incorrect; independent non-vacuous evidence absent.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific with JSON evidence."
+    },
+    "stimulus": {
+      "0": "Missing or incorrect; independent non-vacuous evidence absent.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific with JSON evidence."
+    },
+    "expected": {
+      "0": "Missing or incorrect; independent non-vacuous evidence absent.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific with JSON evidence."
+    },
+    "sampling": {
+      "0": "Missing or incorrect; independent non-vacuous evidence absent.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific with JSON evidence."
+    },
+    "checker": {
+      "0": "Missing or incorrect; independent non-vacuous evidence absent.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific with JSON evidence."
+    }
+  }
+}

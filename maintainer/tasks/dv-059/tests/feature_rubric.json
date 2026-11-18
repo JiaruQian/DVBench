@@ -1,0 +1,164 @@
+{
+  "requirement_ids": [
+    "R-bba53466-001",
+    "R-bba53466-002",
+    "R-bba53466-003",
+    "R-bba53466-004",
+    "R-bba53466-005",
+    "R-bba53466-006"
+  ],
+  "required_interfaces": {
+    "R-bba53466-001": [
+      "state_i",
+      "key_i",
+      "data_i",
+      "resetb_i",
+      "start_i",
+      "clock_i",
+      "data_valid_i",
+      "end_o",
+      "cipher_valid_o",
+      "cipher_o",
+      "tag_o"
+    ],
+    "R-bba53466-002": [
+      "state_i",
+      "key_i",
+      "data_i",
+      "resetb_i",
+      "start_i",
+      "clock_i",
+      "data_valid_i",
+      "end_o",
+      "cipher_valid_o",
+      "cipher_o",
+      "tag_o"
+    ],
+    "R-bba53466-003": [
+      "state_i",
+      "key_i",
+      "data_i",
+      "resetb_i",
+      "start_i",
+      "clock_i",
+      "data_valid_i",
+      "end_o",
+      "cipher_valid_o",
+      "cipher_o",
+      "tag_o"
+    ],
+    "R-bba53466-004": [
+      "state_i",
+      "key_i",
+      "data_i",
+      "resetb_i",
+      "start_i",
+      "clock_i",
+      "data_valid_i",
+      "end_o",
+      "cipher_valid_o",
+      "cipher_o",
+      "tag_o"
+    ],
+    "R-bba53466-005": [
+      "state_i",
+      "key_i",
+      "data_i",
+      "resetb_i",
+      "start_i",
+      "clock_i",
+      "data_valid_i",
+      "end_o",
+      "cipher_valid_o",
+      "cipher_o",
+      "tag_o"
+    ],
+    "R-bba53466-006": [
+      "state_i",
+      "key_i",
+      "data_i",
+      "resetb_i",
+      "start_i",
+      "clock_i",
+      "data_valid_i",
+      "end_o",
+      "cipher_valid_o",
+      "cipher_o",
+      "tag_o"
+    ]
+  },
+  "atoms": [
+    {
+      "atom_id": "A1",
+      "requirement_ids": [
+        "R-bba53466-001"
+      ],
+      "description": "Rising edges of clock_i advance computation; resetb_i is active-low and asynchronously returns to idle and clears the logical round number and block count to zero. When computation is enabled, state clearing by reset is overwritten by the computation write in the same event; the state is guaranteed to be zero only when the enable is off during idle or waiting. Reset does not clear defined end_o, cipher_valid_o, or the external-state selection history. start_i=1 starts only when idle; start_i is ignored when busy; state_i, key_i, and data_i are not latched in their entirety at start, but use current port values in the computation windows described below.",
+      "anchors": {
+        "0": "Omission, same-domain error, or contradiction",
+        "1": "Some conditions/timing/boundaries are correct",
+        "2": "Rising edges of clock_i advance computation; resetb_i is active-low and asynchronously returns to idle and clears the logical round number and block count to zero. When computation is enabled, state clearing by reset is overwritten by the computation write in the same event; the state is guaranteed to be zero only when the enable is off during idle or waiting. Reset does not clear defined end_o, cipher_valid_o, or the external-state selection history. start_i=1 starts only when idle; start_i is ignored when busy; state_i, key_i, and data_i are not latched in their entirety at start, but use current port values in the computation windows described below."
+      }
+    },
+    {
+      "atom_id": "A2",
+      "requirement_ids": [
+        "R-bba53466-002"
+      ],
+      "description": "The state consists of five 64-bit words, with state_i[0] being the most significant packed word. Initialization executes rounds 0 through 11; after the last round, the upper 64 bits of key_i are XORed into word 3 and the lower 64 bits into word 4; the first round uses state_i at computation time, and subsequent rounds use the preceding mathematical state. Each round consists of constant injection, a 5-bit S-box, and per-word rotate-right XOR operations; see below for the complete mathematical definition and start timing.",
+      "anchors": {
+        "0": "Omission, same-domain error, or contradiction",
+        "1": "Some conditions/timing/boundaries are correct",
+        "2": "The state consists of five 64-bit words, with state_i[0] being the most significant packed word. Initialization executes rounds 0 through 11; after the last round, the upper 64 bits of key_i are XORed into word 3 and the lower 64 bits into word 4; the first round uses state_i at computation time, and subsequent rounds use the preceding mathematical state. Each round consists of constant injection, a 5-bit S-box, and per-word rotate-right XOR operations; see below for the complete mathematical definition and start timing."
+      }
+    },
+    {
+      "atom_id": "A3",
+      "requirement_ids": [
+        "R-bba53466-003"
+      ],
+      "description": "After initialization, wait for data_valid_i=1, then enter the associated-data window. This window XORs current data_i into word 0 and executes rounds 6 through 11; the last round only inverts the least significant bit of word 4 for domain separation, without XORing the key. The mathematical state is held while waiting, and data_valid_i outside waiting windows does not start a new block.",
+      "anchors": {
+        "0": "Omission, same-domain error, or contradiction",
+        "1": "Some conditions/timing/boundaries are correct",
+        "2": "After initialization, wait for data_valid_i=1, then enter the associated-data window. This window XORs current data_i into word 0 and executes rounds 6 through 11; the last round only inverts the least significant bit of word 4 for domain separation, without XORing the key. The mathematical state is held while waiting, and data_valid_i outside waiting windows does not start a new block."
+      }
+    },
+    {
+      "atom_id": "A4",
+      "requirement_ids": [
+        "R-bba53466-004"
+      ],
+      "description": "After associated data, enter plaintext waiting with the block count at 0. Every rising edge in plaintext waiting increments the 2-bit block count by one, wrapping modulo 4, including the edge that accepts data_valid_i. During the one cycle after acceptance in which cipher_valid_o is 1, cipher_o is current mathematical state word 0 xor current data_i; rounds 6 through 11 are then executed, and cipher_valid_o returns to 0. Finalization waiting is entered only if the block count equals 3 when the last round completes; otherwise, return to plaintext waiting. The number of waiting cycles affects exit, so a fixed total of 3 plaintext blocks cannot be assumed.",
+      "anchors": {
+        "0": "Omission, same-domain error, or contradiction",
+        "1": "Some conditions/timing/boundaries are correct",
+        "2": "After associated data, enter plaintext waiting with the block count at 0. Every rising edge in plaintext waiting increments the 2-bit block count by one, wrapping modulo 4, including the edge that accepts data_valid_i. During the one cycle after acceptance in which cipher_valid_o is 1, cipher_o is current mathematical state word 0 xor current data_i; rounds 6 through 11 are then executed, and cipher_valid_o returns to 0. Finalization waiting is entered only if the block count equals 3 when the last round completes; otherwise, return to plaintext waiting. The number of waiting cycles affects exit, so a fixed total of 3 plaintext blocks cannot be assumed."
+      }
+    },
+    {
+      "atom_id": "A5",
+      "requirement_ids": [
+        "R-bba53466-005"
+      ],
+      "description": "Finalization waiting enters the first finalization round only after data_valid_i=1; the first round XORs data_i into word 0 and the upper and lower halves of key_i into words 1 and 2, while cipher_valid_o is 1 and cipher_o is word 0 xor data_i. Rounds 0 through 11 are then executed; valid is 0 starting with the second round, and the last round XORs the current upper and lower halves of key_i into words 3 and 4. On completion, end_o is set to 1 and tag_o is {mathematical state word 3,mathematical state word 4}; the next cycle returns to idle.",
+      "anchors": {
+        "0": "Omission, same-domain error, or contradiction",
+        "1": "Some conditions/timing/boundaries are correct",
+        "2": "Finalization waiting enters the first finalization round only after data_valid_i=1; the first round XORs data_i into word 0 and the upper and lower halves of key_i into words 1 and 2, while cipher_valid_o is 1 and cipher_o is word 0 xor data_i. Rounds 0 through 11 are then executed; valid is 0 starting with the second round, and the last round XORs the current upper and lower halves of key_i into words 3 and 4. On completion, end_o is set to 1 and tag_o is {mathematical state word 3,mathematical state word 4}; the next cycle returns to idle."
+      }
+    },
+    {
+      "atom_id": "A6",
+      "requirement_ids": [
+        "R-bba53466-006"
+      ],
+      "description": "end_o is undefined before the first completion and remains 1 after completion; neither subsequent starts nor reset clear it. cipher_valid_o is undefined before the first plaintext window; afterward, it is set to 1 only in plaintext or the first finalization round, cleared to 0 in the next round, and held during all other stages. After end_o=1, tag_o continuously reflects current mathematical state words 3 and 4, so it may change during a new session; it does not permanently latch the first tag. A numerical value is required for cipher_o only when predicted cipher_valid_o=1, and for tag_o only when predicted end_o=1 and the mathematical bits are defined. The round number during idle may reach 12 through 15; out-of-range constants and mathematical bits not yet overwritten by new initialization are undefined. No particular X pattern is required, and masks must not be determined from actual values.",
+      "anchors": {
+        "0": "Omission, same-domain error, or contradiction",
+        "1": "Some conditions/timing/boundaries are correct",
+        "2": "end_o is undefined before the first completion and remains 1 after completion; neither subsequent starts nor reset clear it. cipher_valid_o is undefined before the first plaintext window; afterward, it is set to 1 only in plaintext or the first finalization round, cleared to 0 in the next round, and held during all other stages. After end_o=1, tag_o continuously reflects current mathematical state words 3 and 4, so it may change during a new session; it does not permanently latch the first tag. A numerical value is required for cipher_o only when predicted cipher_valid_o=1, and for tag_o only when predicted end_o=1 and the mathematical bits are defined. The round number during idle may reach 12 through 15; out-of-range constants and mathematical bits not yet overwritten by new initialization are undefined. No particular X pattern is required, and masks must not be determined from actual values."
+      }
+    }
+  ]
+}

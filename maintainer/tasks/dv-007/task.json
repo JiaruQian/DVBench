@@ -1,0 +1,119 @@
+{
+  "task_id": "dv-007",
+  "dut_top": "ram_2x336",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "ram_2x336.sv"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "model_contract_policy": "native-module-v1",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "R0_addr",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "R0_clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "R0_data",
+        "direction": "Out",
+        "width": 336,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 335,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "R0_en",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "W0_addr",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "W0_clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "W0_data",
+        "direction": "In",
+        "width": 336,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 335,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "W0_en",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "W0_mask",
+        "direction": "In",
+        "width": 336,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 335,
+            "right": 0
+          }
+        ]
+      }
+    ],
+    "parameters": {},
+    "parser": "pyslang 12.1.0"
+  },
+  "reference_submission": "solution/reference",
+  "mutants": [
+    "m10",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "n1"
+  ],
+  "rtl_sources": [
+    "ram_2x336.sv"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "ram_2x336.sv"
+  ]
+}

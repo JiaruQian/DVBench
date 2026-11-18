@@ -1,0 +1,151 @@
+{
+  "task_id": "dv-021",
+  "dut_top": "top_stopwatch_watch",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "button_debounce.v",
+    "fnd_controller.v",
+    "mux_2x1_nbit.v",
+    "stopwatch_datapath.v",
+    "top_control_unit.v",
+    "top_stopwatch_watch.v",
+    "watch_datapath.v",
+    "watch_fnd_adapter.v"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "model_contract_policy": "native-module-v1",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "btnL",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "btnR",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "btnU",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "btuD",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "fnd_com",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "fnd_data",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "led",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "rst",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "sw",
+        "direction": "In",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      }
+    ],
+    "parameters": {}
+  },
+  "reference_submission": "solution/reference",
+  "mutants": [
+    "m1",
+    "m10",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9"
+  ],
+  "rtl_sources": [
+    "button_debounce.v",
+    "fnd_controller.v",
+    "mux_2x1_nbit.v",
+    "stopwatch_datapath.v",
+    "top_control_unit.v",
+    "top_stopwatch_watch.v",
+    "watch_datapath.v",
+    "watch_fnd_adapter.v"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "button_debounce.v",
+    "fnd_controller.v",
+    "mux_2x1_nbit.v",
+    "stopwatch_datapath.v",
+    "top_control_unit.v",
+    "top_stopwatch_watch.v",
+    "watch_datapath.v",
+    "watch_fnd_adapter.v"
+  ]
+}

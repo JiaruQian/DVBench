@@ -1,0 +1,79 @@
+## T-001
+
+feature_ids: ["F-001"]
+
+requirement_ids: ["R-940d3642f8d2-001"]
+
+stimulus: Apply reset between edges during the initial 4 cycles and every 700 cycles during operation, check all control defaults and cleared history, then request previously filled addresses again.
+
+expected: This problem fixes TAG_WIDTH=20, INDEX_WIDTH=6, OFFSET_WIDTH=6; 4 ways and 64 sets, with address tag[31:12], set[11:6], and offset[5:0]. rst_ni is active-low and asynchronous; it clears all valid/tag/data, the historical address, the global replacement tree, and flush progress, and returns to idle. In idle, instr_gnt_o=1, including during reset; all other responses/requests/events are 0, mem_req_len_o is always 3, and mem_req_size_o is always 3.
+
+checker: Prediction uses only input history; drive on falling edges, and have the monitor compare native outputs against an independent model 2ns after falling edges and 2ns after rising edges, reporting UVM_ERROR for four-state mismatches; the comparison count must be nonzero, and judgment is based on the unique UVM summary and normal termination.
+
+implementation_id: V-001
+
+source: tb.sv:dvbench_monitor.run_phase;tb.sv:dvbench_scoreboard.write;stimulus.sv:sample_pins
+
+## T-002
+
+feature_ids: ["F-002"]
+
+requirement_ids: ["R-940d3642f8d2-002"]
+
+stimulus: Fill multiple tags in the same set and read them repeatedly, sweep address offset through 0/4/28/60, and check that the low 32 bits remain identical; change the current set between edges during the lookup cycle to verify the combination of the captured tag and the live set.
+
+expected: In idle, a rising edge with instr_req_i=1 captures the address tag and enters lookup; in the next cycle, the set index of the current instr_addr_i is used combinationally to read all ways, and valid entries are matched against the captured tag. If multiple ways match, the highest-numbered way is selected. During a hit, instr_rvalid_o=1 and instr_rdata_o is the low 32 bits of the selected line, ignoring offset; the next rising edge returns to idle. Changing the input address between edges changes the current lookup set and output; this is not a registered response.
+
+checker: Prediction uses only input history; drive on falling edges, and have the monitor compare native outputs against an independent model 2ns after falling edges and 2ns after rising edges, reporting UVM_ERROR for four-state mismatches; the comparison count must be nonzero, and judgment is based on the unique UVM summary and normal termination.
+
+implementation_id: V-002
+
+source: tb.sv:dvbench_monitor.run_phase;tb.sv:dvbench_scoreboard.write;stimulus.sv:sample_pins
+
+## T-003
+
+feature_ids: ["F-003"]
+
+requirement_ids: ["R-940d3642f8d2-003"]
+
+stimulus: Delay ACK and the response, change the 256-bit data before and after response valid, and test both last=0 and 1; change the address during lookup and observe the saved location, then verify the refill through a hit read.
+
+expected: On a lookup miss, the combinational outputs are mem_req_valid_o=1, mem_req_addr_o=live instr_addr_i, and miss_o=miss_event_o=1; each rising edge in this state saves the live address without waiting for ACK. After an edge with mem_req_ack_i=1, it enters the refill wait state, and requests/events are cleared to 0. While waiting, mem_rsp_valid_i=1 immediately returns the low 32 bits combinationally, and at the next rising edge the entire line and the saved address tag are written into the selected way and valid is set, followed by a return to idle; it does not wait for mem_rsp_last_i or use it to determine whether to write. When mem_rsp_valid_i=0, it remains waiting; ACK/response outside the applicable domain does not trigger a new request.
+
+checker: Prediction uses only input history; drive on falling edges, and have the monitor compare native outputs against an independent model 2ns after falling edges and 2ns after rising edges, reporting UVM_ERROR for four-state mismatches; the comparison count must be nonzero, and judgment is based on the unique UVM summary and normal termination.
+
+implementation_id: V-003
+
+source: tb.sv:dvbench_monitor.run_phase;tb.sv:dvbench_scoreboard.write;stimulus.sv:sample_pins
+
+## T-004
+
+feature_ids: ["F-004"]
+
+requirement_ids: ["R-940d3642f8d2-004"]
+
+stimulus: Fill 5 different tags in the same set, interleave hits to two sets, change the address while idle, then refill the 6th tag; check replacement through hit/miss port behavior without reading internal storage.
+
+expected: refill way selection uses the valid bits of the set addressed by the current live address, preferring the lowest-numbered invalid way; when all ways are valid, it uses a global 4-way tree-PLRU. Reset sets each selection bit of the tree to 0, so the initial victim=0; after accessing a way, the root and the corresponding half-tree are pointed to the other side, and following the selection path yields the victim. In any cycle, whenever the current combinational tag comparison hits or a refill occurs, this global tree is updated, not only during lookup cycles; the refill update has priority and uses its selected way. flush does not reset the tree.
+
+checker: Prediction uses only input history; drive on falling edges, and have the monitor compare native outputs against an independent model 2ns after falling edges and 2ns after rising edges, reporting UVM_ERROR for four-state mismatches; the comparison count must be nonzero, and judgment is based on the unique UVM summary and normal termination.
+
+implementation_id: V-004
+
+source: tb.sv:dvbench_monitor.run_phase;tb.sv:dvbench_scoreboard.write;stimulus.sv:sample_pins
+
+## T-005
+
+feature_ids: ["F-005"]
+
+requirement_ids: ["R-940d3642f8d2-005"]
+
+stimulus: First fill multiple sets, then verify for 100 consecutive cycles after flush that there is no ACK and no new requests are accepted, and that repeated flush has no effect; subsequently apply reset between edges to recover, then request again. Apply flush in the lookup and refill cycles to check the original response in that cycle and subsequent persistence in the state.
+
+expected: In a non-flush phase, flush_i causes a transition to flush at the next edge, taking priority over normal phase transitions, but the current combinational response and any refill write that would otherwise execute at that edge still occur. flush clears the valid bits of the current set at each rising edge; starting from reset progress 0, it alternates only between set 0 and set 1 and cannot reach 63, so flush_ack_o is always 0 and it does not automatically return to idle. Sustained or repeated flush_i does not change this state; only assertion of rst_ni can recover it. During flush, other requests/responses are ignored, and data and tag are not cleared; only valid is cleared. reset sets progress back to 0.
+
+checker: Prediction uses only input history; drive on falling edges, and have the monitor compare native outputs against an independent model 2ns after falling edges and 2ns after rising edges, reporting UVM_ERROR for four-state mismatches; the comparison count must be nonzero, and judgment is based on the unique UVM summary and normal termination.
+
+implementation_id: V-005
+
+source: tb.sv:dvbench_monitor.run_phase;tb.sv:dvbench_scoreboard.write;stimulus.sv:sample_pins

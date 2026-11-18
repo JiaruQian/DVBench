@@ -1,0 +1,59 @@
+{
+  "source": "public/spec.md",
+  "requirements": [
+    {
+      "requirement_id": "R-MUL-001",
+      "title": "流接口、参数与合法域",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-MUL-002",
+      "title": "同步复位与在途事务取消",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-MUL-003",
+      "title": "两输入独立缓冲、顺序配对与last",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-MUL-004",
+      "title": "可停顿流水和精确握手时序",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-MUL-005",
+      "title": "乘法、符号、位宽及LATENCY=0特例",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-MUL-006",
+      "title": "无转换输出切片",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-MUL-007",
+      "title": "单独舍入及安全上界",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-MUL-008",
+      "title": "单独饱和和后续切片",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-MUL-009",
+      "title": "组合舍入、饱和与容量2缓冲",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+`timescale 1ns/1ps
+interface reference_if;
+logic [21:0] az_addr = 0;
+logic [1:0] az_be_n = 0;
+logic  az_cs = 0;
+logic [15:0] az_data = 0;
+logic  az_rd_n = 0;
+logic  az_wr_n = 0;
+logic  clk = 0;
+logic  reset_n = 0;
+logic [15:0] za_data;
+logic [15:0] predicted_za_data;
+logic  za_valid;
+logic  predicted_za_valid;
+logic  za_waitrequest;
+logic  predicted_za_waitrequest;
+logic [11:0] zs_addr;
+logic [11:0] predicted_zs_addr;
+logic [1:0] zs_ba;
+logic [1:0] predicted_zs_ba;
+logic  zs_cas_n;
+logic  predicted_zs_cas_n;
+logic  zs_cke;
+logic  predicted_zs_cke;
+logic  zs_cs_n;
+logic  predicted_zs_cs_n;
+wire [15:0] zs_dq;
+wire [15:0] predicted_zs_dq;
+logic [1:0] zs_dqm;
+logic [1:0] predicted_zs_dqm;
+logic  zs_ras_n;
+logic  predicted_zs_ras_n;
+logic  zs_we_n;
+logic  predicted_zs_we_n;
+logic external_drive=0;logic [15:0] external_data=0;assign zs_dq=external_drive ? external_data : 16'hzzzz;assign predicted_zs_dq=external_drive ? external_data : 16'hzzzz;
+event observe; logic [1023:0] valid_mask = 0; int tag = 0; endinterface

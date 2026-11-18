@@ -1,0 +1,147 @@
+{
+  "task_id": "dv-006",
+  "dut_top": "ibex_alu_mut",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "ibex_alu_mut.v"
+  ],
+  "submission_top": "dvbench_top",
+  "rtl_sources": [
+    "ibex_alu_mut.v"
+  ],
+  "rtl_compile_files": [
+    "ibex_alu_mut.v"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m10"
+  ],
+  "include_dirs": [],
+  "parameter_matrix": [
+    {
+      "RV32B": 0
+    },
+    {
+      "RV32B": 1
+    },
+    {
+      "RV32B": 2
+    },
+    {
+      "RV32B": 3
+    }
+  ],
+  "model_interface": {
+    "top": "dvbench_model",
+    "file": "solution/s4_model/model.sv",
+    "ports": [
+      {
+        "direction": "In",
+        "name": "operator_i",
+        "width": 7
+      },
+      {
+        "direction": "In",
+        "name": "operand_a_i",
+        "width": 32
+      },
+      {
+        "direction": "In",
+        "name": "operand_b_i",
+        "width": 32
+      },
+      {
+        "direction": "In",
+        "name": "instr_first_cycle_i",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "multdiv_operand_a_i",
+        "width": 33
+      },
+      {
+        "direction": "In",
+        "name": "multdiv_operand_b_i",
+        "width": 33
+      },
+      {
+        "direction": "In",
+        "name": "multdiv_sel_i",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "imd_val_q_i",
+        "width": 64
+      },
+      {
+        "direction": "Out",
+        "name": "imd_val_d_o",
+        "width": 64
+      },
+      {
+        "direction": "Out",
+        "name": "imd_val_we_o",
+        "width": 2
+      },
+      {
+        "direction": "Out",
+        "name": "adder_result_o",
+        "width": 32
+      },
+      {
+        "direction": "Out",
+        "name": "adder_result_ext_o",
+        "width": 34
+      },
+      {
+        "direction": "Out",
+        "name": "result_o",
+        "width": 32
+      },
+      {
+        "direction": "Out",
+        "name": "comparison_result_o",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "is_equal_result_o",
+        "width": 1
+      }
+    ],
+    "variants": [
+      {
+        "RV32B": 0
+      },
+      {
+        "RV32B": 1
+      },
+      {
+        "RV32B": 2
+      },
+      {
+        "RV32B": 3
+      }
+    ],
+    "independence": "input history only; separate replay process contains no golden RTL or output"
+  },
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800
+}

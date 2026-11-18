@@ -1,0 +1,66 @@
+{
+  "top": "dvbench_model",
+  "ports": [
+    {
+      "name": "an",
+      "direction": "Out",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "leds",
+      "direction": "Out",
+      "width": 16,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 15,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "rst",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "seg",
+      "direction": "Out",
+      "width": 7,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 6,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "sw",
+      "direction": "In",
+      "width": 16,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 15,
+          "right": 0
+        }
+      ]
+    }
+  ],
+  "parameters": {}
+}

@@ -1,0 +1,160 @@
+{
+  "features": [
+    {
+      "feature_id": "F-1",
+      "requirement_ids": [
+        "R-dv-037-001"
+      ],
+      "module": "watchdog_timer",
+      "definition": "Low presetn asynchronously resets the APB side: pready/prdata/trace are 0, CTRL=0xCA, TIMEOUT=65535, WINDOW=0, RESET_WIDTH=32, lock and refresh error are 0, and last_pc/the boot recovery bit are 0; low wdt_rstn asynchronously sets wdt_reset/count/flags to 0. The two domain resets are independent. On the first pclk edge after presetn is released, pready becomes 1 and remains so; prdata is registered on every pclk edge according to the pre-edge paddr, without requiring psel/penable/read enable, and a read on the same edge as a write returns the pre-write value.",
+      "interface": [
+        "presetn",
+        "pclk",
+        "wdt_rstn",
+        "wdt_clk",
+        "paddr",
+        "prdata",
+        "pready",
+        "wdt_reset",
+        "trace_event_id",
+        "trace_data",
+        "reset_scope"
+      ],
+      "timing": "After asynchronous assertion and before the next clock; check registered reads and pready once stable after the pclk NBA.",
+      "boundary": "Parameters are fixed at ADDR_WIDTH=8, DATA_WIDTH=32, XLEN=32. All non-clock inputs are two-state and avoid sampling edges; the two clocks may run independently, pause, and have different phases. APB writes must have setup followed by access and commit only on the pclk rising edge of access. Adjacent toggle requests for configuration, control, refresh, and status clearing must be separated by at least 4 wdt_clk rising edges, and cross-domain data must be held until the request is consumed; excessively fast toggles are not guaranteed to be lossless. All public outputs are checked according to the digital simulation contract; real analog CDC reliability is not required."
+    },
+    {
+      "feature_id": "F-2",
+      "requirement_ids": [
+        "R-dv-037-002"
+      ],
+      "module": "watchdog_timer",
+      "definition": "Mapped addresses 00/04/08/0C/10/14/18/1C/20/24/28 are all hexadecimal. CTRL writes bits11:8 as hart, 7:6 as reset_scope, 4 as the lock hint bit, 3 as freeze enable, 2 as window enable, 1 as reset enable, and 0 as count enable; bit5 reads as 0. 04 is the 32-bit timeout, 08 the 32-bit window, and 28 the low 16 bits of reset width; 0C/14 read as 0, and unmapped addresses read as 0. Writing 0 to LOCK locks it, and 0x1ACCE551 unlocks it; other keys have no effect. CTRL.bit4 does not itself lock it. When locked, writes to 00/04/08/28 are rejected with pslverr=1; writes to 24 are silently ignored without an error; 0C/10/14 are always writable. pslverr combinationally indicates an invalid address or a protected access write while locked; invalid-address errors are not gated by psel.",
+      "interface": [
+        "psel",
+        "penable",
+        "pwrite",
+        "paddr",
+        "pwdata",
+        "pclk",
+        "prdata",
+        "pslverr",
+        "reset_scope"
+      ],
+      "timing": "Combinational pslverr after inputs stabilize; read values after the pclk edge, with at least one additional pclk edge after a write.",
+      "boundary": "Parameters are fixed at ADDR_WIDTH=8, DATA_WIDTH=32, XLEN=32. All non-clock inputs are two-state and avoid sampling edges; the two clocks may run independently, pause, and have different phases. APB writes must have setup followed by access and commit only on the pclk rising edge of access. Adjacent toggle requests for configuration, control, refresh, and status clearing must be separated by at least 4 wdt_clk rising edges, and cross-domain data must be held until the request is consumed; excessively fast toggles are not guaranteed to be lossless. All public outputs are checked according to the digital simulation contract; real analog CDC reliability is not required."
+    },
+    {
+      "feature_id": "F-3",
+      "requirement_ids": [
+        "R-dv-037-003"
+      ],
+      "module": "watchdog_timer",
+      "definition": "The control toggle uses two-stage synchronization plus a delayed XOR to capture enable/dbg_freeze on the third wdt edge after the write; the counting block uses the new values only on the next wdt edge. cfg likewise captures the three configuration values on the third wdt edge. reset_en/window_en/halt undergo two-stage wdt level sampling, and counting uses the pre-edge synchronized values. timeout is loaded on the first effective enable while not frozen; thereafter, with no refresh and count>0, the count decrements by 1 on each wdt edge, and timeout occurs only when the pre-edge count is already 0 and timeout_active is not set. Disabling or freezing pauses counting; re-enabling does not repeat the initial load.",
+      "interface": [
+        "pclk",
+        "wdt_clk",
+        "psel",
+        "penable",
+        "pwrite",
+        "paddr",
+        "pwdata",
+        "cpu_dbg_halt",
+        "wdt_reset",
+        "prdata"
+      ],
+      "timing": "Advance independent models of the two domains based on input-event history; sample both after the third wdt edge for configuration and on the next edge where counting uses it. Do not equate write completion with taking effect in counting.",
+      "boundary": "Parameters are fixed at ADDR_WIDTH=8, DATA_WIDTH=32, XLEN=32. All non-clock inputs are two-state and avoid sampling edges; the two clocks may run independently, pause, and have different phases. APB writes must have setup followed by access and commit only on the pclk rising edge of access. Adjacent toggle requests for configuration, control, refresh, and status clearing must be separated by at least 4 wdt_clk rising edges, and cross-domain data must be held until the request is consumed; excessively fast toggles are not guaranteed to be lossless. All public outputs are checked according to the digital simulation contract; real analog CDC reliability is not required."
+    },
+    {
+      "feature_id": "F-4",
+      "requirement_ids": [
+        "R-dv-037-004"
+      ],
+      "module": "watchdog_timer",
+      "definition": "Only writing A5 followed by 5A to 0C generates a refresh toggle; any other first/second key sets sticky refresh_error and resets the key state. Successful keys do not clear an old error; intervening writes to other addresses do not cancel the first key. Acceptance by pclk differs from consumption by wdt: the disabled/frozen/initial-load branches do not consume the refresh pulse. On consumption, if the window is enabled and the pre-edge count is strictly greater than window, window_violation is set and the count holds for that cycle; otherwise, timeout is loaded and timeout_active and timeout_flag are cleared, but window_violation is not cleared. Equality with the window allows refresh.",
+      "interface": [
+        "pclk",
+        "wdt_clk",
+        "paddr",
+        "pwdata",
+        "psel",
+        "penable",
+        "pwrite",
+        "cpu_dbg_halt",
+        "prdata",
+        "wdt_reset"
+      ],
+      "timing": "APB error bits after the edge; cross-domain pulses are consumed on the third wdt edge; compare using the count before the consumption edge, not the current delayed readback value.",
+      "boundary": "Parameters are fixed at ADDR_WIDTH=8, DATA_WIDTH=32, XLEN=32. All non-clock inputs are two-state and avoid sampling edges; the two clocks may run independently, pause, and have different phases. APB writes must have setup followed by access and commit only on the pclk rising edge of access. Adjacent toggle requests for configuration, control, refresh, and status clearing must be separated by at least 4 wdt_clk rising edges, and cross-domain data must be held until the request is consumed; excessively fast toggles are not guaranteed to be lossless. All public outputs are checked according to the digital simulation contract; real analog CDC reliability is not required."
+    },
+    {
+      "feature_id": "F-5",
+      "requirement_ids": [
+        "R-dv-037-005"
+      ],
+      "module": "watchdog_timer",
+      "definition": "Timeout sets timeout_flag and sticky reset_cause; when synchronized reset_en is 1, it also sets wdt_reset, reset_issued, and prev_reset. timeout_active makes a zero count trigger only once until a legal refresh; a window violation can also set reset and issued/prev, but does not set cause. An isolated reset-high pulse with stable configuration lasts reset_cycles+1 wdt cycles, including 0→1 cycles and 32→33 cycles; pulse timing is independent of disabling/freezing and is not canceled by a legal refresh. Retriggering during the pulse does not clear reset_counter again; when deassertion and a new trigger occur on the same edge, the new trigger takes priority.",
+      "interface": [
+        "wdt_clk",
+        "wdt_rstn",
+        "wdt_reset",
+        "pclk",
+        "paddr",
+        "pwdata",
+        "prdata",
+        "cpu_dbg_halt"
+      ],
+      "timing": "After wdt edges, record the number of source-clock cycles between the start and end of the high level; flag readback follows two-stage pclk synchronization plus registered-read latency.",
+      "boundary": "Parameters are fixed at ADDR_WIDTH=8, DATA_WIDTH=32, XLEN=32. All non-clock inputs are two-state and avoid sampling edges; the two clocks may run independently, pause, and have different phases. APB writes must have setup followed by access and commit only on the pclk rising edge of access. Adjacent toggle requests for configuration, control, refresh, and status clearing must be separated by at least 4 wdt_clk rising edges, and cross-domain data must be held until the request is consumed; excessively fast toggles are not guaranteed to be lossless. All public outputs are checked according to the digital simulation contract; real analog CDC reliability is not required."
+    },
+    {
+      "feature_id": "F-6",
+      "requirement_ids": [
+        "R-dv-037-006"
+      ],
+      "module": "watchdog_timer",
+      "definition": "STATUS10 reads bits3:0 as reset_issued/refresh_error/window_violation/timeout. Writing 1 to clear bit2 directly clears the refresh error in pclk; bits0/1/3 flip toggles and clear their corresponding wdt flags on the third wdt edge, with setting by a new event on the same edge taking priority; writing 0 has no effect. RESET_CAUSE1C is cleared only by wdt reset. Writing 1 to BOOT24.bit0 clears prev_reset via a toggle; bit1 writes recovery, and the low read bit is synchronized prev_reset. COUNT18 takes a snapshot of the pre-edge count on each wdt edge, latches it in pclk through three-stage toggle detection, and then provides a registered read; snapshots may be skipped. LAST_PC20 updates according to the current cpu_commit_pc after cpu_commit_valid passes through two pclk stages.",
+      "interface": [
+        "pclk",
+        "presetn",
+        "wdt_clk",
+        "wdt_rstn",
+        "paddr",
+        "pwdata",
+        "psel",
+        "penable",
+        "pwrite",
+        "prdata",
+        "cpu_commit_pc",
+        "cpu_commit_valid"
+      ],
+      "timing": "pclk registered reads use pre-edge synchronized values; status clearing occurs on the third wdt edge, followed by two pclk synchronization cycles and then one pclk read cycle; predict COUNT exactly from independent pipeline history.",
+      "boundary": "Parameters are fixed at ADDR_WIDTH=8, DATA_WIDTH=32, XLEN=32. All non-clock inputs are two-state and avoid sampling edges; the two clocks may run independently, pause, and have different phases. APB writes must have setup followed by access and commit only on the pclk rising edge of access. Adjacent toggle requests for configuration, control, refresh, and status clearing must be separated by at least 4 wdt_clk rising edges, and cross-domain data must be held until the request is consumed; excessively fast toggles are not guaranteed to be lossless. All public outputs are checked according to the digital simulation contract; real analog CDC reliability is not required."
+    },
+    {
+      "feature_id": "F-7",
+      "requirement_ids": [
+        "R-dv-037-007"
+      ],
+      "module": "watchdog_timer",
+      "definition": "The trace ports are registered in pclk. APB events appear after the write-commit edge; on the next pclk, they default back to the most recently latched wdt event rather than holding the APB event indefinitely. Codes 08/0C/10/14 indicate CTRL/timeout/window/width updates, 18/1C lock/unlock, 24 refresh acceptance, 2C/30 an incorrect first/second key, 60 a status write, and C0 rejection of a protected write; data is pwdata, except that for a status write it is the 4 flags before clearing, and for rejection it is paddr. On every wdt edge, the default A4 snapshot data is the pre-edge count; debug 80 indicates a synchronized rising halt with freeze_en, and 84 repeats every edge while halt remains 1 and freeze_en=0; reset deassertion 48, initial load 20, legal reload 28, window 40/4C, and timeout 64/44 successively override earlier events. Data for 44/4C is the count, for 48 it is width, for 20/28 it is timeout, and for 64 it is the pre-edge synchronized cause. The wdt event flips a toggle on every edge, is detected and latched through two pclk stages and third-cycle detection, and reaches the ports on the next pclk; events may be lost, there is no lossless queue, and an APB event on the same edge overrides the wdt default.",
+      "interface": [
+        "pclk",
+        "presetn",
+        "wdt_clk",
+        "wdt_rstn",
+        "trace_event_id",
+        "trace_data",
+        "psel",
+        "penable",
+        "pwrite",
+        "paddr",
+        "pwdata",
+        "cpu_dbg_halt"
+      ],
+      "timing": "After the APB commit edge and after every subsequent pclk edge; use the actual toggle sampling history rather than requiring every internal event to appear.",
+      "boundary": "Parameters are fixed at ADDR_WIDTH=8, DATA_WIDTH=32, XLEN=32. All non-clock inputs are two-state and avoid sampling edges; the two clocks may run independently, pause, and have different phases. APB writes must have setup followed by access and commit only on the pclk rising edge of access. Adjacent toggle requests for configuration, control, refresh, and status clearing must be separated by at least 4 wdt_clk rising edges, and cross-domain data must be held until the request is consumed; excessively fast toggles are not guaranteed to be lossless. All public outputs are checked according to the digital simulation contract; real analog CDC reliability is not required."
+    }
+  ]
+}

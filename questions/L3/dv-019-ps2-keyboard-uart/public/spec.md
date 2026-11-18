@@ -1,0 +1,49 @@
+# kb_uart_source_bundle Behavioral Specification
+
+### R-dv-019-source-v3-K001 — Three Functional Roots
+
+The interface includes an independent UART, PS/2 keyboard reception, and ASCII conversion of the keyboard queue head. The two receivers share clk/rst_n; the keyboard queue head connects to the conversion input, while the UART transmit input remains externally driven, with no implicit automatic forwarding between them.
+
+### R-dv-019-source-v3-K002 — PS/2 Reception
+
+ps2c is filtered using an 8-bit history sampled by clk; only filtered falling edges advance the 11-bit frame. The 8 data bits are extracted by right shifting, without validating the start, parity, or stop bits; there is no timeout, and an incomplete frame can continue waiting.
+
+### R-dv-019-source-v3-K003 — Keycode History
+
+After f0, the next completed byte is swallowed; 12 or 59 sets a single shift state, and releasing either shift clears it. Other completed bytes form queue write requests of {old shift,scan code}; e0/e1 receive no special parsing.
+
+### R-dv-019-source-v3-K004 — FIFO
+
+The keyboard queue has depth 4 and width 9; the two UART queues have depth 4 and width 8. A nonempty head is a combinational output. A read alone advances when nonempty, and a write alone advances when not full; simultaneous read and write advance only when neither empty nor full, with no empty bypass or full replacement. Reset clears only logical occupancy and does not erase storage.
+
+### R-dv-019-source-v3-K005 — UART Reception
+
+Parameters are fixed at DBIT=8, SB_TICK=16, DVSR=4, DVSR_WIDTH=2, FIFO_W=2. A low level triggers start detection; the data phase begins after 8 visible ticks, after which one data bit is sampled every 16 ticks, LSB first, and completion occurs after 16 ticks in the stop phase. There is no stop-high detection or error port.
+
+### R-dv-019-source-v3-K006 — UART Transmission
+
+A nonempty transmit FIFO triggers latching of the queue head; registered tx is 0 during reset and idle high after reset release. The start bit, 8 LSB-first data bits, and stop bit each advance according to 16 visible ticks, and the queue head is released only when transmission completes. There are no re-latching semantics during transmission.
+
+### R-dv-019-source-v3-K007 — ASCII
+
+rd_data[8:0] is the complete lookup key, and ascii[7:0] is the combinational result for the current key. There is no clock, reset, handshake, state, or fixed cycle latency; observe after the input is stable and combinational propagation has occurred. Consecutive inputs are independent of previous keys.
+
+
+
+The low 8-bit scan codes 1c 32 21 23 24 2b 34 33 43 3b 42 4b 3a 31 44 4d 15 2d 1b 2c 3c 2a 1d 22 35 1a represent a through z, respectively, in that order; bit8=0 outputs ASCII 61 through 7a, and bit8=1 outputs 41 through 5a. All values are hexadecimal.
+
+
+
+When bit8=0, scan codes 45 16 1e 26 25 2e 36 3d 3e 46 output 30 through 39 in order; scan codes 0e 4e 55 54 5b 5d 4c 52 41 49 4a 29 5a 66 output 60 2d 3d 5b 5d 5c 3b 27 2c 2e 2f 20 0d 08 in order. bit8=1 defines no alternate characters for these special characters; the unmatched rule applies. All values are hexadecimal.
+
+
+
+Any input that does not exactly match one of the complete 9-bit keys above outputs 2a, including keys containing X or Z; it neither retains the previous output nor outputs zero as the default.
+
+
+## Acceptance Edges and Valid Windows
+
+This task uses the VCS backend. The clk period is 20ns; external inputs change on falling edges and are accepted on the next rising edge, with comparison windows at 2ns and 8ns after the edge. Active-low reset asynchronously clears logical state, and TX resets to 0; reset does not erase FIFO storage. There is no validity obligation for rd_data of an empty FIFO or ascii derived from an empty keyboard head; comparison is mandatory when nonempty, and empty-interface checks cannot substitute for normal characters. The baud counter produces a visible tick on the 4th rising edge after reset release, and receive/transmit states consume that tick on a subsequent acceptance edge. The 11th filtered keyboard falling edge completes the frame, followed by decoding and a FIFO write within at most two acceptance edges; same-edge blocking scheduling does not guarantee a unique arrival edge within this transition; invalid frame start/parity/stop bits do not cause a discard. External reads and writes on the same edge do not advance when the queue is empty or full; when neither empty nor full, both advance and occupancy is maintained. No cross-simulator guarantee is made for boundary races between external events and internal frame completion on the same edge; use this fixed backend and the stable phases above. Normal frames, reset, full/empty states, and legal simultaneous operations must all be covered in this task.
+
+
+Keyboard stable comparison window: after the last raw PS/2 stop-bit falling edge, first reserve 16 clk rising edges for the filtering and write transition, and check the queue empty flag, valid queue head, and ASCII after the 16th edge. Queue history before the transition must still be checked; the transition affects only these three groups of keyboard outputs and does not affect the UART. Each frame must undergo a valid comparison after the transition ends; full queues, reads while empty, reset, shift, and break history must not be omitted because of this window. External read requests are performed after the transition ends.

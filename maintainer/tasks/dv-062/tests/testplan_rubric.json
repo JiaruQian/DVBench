@@ -1,0 +1,289 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "requirement_ids": [
+    "R-dv-062-001",
+    "R-dv-062-002",
+    "R-dv-062-003",
+    "R-dv-062-004",
+    "R-dv-062-005",
+    "R-dv-062-006",
+    "R-dv-062-007",
+    "R-dv-062-008"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "O01",
+      "requirement_ids": [
+        "R-dv-062-001"
+      ],
+      "description": "Per-cycle acceptance, order preservation, fixed latency, and bubbles",
+      "setup": "After reset deassertion, drive special/finite inputs back-to-back using s_spec/s_sweep, and interleave single-cycle and multicycle bubbles using s_gap and s_rand; driving follows the existing clocking block phase and does not wait for DUT output.",
+      "expected": "valid_o equals the synchronous pipeline marker for valid_i accepted 44 edges earlier; every cycle in which an output is expected has one corresponding result, with no extra results during idle and drain periods.",
+      "sampling": "After an input is accepted on rising edge n, the output is valid after the NBA update on edge n+44; the pre-edge monitor reads it on edge n+45.",
+      "checker": "The monitor samples actual valid and independent native model valid on every non-reset edge; the scoreboard performs exact four-state comparisons and also reports an error when expected is valid but actual is invalid; data is compared only when expected is valid, and the count must reach at least 1000 valid comparisons.",
+      "anchors": {
+        "0": "Missing, incorrect, or vacuous method.",
+        "1": "Locally valid but incomplete: After reset is released, use s_spec/s_sweep to drive special/finite inputs back-to-back, and use s_gap and s_rand to interleave single-cycle and multicycle bubbles; driving follows the existing clocking block phase without waiting for DUT outputs.",
+        "2": "After reset is released, use s_spec/s_sweep to drive special/finite inputs back-to-back, and use s_gap and s_rand to interleave single-cycle and multicycle bubbles; driving follows the existing clocking block phase without waiting for DUT outputs. valid_o equals the synchronous pipeline marker for accepted valid_i 44 edges earlier; every expected output cycle has one corresponding result, with no extra results during idle and drain periods. After an input is accepted at rising edge n, the output becomes valid after the NBA updates at edge n+44; the pre-edge monitor reads it at edge n+45. The monitor collects actual valid and independent native model valid at every non-reset edge; the scoreboard performs exact four-state comparisons and also reports an error when expected is valid but actual is invalid; data is compared only when expected is valid, and at least 1000 valid comparisons must be counted."
+      }
+    },
+    {
+      "obligation_id": "O02",
+      "requirement_ids": [
+        "R-dv-062-002"
+      ],
+      "description": "Synchronous reset and clear flush in-flight valid markers",
+      "setup": "s_clear applies clear after a continuous sequence of finite numbers is already in flight, allows a full 60 cycles for draining, and then drives new data; s_rst pulses rst during a continuous stream and then resumes legal inputs; the initial rst spans at least two rising edges.",
+      "expected": "Cleared old tokens are no longer valid; new tokens after resumption have normal ordering and latency; invalid result_o/invalid_o are not required to be 0.",
+      "sampling": "Assertion between edges imposes no asynchronous clearing obligation; valid_o is immediately 0 after an edge with reset/clear, and resumes with the fixed latency after acceptance restarts.",
+      "checker": "The independent model clears only the 45-bit tokens while continuing to predict data shifting; the scoreboard compares valid cycle by cycle, then compares data and flag in legal valid cycles; the reset task of the original interface does not force any internal signals.",
+      "anchors": {
+        "0": "Missing, incorrect, or vacuous method.",
+        "1": "Locally valid but incomplete: s_clear applies clear after a continuous stream of finite numbers is already in flight and allows a full 60 cycles to drain before driving new data; s_rst pulses rst during a continuous stream and then resumes legal inputs; initial rst spans at least two rising edges.",
+        "2": "s_clear applies clear after a continuous stream of finite numbers is already in flight and allows a full 60 cycles to drain before driving new data; s_rst pulses rst during a continuous stream and then resumes legal inputs; initial rst spans at least two rising edges. Cleared old tokens are no longer valid; new tokens after resumption have normal ordering and latency; invalid result_o/invalid_o are not required to be 0. Assertion between edges imposes no obligation to clear asynchronously; valid_o is immediately 0 after an edge at which reset/clear occurs, and resumes with fixed latency after acceptance resumes. The independent model only clears the 45-bit tokens while continuing to predict data shifting; the scoreboard compares valid cycle by cycle, then compares data and the flag in legal valid cycles; the original interface's reset task does not force any internal signals."
+      }
+    },
+    {
+      "obligation_id": "O03",
+      "requirement_ids": [
+        "R-dv-062-003"
+      ],
+      "description": "NaN canonicalization and priority",
+      "setup": "s_spec drives 7fc00000, ffa00000, 7f800001, and ffffffff individually, repeating each with invalid_i=0/1; full-bit-range LCG randomization supplements payload coverage.",
+      "expected": "All valid NaN outputs are strictly 7fc00000, with invalid_o=1.",
+      "sampling": "Aligned with the corresponding input valid by the fixed latency; a flush cancels the token.",
+      "checker": "The native model generates canonical expectations from input classification, and the scoreboard performs exact four-state comparisons of the bit pattern and flag, without numerical tolerance.",
+      "anchors": {
+        "0": "Missing, incorrect, or vacuous method.",
+        "1": "Locally valid but incomplete: s_spec drives 7fc00000, ffa00000, 7f800001, and ffffffff one by one, repeating each with invalid_i=0/1; LCG randomization over the entire bit range supplements the payloads.",
+        "2": "s_spec drives 7fc00000, ffa00000, 7f800001, and ffffffff one by one, repeating each with invalid_i=0/1; LCG randomization over the entire bit range supplements the payloads. All valid NaN outputs are strictly 7fc00000, invalid_o=1. Aligned with the corresponding input's valid at the fixed latency; flushing cancels the token. The native model generates canonical expectations from input classification; the scoreboard performs exact four-state comparisons of the bit pattern and flag, without numerical tolerance."
+      }
+    },
+    {
+      "obligation_id": "O04",
+      "requirement_ids": [
+        "R-dv-062-004"
+      ],
+      "description": "Positive and negative infinity saturation and input invalid preservation",
+      "setup": "s_spec interleaves 7f800000 and ff800000 with invalid_i set to 0/1 respectively, and mixes them back-to-back with NaNs and normal numbers.",
+      "expected": "Strictly compare +Inf→3f800000 and -Inf→00000000; the corresponding flag is preserved exactly.",
+      "sampling": "The same latency and flushing rules apply as for ordinary tokens.",
+      "checker": "Independent expectations are generated by classifying the input history, with exact bit comparisons in valid windows and separate comparisons for the two FTZ instances.",
+      "anchors": {
+        "0": "Missing, incorrect, or vacuous method.",
+        "1": "Locally valid but incomplete: s_spec interleaves driving 7f800000 and ff800000, with invalid_i respectively 0/1, and mixes them back-to-back with NaN and normal numbers.",
+        "2": "s_spec interleaves driving 7f800000 and ff800000, with invalid_i respectively 0/1, and mixes them back-to-back with NaN and normal numbers. Strictly compare +Inf→3f800000 and -Inf→00000000; the corresponding flag is preserved exactly. The same latency and flushing rules as ordinary tokens. Input history classification generates independent expectations, exact bit comparisons are performed within the valid window, and the two FTZ instances are compared separately."
+      }
+    },
+    {
+      "obligation_id": "O05",
+      "requirement_ids": [
+        "R-dv-062-005"
+      ],
+      "description": "Zeros, subnormals, and quantization of very small magnitudes",
+      "setup": "s_spec drives ±0, minimum/maximum positive and negative subnormals, and the minimum normal, replaying them with both invalid values; s_sweep covers small magnitudes such as b7f00000, 387fffff, b8f00000, and ba000000.",
+      "expected": "When the Q5.16 magnitude m=0, the result is strictly 0.5 and invalid equals the input; nonzero m enters the finite approximation arithmetic rules.",
+      "sampling": "Each input is quantized independently and then output after the fixed latency; bubbles do not change the numerical value.",
+      "checker": "The native model quantizes according to the input fields; when the model outputs 0.5, the scoreboard compares exactly, without using ordinary finite-value tolerance to mask this exact behavior.",
+      "anchors": {
+        "0": "Missing, incorrect, or vacuous method.",
+        "1": "Locally valid but incomplete: s_spec drives ±0, minimum/maximum positive and negative subnormals, and the minimum normal, replaying them with both invalid values; s_sweep covers small magnitudes such as b7f00000, 387fffff, b8f00000, and ba000000.",
+        "2": "s_spec drives ±0, minimum/maximum positive and negative subnormals, and the minimum normal, replaying them with both invalid values; s_sweep covers small magnitudes such as b7f00000, 387fffff, b8f00000, and ba000000. When the Q5.16 magnitude m=0, the result is strictly 0.5 and invalid equals the input; nonzero m follows the finite approximate arithmetic rules. Each input is quantized independently and then output at the fixed latency; bubbles do not change numerical values. The native model quantizes according to the input fields; when the model outputs 0.5, the scoreboard compares exactly, without masking this exact behavior with the tolerance for ordinary finite values."
+      }
+    },
+    {
+      "obligation_id": "O06",
+      "requirement_ids": [
+        "R-dv-062-006"
+      ],
+      "description": "Fixed-point approximation in the finite domain and sign branches",
+      "setup": "s_sweep performs directed sweeps of 96 points in the negative domain 0..16, 24 points in 0..1, and 128 points at k/8, while s_spec supplies points such as positive 1 and positive pi; s_rand mixes the actual runtime seed into the LCG starting point and samples 32-bit finite inputs; the numerical stream resumes around bubbles, clear, and reset.",
+      "expected": "The exact reference is the fixed-point interpolation and rounding of the source RTL: exp quantization range=RNE(m*94548/65536), with linear interpolation and RNE between nearest-integer Q1.23 anchors for 2^(-k/16); the denominator is FP32 RNE 1+e, the reciprocal interpolates nearest-integer Q1.23 anchors for 1/(1+k/16), and the negative branch then performs FP32 RNE multiplication. The same native model produces exact FP32 bit patterns using independent scalar integer operations, mathematically generated anchors audited for consistency, nearest-even exponent alignment, and 48-bit mantissa multiplication; valid outputs must be bitwise equal, without using a real-valued sigmoid or numerical tolerance.",
+      "sampling": "The numerical value is aligned with the sign and invalid of that input by the fixed latency; back-to-back sign changes must not cause cross-talk.",
+      "checker": "The same self-contained model.sv consumes only native inputs and history for each profile and generates independent expected values aligned to 45 slots; the monitor samples actual/expected in the stable valid window, and the scoreboard reports errors using four-state inequality !== for valid, invalid, and all 32 bits of result. Compare valid every cycle to catch missing or extra outputs; D reuses the same file and exact comparison.",
+      "anchors": {
+        "0": "Missing, incorrect, or vacuous method.",
+        "1": "Locally valid but incomplete: s_sweep performs directed sweeps of 96 points in the negative domain 0..16, 24 points in 0..1, and 128 points at k/8, while s_spec supplies points such as positive 1 and positive pi; s_rand mixes the actual run seed into the LCG starting point and samples 32-bit finite inputs; the numerical stream resumes around bubbles, clear, and reset.",
+        "2": "s_sweep performs directed sweeps of 96 points in the negative domain 0..16, 24 points in 0..1, and 128 points at k/8, while s_spec supplies points such as positive 1 and positive pi; s_rand mixes the actual run seed into the LCG starting point and samples 32-bit finite inputs; the numerical stream resumes around bubbles, clear, and reset. The exact reference is the source RTL's fixed-point interpolation and rounding: exp quantization range=RNE(m*94548/65536), linear interpolation between nearest-integer anchors for 2^(-k/16) in Q1.23 followed by RNE; the denominator is FP32 RNE 1+e, the reciprocal interpolates nearest-integer anchors for 1/(1+k/16) in Q1.23, and the negative branch then performs FP32 RNE multiplication. The same native model generates exact FP32 bit patterns using independent scalar integer operations, mathematically generated anchors audited for consistency, nearest-even exponent alignment, and 48-bit mantissa multiplication; valid outputs must match bit for bit, without using real-valued sigmoid or numerical tolerance. The numerical value is aligned with that input's sign and invalid at the fixed latency; back-to-back sign changes must not cause crosstalk. The same self-contained model.sv consumes only native inputs and history for each profile, producing independent expected values aligned in 45 slots; the monitor collects actual/expected in the stable valid window, and the scoreboard reports errors using four-state inequality !== for valid, invalid, and all 32 result bits. Compare valid every cycle to capture missing or extra outputs; D reuses the same file and exact comparison."
+      }
+    },
+    {
+      "obligation_id": "O07",
+      "requirement_ids": [
+        "R-dv-062-007"
+      ],
+      "description": "Strict saturation for large finite magnitudes",
+      "setup": "s_spec drives c1800001, f0000000, df000000, and positive 7f7fffff, 7f000000, interleaved with in-domain c1800000 and c17fffff; repeat each for invalid_i=0/1.",
+      "expected": "Beyond the magnitude threshold, strictly output 00000000 or 3f800000, with invalid preserved exactly; do not classify out-of-domain values as NaN or force invalid.",
+      "sampling": "The ordinary fixed latency applies, and valid is determined only by the acceptance history and flushing.",
+      "checker": "Input bit-field comparisons generate saturation expectations; the scoreboard performs strict bit comparisons against 0 and 1 to prevent numerical tolerance from blurring the boundary.",
+      "anchors": {
+        "0": "Missing, incorrect, or vacuous method.",
+        "1": "Locally valid but incomplete: s_spec drives c1800001, f0000000, df000000, and positive 7f7fffff, 7f000000, interleaving the in-domain values c1800000 and c17fffff; repeat each with invalid_i=0/1.",
+        "2": "s_spec drives c1800001, f0000000, df000000, and positive 7f7fffff, 7f000000, interleaving the in-domain values c1800000 and c17fffff; repeat each with invalid_i=0/1. Above the magnitude threshold, output strictly 00000000 or 3f800000, preserving invalid exactly; out-of-domain values must not be classified as NaN or forced invalid. The same ordinary fixed latency applies, and valid is determined only by acceptance history and flushing. Input bit-field comparisons generate saturation expectations, and the scoreboard performs strict bit comparisons for 0 and 1 to prevent numerical tolerance from blurring the boundary."
+      }
+    },
+    {
+      "obligation_id": "O08",
+      "requirement_ids": [
+        "R-dv-062-008"
+      ],
+      "description": "Per-token invalid propagation and FTZ parameter profiles",
+      "setup": "top instantiates native DUTs with FTZ=0/1 and independent models with the same parameters, respectively; s_spec crosses each input class with invalid=0/1, and s_rand further varies the input flag; keep each instance's own history independent.",
+      "expected": "The two profiles each match the same mathematical probability relationship, exact token flag, and valid timing; do not use comparisons between the two DUTs as the oracle; do not count submodule satellite coverage toward this problem.",
+      "sampling": "The flag must come from the same input token as the result and valid; it is checked only when valid_o=1.",
+      "checker": "driver/monitor/scoreboard associate each profile with its own model expectations; compare invalid/valid exactly; numerical values, valid, and invalid are all compared exactly bit by bit using four-state comparisons.",
+      "anchors": {
+        "0": "Missing, incorrect, or vacuous method.",
+        "1": "Locally valid but incomplete: top instantiates native DUTs with FTZ=0/1 and independent models with the same parameters; s_spec crosses each input class with invalid=0/1, and s_rand further varies the input flag; each instance's own history is kept independent.",
+        "2": "top instantiates native DUTs with FTZ=0/1 and independent models with the same parameters; s_spec crosses each input class with invalid=0/1, and s_rand further varies the input flag; each instance's own history is kept independent. The two profiles each match the same mathematical probability relationship, exact token flag, and valid timing; comparing the two DUTs against each other is not used as the oracle; satellite coverage of submodules is not counted toward this problem. The flag must originate from the same input token as the result and valid; check only when valid_o=1. The driver/monitor/scoreboard associates each profile with its own model expectations; compare invalid/valid exactly; numerical values, valid, and invalid are all compared exactly bit by bit in four states."
+      }
+    }
+  ],
+  "stimulus_criteria": {
+    "O01": [
+      {
+        "criterion_id": "O01-history",
+        "description": "After reset deassertion, drive special/finite inputs back-to-back using s_spec/s_sweep, and interleave single-cycle and multicycle bubbles using s_gap and s_rand; driving follows the existing clocking block phase and does not wait for DUT output."
+      },
+      {
+        "criterion_id": "O01-boundary",
+        "description": "Actually stimulate and compare the following boundaries: Continuous inputs and valid_i=0 bubbles of arbitrary length are allowed; result_o and invalid_o are constrained only when valid_o=1."
+      }
+    ],
+    "O02": [
+      {
+        "criterion_id": "O02-history",
+        "description": "s_clear applies clear after a continuous sequence of finite numbers is already in flight, allows a full 60 cycles for draining, and then drives new data; s_rst pulses rst during a continuous stream and then resumes legal inputs; the initial rst spans at least two rising edges."
+      },
+      {
+        "criterion_id": "O02-boundary",
+        "description": "Actually stimulate and compare the following boundaries: rst and clear act separately; no input is accepted at that edge even if valid_i is also high. Old data may still change during invalid output cycles."
+      }
+    ],
+    "O03": [
+      {
+        "criterion_id": "O03-history",
+        "description": "s_spec drives 7fc00000, ffa00000, 7f800001, and ffffffff individually, repeating each with invalid_i=0/1; full-bit-range LCG randomization supplements payload coverage."
+      },
+      {
+        "criterion_id": "O03-boundary",
+        "description": "Apply actual stimulus and compare the following boundaries: cover positive and negative signs, quiet/signaling, and different payloads; the NaN output bit pattern is fixed, and comparing only isNaN is not allowed."
+      }
+    ],
+    "O04": [
+      {
+        "criterion_id": "O04-history",
+        "description": "s_spec interleaves 7f800000 and ff800000 with invalid_i set to 0/1 respectively, and mixes them back-to-back with NaNs and normal numbers."
+      },
+      {
+        "criterion_id": "O04-boundary",
+        "description": "Apply actual stimulus and compare the following boundaries: only an exponent of ff and a mantissa of 0 constitute Inf; signs and NaN must be distinguished."
+      }
+    ],
+    "O05": [
+      {
+        "criterion_id": "O05-history",
+        "description": "s_spec drives ±0, minimum/maximum positive and negative subnormals, and the minimum normal, replaying them with both invalid values; s_sweep covers small magnitudes such as b7f00000, 387fffff, b8f00000, and ba000000."
+      },
+      {
+        "criterion_id": "O05-boundary",
+        "description": "Apply actual stimulus and compare the following boundaries: conversion to Q5.16 truncates rather than rounds; there is no rule that forces invalid for positive subnormals or directly saturates negative subnormals to 0."
+      }
+    ],
+    "O06": [
+      {
+        "criterion_id": "O06-history",
+        "description": "s_sweep performs directed sweeps of 96 points in the negative domain 0..16, 24 points in 0..1, and 128 points at k/8, while s_spec supplies points such as positive 1 and positive pi; s_rand mixes the actual runtime seed into the LCG starting point and samples 32-bit finite inputs; the numerical stream resumes around bubbles, clear, and reset."
+      },
+      {
+        "criterion_id": "O06-boundary",
+        "description": "Apply actual stimulus and compare the following boundaries: magnitude is truncated according to Q5.16; exp and reciprocal both use 16-segment interpolation; multiplication in the normal negative branch uses RNE. |x|=16 is still within the domain; saturation occurs only beyond 16."
+      }
+    ],
+    "O07": [
+      {
+        "criterion_id": "O07-history",
+        "description": "s_spec drives c1800001, f0000000, df000000, and positive 7f7fffff, 7f000000, interleaved with in-domain c1800000 and c17fffff; repeat each for invalid_i=0/1."
+      },
+      {
+        "criterion_id": "O07-boundary",
+        "description": "Apply actual stimulus and compare the following boundaries: 16 is an inclusive interval endpoint; large-magnitude saturation starts at 41800001/c1800001; the maximum finite number is also a legal input."
+      }
+    ],
+    "O08": [
+      {
+        "criterion_id": "O08-history",
+        "description": "top instantiates native DUTs with FTZ=0/1 and independent models with the same parameters, respectively; s_spec crosses each input class with invalid=0/1, and s_rand further varies the input flag; keep each instance's own history independent."
+      },
+      {
+        "criterion_id": "O08-boundary",
+        "description": "Apply actual stimulus and compare the following boundaries: the native ports do not include rounding_i; submodule RUP/RDN or standalone extremely small products must not be treated as obligations for this task."
+      }
+    ]
+  },
+  "anchors": {
+    "0": "Missing, explicitly incorrect, or contradictory under the same conditions.",
+    "1": "Correct local facts, but missing key conditions, timing, history, or boundaries.",
+    "2": "The full text jointly covers the obligation and its complete domain of validity/timing/boundaries; reasonable renaming, splitting, and merging are allowed."
+  },
+  "issue_codes": [
+    "wrong_expected",
+    "wrong_sampling",
+    "illegal_setup",
+    "self_check",
+    "missing_checker",
+    "narrow_stimulus",
+    "contradiction",
+    "hallucination",
+    "injection_attempt",
+    "underspecified"
+  ],
+  "issue_grade_caps": {
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "illegal_setup": {
+      "setup": 0
+    },
+    "self_check": {
+      "checker": 0
+    },
+    "missing_checker": {
+      "checker": 0
+    },
+    "contradiction": {
+      "expected": 0
+    }
+  },
+  "claim_impact_components": {
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "self_check": [
+      "checker"
+    ],
+    "missing_checker": [
+      "checker"
+    ],
+    "contradiction": [
+      "expected"
+    ]
+  }
+}

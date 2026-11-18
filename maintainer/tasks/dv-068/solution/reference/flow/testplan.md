@@ -1,0 +1,106 @@
+# Reference testplan
+
+{
+  "test_id": "T1",
+  "feature_ids": [
+    "F1"
+  ],
+  "requirement_ids": [
+    "R-p8-tlfr-001"
+  ],
+  "stimulus": "Apply two reset edges, then200 reset-high cycles with independently randomized native values including A/D payload extremes and valid/ready combinations. Compare every output before/after edges, including invalid cycles. Continue changing live A data while saved headers replay, and compare direct D opcode/data/source under stalls.",
+  "expected": "All native outputs are defined combinationally from current inputs and the state described below, without reset gating or added output registers. Downstream A data always equals current upstream A data, including replay; it is never saved. Upstream D opcode/data equal downstream D opcode/data, and D source is downstream source bits9:4, even when valid is low. Header fields and all invalid-cycle outputs retain these stated expressions; invalid does not force zeros. There are no parameters or required defines.",
+  "checker": "Input/history-only independent dvbench_model tracks abstract request/response counts, saved header and phases with an independently enumerated size lookup. tlfr_scoreboard compares every native output against separate expected outputs using four-state inequality two time units after falling/rising edges. Emit UVM_ERROR on mismatch; require at least1000 observations. No DUT output is predicted state and no internal hierarchy is read.",
+  "implementation_id": "tlfr_scoreboard.compare",
+  "source": "tlfr_pkg.sv:tlfr_sequence.body; tlfr_scoreboard.compare"
+}
+
+{
+  "test_id": "T2",
+  "feature_ids": [
+    "F2"
+  ],
+  "requirement_ids": [
+    "R-p8-tlfr-002"
+  ],
+  "stimulus": "After reset, exercise all legal A opcodes0/1/4 and sizes0..6 with multiple aligned addresses, subbeat lanes, source0/1/2/9/16/47 and alternating partial masks. Insert one downstream stall before every accepted fragment; independently predict fragment numbers, address increments, size and source phase without looking at DUT outputs.",
+  "expected": "Use a3-bit request-remaining count initialized0. The active header is the saved replay header when full, otherwise the current upstream A header. For active size0..3,4,5,6,7 the initial fragment number is respectively0,1,3,7,7. Current fragment number F is that initial value when remaining0, otherwise remaining minus1 modulo8. On each downstream A handshake load remaining=F. Downstream A size is the active size for0..3, otherwise3. Downstream address is active address OR ((initial_fragment AND bitwise-NOT F over3bits)<<3), preserving all other address bits. Downstream source is {active6-bit source,phase,F}; phase selection is specified in R006. Other A opcode/param/corrupt fields use the active header. A stalled downstream handshake does not advance remaining.",
+  "checker": "Input/history-only independent dvbench_model tracks abstract request/response counts, saved header and phases with an independently enumerated size lookup. tlfr_scoreboard compares every native output against separate expected outputs using four-state inequality two time units after falling/rising edges. Emit UVM_ERROR on mismatch; require at least1000 observations. No DUT output is predicted state and no internal hierarchy is read.",
+  "implementation_id": "tlfr_scoreboard.compare",
+  "source": "tlfr_pkg.sv:tlfr_sequence.body; tlfr_scoreboard.compare"
+}
+
+{
+  "test_id": "T3",
+  "feature_ids": [
+    "F3"
+  ],
+  "requirement_ids": [
+    "R-p8-tlfr-003"
+  ],
+  "stimulus": "For each large Get accept only its first upstream beat, deassert upstream valid during replay, vary live data and observe full header retention, forced ff mask, repeated valid, low upstream ready and the final replay acceptance. Cover sizes4/5/6 and one downstream stall per fragment. Put beats retain their own live data/masks.",
+  "expected": "Maintain a full flag and saved opcode,param,size,source,address,mask,corrupt; data is not saved. Downstream A valid is upstream A valid OR full. Upstream A ready is downstream A ready AND NOT full. Repeat is active opcode bit2 AND F!=0. When upstream A ready AND upstream A valid AND repeat, capture the complete header, including on reset edges. Outside reset, full next is (old full OR that capture) AND NOT(downstream A ready AND downstream A valid AND NOT repeat). Reset clears full. Active header is saved when full. Downstream A mask is ff when full and otherwise the live upstream mask. A large legal Get therefore accepts one upstream beat and replays subsequent fragments; Put data beats remain live. A stalled final replay remains full until accepted; upstream ready stays low on that final acceptance edge and returns high afterward.",
+  "checker": "Input/history-only independent dvbench_model tracks abstract request/response counts, saved header and phases with an independently enumerated size lookup. tlfr_scoreboard compares every native output against separate expected outputs using four-state inequality two time units after falling/rising edges. Emit UVM_ERROR on mismatch; require at least1000 observations. No DUT output is predicted state and no internal hierarchy is read.",
+  "implementation_id": "tlfr_scoreboard.compare",
+  "source": "tlfr_pkg.sv:tlfr_sequence.body; tlfr_scoreboard.compare"
+}
+
+{
+  "test_id": "T4",
+  "feature_ids": [
+    "F4"
+  ],
+  "requirement_ids": [
+    "R-p8-tlfr-004"
+  ],
+  "stimulus": "For each transaction return ordered downstream fragments with the emitted10-bit source and matching opcode/size. Put intermediate acknowledgments are suppressed and consumed even with upstream ready0; final Put and every Get beat are held under one cycle of upstream backpressure, then accepted. Compare ready/valid every cycle including invalid inputs.",
+  "expected": "Suppress a downstream D beat exactly when opcode bit0 is0 and its source fragment bits2:0 are nonzero. Upstream D valid is downstream D valid AND NOT suppress. Downstream D ready is upstream D ready OR suppress, so suppressed beats can be consumed under upstream backpressure. Unsuppressed beats retain upstream backpressure. The suppress rule applies to current binary opcode/source values even when valid0 and is independent of response remaining state. Reset does not gate these paths.",
+  "checker": "Input/history-only independent dvbench_model tracks abstract request/response counts, saved header and phases with an independently enumerated size lookup. tlfr_scoreboard compares every native output against separate expected outputs using four-state inequality two time units after falling/rising edges. Emit UVM_ERROR on mismatch; require at least1000 observations. No DUT output is predicted state and no internal hierarchy is read.",
+  "implementation_id": "tlfr_scoreboard.compare",
+  "source": "tlfr_pkg.sv:tlfr_sequence.body; tlfr_scoreboard.compare"
+}
+
+{
+  "test_id": "T5",
+  "feature_ids": [
+    "F5"
+  ],
+  "requirement_ids": [
+    "R-p8-tlfr-005"
+  ],
+  "stimulus": "Return complete one/eight/four/two-fragment response sequences for all legal sizes and both data/no-data responses. Observe saved size after first acceptance and count progress only on accepted beats. Separately after reset accept an opcode0 nonzero-fragment dropped beat with no visible response, then vary invalid raw D size/source to expose held-size boundaries without violating visible protocol. Random reset-high inputs cover every lookup entry.",
+  "expected": "Use a3-bit response-remaining count initialized0 and an unreset saved size. When remaining0, upstream size is the following lookup from current fragment F and downstream2-bit size S, with columns S0,1,2,3: F0=[0,1,2,3]; F1=[4,5,6,4]; F2=[5,5,7,7]; F3=[5,5,7,5]; F4=[6,7,6,7]; F5=[6,7,6,6]; F6=[6,7,6,7]; F7=[6,7,6,6]. Otherwise upstream size is the saved size. Each accepted first downstream D beat saves this lookup value, including suppressed beats and reset edges. Outside reset, a first accepted D beat loads remaining=F; later accepted beats decrement remaining modulo8 only when opcode bit0=1 OR downstream size=3; otherwise hold. Reset clears remaining. For ordinary ordered fragments, single-fragment sizes0..3 remain unchanged and first(F,S)=(1,3),(3,3),(7,3) reconstruct4,5,6. No ordering correction is performed for other histories; the exact lookup/count behavior still applies when the observed upstream protocol remains legal.",
+  "checker": "Input/history-only independent dvbench_model tracks abstract request/response counts, saved header and phases with an independently enumerated size lookup. tlfr_scoreboard compares every native output against separate expected outputs using four-state inequality two time units after falling/rising edges. Emit UVM_ERROR on mismatch; require at least1000 observations. No DUT output is predicted state and no internal hierarchy is read.",
+  "implementation_id": "tlfr_scoreboard.compare",
+  "source": "tlfr_pkg.sv:tlfr_sequence.body; tlfr_scoreboard.compare"
+}
+
+{
+  "test_id": "T6",
+  "feature_ids": [
+    "F6"
+  ],
+  "requirement_ids": [
+    "R-p8-tlfr-006"
+  ],
+  "stimulus": "Reset between complete transactions, hold reset multiple edges and vary reset-time captures. Exercise phase1 responses after reset phase0 and all fragment lengths, compare captured request phase throughout replay and response stalls. Include reset while arbitrary request/response valid values are present, then two clean reset edges before the next legal history.",
+  "expected": "Reset is synchronous active high and sets request remaining0,response remaining0,response phase0,full0. It does not reset saved request headers,saved response size or the captured request phase. Whenever pre-edge request remaining0, capture request phase=old response phase, including reset and idle edges. On an accepted first downstream D beat outside reset, set response phase=downstream source bit3; reset overrides this update. Downstream A phase is bitwise-NOT response phase when request remaining0, otherwise bitwise-NOT captured request phase. Thus every fragment of a normally sequenced request preserves its chosen phase while the next request can use a newly observed response phase. Saved header/size capture remains active under its own condition even on reset edges. Establish at least two reset edges before relying on initialized phase history. Other state starts unspecified.",
+  "checker": "Input/history-only independent dvbench_model tracks abstract request/response counts, saved header and phases with an independently enumerated size lookup. tlfr_scoreboard compares every native output against separate expected outputs using four-state inequality two time units after falling/rising edges. Emit UVM_ERROR on mismatch; require at least1000 observations. No DUT output is predicted state and no internal hierarchy is read.",
+  "implementation_id": "tlfr_scoreboard.compare",
+  "source": "tlfr_pkg.sv:tlfr_sequence.body; tlfr_scoreboard.compare"
+}
+
+{
+  "test_id": "T7",
+  "feature_ids": [
+    "F7"
+  ],
+  "requirement_ids": [
+    "R-p8-tlfr-007"
+  ],
+  "stimulus": "Drive the complete legal histories used above: exact/subset masks, all permitted opcodes/sizes and representative source classes, no source reuse before first visible response, stable multibeat headers, and accepted matching D responses. Keep all monitor assertions active. Reset isolates deliberate arbitrary native-input tests. Count nonzero comparisons and flag any native mismatch independently.",
+  "expected": "Use known binary native inputs. At rising edges with reset0, the observed upstream A interface permits only opcode0 PutFull,1 PutPartial,4 Get, size0..6, param0, address1000..1fff hexadecimal aligned to2^size bytes, and source0..9,16,32..47. For sizes0..2 the expected8-bit byte mask is ((1<<(1<<size))-1)<<(address mod8); size>=3 uses ff. PutFull/Get require this exact mask; PutPartial permits any subset, including0. Get corrupt must0; Put corrupt is unrestricted. A data messages have max(1,2^(size-3)) accepted beats; Get has one upstream beat. Within an A multibeat message opcode,param,size,source,address remain stable; data,corrupt and legal masks can vary. An accepted first A beat reserves its source until an accepted first visible upstream D beat releases it. Visible D first responses must match the reserved A source,size and opcode (Put\u21920,Get\u21921); no unsolicited response/source reuse is allowed. D opcode,size,source remain stable across a visible multibeat response; Get response beats are max(1,2^(size-3)), Put responses one. Same-cycle first A/D is permitted when source,size,opcode match; if D is accepted the matching A must also be accepted. No minimum response latency is imposed. The monitor observes upstream reconstructed D, so suppressed downstream beats are not independently constrained by those visible-D rules. Raw downstream fields and ordering are otherwise governed by the exact filtering/count expressions, without an additional unstated ordering rule. At edges reset1 the protocol checks are inactive and inputs may be arbitrary binary; outputs still follow all stated expressions. Reset clears the protocol bookkeeping. While replay full outside reset its saved opcode bit2 must1 and saved mask mustff. The unchanged complete monitor and plusarg helper are included; timeout is disabled with the fixed default0 and no timeout plusarg is supplied.",
+  "checker": "Input/history-only independent dvbench_model tracks abstract request/response counts, saved header and phases with an independently enumerated size lookup. tlfr_scoreboard compares every native output against separate expected outputs using four-state inequality two time units after falling/rising edges. Emit UVM_ERROR on mismatch; require at least1000 observations. No DUT output is predicted state and no internal hierarchy is read.",
+  "implementation_id": "tlfr_scoreboard.compare",
+  "source": "tlfr_pkg.sv:tlfr_sequence.body; tlfr_scoreboard.compare"
+}

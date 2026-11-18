@@ -1,0 +1,194 @@
+{
+  "task_id": "dv-064",
+  "dut_top": "apb_timer_unit",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "backfill/apb_timer_unit_pkg.sv",
+    "backfill/clkgating.v",
+    "timer_unit_counter.sv",
+    "timer_unit_counter_presc.sv",
+    "apb_timer_unit.sv"
+  ],
+  "rtl_sources": [
+    "backfill/apb_timer_unit_pkg.sv",
+    "backfill/clkgating.v",
+    "timer_unit_counter.sv",
+    "timer_unit_counter_presc.sv",
+    "apb_timer_unit.sv"
+  ],
+  "rtl_compile_files": [
+    "backfill/apb_timer_unit_pkg.sv",
+    "backfill/clkgating.v",
+    "timer_unit_counter.sv",
+    "timer_unit_counter_presc.sv",
+    "apb_timer_unit.sv"
+  ],
+  "include_dirs": [],
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m10",
+    "n1"
+  ],
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "model_contract_policy": "native-module-v1",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "HCLK",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "HRESETn",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "PADDR",
+        "direction": "In",
+        "width": 12,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 11,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "PENABLE",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "PRDATA",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "PREADY",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "PSEL",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "PSLVERR",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "PWDATA",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "PWRITE",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "busy_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "dft_cg_enable_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "event_hi_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "event_lo_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "irq_hi_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "irq_lo_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "ref_clk_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "timer_val_lo_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "APB_ADDR_WIDTH": "12"
+    },
+    "parser": "Native declarations and backfilled package manually audited; pyslang sorted port/string parameter contract"
+  },
+  "coverage_scope": "dvbench_top.dut",
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800
+}

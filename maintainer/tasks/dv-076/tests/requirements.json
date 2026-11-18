@@ -1,0 +1,36 @@
+{
+  "requirements": [
+    {
+      "id": "R-dv-076-001",
+      "text": "The top level for this task is the complete five-stage pipelined pipelined_riscv_core, with fixed WIDTH=32 and PROGRAM_FILE=\"program3.hex\"; replacing the program is not allowed. ROM and RAM each contain 256 32-bit words, and unlisted portions of ROM are NOPs. The public program table defines the software domain for this task; support for arbitrary RV32I programs need not be guaranteed. Use only known two-state inputs."
+    },
+    {
+      "id": "R-dv-076-002",
+      "text": "i_rstn is an active-low asynchronous reset; its falling edge immediately clears result_valid and result_data, and clears the pipeline, PC, registers, and RAM. Generate at least one actual falling reset edge; all outputs are 0 during reset. Release reset away from a rising clock edge; the next rising edge counts as edge 1."
+    },
+    {
+      "id": "R-dv-076-003",
+      "text": "Byte address fffffff8 is read-only input_data, and fffffffc is the result register; neither writes ordinary RAM. The datapath uses 32-bit whole-word reads and writes, and the ordinary RAM word index is the byte address shifted right by 2. The fixed firmware accesses only RAM word 0, writing before reading; there is no externally modifiable code or memory port."
+    },
+    {
+      "id": "R-dv-076-004",
+      "text": "On the 21st rising edge of i_clk after each reset release, sample input_data as the 32-bit unsigned bit vector for this transaction; it must be stable before the edge and held through that edge. Inputs at other times do not affect this result. A run canceled by reset before sampling produces no result; each run samples only once."
+    },
+    {
+      "id": "R-dv-076-005",
+      "text": "The firmware sets x8=-8, reads input_data into x9, computes x10=x9+7, writes RAM word 0 and reads it back into x11, computes x11=x11-3, and writes the result address; all operations are truncated to 32 bits modulo 2^32. Thus, the result is the input at edge 21 plus 4 modulo 2^32; saturation or signed truncation must not be used."
+    },
+    {
+      "id": "R-dv-076-006",
+      "text": "If reset does not interrupt the run, after the 66th rising edge result_valid is 1 and result_data updates to this run's result; result_valid is 0 at edges 1 through 65, and is 0 at edge 67 and thereafter. Only one single-cycle pulse is produced even if the input remains unchanged. After the rising edge, wait for nonblocking assignments to settle before observing."
+    },
+    {
+      "id": "R-dv-076-007",
+      "text": "result_data remains 0 after reset until the first result, and continuously holds the result after updating at edge 66, including all edges where result_valid is 0; only the next reset clears it to zero. The JAL self-loop at the end of the firmware does not write the result again and does not repeat the output in response to subsequent input_data changes. Both result_valid and result_data are public state valid on every cycle."
+    },
+    {
+      "id": "R-dv-076-008",
+      "text": "An effective reset at any time cancels the old run, without queuing or reissuing the old result; after release, timing restarts from edge 1. This includes reset after sampling but before output, immediately after edge 66, and during a prolonged trailing loop. The new result comes only from the input at edge 21 of the new run."
+    }
+  ]
+}

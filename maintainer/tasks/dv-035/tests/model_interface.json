@@ -1,0 +1,534 @@
+{
+  "ports": [
+    {
+      "name": "busy",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "m_eth_dest_mac",
+      "direction": "Out",
+      "width": 48,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 47,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "m_eth_src_mac",
+      "direction": "Out",
+      "width": 48,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 47,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "m_eth_type",
+      "direction": "Out",
+      "width": 16,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 15,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "m_ip_dest_ip",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "m_ip_dscp",
+      "direction": "Out",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "m_ip_ecn",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "m_ip_flags",
+      "direction": "Out",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "m_ip_fragment_offset",
+      "direction": "Out",
+      "width": 13,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 12,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "m_ip_hdr_ready",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "m_ip_hdr_valid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "m_ip_header_checksum",
+      "direction": "Out",
+      "width": 16,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 15,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "m_ip_identification",
+      "direction": "Out",
+      "width": 16,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 15,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "m_ip_ihl",
+      "direction": "Out",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "m_ip_length",
+      "direction": "Out",
+      "width": 16,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 15,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "m_ip_payload_axis_tdata",
+      "direction": "Out",
+      "width": 64,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 63,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "m_ip_payload_axis_tkeep",
+      "direction": "Out",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "m_ip_payload_axis_tlast",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "m_ip_payload_axis_tready",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "m_ip_payload_axis_tuser",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "m_ip_payload_axis_tvalid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "m_ip_protocol",
+      "direction": "Out",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "m_ip_source_ip",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "m_ip_ttl",
+      "direction": "Out",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "m_ip_version",
+      "direction": "Out",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "rst",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "s_eth_dest_mac",
+      "direction": "In",
+      "width": 48,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 47,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "s_eth_src_mac",
+      "direction": "In",
+      "width": 48,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 47,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "s_eth_type",
+      "direction": "In",
+      "width": 16,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 15,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "s_ip_dest_ip",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "s_ip_dscp",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "s_ip_ecn",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "s_ip_flags",
+      "direction": "In",
+      "width": 3,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 2,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "s_ip_fragment_offset",
+      "direction": "In",
+      "width": 13,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 12,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "s_ip_hdr_ready",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "s_ip_hdr_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "s_ip_header_checksum",
+      "direction": "In",
+      "width": 16,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 15,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "s_ip_identification",
+      "direction": "In",
+      "width": 16,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 15,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "s_ip_ihl",
+      "direction": "In",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "s_ip_length",
+      "direction": "In",
+      "width": 16,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 15,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "s_ip_payload_axis_tdata",
+      "direction": "In",
+      "width": 64,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 63,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "s_ip_payload_axis_tkeep",
+      "direction": "In",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "s_ip_payload_axis_tlast",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "s_ip_payload_axis_tready",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "s_ip_payload_axis_tuser",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "s_ip_payload_axis_tvalid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "s_ip_protocol",
+      "direction": "In",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "s_ip_source_ip",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "s_ip_ttl",
+      "direction": "In",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "s_ip_version",
+      "direction": "In",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    }
+  ],
+  "parameters": {
+    "DATA_WIDTH": "64",
+    "KEEP_ENABLE": "1'b1",
+    "KEEP_WIDTH": "8",
+    "PAYLOAD_FIFO_DEPTH": "2048",
+    "HEADER_FIFO_DEPTH": "8"
+  },
+  "parser": "pyslang 12.1.0"
+}

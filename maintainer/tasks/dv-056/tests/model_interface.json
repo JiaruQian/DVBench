@@ -1,0 +1,168 @@
+{
+  "ports": [
+    {
+      "name": "B_out",
+      "direction": "Out",
+      "width": 512,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 511,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "G_out",
+      "direction": "Out",
+      "width": 512,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 511,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "R_out",
+      "direction": "Out",
+      "width": 512,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 511,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "block_num",
+      "direction": "In",
+      "width": 13,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 12,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "bs_Cb",
+      "direction": "In",
+      "width": 1024,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1023,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "bs_Cr",
+      "direction": "In",
+      "width": 1024,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1023,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "bs_Y",
+      "direction": "In",
+      "width": 1024,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1023,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "bs_len_Cb",
+      "direction": "In",
+      "width": 11,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 10,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "bs_len_Cr",
+      "direction": "In",
+      "width": 11,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 10,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "bs_len_Y",
+      "direction": "In",
+      "width": 11,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 10,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "dec_done",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "dec_start",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "rst_n",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "total_bits_consumed",
+      "direction": "Out",
+      "width": 11,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 10,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "trigger_dec",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {},
+  "parser": "pyslang 11.0.0"
+}

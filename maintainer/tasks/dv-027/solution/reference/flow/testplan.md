@@ -1,0 +1,145 @@
+# tests
+
+test_id: T1
+
+feature_ids: ['F1']
+
+requirement_ids: ['R-dv-027-001']
+
+stimulus: First set rst=1, i_camera_reset=0, and i_clk_locked=0 and run both clocks for 20 cycles; run for 50 cycles after release. Separately pulse only rst, drive only i_camera_reset low, and drive only i_clk_locked low, including resets during operation.
+
+expected: Pixel capture and counting operate on the rising edge of i_pix_clk; FIFO reading and status synchronization operate on the rising edge of clk. !i_camera_reset or !i_clk_locked clears capture, byte assembly, and pixel/row counts on the pixel rising edge. rst or !i_clk_locked synchronously resets the FIFO and cross-domain state, but rst does not directly reset pixel assembly/counting; resetting only the camera does not clear the FIFO either. After reset is released on the FIFO write and read sides, each side goes through 5 local-domain edges before its internal reset wait ends. There is no asynchronous camera reset.
+
+checker: Reset the corresponding domains separately according to independent two-clock input histories, and compare valid outputs and four-state values 0.1ns after each edge; do not indiscriminately clear the other domain's model because of a particular reset.
+
+implementation_id: V1
+
+source: native_pkg.sv:native_sequence.body/native_scoreboard.write
+
+test_id: T2
+
+feature_ids: ['F2']
+
+requirement_ids: ['R-dv-027-002']
+
+stimulus: Combine enable/memory_ready/vsync, attempt to start both when a bank is available and when both banks are occupied, and drain in order after frame completion, including enable pauses and cancellation with memory_ready low.
+
+expected: When i_enable=1, capture is not active, i_vsync=0, an empty bank has been allocated, and i_memory_ready=1, capture starts on the next pixel edge. i_vsync=0 and memory_ready=0 cancel capture; i_enable low only prevents starting and pixel reception, and does not directly clear capture that has already started. i_vsync high sets busy to 1, regardless of enable; when vsync is low, busy is high, the FIFO is empty, and capture is still active, busy is cleared and a completion event is generated. The completion event becomes an o_captured pulse through a pixel-domain toggle and XOR of the clk-domain three-cycle shift. o_inactive is the clk-domain synchronized value of the FIFO all-empty status, updated after confirmation by two consecutive high/low history bits.
+
+checker: Maintain capture state, bank occupancy, and the completion toggle from input history, and independently predict busy/captured/inactive according to the actual valid windows in each domain; check both event and no-event cases.
+
+implementation_id: V2
+
+source: native_pkg.sv:native_sequence.body/native_scoreboard.write
+
+test_id: T3
+
+feature_ids: ['F3']
+
+requirement_ids: ['R-dv-027-003']
+
+stimulus: Drive lines with lengths 1, 2, 3, 4, 5, 7, and 8 and multiple sets of seed data; alternate consecutive short lines of fewer than four bytes, trailing residual bytes after complete words, and enable pauses and resumptions.
+
+expected: Bytes are received only on pixel edges when capture has started, enable is high, a bank has been allocated, and hsync/vsync are both high. Four bytes are assembled into a 32-bit word with the earliest byte in the high bits; when assembly is complete, a two-stage pixel-cycle write is scheduled. When fewer than four bytes have been assembled and there is not yet a complete word, hsync low does not release the bank or clear residual bytes; assembly continues on the next line. When a complete word already exists, the bank is released and trailing bytes fewer than four are discarded only when the hsync/vsync condition is not satisfied and both write pipeline stages are empty. A new bank starts at byte position 0.
+
+checker: An independent byte queue accepts only legal pixels and forms expected words according to the actual cross-line and release rules; compare word by word in the valid FIFO read window, and do not use an oracle that independently zero-pads each line.
+
+implementation_id: V3
+
+source: native_pkg.sv:native_sequence.body/native_scoreboard.write
+
+test_id: T4
+
+feature_ids: ['F4']
+
+requirement_ids: ['R-dv-027-004']
+
+stimulus: Alternate the debug switch and prepare with odd/even numbers of pixel cycles with vsync low and memory_ready low, then send at least two complete words, repeating across banks.
+
+expected: With debug disabled, output the assembled pixels. With debug enabled, the first word of a bank in phase 1 is 001F001F and the remaining words are 07D007D0; in phase 0, the first word is FFFFFFFF and the remaining words are F800F800. Toggle the phase each time capture starts; when vsync is low and memory_ready is low, toggle the phase on every pixel edge. The phase is initially cleared to 0 on camera reset; the first word of the pattern is determined by this bank's complete-word count being 0.
+
+checker: Count phase toggles and the word index within the bank using only input history, independently select constants, and compare valid FIFO data.
+
+implementation_id: V4
+
+source: native_pkg.sv:native_sequence.body/native_scoreboard.write
+
+test_id: T5
+
+feature_ids: ['F5']
+
+requirement_ids: ['R-dv-027-005']
+
+stimulus: Send long lines of 4095, 4096, 4097, and 4101 words, fill both banks without reading, and then attempt a third line; resume input after releasing one bank.
+
+expected: Fixed BUFFER_SIZE=12, with physically 4096 32-bit words per bank and two banks. Among empty banks, bank0 is allocated preferentially. When both banks are occupied, there is no writable bank and pixels are ignored, but the pixel counter continues counting according to hsync. The capture unit does not truncate or split a line at 4096 words; for a continuing long line, the write address wraps modulo 4096, the 24-bit word count continues incrementing modulo 2^24, and the published size is that count. The read address also wraps at 12 bits. Do not treat 4096 as an automatic backpressure boundary.
+
+checker: An independent finite-capacity bank storage and wide-counter model handles overwrites/wraparound; check size, bank availability, and valid data point by point, and do not assume lossless behavior beyond capacity.
+
+implementation_id: V5
+
+source: native_pkg.sv:native_sequence.body/native_scoreboard.write
+
+test_id: T6
+
+feature_ids: ['F6']
+
+requirement_ids: ['R-dv-027-006']
+
+stimulus: Vary the phase and rate of the two clocks so that the two banks are published sequentially or nearly simultaneously; delay read activate, alternately read and release banks, and continue writing.
+
+expected: After the capture unit releases a bank containing data, it publishes its word count; publication and read completion each use a three-cycle shift and consecutive high/low history confirmation to cross domains. After receiving publication, the read side records size, preselects a bank, and waits for RAM prefetch before asserting ready. When both banks are readable, selection alternates according to the next-bank preference; ambiguity on simultaneous first arrivals is resolved by the synchronized selection value from the write side, which is 1 when only bank1 is published and 0 otherwise. After read activate is released, the consumed bank returns to writable status through completion acknowledgment and must not be reused before the handshake returns.
+
+checker: Predict ready, size, and selection using independent bank ownership/publication/release histories and synchronization confirmation queues; reading the DUT's internal bank state as expected is prohibited.
+
+implementation_id: V6
+
+source: native_pkg.sv:native_sequence.body/native_scoreboard.write
+
+test_id: T7
+
+feature_ids: ['F7']
+
+requirement_ids: ['R-dv-027-007']
+
+stimulus: Observe prefetch before and after ready; while activate is held, apply no strobe, a single-cycle strobe, continuously high strobe, intermittent highs and lows, accesses beyond size, and address wraparound, then release activate.
+
+expected: read_ready indicates a prefetched bank, and ready subsequently clears low after activate goes high. The read address increments after prefetching the first word; on each read_clock edge, the address advances when strobe is high and the address is less than size+1. The data output selects the synchronous RAM output when strobe was high in the preceding cycle, and otherwise selects the held value; the edge on which strobe transitions from high to low latches the RAM output into the held value. Continuous high reads every cycle, and holding after low does not mean always returning the first word. size is provided when the bank is selected, rather than decrementing with each strobe; do not judge data invalid based on ready clearing low.
+
+checker: An independent read-pointer/synchronous-RAM-latency/data-hold model compares the full four-state data and size after every clk edge; unwritten storage addresses remain undefined, and defined errors must not be masked.
+
+implementation_id: V7
+
+source: native_pkg.sv:native_sequence.body/native_scoreboard.write
+
+test_id: T8
+
+feature_ids: ['F8']
+
+requirement_ids: ['R-dv-027-008']
+
+stimulus: Drive hsync pulses even with enable low and vsync low, vary line lengths, use continuously low hsync and different numbers of rows per frame; apply reset_counts at line end, frame end, and mid-line separately.
+
+expected: Every pixel edge with hsync high increments the current line's pixel count, unrestricted by enable, memory_ready, or vsync. When hsync is low and the current pixel count is nonzero, publish it to o_pixel_count and increment the frame row count, then clear the current pixel count. When vsync is low, if the frame row count is >0 and greater than the existing o_row_count, publish the row count, then clear the frame row count. i_reset_counts first clears both outputs, but line-end/frame-end publication on the same edge takes priority and overrides the clearing; the current internal pixel/row accumulations are not cleared by this. When vsync low and hsync low occur on the same edge, the increment for a nonzero line end takes priority over clearing the internal frame row count. The 32-bit count is modulo 2^32.
+
+checker: Independently track consecutive hsync-high edges and vsync-low publication history, predict the two 32-bit outputs according to old values and last-assignment priority, and perform four-state comparisons.
+
+implementation_id: V8
+
+source: native_pkg.sv:native_sequence.body/native_scoreboard.write
+
+test_id: T9
+
+feature_ids: ['F9']
+
+requirement_ids: ['R-dv-027-009']
+
+stimulus: Change pixel inputs and enables during reset, startup, writing, and bank waiting/release, covering each bank and pipeline phase.
+
+expected: debug[0]=enable, [2:1] is the writable-bank bitmap, [4:3] is the pixel-side active bank, [5] is the current write strobe, [13:6]=pix_data, [14]=vsync, [15]=hsync, [16]=busy; [31:17] is undriven and is Z in four-state simulation. The debug lower-bit state follows the bank and pipeline contracts above and does not constitute permission for the candidate to access internal state.
+
+checker: An independent model generates the debug mapping; compare the input pass-through and Z upper bits, and compare the lower bits using independent bank history.
+
+implementation_id: V9
+
+source: native_pkg.sv:native_sequence.body/native_scoreboard.write

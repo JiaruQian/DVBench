@@ -1,0 +1,192 @@
+{
+  "task_id": "dv-019",
+  "dut_top": "kb_uart_source_bundle",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "ascii_conv.v",
+    "assembly.sv",
+    "baud_generator.v",
+    "fifo.v",
+    "kb.v",
+    "kb_data.v",
+    "ps2_rx.v",
+    "uart.v",
+    "uart_rx.v",
+    "uart_tx.v"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "parameters": {},
+  "model_contract_policy": "native-module-v1",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "ascii",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "kb_fifo_empty",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "kb_ps2c",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "kb_ps2d",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "kb_rd_data",
+        "direction": "Out",
+        "width": 9,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 8,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "kb_rd_fifo",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "rst_n",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "uart_rd_data",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "uart_rd_uart",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "uart_rx",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "uart_rx_empty",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "uart_tx",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "uart_tx_full",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "uart_wr_data",
+        "direction": "In",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "uart_wr_uart",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {}
+  },
+  "reference_submission": "solution/reference",
+  "mutants": [
+    "m10",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "n1",
+    "n2",
+    "n3"
+  ],
+  "rtl_sources": [
+    "ascii_conv.v",
+    "assembly.sv",
+    "baud_generator.v",
+    "fifo.v",
+    "kb.v",
+    "kb_data.v",
+    "ps2_rx.v",
+    "uart.v",
+    "uart_rx.v",
+    "uart_tx.v"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "ascii_conv.v",
+    "assembly.sv",
+    "baud_generator.v",
+    "fifo.v",
+    "kb.v",
+    "kb_data.v",
+    "ps2_rx.v",
+    "uart.v",
+    "uart_rx.v",
+    "uart_tx.v"
+  ]
+}

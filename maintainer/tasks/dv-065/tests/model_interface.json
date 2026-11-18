@@ -1,0 +1,300 @@
+{
+  "ports": [
+    {
+      "name": "cdma2buf_dat_wr_addr",
+      "direction": "Out",
+      "width": 17,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 16,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "cdma2buf_dat_wr_data",
+      "direction": "Out",
+      "width": 64,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 63,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "cdma2buf_dat_wr_en",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "dc2cvt_dat_wr_addr",
+      "direction": "In",
+      "width": 17,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 16,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "dc2cvt_dat_wr_data",
+      "direction": "In",
+      "width": 64,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 63,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "dc2cvt_dat_wr_en",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "dc2cvt_dat_wr_info_pd",
+      "direction": "In",
+      "width": 12,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 11,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "dp2reg_dat_flush_done",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "dp2reg_done",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "dp2reg_inf_data_num",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "dp2reg_nan_data_num",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "img2cvt_dat_wr_addr",
+      "direction": "In",
+      "width": 17,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 16,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "img2cvt_dat_wr_data",
+      "direction": "In",
+      "width": 64,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 63,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "img2cvt_dat_wr_en",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "img2cvt_dat_wr_info_pd",
+      "direction": "In",
+      "width": 12,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 11,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "img2cvt_dat_wr_pad_mask",
+      "direction": "In",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "img2cvt_mn_wr_data",
+      "direction": "In",
+      "width": 128,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 127,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "nvdla_core_clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "nvdla_core_ng_clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "nvdla_core_rstn",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "nvdla_hls_clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "reg2dp_cvt_en",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "reg2dp_cvt_offset",
+      "direction": "In",
+      "width": 16,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 15,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "reg2dp_cvt_scale",
+      "direction": "In",
+      "width": 16,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 15,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "reg2dp_cvt_truncate",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "reg2dp_in_precision",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "reg2dp_nan_to_zero",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "reg2dp_op_en",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "reg2dp_pad_value",
+      "direction": "In",
+      "width": 16,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 15,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "reg2dp_proc_precision",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "slcg_hls_en",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {},
+  "parser": "Individually audited native declarations under fixed supplied configuration"
+}

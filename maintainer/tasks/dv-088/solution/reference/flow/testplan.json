@@ -1,0 +1,116 @@
+{
+  "tests": [
+    {
+      "test_id": "T1",
+      "feature_ids": [
+        "F1"
+      ],
+      "requirement_ids": [
+        "R-dv-088-001"
+      ],
+      "stimulus": "Drive all native inputs, create a10ns core clock and asynchronous active-low resets initially and midstream. Establish known descriptor and pipeline payload before numeric checks; preserve unknown/retained storage. Cross override and power inputs under the fixed gate-bypass profile, and check every output before, during and after reset.",
+      "expected": "The complete NV_NVDLA_bdma root contains all seven original functional RTL sources, CSB configuration and scheduling, read engine, twenty-entry context queue, write engine and the supplied 20x289/245x514 RAM dependencies. It has no top parameters and only the native MCIF memory interface. The fixed compile profile defines VLIB_BYPASS_POWER_CG: every supplied power clock gate forwards nvdla_core_clk directly, so all state machines advance each rising edge independently of the three override inputs. PRAND_OFF selects the minimum argument in optional random-stall helper functions, avoiding external PLI and leaving random stalls disabled. No ASSERT_ON, EMU or FPGA configuration is enabled. Native assertion sources remain intact. pwrbus_ram_pd has no functional effect. nvdla_core_rstn is asynchronous active-low: it clears control, configuration, counters, valid flags, scheduler, busy/interrupt, and load constants/surface address; it does not clear queue RAM, held pipe payload, CSB request/response payload, load line address, store descriptor/address payload, or FIFO read/output payload. Compare all native outputs including retained invalid-cycle payload, leaving only genuinely uninitialized bits unspecified until captured.",
+      "checker": "Drive inputs at falling clock edges and sample all native actual and independent model outputs after 2 ns. Model control state updates at rising edges or asynchronous reset assertion; unreset payload registers retain their native capture rules. Compare with four-state !==, require 4096 observations and fail on every mismatch or empty run. Numerical uninitialized payload is not assigned an invented value; preserve four-state unknowns until an accepted capture initializes it.",
+      "implementation_id": "aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard",
+      "source": "tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv"
+    },
+    {
+      "test_id": "T2",
+      "feature_ids": [
+        "F2"
+      ],
+      "requirement_ids": [
+        "R-dv-088-002"
+      ],
+      "stimulus": "Issue back-to-back reads, posted/nonposted writes and bubbles. Cover every word index0..20 and unmapped aliases through high address bits, ignored request fields, truncation/alignment, each writable bit, read-only writes and retained response payload. Independently predict the two-edge request/response latency.",
+      "expected": "csb2bdma_req_prdy is always one. Each edge captures request valid and captures the63-bit request payload only when input valid. Decode word index from request bits9:0; ignore higher address bits, byte-enable, privilege and level. Data is bits53:22, write is54 and nonposted is55. A registered request applies on the following edge: reads produce valid and {0,error0,read_data}; nonposted writes produce {1,error0,zero32}; posted writes have no response. Response payload captures only on a response and otherwise retains. Word indices0/1 are source low/high,2/3 destination low/high,4 line size13,5 source/destination MC bits0/1,6 line-repeat24,7/8 source/destination line stride,9 surface-repeat24,10/11 source/destination surface stride,12 OP bit0,13/14 group launch bits0,15 stall-enable bit0. Low address and stride writes keep31:5 and read back with five zero low bits; high addresses retain32 bits. Other writable fields clear unused high bits. All configuration resets zero; indices16..20 are read-only status and group0-read/group0-write/group1-read/group1-write counters; other reads return zero and other writes have no effect.",
+      "checker": "Drive inputs at falling clock edges and sample all native actual and independent model outputs after 2 ns. Model control state updates at rising edges or asynchronous reset assertion; unreset payload registers retain their native capture rules. Compare with four-state !==, require 4096 observations and fail on every mismatch or empty run. Numerical uninitialized payload is not assigned an invented value; preserve four-state unknowns until an accepted capture initializes it.",
+      "implementation_id": "aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard",
+      "source": "tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv"
+    },
+    {
+      "test_id": "T3",
+      "feature_ids": [
+        "F3"
+      ],
+      "requirement_ids": [
+        "R-dv-088-003"
+      ],
+      "stimulus": "Fill beyond the twenty RAM slots while launch is withheld, inspect free slots, then launch each group. Cross OP with launch/gather/last acceptance, wrap both FIFO pointers, stage multiple groups and verify dropped full snapshots separately from modular gather counts. Track descriptor and scheduler state independently of DUT outputs.",
+      "expected": "Writing OP or either launch register produces a delayed trigger; one edge later it is qualified with that register's newly stored bit0. Qualified OP snapshots all thirteen current descriptor fields into the command FIFO, even when not yet launched; a full FIFO drops that snapshot while the five-bit gather count still increments. The FIFO has20 RAM entries plus its held output, with immediate input reservation, a one-edge write-to-reader count transfer, synchronous held RAM read and held output, a one-edge reader-pop return to the write count, modulo20 pointers and no full replacement. Status free slots is8-bit20 minus the write count. Each group launch sets that group's busy, with group0 priority for simultaneous group choice. Gather valid accepts launch when empty or when its downstream can replace; gather-to-launch clears count, or leaves one for a simultaneous OP. Launch count loads gather count when idle or on its last consumed descriptor; group identity follows that count. Launch count decrements on load acceptance, independent of command FIFO output-valid. The last accepted descriptor is marked interrupt with the active group. Gather/launch counts are five-bit modular. Busy set wins completion clear.",
+      "checker": "Drive inputs at falling clock edges and sample all native actual and independent model outputs after 2 ns. Model control state updates at rising edges or asynchronous reset assertion; unreset payload registers retain their native capture rules. Compare with four-state !==, require 4096 observations and fail on every mismatch or empty run. Numerical uninitialized payload is not assigned an invented value; preserve four-state unknowns until an accepted capture initializes it.",
+      "implementation_id": "aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard",
+      "source": "tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv"
+    },
+    {
+      "test_id": "T4",
+      "feature_ids": [
+        "F4"
+      ],
+      "requirement_ids": [
+        "R-dv-088-004"
+      ],
+      "stimulus": "Exercise zero and nonzero sizes, all address halves, line/surface repeats and distinct strides; cross stalls with every line/surface/cube boundary and source-type changes. Verify ordered MC request payload, pipeline hold/replacement, full64-bit carries and source0's unavailable native path without inventing a CVIF response.",
+      "expected": "Load accepts a launched descriptor only when the context queue can accept, its current transfer is empty or its last request accepts, and either the source RAM type is unchanged or both load/context and store command state are idle. It captures full64-bit source address,13-bit line size,24-bit line/surface repeats and32-bit byte strides from27-bit values shifted left five. Each line issues exactly one request with {zero2,size13,address64}; source MC=1 routes to bdma2mcif_rd_req. Accepted requests increment line address by line stride, or reset it to old surface base plus surface stride on the last line; surface base advances on that boundary. Inclusive repeat counts produce repeat+1 lines/surfaces, counters wrap after the cube. The last acceptance can replace the load descriptor without a bubble. Line payload is not reset. The native source-type0 path has an internal identical pipe with an unconnected downstream ready, so it must not be treated as a working CVIF port. MC and internal CV paths each have an input skid slot, registered ready and one bubble-collapsing held output register; requests/data remain held during backpressure.",
+      "checker": "Drive inputs at falling clock edges and sample all native actual and independent model outputs after 2 ns. Model control state updates at rising edges or asynchronous reset assertion; unreset payload registers retain their native capture rules. Compare with four-state !==, require 4096 observations and fail on every mismatch or empty run. Numerical uninitialized payload is not assigned an invented value; preserve four-state unknowns until an accepted capture initializes it.",
+      "implementation_id": "aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard",
+      "source": "tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv"
+    },
+    {
+      "test_id": "T5",
+      "feature_ids": [
+        "F5"
+      ],
+      "requirement_ids": [
+        "R-dv-088-005"
+      ],
+      "stimulus": "Fill/stall/drain context stages, cross load and store acceptance, and use repeat values with bits above12 set to distinguish load24-bit and store13-bit domains. Exercise context replacement exactly on final data acceptance and verify destination line/surface progression and retained descriptor payload across reset.",
+      "expected": "Each accepted load descriptor also enters a separate context FIFO:20 RAM entries with an input register and held output, immediate empty bypass from the registered input into the output, modulo20 pointers and registered upstream backpressure. Context packs destination address64, size13, source/destination types, interrupt/group, destination strides27 and only low13 bits of each24-bit repeat count. Store accepts a context when empty or when its final data beat of the final line/surface accepts. Store payload captures even without reset gating and retains through reset; store valid resets zero. Line/surface counters are13-bit, address arithmetic is64-bit modular, and destination stride values shift left five before addition. Completing a line increments destination line address, or advances/restores from surface base on the last line. The final data beat can simultaneously replace the context; the new address and constants win old traversal updates.",
+      "checker": "Drive inputs at falling clock edges and sample all native actual and independent model outputs after 2 ns. Model control state updates at rising edges or asynchronous reset assertion; unreset payload registers retain their native capture rules. Compare with four-state !==, require 4096 observations and fail on every mismatch or empty run. Numerical uninitialized payload is not assigned an invented value; preserve four-state unknowns until an accepted capture initializes it.",
+      "implementation_id": "aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard",
+      "source": "tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv"
+    },
+    {
+      "test_id": "T6",
+      "feature_ids": [
+        "F6"
+      ],
+      "requirement_ids": [
+        "R-dv-088-006"
+      ],
+      "stimulus": "Provide varied514-bit responses, burst beyond FIFO capacity while writes stall, then drain with bubbles and ready toggles. Cross even/odd size and first/last data beats, last-line/surface require-ack, destination types and response-marker changes; predict complete515-bit packets and registered credits from independent queue/phase state.",
+      "expected": "MC read responses pass through one bubble-collapsing register followed by a registered-ready skid slot. Accepted responses enter the supplied245-entry RAM FIFO with immediate write reservation, one-edge reader-count transfer, synchronous held read address/output, one-edge returned pop count, modulo245 pointers and full backpressure. Response upper two bits are stored but discarded when formatting writes. Store starts in command phase. It emits one command packet {ID0,zero437,require_ack,size13,address64}, then data packets {ID1,mask2,data512}. require_ack is descriptor interrupt AND final line AND final surface. Each line has floor(size/2)+1 data beats, because size is the last32-byte-unit index. Data mask is01 only on the last beat when size bit0 is zero, otherwise11. Destination MC=1 routes requests; destination type0 has no ready source and stalls rather than providing another port. A command acceptance switches to data; final data acceptance switches to command and advances traversal. Writes use an input skid slot and held registered output with registered upstream ready. The return-credit output is the registered latency-FIFO data pop AND store source MC bit, one per accepted64-byte data beat.",
+      "checker": "Drive inputs at falling clock edges and sample all native actual and independent model outputs after 2 ns. Model control state updates at rising edges or asynchronous reset assertion; unreset payload registers retain their native capture rules. Compare with four-state !==, require 4096 observations and fail on every mismatch or empty run. Numerical uninitialized payload is not assigned an invented value; preserve four-state unknowns until an accepted capture initializes it.",
+      "implementation_id": "aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard",
+      "source": "tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv"
+    },
+    {
+      "test_id": "T7",
+      "feature_ids": [
+        "F7"
+      ],
+      "requirement_ids": [
+        "R-dv-088-007"
+      ],
+      "stimulus": "Launch both groups with multiple commands and multiple lines. Provide early, delayed, repeated and back-to-back completions, overlap require-ack admission with release, and reset outstanding groups. Verify exact tracker/ack/release/interrupt latency, busy priority, ordering and no false interrupt from an empty tracker.",
+      "expected": "Every accepted internal write command requiring acknowledgement pushes its interrupt group into the native zero-depth interrupt tracker with a held output and registered-ready skid history; it is not a RAM queue. A two-stage held acknowledgement-ID pipeline receives accepted require-ack commands. MC complete is registered; an early completion is retained pending while the top ID is zero, then consumed when the top ID becomes one. Releasing is top ID one AND registered complete-or-pending, without an extra top-valid gate; top ID retains after valid drains. Release is registered once more before consuming the interrupt tracker. A valid tracker entry and this delayed release produce a group completion; the corresponding external interrupt bit captures that event on the next edge and otherwise clears. Empty tracking cannot produce group completion. Completion clears the corresponding busy unless the same group is launched on that edge. Multiple groups, delayed responses, early completions and simultaneous new acknowledgements retain native ordering and pipeline timing.",
+      "checker": "Drive inputs at falling clock edges and sample all native actual and independent model outputs after 2 ns. Model control state updates at rising edges or asynchronous reset assertion; unreset payload registers retain their native capture rules. Compare with four-state !==, require 4096 observations and fail on every mismatch or empty run. Numerical uninitialized payload is not assigned an invented value; preserve four-state unknowns until an accepted capture initializes it.",
+      "implementation_id": "aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard",
+      "source": "tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv"
+    },
+    {
+      "test_id": "T8",
+      "feature_ids": [
+        "F8"
+      ],
+      "requirement_ids": [
+        "R-dv-088-008"
+      ],
+      "stimulus": "Enable/disable statistics around read/write stalls and completions, read every status counter, launch/complete simultaneously and exercise32-bit modular counts. Combine all channels and reset boundaries; compare every native output with a self-contained input-history predictor and fail on any mismatch or vacuous observation set.",
+      "expected": "Status index16 packs {zero21,group1_busy,group0_busy,idle,free_slots8}. Idle is command-FIFO write-idle AND context/load-idle AND interrupt/store-idle; queued responses and acknowledgement-valid flags alone do not gate it. Read stall is load-valid AND not selected-source pipe-ready, charged using the current scheduler group. Each group's running32-bit read counter increments on its stalls and clears on its group completion, only while stall-enable is one. The shared32-bit write counter increments on internal write-valid AND not selected-destination pipe-ready and clears on registered release, also only while enabled. Launch clears the group's latched read/write counters; completion captures pre-edge running read/shared-write values, with launch priority. Disabled statistics hold even through a completion. Reset clears all running/latched counts. CSB accesses, OP snapshots, launches, requests, responses, backpressure, data beats, completions and reset can overlap with these exact pre-edge priorities; all retained native payload bits and all address/data bits remain part of the observable contract.",
+      "checker": "Drive inputs at falling clock edges and sample all native actual and independent model outputs after 2 ns. Model control state updates at rising edges or asynchronous reset assertion; unreset payload registers retain their native capture rules. Compare with four-state !==, require 4096 observations and fail on every mismatch or empty run. Numerical uninitialized payload is not assigned an invented value; preserve four-state unknowns until an accepted capture initializes it.",
+      "implementation_id": "aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard",
+      "source": "tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv"
+    }
+  ]
+}

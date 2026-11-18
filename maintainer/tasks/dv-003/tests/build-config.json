@@ -1,0 +1,13 @@
+{
+  "top": "ALUExeUnit",
+  "parameters": {},
+  "defines": [],
+  "include_dirs": [],
+  "timescale": "1ns/1ps",
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "mutant_timeout_seconds": 1800
+}

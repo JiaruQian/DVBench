@@ -1,0 +1,235 @@
+{
+  "ports": [
+    {
+      "name": "clk_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "gnt_o",
+      "direction": "Out",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "req_addr_i",
+      "direction": "In",
+      "width": 12,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 11,
+          "right": 0
+        },
+        {
+          "kind": "unpacked",
+          "left": 0,
+          "right": 3
+        }
+      ]
+    },
+    {
+      "name": "req_i",
+      "direction": "In",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "req_wdata_i",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        },
+        {
+          "kind": "unpacked",
+          "left": 0,
+          "right": 3
+        }
+      ]
+    },
+    {
+      "name": "req_wmask_i",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        },
+        {
+          "kind": "unpacked",
+          "left": 0,
+          "right": 3
+        }
+      ]
+    },
+    {
+      "name": "req_write_i",
+      "direction": "In",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "rsp_error_o",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        },
+        {
+          "kind": "unpacked",
+          "left": 0,
+          "right": 3
+        }
+      ]
+    },
+    {
+      "name": "rsp_rdata_o",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        },
+        {
+          "kind": "unpacked",
+          "left": 0,
+          "right": 3
+        }
+      ]
+    },
+    {
+      "name": "rsp_rvalid_o",
+      "direction": "Out",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "rst_ni",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "sram_addr_o",
+      "direction": "Out",
+      "width": 12,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 11,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "sram_rdata_i",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "sram_req_o",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "sram_rerror_i",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "sram_rvalid_i",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "sram_wdata_o",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "sram_wmask_o",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "sram_write_o",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {
+    "N": 4,
+    "SramDw": 32,
+    "SramAw": 12,
+    "ArbiterImpl": "PPC",
+    "EnMask": 0
+  },
+  "profile_ports": "N and EnMask vary only across the three explicitly listed profiles."
+}

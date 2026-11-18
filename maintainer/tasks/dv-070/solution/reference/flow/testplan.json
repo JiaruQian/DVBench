@@ -1,0 +1,22 @@
+{
+  "tests": [
+    {
+      "test_id": "native-early-history",
+      "feature_ids": [
+        "local-6",
+        "local-7",
+        "local-8"
+      ],
+      "requirement_ids": [
+        "R-ELEV-006",
+        "R-ELEV-007",
+        "R-ELEV-008"
+      ],
+      "stimulus": "Use only default top_module ports. Assert rst=0 between source edges and hold for four source cycles. Release rst=1 with held cabin requests for floors 1,2,3,4,0 and simultaneous masks 11111/11100, resetting before each case. Check source cycles 1000000,1000001 and the third derived rising edge at 5000005; stop before any inter-floor count completes. Keep external call inputs zero and direction inputs high.",
+      "expected": "Low-active reset asynchronously clears paired LEDs and busy, while display blanks on the next source rising edge. First derived rising edge is source cycle 1000001. Early cabin acceptance prioritizes floors 1,2,3,4,0, sets both LED banks for a nonzero destination, and shows up direction while still on floor zero. Under these histories busy becomes high at the third derived rising edge for nonzero destinations. Display samples the prior scan selection each source edge; digits advance every 100001 source cycles. This test does not predict completed movement, descending travel, direction insertion or external-call debounce.",
+      "checker": "Same native-port dvbench_model predicts only from source/reset/request history. Independent periodic observations and driver observation events compare all 27 outputs with !==. Require over 3000 comparisons, 1000 accepted-request observations and reset/busy observations. No force, internal reads or parameter override.",
+      "implementation_id": "elevator-early-scoreboard",
+      "source": "uvm_tb.sv:elevator_scoreboard.write"
+    }
+  ]
+}

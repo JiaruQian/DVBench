@@ -1,0 +1,256 @@
+{
+  "requirement_ids": [
+    "R-ETH-001",
+    "R-ETH-002",
+    "R-ETH-003",
+    "R-ETH-004",
+    "R-ETH-005",
+    "R-ETH-006",
+    "R-ETH-007",
+    "R-ETH-008"
+  ],
+  "atoms": [
+    {
+      "atom_id": "R-ETH-001:behavior",
+      "requirement_ids": [
+        "R-ETH-001"
+      ],
+      "title": "Role and Boundaries",
+      "definition": "IEEE802TX is an Ethernet frame transmitter located between the client MAC and PHY/GMII. It reads the frame payload byte by byte from an external FIFO, sequentially generates the Preamble, start frame delimiter (SFD), 12-byte destination/source MAC header, payload data, and 32-bit frame check sequence (FCS) according to the IEEE 802.3 frame format, and outputs them through the GMII transmit interface.\n\nThe module internally maintains a 7-state transmit state machine, outputs the current state through `diagnostic`, and indicates transmit idle through `complete`. FCS calculation is delegated to submodule `CRC_gen` (instance `CRC_gen_inst`).\n\nThe module is **not responsible for**: FIFO storage and full/empty management (`iEmpty`/`i8Data` are provided externally); PHY encoding beyond GMII; collision/carrier detection (`gmii_tx_er` is always 0, and no transmit error indication is generated); MAC header configuration (the destination/source addresses are hardcoded constants). The input does not provide an MTU/maximum frame length specification; see I4.",
+      "grading": {
+        "0": "Omitted or explicitly contradictory",
+        "1": "A correct nonempty subset, but omitting the key relationship in this item",
+        "2": "Jointly complete across features and fields, with no contradictions"
+      }
+    },
+    {
+      "atom_id": "R-ETH-002:behavior",
+      "requirement_ids": [
+        "R-ETH-002"
+      ],
+      "title": "Interface Contract",
+      "definition": "The top level has a total of 12 ports:\n\n| Port | Direction | Bit Width | Purpose |\n|------|------|------|------|\n| Reset | input | 1 | Synchronous active-high reset |\n| Clk | input | 1 | Main clock |\n| clk_en | input | 1 | Clock enable |\n| iEmpty | input | 1 | External FIFO empty flag |\n| i8Data | input | 16 | External FIFO data word |\n| oRead | output | 1 | FIFO read request |\n| Addres | output | 9 | FIFO read address |\n| gmii_txd | output | 8 | GMII transmit data |\n| gmii_tx_en | output | 1 | GMII transmit enable |\n| gmii_tx_er | output | 1 | GMII transmit error |\n| complete | output | 1 | Transmit idle indication |\n| diagnostic | output | 3 | State indication |\n\n(Clock/reset) The rising edge of `Clk` is the main clock for all sequential logic; `Reset` is a **synchronous active-high** reset, sampled on the rising edge of `Clk`, clearing each sequential register on reset. `clk_en` is an active-high clock enable that gates almost all `posedge Clk` logic except `clkDiv`; when `clk_en=0`, the state machine and data registers hold their values.\n\n(FIFO side) `iEmpty` indicates that the external FIFO is empty and is active high; `i8Data[15:0]` is the 16-bit data word output by the FIFO; `oRead` is the read request; `Addres[8:0]` is the read address.\n\nKey fact: `oRead` is implemented as `~clkDiv[0]`, while `clkDiv` increments on the falling edge of `Clk`, so `oRead` is a **free-running half-rate clock** (toggles once every `Clk` cycle), not gated by `state` or `iEmpty`. This differs from the port comment “read request” and the read enable `wReadFifo = rReadFifo & ~iEmpty` actually used internally by the module to check for empty; see I1.\n\n`Addres = r11DataCounter[9:1]`, that is, the data counter shifted right by one bit; the read address changes with the counter once every two cycles.\n\n(GMII side) `gmii_txd[7:0]`, `gmii_tx_en`, and `gmii_tx_er` are GMII transmit data, transmit enable, and transmit error. `gmii_txd`/`gmii_tx_en` are **one-cycle-delayed** versions of internal `FCS_data`/`tx_en`; `gmii_tx_er` is always 0.\n\n(State indication) `diagnostic[2:0] = diag`, and `diag` takes values 0..6 according to the state; `complete` is a combinational signal and is 1 only in `StateIdle`.",
+      "grading": {
+        "0": "No correct nonempty support, or only erroneous claims",
+        "1": "Only a correct subset, or correct and mutually exclusive facts coexist",
+        "2": "The full text jointly provides complete support, and no feature contains facts mutually exclusive with this atom"
+      },
+      "task_contradiction_anchor": "Reset is active-high and synchronous; clk_en pauses the rising-edge main domain but does not pause falling-edge clkDiv/oRead. Any feature claiming that Reset is active-low and asynchronous or that clk_en=0 holds oRead is mutually exclusive with this atom."
+    },
+    {
+      "atom_id": "R-ETH-003:behavior",
+      "requirement_ids": [
+        "R-ETH-003"
+      ],
+      "title": "Normal mechanism (state machine and transmission flow)",
+      "definition": "State encoding (4 bits): `StateIdle=0`, `StatePreamble=1`, `StateSFD=2`, `StateHeader=3`, `StateData=4`, `StateFCS=5`, `StateIFG=6`. `state` is updated to the combinationally computed `next_state` when `posedge Clk` and `clk_en`; `next_state`, `diag`, and `complete` are generated combinationally in `always @(*)` according to the current `state`.\n\n- **Idle**: `complete=1`, `diag=0`. When `~iEmpty` (FIFO nonempty), the next state is Preamble; otherwise, remain in this state.\n- **Preamble**: `diag=1`, `complete=0`. Transmit 7 bytes of 0x55. Counter `r4CntrPreamble` increments from 0; when `wFinishPreamble=(r4CntrPreamble==6)`, it is cleared to zero and the state transitions to SFD.\n- **SFD**: `diag=2`. Transmit 1 byte of 0xd5, and unconditionally transition to Header; within the same state, `FCS_init=1` resets the CRC register.\n- **Header**: `diag=3`. Transmit a 12-byte MAC header. Counter `r4CntrHeader` increments from 0 to 11; when `wFinishHeader=(r4CntrHeader==11)`, it is cleared to zero and the state transitions to Data. The bytes actually transmitted are determined by the `case(r4CntrHeader)` of `FCS_data` (see I2).\n- **Data**: `diag=4`. Transmit the FIFO payload byte by byte; counter `r11DataCounter` increments every cycle. When `~wReadFifo | wFinishData`, transition to FCS, where `wReadFifo=rReadFifo&~iEmpty`, `wFinishData=iEmpty | (r11DataCounter==1023)`.\n- **FCS**: `diag=5`. In the first cycle upon entering FCS, `FCS_read` has not yet taken effect (`CRC_rd=0`); in cycles 2–5, `FCS_read=1` causes the CRC submodule to output a 4-byte checksum over 4 cycles; `FCS_end` (`Counter==3`) is asserted in cycle 5 and the state transitions to IFG, so the FCS state lasts a total of 5 cycles (see Section 5 for details).\n- **IFG**: `diag=6`. `r6IFG_counter` increments during IFG; when the count reaches 12, transition to Idle (a total interval of 13 cycles).\n\nTransmit-byte generation and the CRC input share `FCS_data`: Preamble selects 0x55, SFD selects 0xd5, Header selects the constant table, and Data selects the high/low byte of `i8Data`; `FCS_data_en` is asserted in Header/Data to feed bytes to the CRC; `FCS_init` is asserted in SFD. `tx_en` is 1 in Preamble/SFD/Header/Data, and 0 otherwise.\n\nHeader field constant table (`case(r4CntrHeader)`): 6→0x12, 7→0x34, 8→0x56, 9→0x78, 10→0x9A, 11→0xBC, 0→0xC8, 1→0x60, 2→0x00, 3→0x98, 4→0xCC, 5→0xBE. Since the counter starts at 0 and transmits sequentially, the 12-byte sequence actually transmitted is `C8 60 00 98 CC BE 12 34 56 78 9A BC`; see I2.",
+      "grading": {
+        "0": "Omitted or explicitly contradictory",
+        "1": "A correct nonempty subset, but omitting the key relationship in this item",
+        "2": "Jointly complete across features and fields, with no contradictions"
+      }
+    },
+    {
+      "atom_id": "R-ETH-004:behavior",
+      "requirement_ids": [
+        "R-ETH-004"
+      ],
+      "title": "Datapath and addresses",
+      "definition": "(16→8 serialization) At `StateData`, `FCS_data = (r11DataCounter[0]==1'b1) ? i8Data[7:0] : i8Data[15:8]`, that is, the high byte is selected when the counter is even and the low byte when it is odd, splitting a 16-bit word into two bytes in big-endian order.\n\n`Addres = r11DataCounter[9:1]`, the address is the counter divided by 2 using integer division. The counter is 11 bits, and the termination check uses 1023, so the address range is 0..511. `r11DataCounter` increments by +1 each cycle in Data and is cleared when `wFinishData`; it is cleared on reset. In addition, this counter is cleared by default every cycle outside the `StateData` state, so outside Data, `r11DataCounter` is always 0 and `Addres` is always 0.\n\nThe expressions for `wFinishData` and `wFinishDataFifo` are exactly the same (`iEmpty | (r11DataCounter==11'd1023)`); the latter is a redundant condition; see I3.\n\n(Internal read enable) Assignment priority for `rReadFifo`: default `~iEmpty & (r4CntrHeader==10)`; if `wFinishData` (or `wFinishDataFifo`), clear to 0; otherwise, set to `~iEmpty` when `state==StateHeader & r4CntrHeader==11`; otherwise, set to `~iEmpty` when `state==StateData`. The actual read enable `wReadFifo=rReadFifo & ~iEmpty` participates only in the StateData→FCS transition check and does **not** drive the `oRead` output.\n\n(Output registers) `delayed_FCS_data`/`delayed_tx_en` register `FCS_data`/`tx_en` under `clk_en`; when `dstate==StateFCS & state==StateFCS`, they instead register `FCS_out` and `delayed_tx_en=1`. Therefore, the GMII output is one cycle later than the internal byte. `dstate` is `state` delayed by one cycle (also updated under `clk_en`).",
+      "grading": {
+        "0": "Omitted or explicitly contradictory",
+        "1": "A correct nonempty subset, but omitting the key relationship in this item",
+        "2": "Jointly complete across features and fields, with no contradictions"
+      }
+    },
+    {
+      "atom_id": "R-ETH-005:behavior",
+      "requirement_ids": [
+        "R-ETH-005"
+      ],
+      "title": "FCS/CRC submodule (CRC_gen)",
+      "definition": "`CRC_gen` is a 32-bit CRC updated byte by byte (Ethernet FCS):\n\n- On reset or when `Init & Ce`, `CRC_reg <= 32'hffffffff`.\n- When `Data_en & Ce`, `CRC_reg <= NextCRC(Frame_data, CRC_reg)`; `NextCRC` is a bitwise combinational polynomial.\n- When `CRC_rd & Ce`, `CRC_reg <= {CRC_reg[23:0], 8'hff}`, shifting left by 8 bits each cycle and filling with 0xff.\n- `CRC_out` is combinational logic: when `CRC_rd & Ce`, it outputs `~{CRC_reg[24],…,CRC_reg[31]}` (the upper 8 bits inverted bitwise), otherwise 0; only the upper 8 bits are taken, with a left shift each cycle, outputting 4 bytes during the 4 cycles for which `CRC_rd` is high.\n- `Counter` is cleared when `!CRC_rd` and increments when `CRC_rd & Ce`, `CRC_end=(Counter==3)`. On the first cycle upon entering FCS, `FCS_read` is still 0 (this register is set to 1 at the next rising edge when `state==StateFCS`, ), so `CRC_rd` is high for 4 consecutive cycles starting from cycle 2, `Counter` counts 0/1/2/3 in sequence, and `CRC_end` is set on cycle 5 and transitions to IFG: **the FCS state lasts 5 cycles**. “4 cycles” in the `CRC_gen` comment refers only to the number of cycles for which `CRC_rd` is high, not the number of cycles in the FCS state.\n\nTop-level instance connections: `.Ce(clk_en)`, `.Init(FCS_init)`, `.Frame_data(FCS_data)`, `.Data_en(FCS_data_en)`, `.CRC_rd(FCS_read)`, `.CRC_end(FCS_end)`, `.CRC_out(FCS_out)`. `delayed_FCS_data` sequentially latches `CRC_out` at the rising edges of the 4 cycles of `dstate==StateFCS & state==StateFCS` (FCS cycles 2–5), so the 4 check bytes appear sequentially on `gmii_txd` during FCS cycles 3–5 and the immediately following IFG cycle 1.",
+      "grading": {
+        "0": "Omitted or explicitly contradictory",
+        "1": "A correct nonempty subset, but omitting the key relationship in this item",
+        "2": "Jointly complete across features and fields, with no contradictions"
+      }
+    },
+    {
+      "atom_id": "R-ETH-006:behavior",
+      "requirement_ids": [
+        "R-ETH-006"
+      ],
+      "title": "State and resource boundaries",
+      "definition": "This module has no internal storage array; its “resources” consist of counters and pipeline registers: preamble counter `r4CntrPreamble` (4 bits), header counter `r4CntrHeader` (4 bits), data counter `r11DataCounter` (11 bits), IFG counter `r6IFG_counter` (6 bits), CRC 32-bit register `CRC_reg`, and output delay registers `delayed_FCS_data`/`delayed_tx_en`/`dstate`. All counters and registers are cleared on `Reset`; `r11DataCounter` is cleared when `wFinishData` and is cleared by default every cycle outside the `StateData` state (, so `Addres` is always 0 between frames); `r6IFG_counter` is cleared when leaving IFG.\n\nThe data length limit is determined by `r11DataCounter==1023` (counting up to 1023, addresses 0..511). The input does not provide MTU or maximum frame length requirements; the actual boundary is defined by this constant; see I4.\n\nNo queue/arbitration: single-port sequential transmission, with no read/write conflicts or concurrent accesses.",
+      "grading": {
+        "0": "Omitted or explicitly contradictory",
+        "1": "A correct nonempty subset, but omitting the key relationship in this item",
+        "2": "Jointly complete across features and fields, with no contradictions"
+      }
+    },
+    {
+      "atom_id": "R-ETH-007:behavior",
+      "requirement_ids": [
+        "R-ETH-007"
+      ],
+      "title": "Reset and clocks",
+      "definition": "`Reset` is a synchronous active-high reset that takes effect only on the rising edge of `Clk`; as an exception, `clkDiv` samples reset on the falling edge of `Clk`. `clk_en` is the global clock enable. `complete`, `diag`, and `next_state` are combinational signals, and reset does not act on them directly (their values are determined by `state`; after reset, `state=StateIdle`). `oRead` is derived from `clkDiv` in the falling-edge domain and has a cross-edge relationship with the remaining rising-edge logic.",
+      "grading": {
+        "0": "Omitted or explicitly contradictory",
+        "1": "A correct nonempty subset, but omitting the key relationship in this item",
+        "2": "Jointly complete across features and fields, with no contradictions"
+      }
+    },
+    {
+      "atom_id": "R-ETH-008:behavior",
+      "requirement_ids": [
+        "R-ETH-008"
+      ],
+      "title": "Issues and revision locations",
+      "definition": "- **I1**: `oRead` is free-running and inconsistent with the “read request” semantics and internal `wReadFifo` (see Section 2).\n- **I2**: The header field byte order is determined by `case` of `FCS_data` offset by 6 relative to `r8HeaderData`, and `r8HeaderData` is unused (see Section 3).\n- **I3**: There are unused registers and redundant conditions (`addrCnt`, `r8PreambleData`, `r8HeaderData`, `r8SFD`, `rFIFOData`, `wFinishDataFifo`) (see Section 4).\n- **I4**: The maximum frame length/MTU is not specified in the input; the boundary is defined by the `1023` constant (see Section 6).",
+      "grading": {
+        "0": "Omitted or explicitly contradictory",
+        "1": "A correct nonempty subset, but omitting the key relationship in this item",
+        "2": "Jointly complete across features and fields, with no contradictions"
+      }
+    }
+  ],
+  "required_interfaces": {
+    "R-ETH-001": [
+      "Reset",
+      "Clk",
+      "clk_en",
+      "iEmpty",
+      "i8Data",
+      "oRead",
+      "Addres",
+      "gmii_txd",
+      "gmii_tx_en",
+      "gmii_tx_er",
+      "complete",
+      "diagnostic"
+    ],
+    "R-ETH-002": [
+      "Reset",
+      "Clk",
+      "clk_en",
+      "iEmpty",
+      "i8Data",
+      "oRead",
+      "Addres",
+      "gmii_txd",
+      "gmii_tx_en",
+      "gmii_tx_er",
+      "complete",
+      "diagnostic"
+    ],
+    "R-ETH-003": [
+      "Reset",
+      "Clk",
+      "clk_en",
+      "iEmpty",
+      "i8Data",
+      "oRead",
+      "Addres",
+      "gmii_txd",
+      "gmii_tx_en",
+      "gmii_tx_er",
+      "complete",
+      "diagnostic"
+    ],
+    "R-ETH-004": [
+      "Reset",
+      "Clk",
+      "clk_en",
+      "iEmpty",
+      "i8Data",
+      "oRead",
+      "Addres",
+      "gmii_txd",
+      "gmii_tx_en",
+      "gmii_tx_er",
+      "complete",
+      "diagnostic"
+    ],
+    "R-ETH-005": [
+      "Reset",
+      "Clk",
+      "clk_en",
+      "iEmpty",
+      "i8Data",
+      "oRead",
+      "Addres",
+      "gmii_txd",
+      "gmii_tx_en",
+      "gmii_tx_er",
+      "complete",
+      "diagnostic"
+    ],
+    "R-ETH-006": [
+      "Reset",
+      "Clk",
+      "clk_en",
+      "iEmpty",
+      "i8Data",
+      "oRead",
+      "Addres",
+      "gmii_txd",
+      "gmii_tx_en",
+      "gmii_tx_er",
+      "complete",
+      "diagnostic"
+    ],
+    "R-ETH-007": [
+      "Reset",
+      "Clk",
+      "clk_en",
+      "iEmpty",
+      "i8Data",
+      "oRead",
+      "Addres",
+      "gmii_txd",
+      "gmii_tx_en",
+      "gmii_tx_er",
+      "complete",
+      "diagnostic"
+    ],
+    "R-ETH-008": [
+      "Reset",
+      "Clk",
+      "clk_en",
+      "iEmpty",
+      "i8Data",
+      "oRead",
+      "Addres",
+      "gmii_txd",
+      "gmii_tx_en",
+      "gmii_tx_er",
+      "complete",
+      "diagnostic"
+    ]
+  },
+  "task_specific_anchors": [
+    {
+      "scenario": "clock_reset",
+      "expected": "Reset synchronously resets the main domain on the rising edge and takes priority over enable, and resets clkDiv on the falling edge; clk_en=0 holds the main domain, but the oRead falling-edge domain still runs freely and is not gated by iEmpty/state/clk_en."
+    },
+    {
+      "scenario": "frame",
+      "expected": "In sequence: seven 55 bytes, d5, C8 60 00 98 CC BE 12 34 56 78 9A BC, payload, FCS, and IFG; complete is asserted only in Idle, gmii_tx_er is always 0, and there is a register delay between GMII and the internal state."
+    },
+    {
+      "scenario": "fifo_bytes",
+      "expected": "The data counter selects the high byte when even and the low byte when odd, Addres=floor(count/2) has range 0..511, and is cleared to 0 outside Data; GMII is one cycle later; free-running half-rate oRead differs from the actual internal FIFO acceptance condition."
+    },
+    {
+      "scenario": "fcs_ifg",
+      "expected": "CRC starts from ffffffff and updates on Header/Data bytes; the FCS state lasts 5 enabled cycles, of which 4 cycles read CRC, and the last byte falls in the first IFG cycle; the IFG state lasts 13 cycles. Pausing does not advance CRC/output in the enabled domain; the standard 4-cycle FCS state or 12-cycle IFG cannot be applied."
+    }
+  ],
+  "grouping_policy": "IDs are only for locating items; duplicate IDs are a format error, and semantic duplicates under different IDs must be deduplicated. Splitting, merging, moving fields, and mislabeling valid R-IDs do not incur semantic-score deductions. Omissions reduce recall; do not treat correct local facts as hallucinations.",
+  "representation_equivalence": "CRC representation equivalence anchor: the DUT's non-reflected CRC_reg uses 04C11DB7, high-bit feedback, and left shifts; an independent reference may use reflected EDB88320, low-bit feedback, and right shifts, with the two states being bit reversals of each other. Outputting the low byte of the reflected state ~crc[7:0] first is equivalent to the DUT's ~{CRC_reg[24],...,CRC_reg[31]}; sequentially right-shifting to output 4 bytes is equivalent to the DUT sequentially left-shifting for output. Do not judge wrong_expected merely because a candidate writes low to high; first determine the CRC representation. The initial value ffffffff, Header/Data updates, complement, and correct 4-byte output window are still required; representation equivalence does not waive checks for an incorrect polynomial/complement/sampling/IFG.",
+  "cross_feature_consistency": "Scan all features and align each atom by the actual behavioral object/condition/window; list correct evidence first, then check for mutually exclusive facts. Correct entries cannot override erroneous facts under the same conditions. An explicit mutual exclusion must cap the actually affected atom at 1 and assign support0 in claims; do not merely deduct precision while retaining full recall for the corresponding atom, and do not penalize unrelated atoms based on the erroneous feature's R-ID or position.",
+  "visibility": "blackbox",
+  "observability_policy": "Require only the behavior and logical objects described by the public spec/ports; do not require guessing hidden instance names, source-code layout, undisclosed internal structures, or directly sampling internal ports. Logical interfaces such as clock division/CRC may be used for explanation, but the submitted interface must use the public native top-level ports."
+}

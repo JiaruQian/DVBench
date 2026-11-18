@@ -1,0 +1,146 @@
+{
+  "task_id": "dv-009",
+  "dut_top": "cva6_fifo_v3",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "cva6_fifo_v3.sv"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "model_contract_policy": "native-module-v1",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "clk_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "data_i",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "data_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "empty_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "flush_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "full_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "pop_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "push_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "rst_ni",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "testmode_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "usage_o",
+        "direction": "Out",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "FALL_THROUGH": "1",
+      "FPGA_ALTERA": "0",
+      "DATA_WIDTH": "32",
+      "DEPTH": "8",
+      "FPGA_EN": "0"
+    },
+    "parser": "pyslang 12.1.0"
+  },
+  "dut_parameters": {
+    "FALL_THROUGH": 1
+  },
+  "reference_submission": "solution/reference",
+  "mutants": [
+    "m2",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "n1",
+    "n2",
+    "n3"
+  ],
+  "rtl_sources": [
+    "cva6_fifo_v3.sv"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "cva6_fifo_v3.sv"
+  ],
+  "output_validity": {
+    "data_o": {
+      "valid_port": "empty_o",
+      "equals": "0"
+    }
+  }
+}

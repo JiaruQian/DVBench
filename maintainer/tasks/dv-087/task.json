@@ -1,0 +1,243 @@
+{
+  "task_id": "dv-087",
+  "dut_top": "vga_range_plot_top",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "clk_div_4.v",
+    "tof_frame_decay_fsm.v",
+    "tof_plot_bram_dp4.v",
+    "tof_plot_point_writer_accum_fsm.v",
+    "vga_frame_capture_rgb444.v",
+    "vga_range_plot_top.v",
+    "vga_timing_640x480_60.v"
+  ],
+  "data_root": "runtime_data",
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m10",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9"
+  ],
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "reference_sources": [
+    "model/model.sv",
+    "uvm_tb.sv"
+  ],
+  "model_contract_policy": "native-module-v1",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "active_video",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "clk_100mhz",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "dist_mm",
+        "direction": "In",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "dist_vld",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "frame_tick",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "hcount",
+        "direction": "Out",
+        "width": 10,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 9,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "logo_buf_sel",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "logo_rgb",
+        "direction": "In",
+        "width": 12,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 11,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "logo_x",
+        "direction": "Out",
+        "width": 9,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 8,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "logo_y",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "pix_clk",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "rgb_plot",
+        "direction": "Out",
+        "width": 12,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 11,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "rst_sys",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "sweep_wrap",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "theta_q15",
+        "direction": "In",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "vcount",
+        "direction": "Out",
+        "width": 10,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 9,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "vga_hsync_n",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "vga_vsync_n",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {
+      "R_MAX_MM": "16'd2000",
+      "TEMP_Q15_COLD": "16'sd4096",
+      "TEMP_Q15_HOT": "16'sd16384"
+    },
+    "parser": "pyslang 12.1.0"
+  },
+  "authorized_program_data": false,
+  "native_instance_range": [
+    1,
+    8
+  ],
+  "coverage": {
+    "metrics": [
+      "LINE",
+      "COND",
+      "BRANCH",
+      "TOGGLE"
+    ],
+    "scope": "Native DUT instances and descendants only"
+  },
+  "rtl_sources": [
+    "clk_div_4.v",
+    "tof_frame_decay_fsm.v",
+    "tof_plot_bram_dp4.v",
+    "tof_plot_point_writer_accum_fsm.v",
+    "vga_frame_capture_rgb444.v",
+    "vga_range_plot_top.v",
+    "vga_timing_640x480_60.v"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "clk_div_4.v",
+    "tof_frame_decay_fsm.v",
+    "tof_plot_bram_dp4.v",
+    "tof_plot_point_writer_accum_fsm.v",
+    "vga_frame_capture_rgb444.v",
+    "vga_range_plot_top.v",
+    "vga_timing_640x480_60.v"
+  ]
+}

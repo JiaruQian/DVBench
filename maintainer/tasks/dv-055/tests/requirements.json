@@ -1,0 +1,26 @@
+{
+  "task_id": "dv-055",
+  "source_id": "AhmedAalaaa__32-point-FFT-Verilog-design-based-DIT-butterfly-algorithm__fft_wrapper",
+  "requirements": [
+    {
+      "requirement_id": "R-dv-055-001",
+      "statement": "m_we writes one 16-bit input word at m_addr on the external rising edge; the input RAM has no reset initialization.",
+      "source": "m_ram.v:52-58"
+    },
+    {
+      "requirement_id": "R-dv-055-002",
+      "statement": "s_re requests a registered read of the 32-bit output word selected by s_addr; the value updates after the rising edge and holds while s_re is low. rst does not clear the output register; disabled reads retain the previous value even while reset is high.",
+      "source": "s_ram.v:120-123"
+    },
+    {
+      "requirement_id": "R-dv-055-003",
+      "statement": "The fixed default profile is DIVISOR=5, N=16, Q=8, ADDR_WIDTH=5, DATA_WIDTH=16, DEPTH=32. The transform runs continuously and exposes no start, ready, or done handshake. rst is asynchronous active-high; neither input nor output RAM is initialized by reset.",
+      "source": "fft_wrapper.v:4-23; clk_div.v:15-28"
+    },
+    {
+      "requirement_id": "R-dv-055-004",
+      "statement": "After addresses 0 through 31 have each been written once and the inputs remain stable for at least 20 external rising edges, the 32 output words match the public 32-point fixed-point forward-transform contract in natural frequency order.",
+      "source": "top_n.v:1830-1899; adder3_n.v:19-25"
+    }
+  ]
+}

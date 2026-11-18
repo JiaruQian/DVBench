@@ -1,0 +1,71 @@
+{
+  "ports": [
+    {
+      "name": "ap_scl",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "ap_sda",
+      "direction": "InOut",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "led",
+      "direction": "Out",
+      "width": 4,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 3,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "seg_led",
+      "direction": "Out",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "sel",
+      "direction": "Out",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "sys_clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "sys_rst_n",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {
+    "SLAVE_ADDR": "7'b11110",
+    "BIT_CTRL": "1'b0",
+    "CLK_FREQ": "26'd50000000",
+    "I2C_FREQ": "18'd250000"
+  },
+  "parser": "pyslang 12.1.0"
+}

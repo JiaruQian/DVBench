@@ -1,0 +1,142 @@
+{
+  "task_id": "dv-081",
+  "dut_top": "Top",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "Data_Memory.sv",
+    "EXECUTE.sv",
+    "EXECUTE_Pipeline.sv",
+    "FETCH.sv",
+    "IR.sv",
+    "Processor.sv",
+    "Program_Memory.sv",
+    "READ.sv",
+    "READ_Pipeline.sv",
+    "REGS.sv",
+    "Top.sv",
+    "WRITE_BACK.sv"
+  ],
+  "data_root": "runtime_data",
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m10",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9"
+  ],
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "reference_sources": [
+    "model/model.sv",
+    "uvm_tb.sv"
+  ],
+  "model_contract_policy": "native-module-v1",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "input_data",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "result_data",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "result_valid",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "rst",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {
+      "PROGRAM_FILE": "88'h70726f6772616d2e6d656d"
+    },
+    "parser": "pyslang 12.1.0"
+  },
+  "authorized_program_data": true,
+  "native_instance_range": [
+    1,
+    9
+  ],
+  "coverage": {
+    "metrics": [
+      "LINE",
+      "COND",
+      "BRANCH",
+      "TOGGLE"
+    ],
+    "scope": "Native DUT instances and descendants only"
+  },
+  "rtl_sources": [
+    "Data_Memory.sv",
+    "EXECUTE.sv",
+    "EXECUTE_Pipeline.sv",
+    "FETCH.sv",
+    "IR.sv",
+    "Processor.sv",
+    "Program_Memory.sv",
+    "READ.sv",
+    "READ_Pipeline.sv",
+    "REGS.sv",
+    "Top.sv",
+    "WRITE_BACK.sv"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "Data_Memory.sv",
+    "EXECUTE.sv",
+    "EXECUTE_Pipeline.sv",
+    "FETCH.sv",
+    "IR.sv",
+    "Processor.sv",
+    "Program_Memory.sv",
+    "READ.sv",
+    "READ_Pipeline.sv",
+    "REGS.sv",
+    "Top.sv",
+    "WRITE_BACK.sv"
+  ]
+}

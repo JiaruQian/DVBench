@@ -1,0 +1,68 @@
+{
+  "dut_top": "axi_interconnect",
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "self_contained": true,
+    "parameters": {
+      "S_COUNT": "4",
+      "M_COUNT": "4",
+      "DATA_WIDTH": "32",
+      "ADDR_WIDTH": "32",
+      "STRB_WIDTH": "4",
+      "ID_WIDTH": "8",
+      "AWUSER_ENABLE": "0",
+      "AWUSER_WIDTH": "1",
+      "WUSER_ENABLE": "0",
+      "WUSER_WIDTH": "1",
+      "BUSER_ENABLE": "0",
+      "BUSER_WIDTH": "1",
+      "ARUSER_ENABLE": "0",
+      "ARUSER_WIDTH": "1",
+      "RUSER_ENABLE": "0",
+      "RUSER_WIDTH": "1",
+      "FORWARD_ID": "0",
+      "M_REGIONS": "1",
+      "M_BASE_ADDR": "0",
+      "M_ADDR_WIDTH": "128'h18000000180000001800000018",
+      "M_CONNECT_READ": "16'd65535",
+      "M_CONNECT_WRITE": "16'd65535",
+      "M_SECURE": "4'b0"
+    }
+  },
+  "features": {
+    "json": "flow/features.json",
+    "markdown": "flow/features.md"
+  },
+  "testplan": {
+    "json": "flow/testplan.json",
+    "markdown": "flow/testplan.md"
+  },
+  "tb_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "filelist": "sources.f",
+  "framework": "uvm-1.2",
+  "top": "dvbench_top",
+  "format": "public/submission_format.md",
+  "submission_format": "public/submission_format.md",
+  "json_is_complete_fact_carrier": true,
+  "task_id": "dv-080",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

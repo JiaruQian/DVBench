@@ -1,0 +1,8 @@
+{
+  "backend": {
+    "type": "hosted",
+    "url_env": "DVBENCH_SERVICE_URL",
+    "token_env": "DVBENCH_SERVICE_TOKEN"
+  },
+  "transport_timeout_seconds": 120
+}

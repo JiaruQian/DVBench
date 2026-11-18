@@ -1,0 +1,6 @@
+{
+  "top": "dvbench_model",
+  "file": "solution/s4_model/model.sv",
+  "ports": "native DUT ports",
+  "independence": "input history only; no DUT, actual output, hierarchy, force/release or filesystem access"
+}

@@ -1,0 +1,36 @@
+{
+  "requirements": [
+    {
+      "requirement_id": "R-dv-020-001",
+      "definition": "reset_n is an active-low asynchronous reset: queue occupancy is cleared to 0, in-flight requests and read returns are canceled, za_valid/data=0, command 1111, address/bank/mask=0, DQ is high-impedance, and cke is constantly 1. External memory contents are not cleared; read and write operations must remain inactive while reset is low."
+    },
+    {
+      "requirement_id": "R-dv-020-002",
+      "definition": "One entry is accepted on each rising edge when (!az_wr_n or !az_rd_n) and waitrequest=0 before the edge; az_cs does not gate acceptance, and acceptance is also allowed during initialization/refresh. Both operations low simultaneously encode a write. waitrequest indicates only that the two-entry FIFO is full; when full, no new entry is accepted even if a dequeue occurs on the same edge. When full, the source holds its request until it is accepted."
+    },
+    {
+      "requirement_id": "R-dv-020-003",
+      "definition": "The 22-bit word address maps to bank={addr21,addr8}, row=addr20:9, and column=addr7:0. ACT outputs the row and bank, and the upper 4 address bits of column commands are 0. The write mask is az_be_n, with 1 indicating that the corresponding byte is masked; the read command mask is 00."
+    },
+    {
+      "requirement_id": "R-dv-020-004",
+      "definition": "Count natural clock edges after reset deassertion: after edge 5003, issue precharge-all command 0010; after edges 5005 and 5009, issue one refresh 0001 each; after edge 5013, issue mode set 0000 with address 030, with NOP0111 in between; before these, issue INHIBIT1111. Main scheduling begins at edge 5018. Initialization does not clear enqueued requests."
+    },
+    {
+      "requirement_id": "R-dv-020-005",
+      "definition": "The edge after the main controller fetches the first entry outputs ACT0011, the next edge outputs NOP, and the next edge outputs the first READ0101 or WRITE0100. The corresponding data is driven during a write command; at all other times, the bus is high-impedance. For the same direction/bank/row, column commands can be consecutive on every edge; after the prefetched tail entry is consumed, the final entry must not be issued again."
+    },
+    {
+      "requirement_id": "R-dv-020-006",
+      "definition": "After draining, keep the row open and issue NOP; subsequent requests with the same direction/bank/row issue column commands directly, without a new ACT. A direction, row, or bank mismatch goes through recovery NOP, precharge-all with address fff, and a wait, then fetches again and issues ACT; only one open-row context is retained."
+    },
+    {
+      "requirement_id": "R-dv-020-007",
+      "definition": "Using the first READ output after edge E as the anchor, after edge E+4, za_valid is 1 and za_data equals DQ before edge E+4; consecutive READs correspond to consecutive valid cycles. za_data still samples DQ when invalid, but is not treated as a response. There is no response ready; the consumer must accept every valid response."
+    },
+    {
+      "requirement_id": "R-dv-020-008",
+      "definition": "After the startup count of 5000, refresh becomes due steadily once every 782 edges; the first operational refresh request is generated on edge 5783 after deassertion and remains asserted until serviced. When idle, prioritize precharge-all followed by REF; after refresh, wait for 3 WAIT execution edges before scheduling again. A read stream exits for refresh using 2 WAIT edges, a write stream uses 1, and the row-retention state uses 1. Refresh does not clear the FIFO, and enqueuing is still restricted only by full status."
+    }
+  ]
+}

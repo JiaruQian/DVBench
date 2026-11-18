@@ -1,0 +1,123 @@
+{
+  "requirement_ids": [
+    "R-N111-001",
+    "R-N111-002",
+    "R-N111-003",
+    "R-N111-004",
+    "R-N111-005"
+  ],
+  "atoms": [
+    {
+      "atom_id": "reset",
+      "requirement_ids": [
+        "R-N111-001"
+      ],
+      "definition": "Operation is on the rising edge of clk; active-high asynchronous reset rst clears all message storage, the retained padding region, the result, and DONE, with LANE_COUNT=1 and LAST_BYTECNT=8. Only complete single-block transactions with LANE_COUNT in 1..17 and LAST_BYTECNT in 1..8 are defined; do not write data or configuration during an operation from the START write through DONE; reads and repeated START are allowed. Inputs change after the falling edge and are sampled stably after the rising edge.",
+      "title": "Asynchronous reset and legal domain",
+      "anchors": {
+        "0": "Omitted, or an explicitly incorrect relationship is given under the public conditions/history/window of this item; operation is on the rising edge of clk; active-high asynchronous reset rst clears all message storage, the retained padding region, the result, and DONE, with LANE_COUNT=1 and LAST_BYTECNT=8. Only complete single-block transactions with LANE_COUNT in 1..17 and LAST_BYTECNT in 1..8 are defined; do not write data or configuration during an operation from the START write through DONE; reads and repeated START are allowed. Inputs change after the falling edge and are sampled stably after the rising edge.",
+        "1": "Only describes clearing DONE or message storage, omits the retained padding region/configuration defaults, or does not cover cancellation while busy",
+        "2": "The candidate JSON collectively expresses the following facts in full across features; each individual feature need only list its own relevant native ports: operation is on the rising edge of clk; active-high asynchronous reset rst clears all message storage, the retained padding region, the result, and DONE, with LANE_COUNT=1 and LAST_BYTECNT=8. Only complete single-block transactions with LANE_COUNT in 1..17 and LAST_BYTECNT in 1..8 are defined; do not write data or configuration during an operation from the START write through DONE; reads and repeated START are allowed. Inputs change after the falling edge and are sampled stably after the rising edge."
+      }
+    },
+    {
+      "atom_id": "mmio",
+      "requirement_ids": [
+        "R-N111-002"
+      ],
+      "definition": "we=1 writes on the rising edge; only the low 8 bits of addr are decoded. 00..87 write 17 64-bit lanes; addr[7:3] selects the lane, bit2 selects the high or low 32 bits, and the low 2 bits are ignored. 88 writes the low 5 bits of LANE_COUNT, and 8C writes the low 4 bits of LAST_BYTECNT; these configurations are not readable. rd=0 or an unmapped read returns 0. When rd=1, 94 returns DONE, and A0/A4/…/BC return the digest from the low 32 bits to the high 32 bits, respectively; the low 2 bits of exact read addresses must be 0. Reads have no side effects, and reads and writes can occur simultaneously.",
+      "title": "32-bit MMIO and address aliasing",
+      "anchors": {
+        "0": "Omitted, or an explicitly incorrect relationship is given under the public conditions/history/window of this item; we=1 writes on the rising edge; only the low 8 bits of addr are decoded. 00..87 write 17 64-bit lanes; addr[7:3] selects the lane, bit2 selects the high or low 32 bits, and the low 2 bits are ignored. 88 writes the low 5 bits of LANE_COUNT, and 8C writes the low 4 bits of LAST_BYTECNT; these configurations are not readable. rd=0 or an unmapped read returns 0. When rd=1, 94 returns DONE, and A0/A4/…/BC return the digest from the low 32 bits to the high 32 bits, respectively; the low 2 bits of exact read addresses must be 0. Reads have no side effects, and reads and writes can occur simultaneously.",
+        "1": "Only covers data writes or some result addresses, omitting high-bit aliasing, half-word selection, rd gating, or unmapped values",
+        "2": "The candidate JSON collectively expresses the following facts in full across features; each individual feature need only list its own relevant native ports: we=1 writes on the rising edge; only the low 8 bits of addr are decoded. 00..87 write 17 64-bit lanes; addr[7:3] selects the lane, bit2 selects the high or low 32 bits, and the low 2 bits are ignored. 88 writes the low 5 bits of LANE_COUNT, and 8C writes the low 4 bits of LAST_BYTECNT; these configurations are not readable. rd=0 or an unmapped read returns 0. When rd=1, 94 returns DONE, and A0/A4/…/BC return the digest from the low 32 bits to the high 32 bits, respectively; the low 2 bits of exact read addresses must be 0. Reads have no side effects, and reads and writes can occur simultaneously."
+      }
+    },
+    {
+      "atom_id": "command",
+      "requirement_ids": [
+        "R-N111-003"
+      ],
+      "definition": "Writing wdata.bit0=1 at 90 generates START with a one-cycle delay; on the next rising edge, the FSM accepts it only when idle or completed, clearing DONE while retaining the old digest; START while busy is ignored and is not queued. The acceptance edge is t0; without an intervening reset, DONE and the new digest update exactly at t0+LANE_COUNT+30 rising edges; DONE holds until the next acceptance or reset. If consecutive START writes span the completion edge, acceptance is determined by the state at that time.",
+      "title": "START, completion, and result retention",
+      "anchors": {
+        "0": "Omitted, or an explicitly incorrect relationship is given under the public conditions/history/window of this item; writing wdata.bit0=1 at 90 generates START with a one-cycle delay; on the next rising edge, the FSM accepts it only when idle or completed, clearing DONE while retaining the old digest; START while busy is ignored and is not queued. The acceptance edge is t0; without an intervening reset, DONE and the new digest update exactly at t0+LANE_COUNT+30 rising edges; DONE holds until the next acceptance or reset. If consecutive START writes span the completion edge, acceptance is determined by the state at that time.",
+        "1": "Only describes starting/waiting for DONE, lacking one of acceptance delay, ignoring while busy, exact completion, or old-result retention",
+        "2": "The candidate JSON collectively expresses the following facts in full across features; each individual feature need only list its own relevant native ports: writing wdata.bit0=1 at 90 generates START with a one-cycle delay; on the next rising edge, the FSM accepts it only when idle or completed, clearing DONE while retaining the old digest; START while busy is ignored and is not queued. The acceptance edge is t0; without an intervening reset, DONE and the new digest update exactly at t0+LANE_COUNT+30 rising edges; DONE holds until the next acceptance or reset. If consecutive START writes span the completion edge, acceptance is determined by the state at that time."
+      }
+    },
+    {
+      "atom_id": "padding",
+      "requirement_ids": [
+        "R-N111-004"
+      ],
+      "definition": "The input bytes of each lane are used as message bytes in order from 63:56, 55:48 through 7:0; they map starting at the low byte of the Keccak lane. Only the LAST_BYTECNT high-order bytes of the last lane are taken; when fewer than 8, 06 is placed immediately after the valid bytes and the remaining high-order bytes are cleared; when equal to 8, this implementation does not place an additional 06. The highest bit of lane16 is always set to 1; if the last lane is not 16, lane16 is directly set to 8000000000000000. Lanes lane0..15 not covered by the current message retain their previous padded contents; reset clears them. This history-dependent behavior also applies to shorter subsequent messages; clearing on every operation must not be assumed.",
+      "title": "Input byte order and retained padding history",
+      "anchors": {
+        "0": "Omitted, or an explicitly incorrect relationship is given under the public conditions/history/window of this item; the input bytes of each lane are used as message bytes in order from 63:56, 55:48 through 7:0; they map starting at the low byte of the Keccak lane. Only the LAST_BYTECNT high-order bytes of the last lane are taken; when fewer than 8, 06 is placed immediately after the valid bytes and the remaining high-order bytes are cleared; when equal to 8, this implementation does not place an additional 06. The highest bit of lane16 is always set to 1; if the last lane is not 16, lane16 is directly set to 8000000000000000. Lanes lane0..15 not covered by the current message retain their previous padded contents; reset clears them. This history-dependent behavior also applies to shorter subsequent messages; clearing on every operation must not be assumed.",
+        "1": "Only describes 06/80, without covering the absence of 06 insertion for bytecnt8, residual contents for a short message following a long one, or the lane16 rule",
+        "2": "The candidate JSON collectively expresses the following facts in full across features; each individual feature need only list its own relevant native ports: the input bytes of each lane are used as message bytes in order from 63:56, 55:48 through 7:0; they map starting at the low byte of the Keccak lane. Only the LAST_BYTECNT high-order bytes of the last lane are taken; when fewer than 8, 06 is placed immediately after the valid bytes and the remaining high-order bytes are cleared; when equal to 8, this implementation does not place an additional 06. The highest bit of lane16 is always set to 1; if the last lane is not 16, lane16 is directly set to 8000000000000000. Lanes lane0..15 not covered by the current message retain their previous padded contents; reset clears them. This history-dependent behavior also applies to shorter subsequent messages; clearing on every operation must not be assumed."
+      }
+    },
+    {
+      "atom_id": "keccak",
+      "requirement_ids": [
+        "R-N111-005"
+      ],
+      "definition": "Set the low 1088 bits of Keccak-f1600 to the 17 padded lanes, with the remaining 512 bits set to 0; the linear index of lane(x,y) is x+5*y. Execute the standard 24 rounds of theta/rho/pi/chi/iota without absorbing the previous state; reverse the bytes within each of the first four output lanes, and arrange lane0 through lane3 from high to low in the 256-bit digest. Keccak uses the standard FIPS202 rotation offsets and round constants. Note that the full-lane padding and retained region described above are the contract of this implementation; the standard SHA3 message API cannot be applied directly to all histories.",
+      "title": "Keccak mathematical result and readout order",
+      "anchors": {
+        "0": "Omitted, or an explicitly incorrect relationship is given under the public conditions/history/window of this item; set the low 1088 bits of Keccak-f1600 to the 17 padded lanes, with the remaining 512 bits set to 0; the linear index of lane(x,y) is x+5*y. Execute the standard 24 rounds of theta/rho/pi/chi/iota without absorbing the previous state; reverse the bytes within each of the first four output lanes, and arrange lane0 through lane3 from high to low in the 256-bit digest. Keccak uses the standard FIPS202 rotation offsets and round constants. Note that the full-lane padding and retained region described above are the contract of this implementation; the standard SHA3 message API cannot be applied directly to all histories.",
+        "1": "Only mentions a SHA3 digest without defining the mathematical single-block Keccak operation, lane mapping, and 256-bit output order",
+        "2": "The candidate JSON collectively expresses the following facts in full across features; each individual feature need only list its own relevant native ports: set the low 1088 bits of Keccak-f1600 to the 17 padded lanes, with the remaining 512 bits set to 0; the linear index of lane(x,y) is x+5*y. Execute the standard 24 rounds of theta/rho/pi/chi/iota without absorbing the previous state; reverse the bytes within each of the first four output lanes, and arrange lane0 through lane3 from high to low in the 256-bit digest. Keccak uses the standard FIPS202 rotation offsets and round constants. Note that the full-lane padding and retained region described above are the contract of this implementation; the standard SHA3 message API cannot be applied directly to all histories."
+      }
+    }
+  ],
+  "required_interfaces": {
+    "R-N111-001": [
+      "clk",
+      "rst",
+      "addr",
+      "wdata",
+      "we",
+      "rd",
+      "rdata"
+    ],
+    "R-N111-002": [
+      "clk",
+      "addr",
+      "wdata",
+      "we",
+      "rd",
+      "rdata"
+    ],
+    "R-N111-003": [
+      "clk",
+      "rst",
+      "addr",
+      "wdata",
+      "we",
+      "rd",
+      "rdata"
+    ],
+    "R-N111-004": [
+      "clk",
+      "rst",
+      "addr",
+      "wdata",
+      "we",
+      "rd",
+      "rdata"
+    ],
+    "R-N111-005": [
+      "clk",
+      "rst",
+      "addr",
+      "wdata",
+      "we",
+      "rd",
+      "rdata"
+    ]
+  },
+  "scope": "fixed public behavior, jointly supported JSON facts; MD errors retained; no reference grouping requirement"
+}

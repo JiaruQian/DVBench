@@ -1,0 +1,162 @@
+{
+  "ports": [
+    {
+      "name": "cacc2glb_done_intr_pd",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "cdma_dat2glb_done_intr_pd",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "cdma_wt2glb_done_intr_pd",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "cdp2glb_done_intr_pd",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "core_intr",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2glb_req_pd",
+      "direction": "In",
+      "width": 63,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 62,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "csb2glb_req_prdy",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2glb_req_pvld",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "direct_reset_",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "glb2csb_resp_pd",
+      "direction": "Out",
+      "width": 34,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 33,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "glb2csb_resp_valid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "nvdla_core_clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "nvdla_core_rstn",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "nvdla_falcon_clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "nvdla_falcon_rstn",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "pdp2glb_done_intr_pd",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "sdp2glb_done_intr_pd",
+      "direction": "In",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "test_mode",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {},
+  "parser": "manual native declaration audit; sorted for native-module-v1 preflight"
+}

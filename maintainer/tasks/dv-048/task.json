@@ -1,0 +1,121 @@
+{
+  "task_id": "dv-048",
+  "dut_top": "dpc_5x5",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "dpc_core/delta_3x3.v",
+    "dpc_core/dpc_5x5.v",
+    "dpc_core/dpc_judge.v",
+    "dpc_core/mid_3x3.v"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m10",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9"
+  ],
+  "compile_files": [
+    "dpc_core/delta_3x3.v",
+    "dpc_core/dpc_5x5.v",
+    "dpc_core/dpc_judge.v",
+    "dpc_core/mid_3x3.v"
+  ],
+  "auxiliary_dependency_files": [],
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "rtl_sources": [
+    "dpc_core/delta_3x3.v",
+    "dpc_core/dpc_5x5.v",
+    "dpc_core/dpc_judge.v",
+    "dpc_core/mid_3x3.v"
+  ],
+  "model_interface": {
+    "selected_top": "dpc_5x5",
+    "ports": [
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1
+      },
+      {
+        "name": "reset_n",
+        "direction": "In",
+        "width": 1
+      },
+      {
+        "name": "bayer_format",
+        "direction": "In",
+        "width": 1
+      },
+      {
+        "name": "i_dpc_threshold",
+        "direction": "In",
+        "width": 8
+      },
+      {
+        "name": "i_video_syn",
+        "direction": "In",
+        "width": 3
+      },
+      {
+        "name": "i_data_r0",
+        "direction": "In",
+        "width": 8
+      },
+      {
+        "name": "i_data_r1",
+        "direction": "In",
+        "width": 8
+      },
+      {
+        "name": "i_data_r2",
+        "direction": "In",
+        "width": 8
+      },
+      {
+        "name": "i_data_r3",
+        "direction": "In",
+        "width": 8
+      },
+      {
+        "name": "i_data_r4",
+        "direction": "In",
+        "width": 8
+      },
+      {
+        "name": "o_video_sync",
+        "direction": "Out",
+        "width": 3
+      },
+      {
+        "name": "o_data",
+        "direction": "Out",
+        "width": 8
+      }
+    ],
+    "typed_struct_ports_require_package_layout_review": false
+  },
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "dpc_core/delta_3x3.v",
+    "dpc_core/dpc_5x5.v",
+    "dpc_core/dpc_judge.v",
+    "dpc_core/mid_3x3.v"
+  ]
+}

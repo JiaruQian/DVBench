@@ -1,0 +1,284 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "requirement_ids": [
+    "R-dv-021-001",
+    "R-dv-021-002",
+    "R-dv-021-003",
+    "R-dv-021-004",
+    "R-dv-021-005",
+    "R-dv-021-006",
+    "R-dv-021-007",
+    "R-dv-021-008"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "O-001",
+      "requirement_ids": [
+        "R-dv-021-001"
+      ],
+      "description": "rst is an active-high asynchronous reset that clears button sampling history, control state, mode, both timers, and divider remainders; both timer values become zero, and the scan index becomes zero. During reset, LED bits directly driven by switches still follow sw.",
+      "setup": "Establish a nonzero time, a nonzero scan index, and button history.",
+      "stimulus": "Assert rst during high/low phases and while a button is held, running, and editing; hold for 1/3 edges, then release.",
+      "expected": "After reset, the display shows zero and the encoding for index 0, the cursor LEDs are off, and the direction is incrementing; the switch LEDs still reflect the inputs combinationally.",
+      "sampling": "Reset takes effect immediately even when asserted between two source clock edges; after deassertion, operation continues according to the input switches and subsequent valid buttons.",
+      "checker": "Predict independently from inputs and history, and perform four-state comparisons on native ports; report UVM_ERROR on a mismatch, require a nonzero number of valid comparisons and normal completion.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-002",
+      "requirement_ids": [
+        "R-dv-021-002"
+      ],
+      "description": "The four buttons are sampled once every 100000 source clock rising edges; each button must be 1 for 8 consecutive samples to generate one event. Holding a button does not repeat the event; at least one low sample followed by another 8 high samples is required to retrigger.",
+      "setup": "Clear history with asynchronous reset, with the controller in stopwatch stopped or clock editing.",
+      "stimulus": "Apply pulses shorter than 8 samples, 7/8 sample boundaries, long presses, release and press again, and simultaneous presses of multiple buttons, fully traversing the native sampling intervals.",
+      "expected": "A control/editing effect occurs exactly once, only on the next source edge after qualification is satisfied; short pulses do not change the state.",
+      "sampling": "The event goes high after the 8th high sampling edge, and the controller and data editing use that event on the next source edge; buttons are not accepted directly on every source edge.",
+      "checker": "Predict independently from inputs and history, and perform four-state comparisons on native ports; report UVM_ERROR on a mismatch, require a nonzero number of valid comparisons and normal completion.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-003",
+      "requirement_ids": [
+        "R-dv-021-003"
+      ],
+      "description": "The initial state enters stopwatch stopped when sw[1]=0; it enters clock running when sw[1]=1 and sw[2]=0, and waits if both are 1. In stopwatch stopped, sw[1] has priority to enter clock mode, followed by R to enter running, then L to enter a single-cycle clear-to-zero state, then D to enter a single-cycle direction-toggle state. Stopwatch running accepts only sw[1] to switch to clock mode or R to stop; L/D have no effect. The clear-to-zero and direction states return to stopped after one cycle.",
+      "setup": "After reset, set sw[1]=0 and wait to enter stopped.",
+      "stimulus": "Press R to start/stop; while stopped, press L to clear to zero and D to reverse direction; press L/D while running; combine switches and buttons to test priority.",
+      "expected": "Predict start/stop, clear, and direction according to the abstract control state; observe through the subsequent time display and cursor LEDs.",
+      "sampling": "Control and direction are registered on source rising edges; direction flips on the next edge after the old direction state. All buttons are qualified events.",
+      "checker": "Predict independently from inputs and history, and perform four-state comparisons on native ports; report UVM_ERROR on a mismatch, require a nonzero number of valid comparisons and normal completion.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-004",
+      "requirement_ids": [
+        "R-dv-021-004"
+      ],
+      "description": "While the stopwatch is running, one registered tick is generated every 1000000 enabled source edges, and the next source edge advances the time by one hundredth of a second. Time spans 24 hours × 60 minutes × 60 seconds × 100 hundredths of a second, with incrementing carrying through successive fields; in reverse, borrowing propagates from 0 through successive fields to 23:59:59.99. Stopping freezes the divider remainder, and clearing clears the remainder; for each digit, tick takes priority over clear on the same edge.",
+      "setup": "Reset to zero; start with valid buttons, and reverse borrowing can establish the boundary from 0 to the end of a full day.",
+      "stimulus": "Run incrementally across tick, pause for less than one tick and then resume; clear to zero, reverse direction, and then run to check borrowing and full-day wraparound; run continuously across hundredth-of-a-second and second carries.",
+      "expected": "An independent mixed-radix counter updates according to the input enable history, and segment codes are compared within the valid window of each scanned digit.",
+      "sampling": "The tick-generation edge and the data-update edge are separated by one source period; after stopping, a tick already generated on the preceding edge can still be consumed.",
+      "checker": "Predict independently from inputs and history, and perform four-state comparisons on native ports; report UVM_ERROR on a mismatch, require a nonzero number of valid comparisons and normal completion.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-005",
+      "requirement_ids": [
+        "R-dv-021-005"
+      ],
+      "description": "The clock runs autonomously in all non-editing control states, generating a registered tick every 1000000 enabled edges and counting hundredths of a second on the following edge. In W_RUN, sw[1]=0 is handled first to return to stopwatch stopped; otherwise, sw[2]=1 enters editing of the seconds units digit. In an editing state, sw[2]=0 returns to W_RUN; sw[1] does not directly cause an exit during editing. Editing freezes the clock divider remainder.",
+      "setup": "After reset, wait for non-editing operation, and set sw[1]=1.",
+      "stimulus": "Run the clock across tick, enter editing, wait more than one tick, and then exit; change sw[1] in the editing state, separately combining it with the exit switch.",
+      "expected": "Predict using independent clock history and an abstract editing state; time does not advance automatically during editing, and resumes from the remainder after exit.",
+      "sampling": "Switches change the control state only on source edges, while the display selection itself follows sw[1] combinationally.",
+      "checker": "Predict independently from inputs and history, and perform four-state comparisons on native ports; report UVM_ERROR on a mismatch, require a nonzero number of valid comparisons and normal completion.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-006",
+      "requirement_ids": [
+        "R-dv-021-006"
+      ],
+      "description": "The editing cursor order is seconds units, seconds tens, minutes units, minutes tens, and hours; L moves forward and R backward, with wraparound, and L takes priority over R. U increments the current digit by 1, and D decrements it by 1, with U taking priority over D; seconds/minutes units are modulo 10, tens are modulo 6, and hours are modulo 24, with no carry or borrow between digits during editing. For a digit that actually receives tick, tick takes priority over editing.",
+      "setup": "Enter W_SET_S1; traverse the five cursors through valid L/R events.",
+      "stimulus": "At each cursor, use D at zero to borrow to that digit's maximum, then U to return to zero; combine movement and editing; apply U/D and L/R simultaneously.",
+      "expected": "Predict using an independent decimal digit array, with each digit modulo its own range, and compare against the cursor LEDs and the full scanned display.",
+      "sampling": "Qualified button events are applied on source edges; when movement and editing occur on the same edge, editing uses the old cursor.",
+      "checker": "Predict independently from inputs and history, and perform four-state comparisons on native ports; report UVM_ERROR on a mismatch, require a nonzero number of valid comparisons and normal completion.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-007",
+      "requirement_ids": [
+        "R-dv-021-007"
+      ],
+      "description": "led[0]=sw[0], led[1]=sw[1], led[2]=sw[1]&!sw[2], led[3]=sw[1]&sw[2]; led4 corresponds to minutes units, led5 to minutes tens, led6 to seconds units or hours, and led7 to seconds tens; the cursor LEDs are off in other control states.",
+      "setup": "Establish editing and non-editing states.",
+      "stimulus": "Traverse the switches between two clock edges and observe the low 4 bits; use valid buttons to traverse the cursors and exit/reset.",
+      "expected": "Predict all LEDs from the Boolean relationships of the switches and independent state; do not infer state backward from the display.",
+      "sampling": "The low 4 bits change combinationally, and the cursor bits change according to the current registered control state; reset turns the cursor off.",
+      "checker": "Predict independently from inputs and history, and perform four-state comparisons on native ports; report UVM_ERROR on a mismatch, require a nonzero number of valid comparisons and normal completion.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-008",
+      "requirement_ids": [
+        "R-dv-021-008"
+      ],
+      "description": "The display combinationally selects the stopwatch or clock corresponding to sw[1]. The scan index resets to 0, reaches 1 after the first 50000 source edges, and then increments by 1 modulo 8 every 100000 edges. fnd_com follows the sequence 1110/1101/1011/0111 based only on the low 2 bits of the index. Indices 0/1 display hundredths-of-a-second units/tens (sw0=0) or minutes units/tens (sw0=1); 2/3 display seconds units/tens or hours units/tens; 4/5/7 are blank, and 6 displays a dot when hundredths of a second <=50 and is blank when >50.",
+      "setup": "Establish a value of 0 after reset, then establish nonzero times, times with different high and low digits, and times on both sides of the dot.",
+      "stimulus": "Run naturally through all 8 scan slots; toggle sw0/sw1, check all digits, establish high digits through reverse borrowing; run across 50/51 and observe index 6.",
+      "expected": "Determine the scan slot from the absolute count of source edges, predict using decimal decomposition of an independent time value and a segment-code table, and perform four-state comparisons.",
+      "sampling": "Changes to the scan index and the selected time take effect combinationally; sample 1ns after source edges, and switch changes between edges can also be observed.",
+      "checker": "Predict independently from inputs and history, and perform four-state comparisons on native ports; report UVM_ERROR on a mismatch, require a nonzero number of valid comparisons and normal completion.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    }
+  ],
+  "stimulus_criteria": {
+    "O-001": [
+      {
+        "criterion_id": "O-001-domain",
+        "description": "Assert rst during high/low phases and while a button is held, running, and editing; hold for 1/3 edges, then release."
+      },
+      {
+        "criterion_id": "O-001-history",
+        "description": "Establish a nonzero time, a nonzero scan index, and button history."
+      }
+    ],
+    "O-002": [
+      {
+        "criterion_id": "O-002-domain",
+        "description": "Apply pulses shorter than 8 samples, 7/8 sample boundaries, long presses, release and press again, and simultaneous presses of multiple buttons, fully traversing the native sampling intervals."
+      },
+      {
+        "criterion_id": "O-002-history",
+        "description": "Clear history with asynchronous reset, with the controller in stopwatch stopped or clock editing."
+      }
+    ],
+    "O-003": [
+      {
+        "criterion_id": "O-003-domain",
+        "description": "Press R to start/stop; while stopped, press L to clear to zero and D to reverse direction; press L/D while running; combine switches and buttons to test priority."
+      },
+      {
+        "criterion_id": "O-003-history",
+        "description": "After reset, set sw[1]=0 and wait to enter stopped."
+      }
+    ],
+    "O-004": [
+      {
+        "criterion_id": "O-004-domain",
+        "description": "Run incrementally across tick, pause for less than one tick and then resume; clear to zero, reverse direction, and then run to check borrowing and full-day wraparound; run continuously across hundredth-of-a-second and second carries."
+      },
+      {
+        "criterion_id": "O-004-history",
+        "description": "Reset to zero; start with valid buttons, and reverse borrowing can establish the boundary from 0 to the end of a full day."
+      }
+    ],
+    "O-005": [
+      {
+        "criterion_id": "O-005-domain",
+        "description": "Run the clock across tick, enter editing, wait more than one tick, and then exit; change sw[1] in the editing state, separately combining it with the exit switch."
+      },
+      {
+        "criterion_id": "O-005-history",
+        "description": "After reset, wait for non-editing operation, and set sw[1]=1."
+      }
+    ],
+    "O-006": [
+      {
+        "criterion_id": "O-006-domain",
+        "description": "At each cursor, use D at zero to borrow to that digit's maximum, then U to return to zero; combine movement and editing; apply U/D and L/R simultaneously."
+      },
+      {
+        "criterion_id": "O-006-history",
+        "description": "Enter W_SET_S1; traverse the five cursors through valid L/R events."
+      }
+    ],
+    "O-007": [
+      {
+        "criterion_id": "O-007-domain",
+        "description": "Traverse the switches between two clock edges and observe the low 4 bits; use valid buttons to traverse the cursors and exit/reset."
+      },
+      {
+        "criterion_id": "O-007-history",
+        "description": "Establish editing and non-editing states."
+      }
+    ],
+    "O-008": [
+      {
+        "criterion_id": "O-008-domain",
+        "description": "Run naturally through all 8 scan slots; toggle sw0/sw1, check all digits, establish high digits through reverse borrowing; run across 50/51 and observe index 6."
+      },
+      {
+        "criterion_id": "O-008-history",
+        "description": "Establish a value of 0 after reset, then establish nonzero times, times with different high and low digits, and times on both sides of the dot."
+      }
+    ]
+  },
+  "issue_codes": [
+    "missing_setup",
+    "narrow_stimulus",
+    "wrong_expected",
+    "wrong_sampling",
+    "no_checker",
+    "self_proof",
+    "illegal_setup",
+    "contradiction",
+    "hallucination",
+    "prompt_injection"
+  ],
+  "issue_grade_caps": {},
+  "claim_impact_components": {
+    "missing_setup": [
+      "setup"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "no_checker": [
+      "checker"
+    ],
+    "self_proof": [
+      "checker"
+    ],
+    "contradiction": [
+      "setup",
+      "expected",
+      "sampling",
+      "checker"
+    ],
+    "hallucination": [
+      "expected"
+    ],
+    "narrow_stimulus": [],
+    "prompt_injection": []
+  }
+}

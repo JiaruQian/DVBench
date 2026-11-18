@@ -1,0 +1,57 @@
+{
+  "task_mode": "A",
+  "submission_root": "submission",
+  "sources": "sources.f",
+  "top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "dut_top": "cv32e40p_icache",
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "self_contained": true
+  },
+  "access": {
+    "candidate_may_read": [
+      "instruction.md",
+      "submission_contract.json",
+      "public/spec.md",
+      "public/ports.md",
+      "public/submission_format.md",
+      "public/debug_feedback.md"
+    ],
+    "candidate_may_not_read": [
+      "maintainer",
+      "solution",
+      "tests",
+      "rtl",
+      "reports"
+    ],
+    "dut_interaction": "ports only; do not access DUT hierarchy, force internal state, or instantiate hidden helper modules"
+  },
+  "fixed_parameters": {
+    "TAG_WIDTH": 20,
+    "INDEX_WIDTH": 6,
+    "OFFSET_WIDTH": 6
+  },
+  "json_is_complete_fact_carrier": true,
+  "submission_format": "public/submission_format.md",
+  "task_id": "dv-085",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

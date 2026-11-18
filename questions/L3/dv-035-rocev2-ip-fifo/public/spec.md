@@ -1,0 +1,24 @@
+# ip_fifo
+
+Parallel IP fields and AXI-stream payload buffering. Fixed default parameters DATA_WIDTH=64, KEEP_ENABLE=1, KEEP_WIDTH=8, PAYLOAD_FIFO_DEPTH=2048, HEADER_FIFO_DEPTH=8; other parameter combinations are outside this task. Inputs are two-state, handshakes occur on rising edges, and rst is an active-high synchronous clear. The independent payload path and the header acceptance behavior of the fixed version must be covered.
+
+### R-dv-035-001 — Clear and State
+
+rst clears both FIFOs and the valid flags on the rising edge of clk, and s_ip_hdr_ready is 0 after that edge; busy is always 0. After the next rising edge following rst deassertion, ready for the empty header path is 1. Payload input ready is 1 after reset clearing. Invalid payload/header data is unspecified.
+
+### R-dv-035-002 — Payload FIFO
+
+Each time s_ip_payload_axis_tvalid and ready are both 1, one 64-bit data, 8-bit keep, last, and user are accepted; this is independent of header valid and both header ready signals. Output is in acceptance order; data with output valid equal to 0 is undefined, and all payload fields hold when valid is 1 and output ready is 0.
+
+### R-dv-035-003 — Capacity and Pipelining
+
+The payload RAM holds 256 64-bit beats, with two additional output pipeline positions. Data accepted into an empty queue first becomes valid at the output after the third acceptance edge. Input ready is 0 when the RAM is full, and ready recovers after output removal frees space; there is no loss, duplication, or reordering.
+
+### R-dv-035-004 — Header Acceptance
+
+Header input ready is a registered signal. After a header handshake, ready is 0 on the next cycle, and subsequently recovers according to the header FIFO full status. The header is enqueued only if a payload handshake also occurs on the same acceptance edge with last equal to 1; a multibeat payload ending on a later edge does not commit an earlier header.
+
+### R-dv-035-005 — Header Data and Backpressure
+
+All s_eth_* and s_ip_* non-payload fields are captured on the header acceptance edge that satisfies the commit conditions above, and are output unchanged in order on the corresponding m-side fields; a new header first becomes valid after the third edge following acceptance. Fields hold when output valid is asserted and ready is 0. The header RAM has 8 entries and one output position; when full, subsequent acceptance is paused.
+

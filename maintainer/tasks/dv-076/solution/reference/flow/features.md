@@ -1,0 +1,63 @@
+## F-1
+requirement_ids: ["R-dv-076-001"]
+module: pipelined_riscv_core
+definition: The top level for this task is the complete five-stage pipelined pipelined_riscv_core, with fixed WIDTH=32 and PROGRAM_FILE="program3.hex"; replacing the program is not allowed. ROM and RAM each contain 256 32-bit words, and unlisted portions of ROM are NOPs. The public program table defines the software domain for this task; support for arbitrary RV32I programs need not be guaranteed. Use only known two-state inputs.
+interface: ["i_clk", "i_rstn", "input_data", "result_valid", "result_data"]
+timing: Edge numbering starts at edge 1 after reset release; inputs are stable before the rising edge, and comparison is performed 1ns after the edge; after a falling reset edge, an additional comparison is performed before the next clock.
+boundary: Run the complete system from reset through the end of the firmware, keeping the external input variable.
+
+## F-2
+requirement_ids: ["R-dv-076-002"]
+module: pipelined_riscv_core
+definition: i_rstn is an active-low asynchronous reset; its falling edge immediately clears result_valid and result_data, and clears the pipeline, PC, registers, and RAM. Generate at least one actual falling reset edge; all outputs are 0 during reset. Release reset away from a rising clock edge; the next rising edge counts as edge 1.
+interface: ["i_clk", "i_rstn", "input_data", "result_valid", "result_data"]
+timing: Edge numbering starts at edge 1 after reset release; inputs are stable before the rising edge, and comparison is performed 1ns after the edge; after a falling reset edge, an additional comparison is performed before the next clock.
+boundary: Apply reset separately at power-up, before and after sampling, before and after output, and during prolonged idle periods, including short pulses that do not span a rising edge and low levels spanning multiple clocks.
+
+## F-3
+requirement_ids: ["R-dv-076-003"]
+module: pipelined_riscv_core
+definition: Byte address fffffff8 is read-only input_data, and fffffffc is the result register; neither writes ordinary RAM. The datapath uses 32-bit whole-word reads and writes, and the ordinary RAM word index is the byte address shifted right by 2. The fixed firmware accesses only RAM word 0, writing before reading; there is no externally modifiable code or memory port.
+interface: ["i_clk", "i_rstn", "input_data", "result_valid", "result_data"]
+timing: Edge numbering starts at edge 1 after reset release; inputs are stable before the rising edge, and comparison is performed 1ns after the edge; after a falling reset edge, an additional comparison is performed before the next clock.
+boundary: Each legal run starts from a fresh reset; change the input before and after the sampling window, and use multiple resets to verify that old RAM and register state does not leak.
+
+## F-4
+requirement_ids: ["R-dv-076-004"]
+module: pipelined_riscv_core
+definition: On the 21st rising edge of i_clk after each reset release, sample input_data as the 32-bit unsigned bit vector for this transaction; it must be stable before the edge and held through that edge. Inputs at other times do not affect this result. A run canceled by reset before sampling produces no result; each run samples only once.
+interface: ["i_clk", "i_rstn", "input_data", "result_valid", "result_data"]
+timing: Edge numbering starts at edge 1 after reset release; inputs are stable before the rising edge, and comparison is performed 1ns after the edge; after a falling reset edge, an additional comparison is performed before the next clock.
+boundary: Use distinct patterns on edges 20, 21, and 22, and keep changing the input on other edges; cover constant input and input that changes every cycle.
+
+## F-5
+requirement_ids: ["R-dv-076-005"]
+module: pipelined_riscv_core
+definition: The firmware sets x8=-8, reads input_data into x9, computes x10=x9+7, writes RAM word 0 and reads it back into x11, computes x11=x11-3, and writes to the result address; all operations are truncated to 32 bits modulo 2^32. Therefore, the result is the input at edge 21 plus 4 modulo 2^32, with no saturation or signed truncation.
+interface: ["i_clk", "i_rstn", "input_data", "result_valid", "result_data"]
+timing: Edge numbering starts at edge 1 after reset release; inputs are stable before the rising edge, and comparison is performed 1ns after the edge; after a falling reset edge, an additional comparison is performed before the next clock.
+boundary: Inputs cover 0, fffffffb, fffffffc, ffffffff, 7fffffff, 80000000, alternating bits, single-set-bit patterns, and random 32-bit values.
+
+## F-6
+requirement_ids: ["R-dv-076-006"]
+module: pipelined_riscv_core
+definition: If reset does not interrupt the run, after the 66th rising edge result_valid is 1 and result_data is updated to the result of this run; result_valid is 0 on edges 1 through 65 and on edge 67 and thereafter it is 0. Even if the input remains unchanged, only one single-cycle pulse is produced. After the rising edge, wait for nonblocking assignments to settle before observing.
+interface: ["i_clk", "i_rstn", "input_data", "result_valid", "result_data"]
+timing: Edge numbering starts at edge 1 after reset release; inputs are stable before the rising edge, and comparison is performed 1ns after the edge; after a falling reset edge, an additional comparison is performed before the next clock.
+boundary: In a complete run, observe edges 65, 66, and 67 and at least several hundred later cycles; also reset after edge 65 to verify that no late output occurs.
+
+## F-7
+requirement_ids: ["R-dv-076-007"]
+module: pipelined_riscv_core
+definition: result_data remains 0 after reset until the first result, and after being updated on edge 66, continues to hold the result, including on all edges where result_valid is 0; it is cleared only by the next reset. The JAL self-loop at the end of the firmware no longer writes the result and does not produce repeated outputs due to subsequent input_data changes. Both result_valid and result_data are public state valid on every cycle.
+interface: ["i_clk", "i_rstn", "input_data", "result_valid", "result_data"]
+timing: Edge numbering starts at edge 1 after reset release; inputs are stable before the rising edge, and comparison is performed 1ns after the edge; after a falling reset edge, an additional comparison is performed before the next clock.
+boundary: After the result, continue changing the input and run for hundreds of cycles, checking on every cycle that data is held and valid is 0; then reset and rerun with a different input.
+
+## F-8
+requirement_ids: ["R-dv-076-008"]
+module: pipelined_riscv_core
+definition: An active reset at any time cancels the old run, with no queuing or subsequent delivery of old results; after release, restart counting from edge 1. This includes resets after sampling but before output, immediately after edge 66, and during the long-running tail loop. The new result comes only from the input at edge 21 of the new run.
+interface: ["i_clk", "i_rstn", "input_data", "result_valid", "result_data"]
+timing: Edge numbering starts at edge 1 after reset release; inputs are stable before the rising edge, and comparison is performed 1ns after the edge; after a falling reset edge, an additional comparison is performed before the next clock.
+boundary: Cancel after edges 20, 21, 65, 66, and 67 respectively, alternate short/long resets, and restart with distinct inputs to confirm that old samples are not reused across runs.

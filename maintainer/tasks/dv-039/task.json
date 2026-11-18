@@ -1,0 +1,140 @@
+{
+  "task_id": "dv-039",
+  "dut_top": "NV_NVDLA_CDP_RDMA_cq",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "NV_NVDLA_CDP_RDMA_cq.v"
+  ],
+  "rtl_sources": [
+    "fixed/compile_configuration.sv",
+    "NV_NVDLA_CDP_RDMA_cq.v",
+    "deps/verif/small_gold/vmod/vlibs/NV_CLK_gate_power.v",
+    "deps/verif/small_gold/vmod/vlibs/NV_BLKBOX_SINK.v",
+    "fixed/assertion_library.sv"
+  ],
+  "rtl_compile_files": [
+    "fixed/compile_configuration.sv",
+    "NV_NVDLA_CDP_RDMA_cq.v",
+    "deps/verif/small_gold/vmod/vlibs/NV_CLK_gate_power.v",
+    "deps/verif/small_gold/vmod/vlibs/NV_BLKBOX_SINK.v",
+    "fixed/assertion_library.sv"
+  ],
+  "include_dirs": [
+    "deps/verif/small_gold/vmod/include",
+    "deps/verif/small_gold/vmod/vlibs"
+  ],
+  "defines": [
+    "VLIB_BYPASS_POWER_CG"
+  ],
+  "output_validity": {
+    "cq_rd_pd": {
+      "valid_port": "cq_rd_pvld",
+      "equals": "1"
+    }
+  },
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m10",
+    "n1"
+  ],
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "model_contract_policy": "native-module-v1",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "cq_rd_pd",
+        "direction": "Out",
+        "width": 7,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 6,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "cq_rd_prdy",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "cq_rd_pvld",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "cq_wr_pd",
+        "direction": "In",
+        "width": 7,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 6,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "cq_wr_prdy",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "cq_wr_pvld",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "nvdla_core_clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "nvdla_core_rstn",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "pwrbus_ram_pd",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      }
+    ],
+    "parameters": {},
+    "parser": "manual declaration audit against original source lines43-51"
+  },
+  "coverage_scope": "dvbench_top.dut",
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800
+}

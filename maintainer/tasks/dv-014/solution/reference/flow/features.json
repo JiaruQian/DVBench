@@ -1,0 +1,143 @@
+{
+  "features": [
+    {
+      "feature_id": "F-AP-001",
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-001"
+      ],
+      "module": "ap3216c_top",
+      "definition": "sys_rst_n is asynchronous active-low. After reset, the I2C clock and master SDA drive are both high, led=0000, sel=111111, and seg_led=C0. Reset interrupts in-flight polling, and initialization restarts after release; no data guarantee is made for the ALS displayed value before the first complete publication, and this undefined domain must not be used to reject a legal design.",
+      "interface": [
+        "sys_clk",
+        "sys_rst_n",
+        "ap_scl",
+        "ap_sda",
+        "led",
+        "sel",
+        "seg_led"
+      ],
+      "timing": "Use the default 50MHz system clock and sample after the native outputs have stabilized; allow conversion/scanning waits to elapse naturally.",
+      "boundary": "Keep the default parameters fixed, with no acceleration using force/internal probes; display data is not guaranteed before the first complete ALS publication."
+    },
+    {
+      "feature_id": "F-AP-002",
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-002"
+      ],
+      "module": "ap3216c_top",
+      "definition": "Fixed sys_clk=50MHz, CLK_FREQ=50000000, I2C_FREQ=250000. I2C operations use a 1MHz internal time tick; the master holds each data bit for four ticks, transmitting MSB first; SDA changes during the SCL-low phase and remains stable during the high phase, except for START and STOP. SCL clock stretching and multi-master arbitration are not supported.",
+      "interface": [
+        "sys_clk",
+        "ap_scl",
+        "ap_sda"
+      ],
+      "timing": "Use the default 50MHz system clock and sample after the native outputs have stabilized; allow conversion/scanning waits to elapse naturally.",
+      "boundary": "Keep the default parameters fixed, with no acceleration using force/internal probes; display data is not guaranteed before the first complete ALS publication."
+    },
+    {
+      "feature_id": "F-AP-003",
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-003"
+      ],
+      "module": "ap3216c_top",
+      "definition": "After each reset release, the master waits for the startup delay, then issues a write transaction to 7-bit address 1E, sending 8-bit register address 00 and data 03. The first START occurs on the 105th operation-tick rising edge after release; clock division restarts from a count cleared to zero during reset. The configuration write occurs only once after reset.",
+      "interface": [
+        "sys_clk",
+        "sys_rst_n",
+        "ap_scl",
+        "ap_sda"
+      ],
+      "timing": "Use the default 50MHz system clock and sample after the native outputs have stabilized; allow conversion/scanning waits to elapse naturally.",
+      "boundary": "Keep the default parameters fixed, with no acceleration using force/internal probes; display data is not guaranteed before the first complete ALS publication."
+    },
+    {
+      "feature_id": "F-AP-004",
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-004"
+      ],
+      "module": "ap3216c_top",
+      "definition": "After initialization, repeatedly read one byte each in the order 0E, 0F, 0C, 0D indefinitely. Each read first writes the device address and 8-bit register address, then issues a repeated START and the device read address, receives 8 bits, and sends a high-level non-acknowledgment followed by STOP. The interval from the SDA rising edge of the preceding STOP to the next START is: 12519 operation ticks after the configuration write or a 0D read; 21 operation ticks after a 0E or 0C read; 100019 operation ticks after a 0F read. The complete top level must not be reduced to a standalone display or I2C submodule.",
+      "interface": [
+        "sys_clk",
+        "ap_scl",
+        "ap_sda"
+      ],
+      "timing": "Use the default 50MHz system clock and sample after the native outputs have stabilized; allow conversion/scanning waits to elapse naturally.",
+      "boundary": "Keep the default parameters fixed, with no acceleration using force/internal probes; display data is not guaranteed before the first complete ALS publication."
+    },
+    {
+      "feature_id": "F-AP-005",
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-005"
+      ],
+      "module": "ap3216c_top",
+      "definition": "The master actively drives 0 or 1 when transmitting bits and non-acknowledgments; it releases SDA when receiving slave ACKs and data, with the external pull-up and slave pull-down forming the input. A high ACK level does not terminate subsequent bytes, STOP, or polling. The external sensor must drive only within receive windows in which the master releases the line, keeping data stable before sampling; a high ap_sda level from the master is not synonymous with open-drain release.",
+      "interface": [
+        "ap_scl",
+        "ap_sda"
+      ],
+      "timing": "Use the default 50MHz system clock and sample after the native outputs have stabilized; allow conversion/scanning waits to elapse naturally.",
+      "boundary": "Keep the default parameters fixed, with no acceleration using force/internal probes; display data is not guaranteed before the first complete ALS publication."
+    },
+    {
+      "feature_id": "F-AP-006",
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-006"
+      ],
+      "module": "ap3216c_top",
+      "definition": "The low 4 bits of the byte received from 0E become the low 4 bits of the PS value, and the low 6 bits of the byte received from 0F become its high 6 bits. Bits 6 and 7 in the two bytes do not inhibit data publication. This 10-bit value is published 100015 operation ticks after the STOP of the 0F transaction, and the LEDs update one operation tick later. For PS less than 16, the LEDs are 0001; for 16 through 127, 0011; for 128 through 511, 0111; for 512 through 1023, 1111; before the first PS publication, outside reset, display 0001 according to PS=0.",
+      "interface": [
+        "ap_scl",
+        "ap_sda",
+        "led"
+      ],
+      "timing": "Use the default 50MHz system clock and sample after the native outputs have stabilized; allow conversion/scanning waits to elapse naturally.",
+      "boundary": "Keep the default parameters fixed, with no acceleration using force/internal probes; display data is not guaranteed before the first complete ALS publication."
+    },
+    {
+      "feature_id": "F-AP-007",
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-007"
+      ],
+      "module": "ap3216c_top",
+      "definition": "The 0C byte is the low byte of the raw ALS value, and the 0D byte is the high byte. Publish the converted value 14 operation ticks after the STOP of the 0D transaction: first multiply the unsigned 16-bit raw value by 35, truncate the product to 16 bits, then divide by 100 and round toward zero. Thus the result ranges from 0 to 655; for example, a raw value of 30000 yields 14, and 65535 yields 655. Retain the previous value between complete publications; receiving the low byte alone does not change the published value; before the first complete publication, the data meaning of the segment codes is undefined.",
+      "interface": [
+        "ap_scl",
+        "ap_sda",
+        "seg_led"
+      ],
+      "timing": "Use the default 50MHz system clock and sample after the native outputs have stabilized; allow conversion/scanning waits to elapse naturally.",
+      "boundary": "Keep the default parameters fixed, with no acceleration using force/internal probes; display data is not guaranteed before the first complete ALS publication."
+    },
+    {
+      "feature_id": "F-AP-008",
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-008"
+      ],
+      "module": "ap3216c_top",
+      "definition": "Display the decimal representation of the published converted ALS value, with the least significant digit at the lowest bit of sel; leave leading-zero positions in higher digits blank, and display the value 0 as a single 0. There is no minus sign, and all decimal points are off. The eight-bit active-low segment codes for 0 through 9 are, in order, C0, F9, A4, B0, 99, 92, 82, F8, 80, 90; blank is FF.",
+      "interface": [
+        "sel",
+        "seg_led"
+      ],
+      "timing": "Use the default 50MHz system clock and sample after the native outputs have stabilized; allow conversion/scanning waits to elapse naturally.",
+      "boundary": "Keep the default parameters fixed, with no acceleration using force/internal probes; display data is not guaranteed before the first complete ALS publication."
+    },
+    {
+      "feature_id": "F-AP-009",
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-009"
+      ],
+      "module": "ap3216c_top",
+      "definition": "The display timebase is sys_clk divided by ten, with a high reset phase. The six digit-select signals cycle through 111110, 111101, 111011, 110111, 101111, and 011111; the scan position advances every 5000 display rising edges, and due to the register pipeline, the new digit selection occurs one additional display rising edge after the position advances. Decimal conversion, current-digit selection, and segment-code encoding each use the values registered on the previous display edge; after a new ALS value appears, allow this fixed pipeline to propagate. The scanning of sel is independent of whether the first ALS data is valid.",
+      "interface": [
+        "sys_clk",
+        "sys_rst_n",
+        "sel",
+        "seg_led"
+      ],
+      "timing": "Use the default 50MHz system clock and sample after the native outputs have stabilized; allow conversion/scanning waits to elapse naturally.",
+      "boundary": "Keep the default parameters fixed, with no acceleration using force/internal probes; display data is not guaranteed before the first complete ALS publication."
+    }
+  ]
+}

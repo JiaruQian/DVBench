@@ -1,0 +1,137 @@
+{
+  "ports": [
+    {
+      "name": "addra",
+      "direction": "In",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "addrb",
+      "direction": "In",
+      "width": 8,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 7,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "clka",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "clkb",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "dina",
+      "direction": "In",
+      "width": 24,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 23,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "dinb",
+      "direction": "In",
+      "width": 24,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 23,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "douta",
+      "direction": "Out",
+      "width": 24,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 23,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "doutb",
+      "direction": "Out",
+      "width": 24,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 23,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "rsta",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "rsta_busy",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "rstb",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "rstb_busy",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "wea",
+      "direction": "In",
+      "width": 1,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 0,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "web",
+      "direction": "In",
+      "width": 1,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 0,
+          "right": 0
+        }
+      ]
+    }
+  ],
+  "parameters": {}
+}

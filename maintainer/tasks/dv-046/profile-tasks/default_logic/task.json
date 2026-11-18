@@ -1,0 +1,248 @@
+{
+  "task_id": "bb-12edf1724b51",
+  "dut_top": "fpnew_fma",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "backfill/cf_math_pkg.sv",
+    "backfill/fpnew_pkg.sv",
+    "cv32e40p/fpga/rtl/src/lzc.sv",
+    "cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_classifier.sv",
+    "cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_rounding.sv",
+    "cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma.sv"
+  ],
+  "compile_flags": "+incdir+rtl/cv32e40p/fpga/rtl/include",
+  "mutant_root": "mutants/{variant}",
+  "submission_top": "dvbench_top",
+  "reference_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_test": "dvbench_test",
+  "dut_scope": "dvbench_top.dut",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "aux_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "aux_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "busy_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "clk_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "extension_bit_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "flush_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "in_ready_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "in_valid_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "is_boxed_i",
+        "direction": "In",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "mask_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "mask_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "op_i",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "op_mod_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "operands_i",
+        "direction": "In",
+        "width": 96,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          },
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "out_ready_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "out_valid_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "reg_ena_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 0,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "result_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "rnd_mode_i",
+        "direction": "In",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "rst_ni",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "status_o",
+        "direction": "Out",
+        "width": 5,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 4,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "tag_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "tag_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {},
+    "parser": "manual RTL native declaration audit, fixed elaboration"
+  },
+  "model_contract_policy": "native-module-v1",
+  "rtl_sources": [
+    "backfill/cf_math_pkg.sv",
+    "backfill/fpnew_pkg.sv",
+    "cv32e40p/fpga/rtl/src/lzc.sv",
+    "cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_classifier.sv",
+    "cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_rounding.sv",
+    "cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma.sv"
+  ],
+  "mutants": [
+    "m1",
+    "m10",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "backfill/cf_math_pkg.sv",
+    "backfill/fpnew_pkg.sv",
+    "cv32e40p/fpga/rtl/src/lzc.sv",
+    "cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_classifier.sv",
+    "cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_rounding.sv",
+    "cv32e40p/rtl/vendor/pulp_platform_fpnew/src/fpnew_fma.sv"
+  ]
+}

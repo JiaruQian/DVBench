@@ -1,0 +1,322 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "requirement_ids": [
+    "R-p8-sched-001",
+    "R-p8-sched-002",
+    "R-p8-sched-003",
+    "R-p8-sched-004",
+    "R-p8-sched-005",
+    "R-p8-sched-006",
+    "R-p8-sched-007",
+    "R-p8-sched-008",
+    "R-p8-sched-009"
+  ],
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "O-01",
+      "requirement_ids": [
+        "R-p8-sched-001"
+      ],
+      "description": "Asynchronous reset and fully defined native observations",
+      "setup": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only.",
+      "stimulus": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only. Initialize nonzero workgroup membership,addresses,running/barrier state, then assert startup,midtraffic and wholly-between-edge reset pulses. Hold active controls during reset and inspect both state-derived and direct combinational outputs.",
+      "expected": "All registered histories clear asynchronously, including workgroup membership after a short pulse; direct control outputs continue their documented current-pin functions. Invalid payloads remain exact rather than unconstrained.",
+      "sampling": "1ns after rising clk and asynchronous reset assertion; combinational ready/valid/payloads use current pins and settled state,edge decisions use pre-edge state.",
+      "checker": "A self-contained independent model predicts abstract running/waiting/group-member sets and mathematical per-bank address/mask histories from inputs only. Separate actual/expected wires feed four-state comparisons1ns after rising clk and asynchronous reset; any mismatch emits UVM_ERROR,with finite stimulus and mandatory sample/reset counts.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-02",
+      "requirement_ids": [
+        "R-p8-sched-002"
+      ],
+      "description": "Cache replay, branch and warp-control acceptance priority",
+      "setup": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only.",
+      "stimulus": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only. Sweep response valid/status,branch valid/jump,warp-control valid/op and response-ready independently, including simultaneous assertions and different warp IDs. Inspect current combinational ready,response,lookup and flush signals before edges.",
+      "expected": "Only valid-and-status requests a cache flush and blocks both control paths; branch acceptance blocks warp control even without a jump. End/branch flushes and all payload IDs follow the exact priority, without a response holding register.",
+      "sampling": "1ns after rising clk and asynchronous reset assertion; combinational ready/valid/payloads use current pins and settled state,edge decisions use pre-edge state.",
+      "checker": "A self-contained independent model predicts abstract running/waiting/group-member sets and mathematical per-bank address/mask histories from inputs only. Separate actual/expected wires feed four-state comparisons1ns after rising clk and asynchronous reset; any mismatch emits UVM_ERROR,with finite stimulus and mandatory sample/reset counts.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-03",
+      "requirement_ids": [
+        "R-p8-sched-003"
+      ],
+      "description": "Running warps and workgroup membership updates",
+      "setup": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only.",
+      "stimulus": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only. Dispatch/end same and different banks/groups, vary response ready, re-dispatch a warp into a different group and vary tag low bits. Observe subsequent barrier completion and running readiness to expose both independent sets.",
+      "expected": "Running end wins coincident dispatch, while membership dispatch wins coincident response-handshake removal. Group indices use only tag upper three bits, and old group membership persists unless explicitly removed/reset.",
+      "sampling": "1ns after rising clk and asynchronous reset assertion; combinational ready/valid/payloads use current pins and settled state,edge decisions use pre-edge state.",
+      "checker": "A self-contained independent model predicts abstract running/waiting/group-member sets and mathematical per-bank address/mask histories from inputs only. Separate actual/expected wires feed four-state comparisons1ns after rising clk and asynchronous reset; any mismatch emits UVM_ERROR,with finite stimulus and mandatory sample/reset counts.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-04",
+      "requirement_ids": [
+        "R-p8-sched-004"
+      ],
+      "description": "Global barrier arrivals and per-group release",
+      "setup": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only.",
+      "stimulus": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only. Build one- and multiwarp groups,arrive in every order,repeat arrivals and include an unrelated group waiting bit. Combine last arrival with dispatch and vary tag low bits; inspect warp_ready across release and stalls.",
+      "expected": "Only exact whole-set equality releases selected members. Otherwise arriving bits accumulate,unrelated waiting bits persist and old group membership governs coincident arrivals.",
+      "sampling": "1ns after rising clk and asynchronous reset assertion; combinational ready/valid/payloads use current pins and settled state,edge decisions use pre-edge state.",
+      "checker": "A self-contained independent model predicts abstract running/waiting/group-member sets and mathematical per-bank address/mask histories from inputs only. Separate actual/expected wires feed four-state comparisons1ns after rising clk and asynchronous reset; any mismatch emits UVM_ERROR,with finite stimulus and mandatory sample/reset counts.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-05",
+      "requirement_ids": [
+        "R-p8-sched-005"
+      ],
+      "description": "Warp issue readiness and fixed-priority fetch selection",
+      "setup": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only.",
+      "stimulus": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only. Dispatch all banks,apply every one-hot/multiple/zero buffer-ready pattern and varied scoreboard/barrier states. Branch to the selected and a different warp with jump0/1. Observe all ready and fetch outputs including no-eligible cycles.",
+      "expected": "Fetch always uses lowest eligible bank and defaults to bank0 while invalid. Busy/barrier only affect warp_ready. Only an accepted selected-warp jump suppresses request valid.",
+      "sampling": "1ns after rising clk and asynchronous reset assertion; combinational ready/valid/payloads use current pins and settled state,edge decisions use pre-edge state.",
+      "checker": "A self-contained independent model predicts abstract running/waiting/group-member sets and mathematical per-bank address/mask histories from inputs only. Separate actual/expected wires feed four-state comparisons1ns after rising clk and asynchronous reset; any mismatch emits UVM_ERROR,with finite stimulus and mandatory sample/reset counts.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-06",
+      "requirement_ids": [
+        "R-p8-sched-006"
+      ],
+      "description": "Dispatch and branch address alignment and lane masks",
+      "setup": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only.",
+      "stimulus": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only. Dispatch and branch every byte offset0..7 in ordinary and0xfffffff8 lines to each bank,including coincident dispatch/branch and dispatch/failed-response targets. Later select each bank and inspect aligned address and both mask bits.",
+      "expected": "Address alignment and unsigned greater-or-equal lane tests are exact,including offset0/4 equality boundaries. Dispatch target wins coincident same-bank inputs and all eight bank histories remain independent.",
+      "sampling": "1ns after rising clk and asynchronous reset assertion; combinational ready/valid/payloads use current pins and settled state,edge decisions use pre-edge state.",
+      "checker": "A self-contained independent model predicts abstract running/waiting/group-member sets and mathematical per-bank address/mask histories from inputs only. Separate actual/expected wires feed four-state comparisons1ns after rising clk and asynchronous reset; any mismatch emits UVM_ERROR,with finite stimulus and mandatory sample/reset counts.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-07",
+      "requirement_ids": [
+        "R-p8-sched-007"
+      ],
+      "description": "Fetch-address updates, sequential increment and replay priority",
+      "setup": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only.",
+      "stimulus": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only. Observe several idle clocks after reset,then run selected/unselected banks through wraparound,failed response unaligned address/mask and successful response histories. Combine different-bank and same-bank dispatch/branch/replay and check every later-selected address.",
+      "expected": "Exact update priority and modulo increment occur on every edge as stated,including invalid request cycles. Failed responses copy unaligned payload; successful responses only affect the explicit replay condition in the next obligation.",
+      "sampling": "1ns after rising clk and asynchronous reset assertion; combinational ready/valid/payloads use current pins and settled state,edge decisions use pre-edge state.",
+      "checker": "A self-contained independent model predicts abstract running/waiting/group-member sets and mathematical per-bank address/mask histories from inputs only. Separate actual/expected wires feed four-state comparisons1ns after rising clk and asynchronous reset; any mismatch emits UVM_ERROR,with finite stimulus and mandatory sample/reset counts.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-08",
+      "requirement_ids": [
+        "R-p8-sched-008"
+      ],
+      "description": "No-eligible selected-bank replay exceptions",
+      "setup": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only.",
+      "stimulus": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only. Construct zero,one-warp0,one-higher-warp,two-warp and three-warp active sets with all buffer-ready bits0. Toggle response-valid/status,dispatch/end and track bank0 address/mask before later making it eligible.",
+      "expected": "The greater-than-one population threshold and exact bitvector01 exception are distinguished from generic one-active-warp logic. Response-valid alone can remove the warp0-only hold; higher-priority updates retain precedence.",
+      "sampling": "1ns after rising clk and asynchronous reset assertion; combinational ready/valid/payloads use current pins and settled state,edge decisions use pre-edge state.",
+      "checker": "A self-contained independent model predicts abstract running/waiting/group-member sets and mathematical per-bank address/mask histories from inputs only. Separate actual/expected wires feed four-state comparisons1ns after rising clk and asynchronous reset; any mismatch emits UVM_ERROR,with finite stimulus and mandatory sample/reset counts.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    },
+    {
+      "obligation_id": "O-09",
+      "requirement_ids": [
+        "R-p8-sched-009"
+      ],
+      "description": "Bank isolation and retained combinational payload relationships",
+      "setup": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only.",
+      "stimulus": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only. Establish distinct bank/group histories,perturb neutral field combinations and selectors between edges,and sweep IDs0..7. Repeat identical accepted histories with only tag low bits and unrelated response-ready/busy fields changed; compare complete native vectors and invalid payloads.",
+      "expected": "No bank or group is rerouted/truncated. Direct payload IDs track pins while stored address/mask changes only through defined edges; each neutral field is neutral only in the stated domain.",
+      "sampling": "1ns after rising clk and asynchronous reset assertion; combinational ready/valid/payloads use current pins and settled state,edge decisions use pre-edge state.",
+      "checker": "A self-contained independent model predicts abstract running/waiting/group-member sets and mathematical per-bank address/mask histories from inputs only. Separate actual/expected wires feed four-state comparisons1ns after rising clk and asynchronous reset; any mismatch emits UVM_ERROR,with finite stimulus and mandatory sample/reset counts.",
+      "anchors": {
+        "0": "Missing, illegal or explicitly wrong.",
+        "1": "Correct local subset.",
+        "2": "Complete setup, actual stimulus, expected relation, sampling and independent failure check."
+      }
+    }
+  ],
+  "stimulus_criteria": {
+    "O-01": [
+      {
+        "criterion_id": "O-01-stimulus",
+        "description": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only. Initialize nonzero workgroup membership,addresses,running/barrier state, then assert startup,midtraffic and wholly-between-edge reset pulses. Hold active controls during reset and inspect both state-derived and direct combinational outputs."
+      }
+    ],
+    "O-02": [
+      {
+        "criterion_id": "O-02-stimulus",
+        "description": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only. Sweep response valid/status,branch valid/jump,warp-control valid/op and response-ready independently, including simultaneous assertions and different warp IDs. Inspect current combinational ready,response,lookup and flush signals before edges."
+      }
+    ],
+    "O-03": [
+      {
+        "criterion_id": "O-03-stimulus",
+        "description": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only. Dispatch/end same and different banks/groups, vary response ready, re-dispatch a warp into a different group and vary tag low bits. Observe subsequent barrier completion and running readiness to expose both independent sets."
+      }
+    ],
+    "O-04": [
+      {
+        "criterion_id": "O-04-stimulus",
+        "description": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only. Build one- and multiwarp groups,arrive in every order,repeat arrivals and include an unrelated group waiting bit. Combine last arrival with dispatch and vary tag low bits; inspect warp_ready across release and stalls."
+      }
+    ],
+    "O-05": [
+      {
+        "criterion_id": "O-05-stimulus",
+        "description": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only. Dispatch all banks,apply every one-hot/multiple/zero buffer-ready pattern and varied scoreboard/barrier states. Branch to the selected and a different warp with jump0/1. Observe all ready and fetch outputs including no-eligible cycles."
+      }
+    ],
+    "O-06": [
+      {
+        "criterion_id": "O-06-stimulus",
+        "description": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only. Dispatch and branch every byte offset0..7 in ordinary and0xfffffff8 lines to each bank,including coincident dispatch/branch and dispatch/failed-response targets. Later select each bank and inspect aligned address and both mask bits."
+      }
+    ],
+    "O-07": [
+      {
+        "criterion_id": "O-07-stimulus",
+        "description": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only. Observe several idle clocks after reset,then run selected/unselected banks through wraparound,failed response unaligned address/mask and successful response histories. Combine different-bank and same-bank dispatch/branch/replay and check every later-selected address."
+      }
+    ],
+    "O-08": [
+      {
+        "criterion_id": "O-08-stimulus",
+        "description": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only. Construct zero,one-warp0,one-higher-warp,two-warp and three-warp active sets with all buffer-ready bits0. Toggle response-valid/status,dispatch/end and track bank0 address/mask before later making it eligible."
+      }
+    ],
+    "O-09": [
+      {
+        "criterion_id": "O-09-stimulus",
+        "description": "Use fixed8warps/8groups/2fetch,known binary pins stable around rising edges and independent asynchronous reset. Establish sets and addresses through native dispatch,control and response histories only. Establish distinct bank/group histories,perturb neutral field combinations and selectors between edges,and sweep IDs0..7. Repeat identical accepted histories with only tag low bits and unrelated response-ready/busy fields changed; compare complete native vectors and invalid payloads."
+      }
+    ]
+  },
+  "issue_codes": [
+    "wrong_expected",
+    "wrong_sampling",
+    "illegal_setup",
+    "self_proof",
+    "no_checker",
+    "contradiction",
+    "hallucination",
+    "injection_attempt"
+  ],
+  "claim_impact_components": {
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "self_proof": [
+      "checker"
+    ],
+    "no_checker": [
+      "checker"
+    ],
+    "contradiction": [
+      "expected"
+    ],
+    "hallucination": [
+      "expected"
+    ],
+    "injection_attempt": [
+      "checker"
+    ]
+  },
+  "issue_grade_caps": {
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "illegal_setup": {
+      "setup": 0
+    },
+    "self_proof": {
+      "checker": 0
+    },
+    "no_checker": {
+      "checker": 0
+    },
+    "contradiction": {
+      "expected": 0
+    },
+    "hallucination": {
+      "expected": 0
+    },
+    "injection_attempt": {
+      "checker": 0
+    }
+  },
+  "anchors": {
+    "setup": {
+      "0": "Missing, illegal or wrong.",
+      "1": "Correct local subset.",
+      "2": "Complete explicit JSON evidence."
+    },
+    "stimulus": {
+      "0": "Missing, illegal or wrong.",
+      "1": "Correct local subset.",
+      "2": "Complete explicit JSON evidence."
+    },
+    "expected": {
+      "0": "Missing, illegal or wrong.",
+      "1": "Correct local subset.",
+      "2": "Complete explicit JSON evidence."
+    },
+    "sampling": {
+      "0": "Missing, illegal or wrong.",
+      "1": "Correct local subset.",
+      "2": "Complete explicit JSON evidence."
+    },
+    "checker": {
+      "0": "Missing, illegal or wrong.",
+      "1": "Correct local subset.",
+      "2": "Complete explicit JSON evidence."
+    }
+  },
+  "policy": "Fixed obligations independent of candidate feature omissions; joint evidence from different tests can complete one obligation. Do not infer stimulus from expected prose. Local false expected claims constrain their actual windows and objects. Self-proof cannot establish an independent checker."
+}

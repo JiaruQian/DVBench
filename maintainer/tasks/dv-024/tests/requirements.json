@@ -1,0 +1,53 @@
+{
+  "source": "public/spec.md",
+  "requirements": [
+    {
+      "id": "R-dv-024-001",
+      "title": "Native scope and protocol domain",
+      "description": "The complete native TLBuffer contains independent depth-two FIFOs for A requests from auto_in to auto_out and D responses from auto_out to auto_in, plus the original observational TileLink monitor. It has one clock and synchronous active-high reset, no top parameters, no combinational flow-through and no full-queue replacement path. Functional transformations operate per accepted beat, including multibeat messages. Legal active A messages use opcode 0/1/4 (PutFull/PutPartial/Get), param zero, source in {0..9,16,32..47}, size 0..6, address[12]=1 and address aligned to 2^size. Sizes above three span multiple 64-bit beats for writes and read responses. Get and PutFull use the exact addressed lane mask; PutPartial uses a subset, possibly zero. Get corrupt is zero; write corrupt is passed through. Match D source, size and acknowledgment opcode to the outstanding A transaction, preserve multibeat metadata, keep stalled payload stable and reuse sources only after completion. Native monitor assertions remain enabled.",
+      "source": "public/spec.md"
+    },
+    {
+      "id": "R-dv-024-002",
+      "title": "Synchronous reset and storage retention",
+      "description": "At each rising edge with reset high both FIFO occupancies and read/write positions become empty at slot zero. Payload storage is not reset or cleared. Outputs are not directly gated by the reset level before that edge. Reset discards pending beats. Separately, a pre-edge nonfull FIFO can still write incoming valid payload into its pre-edge write slot on a reset edge, while its occupancy and positions are reset; a pre-edge full FIFO cannot capture on that edge. Before slot initialization numerical payload is unspecified.",
+      "source": "public/spec.md"
+    },
+    {
+      "id": "R-dv-024-003",
+      "title": "A FIFO ready, valid and depth",
+      "description": "auto_in_a_ready is one exactly when the A FIFO has fewer than two stored beats, and auto_out_a_valid is one exactly when it has at least one. An A input beat is captured at a rising edge iff auto_in_a_valid and auto_in_a_ready are one; an A output beat is removed iff auto_out_a_valid and auto_out_a_ready are one. At empty there is no same-cycle bypass. At full, input ready stays zero even when the output is ready; draining a full FIFO cannot also accept a replacement beat on that edge.",
+      "source": "public/spec.md"
+    },
+    {
+      "id": "R-dv-024-004",
+      "title": "A request payload and FIFO order",
+      "description": "Every captured A beat retains all bits of opcode, param, size, source, address, mask, data and corrupt without transformation. Output payload is the oldest queued beat. Accepted beats preserve order across stalls, simultaneous enqueue/dequeue and wraparound. Output payload remains stable while output valid is one and output ready is zero. Input changes while full or invalid do not overwrite a retained beat.",
+      "source": "public/spec.md"
+    },
+    {
+      "id": "R-dv-024-005",
+      "title": "D FIFO ready, valid and depth",
+      "description": "auto_out_d_ready is one exactly when the D FIFO has fewer than two stored beats, and auto_in_d_valid is one exactly when it has at least one. Capture D at a rising edge iff auto_out_d_valid and auto_out_d_ready are one; remove its oldest beat iff auto_in_d_valid and auto_in_d_ready are one. It has no empty bypass and no same-edge replacement while full. Accepted response beats preserve order with simultaneous enqueue/dequeue and pointer wraparound.",
+      "source": "public/spec.md"
+    },
+    {
+      "id": "R-dv-024-006",
+      "title": "D payload and constant fields",
+      "description": "D output opcode, size, source and all 64 data bits equal those of the oldest captured auto_out D beat. On each D capture, the stored output param, sink, denied and corrupt fields are all zero; after those slots are initialized these fields remain zero for their contents. D payload stays stable while valid and stalled. Invalid output payload is not automatically zeroed; it reflects the current read slot, including retained earlier data.",
+      "source": "public/spec.md"
+    },
+    {
+      "id": "R-dv-024-007",
+      "title": "Independent directions and multibeat behavior",
+      "description": "The A and D FIFO storage, occupancy, enqueue, dequeue and backpressure decisions are independent. Fullness or stalling in one direction cannot directly gate the other direction. Both directions may capture/remove beats simultaneously at the same rising edge. A FIFO stores each message beat rather than assembling a transaction, changing beat count, changing source IDs or interpreting addresses; legal multibeat payload ordering is preserved.",
+      "source": "public/spec.md"
+    },
+    {
+      "id": "R-dv-024-008",
+      "title": "Read-slot visibility including invalid cycles",
+      "description": "Each FIFO has two persistent payload slots. Its write position advances modulo two only on accepted input beats; its read position advances modulo two only on accepted output beats. Non-reset simultaneous enqueue/dequeue advances both. Output payload continuously reflects the slot at the current read position, even while empty; after removing the last beat, it can therefore switch to the other slot's retained or uninitialized data. Reset returns both positions to slot zero without clearing its payload. Numerical comparisons before a slot's first initialization are outside the required domain; do not infer payload-zeroing from reset or valid low.",
+      "source": "public/spec.md"
+    }
+  ]
+}

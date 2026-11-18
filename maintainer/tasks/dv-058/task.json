@@ -1,0 +1,210 @@
+{
+  "task_id": "dv-058",
+  "dut_top": "video_filter_top",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "emboss.v",
+    "font_rom.v",
+    "gaussian_blur.v",
+    "greyscale.v",
+    "line_buffer.v",
+    "negative.v",
+    "sharpen.v",
+    "sobel.v",
+    "text_overlay.v",
+    "threshold.v",
+    "video_filter_top.v",
+    "window_generator.v"
+  ],
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "parameters": {
+    "DATA_WIDTH": 24,
+    "IMAGE_WIDTH": 384,
+    "IMAGE_HEIGHT": 64,
+    "BLINK_RATE": 6,
+    "DEBOUNCE_LIMIT": 2500000
+  },
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m10"
+  ],
+  "model_interface": {
+    "ports": [
+      {
+        "name": "btn",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "i_vid_VDE",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "i_vid_data",
+        "direction": "In",
+        "width": 24,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 23,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "i_vid_hsync",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "i_vid_vsync",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "led",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "n_rst",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "o_vid_VDE",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "o_vid_data",
+        "direction": "Out",
+        "width": 24,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 23,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "o_vid_hsync",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "o_vid_vsync",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "sw",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      }
+    ],
+    "parameters": {
+      "DATA_WIDTH": "24",
+      "IMAGE_WIDTH": "384",
+      "IMAGE_HEIGHT": "64",
+      "BLINK_RATE": "26'd6",
+      "DEBOUNCE_LIMIT": "22'd2500000"
+    },
+    "parser": "pyslang 12.1.0",
+    "ignored_unnamed_ast_ports": [],
+    "source_default_parameters": {
+      "DATA_WIDTH": "24",
+      "IMAGE_WIDTH": "1920",
+      "IMAGE_HEIGHT": "1080",
+      "BLINK_RATE": "26'd62500000",
+      "DEBOUNCE_LIMIT": "22'd2500000"
+    }
+  },
+  "coverage_scopes": [
+    "dvbench_top.dut"
+  ],
+  "rtl_sources": [
+    "emboss.v",
+    "font_rom.v",
+    "gaussian_blur.v",
+    "greyscale.v",
+    "line_buffer.v",
+    "negative.v",
+    "sharpen.v",
+    "sobel.v",
+    "text_overlay.v",
+    "threshold.v",
+    "video_filter_top.v",
+    "window_generator.v"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "emboss.v",
+    "font_rom.v",
+    "gaussian_blur.v",
+    "greyscale.v",
+    "line_buffer.v",
+    "negative.v",
+    "sharpen.v",
+    "sobel.v",
+    "text_overlay.v",
+    "threshold.v",
+    "video_filter_top.v",
+    "window_generator.v"
+  ]
+}

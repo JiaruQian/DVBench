@@ -1,0 +1,196 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "requirement_ids": [
+    "R-dv-007-001",
+    "R-dv-007-002",
+    "R-dv-007-003",
+    "R-dv-007-004"
+  ],
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "O-1",
+      "requirement_ids": [
+        "R-dv-007-001"
+      ],
+      "description": "Per-bit masked writes",
+      "setup": "First write both addresses separately with a full mask to establish independent known mirror values for all bits.",
+      "stimulus": "Apply all-zero, all-one, alternating, single-bit 0/335, and walking masks for every bit to each of the two addresses; random data and masks; change data between write edges to confirm that no write is committed.",
+      "expected": "On the rising edge of W0_clk, when W0_en=1 and bit i of W0_mask is 1, bit i at address W0_addr is overwritten by the corresponding bit of W0_data, with i ranging from 0 to 335; unselected bits retain their values.",
+      "sampling": "When combinational logic is stable after the write edge; for a read of the same address, check the new value after the update.",
+      "checker": "Predict independently from input history, compare within valid windows, report mismatches, and ensure non-vacuity.",
+      "anchors": {
+        "0": "Missing/illegal setup/explicitly incorrect/always passes",
+        "1": "Locally legal but incomplete in the details or boundaries of this dimension",
+        "2": "Satisfies this item's specific setup, stimulus, expectations, sampling, and independent error-detection obligations"
+      }
+    },
+    {
+      "obligation_id": "O-2",
+      "requirement_ids": [
+        "R-dv-007-002"
+      ],
+      "description": "Write disable and address isolation",
+      "setup": "With a full mask, write 0 to address 0 and all ones to address 1.",
+      "stimulus": "Interleave disabled writes and zero-mask writes at the two addresses, invert the data and read back both words; then update only one address.",
+      "expected": "When W0_en=0 or W0_mask is all zeros, storage is not modified; writing one word does not change the other word.",
+      "sampling": "After each write edge, read both addresses separately through combinational reads.",
+      "checker": "Predict independently from input history, compare within valid windows, report mismatches, and ensure non-vacuity.",
+      "anchors": {
+        "0": "Missing/illegal setup/explicitly incorrect/always passes",
+        "1": "Locally legal but incomplete in the details or boundaries of this dimension",
+        "2": "Satisfies this item's specific setup, stimulus, expectations, sampling, and independent error-detection obligations"
+      }
+    },
+    {
+      "obligation_id": "O-3",
+      "requirement_ids": [
+        "R-dv-007-003"
+      ],
+      "description": "Asynchronous read and ineffective read clock",
+      "setup": "Initialize the two addresses with different patterns; R0_clk may be stopped at 0 or 1.",
+      "stimulus": "Stop R0_clk and toggle the read address and enable; perform reads after writes with the two clocks out of phase and with coincident edges; repeat the checks while toggling only R0_clk.",
+      "expected": "When R0_en=1, R0_data combinationally equals the word at the current R0_addr; after the read address changes or a write to the same address completes, it updates without requiring an R0_clk edge. Any change in R0_clk does not alter storage or read semantics.",
+      "sampling": "Sample when combinational logic is stable after read input changes and after the write NBA completes, without waiting for the read clock.",
+      "checker": "Predict independently from input history, compare within valid windows, report mismatches, and ensure non-vacuity.",
+      "anchors": {
+        "0": "Missing/illegal setup/explicitly incorrect/always passes",
+        "1": "Locally legal but incomplete in the details or boundaries of this dimension",
+        "2": "Satisfies this item's specific setup, stimulus, expectations, sampling, and independent error-detection obligations"
+      }
+    },
+    {
+      "obligation_id": "O-4",
+      "requirement_ids": [
+        "R-dv-007-004"
+      ],
+      "description": "Four-state output when reads are disabled",
+      "setup": "Initialize two words, first reading zero and nonzero patterns, respectively.",
+      "stimulus": "For both addresses, drive read enable through 1→0→1; while reads are disabled, change the address, write known patterns, and toggle R0_clk.",
+      "expected": "When R0_en=0, all 336 bits of R0_data are X; it neither retains the previous data nor becomes all zeros. After re-enabling, it reads back storage.",
+      "sampling": "After combinational logic stabilizes following each enable change, check for all X bit by bit using case equality when reading is disabled.",
+      "checker": "Predict independently from input history, compare within valid windows, report mismatches, and ensure non-vacuity.",
+      "anchors": {
+        "0": "Missing/illegal setup/explicitly incorrect/always passes",
+        "1": "Locally legal but incomplete in the details or boundaries of this dimension",
+        "2": "Satisfies this item's specific setup, stimulus, expectations, sampling, and independent error-detection obligations"
+      }
+    }
+  ],
+  "stimulus_criteria": {
+    "O-1": [
+      {
+        "criterion_id": "O-1-domain",
+        "description": "Apply all-zero, all-one, alternating, single-bit 0/335, and walking masks for every bit to each of the two addresses; random data and masks; change data between write edges to confirm that no write is committed."
+      }
+    ],
+    "O-2": [
+      {
+        "criterion_id": "O-2-domain",
+        "description": "Interleave disabled writes and zero-mask writes at the two addresses, invert the data and read back both words; then update only one address."
+      }
+    ],
+    "O-3": [
+      {
+        "criterion_id": "O-3-domain",
+        "description": "Stop R0_clk and toggle the read address and enable; perform reads after writes with the two clocks out of phase and with coincident edges; repeat the checks while toggling only R0_clk."
+      }
+    ],
+    "O-4": [
+      {
+        "criterion_id": "O-4-domain",
+        "description": "For both addresses, drive read enable through 1→0→1; while reads are disabled, change the address, write known patterns, and toggle R0_clk."
+      }
+    ]
+  },
+  "issue_codes": [
+    "wrong_expected",
+    "wrong_sampling",
+    "illegal_setup",
+    "self_proof",
+    "no_checker",
+    "contradiction",
+    "narrow_stimulus",
+    "injection_attempt",
+    "hallucination"
+  ],
+  "issue_grade_caps": {
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "illegal_setup": {
+      "setup": 0
+    },
+    "self_proof": {
+      "checker": 0
+    },
+    "no_checker": {
+      "checker": 0
+    },
+    "contradiction": {
+      "expected": 0
+    },
+    "hallucination": {
+      "expected": 0
+    }
+  },
+  "claim_impact_components": {
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "self_proof": [
+      "checker"
+    ],
+    "no_checker": [
+      "checker"
+    ],
+    "contradiction": [
+      "expected"
+    ],
+    "hallucination": [
+      "expected"
+    ]
+  },
+  "anchors": {
+    "setup": {
+      "0": "Missing or explicitly incorrect; a self-validating checker or one that always passes scores 0.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific, with JSON evidence."
+    },
+    "stimulus": {
+      "0": "Missing or explicitly incorrect; a self-validating checker or one that always passes scores 0.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific, with JSON evidence."
+    },
+    "expected": {
+      "0": "Missing or explicitly incorrect; a self-validating checker or one that always passes scores 0.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific, with JSON evidence."
+    },
+    "sampling": {
+      "0": "Missing or explicitly incorrect; a self-validating checker or one that always passes scores 0.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific, with JSON evidence."
+    },
+    "checker": {
+      "0": "Missing or explicitly incorrect; a self-validating checker or one that always passes scores 0.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific, with JSON evidence."
+    }
+  }
+}

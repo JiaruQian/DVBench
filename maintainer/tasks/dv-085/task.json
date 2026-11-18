@@ -1,0 +1,223 @@
+{
+  "task_id": "dv-085",
+  "task_mode": "A",
+  "dut_top": "cv32e40p_icache",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "backfill/cv32e40p_icache_pkg.sv",
+    "cv32e40p_icache.sv",
+    "cv32e40p_icache_data_mem.sv",
+    "cv32e40p_icache_tag_mem.sv",
+    "plru.sv",
+    "plru_tree.sv"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "submission_top": "dvbench_top",
+  "reference_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_test": "dvbench_test",
+  "model_interface": {
+    "top": "dvbench_model",
+    "ports": [
+      {
+        "name": "clk_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "flush_ack_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "flush_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "instr_addr_i",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "instr_gnt_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "instr_rdata_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "instr_req_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "instr_rvalid_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "mem_req_ack_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "mem_req_addr_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "mem_req_len_o",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "mem_req_size_o",
+        "direction": "Out",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "mem_req_valid_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "mem_rsp_data_i",
+        "direction": "In",
+        "width": 256,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 255,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "mem_rsp_last_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "mem_rsp_valid_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "miss_event_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "miss_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "rst_ni",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {}
+  },
+  "model_contract_policy": "native-module-v1",
+  "fixed_parameters": {},
+  "coverage": {
+    "scope": "dvbench_top.dut",
+    "metrics": [
+      "line",
+      "cond",
+      "branch",
+      "tgl"
+    ],
+    "line_contassign": true
+  },
+  "rtl_sources": [
+    "backfill/cv32e40p_icache_pkg.sv",
+    "cv32e40p_icache.sv",
+    "cv32e40p_icache_data_mem.sv",
+    "cv32e40p_icache_tag_mem.sv",
+    "plru.sv",
+    "plru_tree.sv"
+  ],
+  "mutants": [
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "s08",
+    "s09",
+    "s10",
+    "n1",
+    "n2",
+    "n3"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "backfill/cv32e40p_icache_pkg.sv",
+    "cv32e40p_icache.sv",
+    "cv32e40p_icache_data_mem.sv",
+    "cv32e40p_icache_tag_mem.sv",
+    "plru.sv",
+    "plru_tree.sv"
+  ]
+}

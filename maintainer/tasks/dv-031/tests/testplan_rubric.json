@@ -1,0 +1,284 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "requirement_ids": [
+    "R-dv-031-001",
+    "R-dv-031-002",
+    "R-dv-031-003",
+    "R-dv-031-004",
+    "R-dv-031-005",
+    "R-dv-031-006",
+    "R-dv-031-007",
+    "R-dv-031-008"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "O-001",
+      "requirement_ids": [
+        "R-dv-031-001"
+      ],
+      "description": "Port A accepts the address, write enable, and data on the rising edge of its own clock. When write enable is 1, the entire word is written to the shared 256×24 memory, and douta is the value written in this operation (WRITE_FIRST); when it is 0, douta is the stored content at the address presented on that edge. There is no additional output pipeline stage or read enable.",
+      "setup": "Keep both clocks low for at least 110ns, then run each for 12 rising edges with write enables at 0; avoid cross-port collisions.",
+      "stimulus": "Through port A, write alternating bits, all 0s, all 1s, and walking-bit patterns address by address, and read back the first and last addresses and all addresses; change inputs during the low phase and check that outputs hold before the edge; use random reads and writes to cover all data bits.",
+      "expected": "Predict using an independent array and a registered read port updated on its own edges; in a write cycle, the value is the new input value.",
+      "sampling": "Data and address are stable before the edge; sample the output at least 1ns after the edge. It holds when there is no new rising edge on that port.",
+      "checker": "Perform four-state comparisons of valid dout; separately compare the pre-edge held value and the post-edge value, issue UVM_ERROR on a mismatch, and require reads and writes to all addresses to complete.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-002",
+      "requirement_ids": [
+        "R-dv-031-002"
+      ],
+      "description": "rsta is synchronous active-high and sets only this port's output to 0 on a clka rising edge; it neither clears shared memory nor resets the other port. When reset and write are active simultaneously, memory still accepts the write, while the output is 0; a subsequent legal read sees the written value.",
+      "setup": "Complete startup and establish nonzero data and outputs at different addresses on the two ports.",
+      "stimulus": "Assert/release rsta between edges in separate tests, holding it for 1/3 edges; write nonzero data through this port during reset, read it back from both ports after release, and keep the other port operating.",
+      "expected": "Only the output of the port being reset becomes 0 synchronously; memory and the other port's state are retained, and writes during reset are visible in subsequent readback.",
+      "sampling": "Changing reset between edges does not immediately clear the output; it is 0 at 1ns after an assertion edge, and normal read/write operation resumes on the next edge of its own clock after deassertion.",
+      "checker": "Predict using an input history array, and perform four-state comparisons between edges and after edges; do not treat reset as clearing memory.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-003",
+      "requirement_ids": [
+        "R-dv-031-003"
+      ],
+      "description": "rsta_busy is registered state in this clock domain. After startup settles, if rsta=1 on that edge, busy is set to 1; after deassertion, it remains 1 on the 1st and 2nd edges of its own clock and becomes 0 on the 3rd edge of its own clock. Reassertion extends recovery again. busy does not mask memory writes.",
+      "setup": "After 12 startup edges, busy is low; control the two port clocks separately.",
+      "stimulus": "Assert rsta for only one edge of its own clock and then release it, checking edge by edge at 1/1/0; then reassert it during the tail window, pause clka, and advance only the other port.",
+      "expected": "Independently count the reset history of the two most recent edges; busy is the registered result of ORing the current reset with the two historical values.",
+      "sampling": "busy changes only on rising edges of its own clock and is observed 1ns after the edge; stopping that clock freezes it, and the other port's clock cannot advance it.",
+      "checker": "Perform four-state comparisons of busy and count edge by edge, and check that it holds between edges/during clock stoppage; do not replace bounded checks with waiting for busy to clear on its own.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-004",
+      "requirement_ids": [
+        "R-dv-031-004"
+      ],
+      "description": "Port B accepts the address, write enable, and data on the rising edge of its own clock. When write enable is 1, the entire word is written to the shared 256×24 memory, and doutb is the value written in this operation (WRITE_FIRST); when it is 0, doutb is the stored content at the address presented on that edge. There is no additional output pipeline stage or read enable.",
+      "setup": "Keep both clocks low for at least 110ns, then run each for 12 rising edges with write enables at 0; avoid cross-port collisions.",
+      "stimulus": "Through port B, write alternating bits, all 0s, all 1s, and walking-bit patterns address by address, and read back the first and last addresses and all addresses; change inputs during the low phase and check that outputs hold before the edge; use random reads and writes to cover all data bits.",
+      "expected": "Predict using an independent array and a registered read port updated on its own edges; in a write cycle, the value is the new input value.",
+      "sampling": "Data and address are stable before the edge; sample the output at least 1ns after the edge. It holds when there is no new rising edge on that port.",
+      "checker": "Perform four-state comparisons of valid dout; separately compare the pre-edge held value and the post-edge value, issue UVM_ERROR on a mismatch, and require reads and writes to all addresses to complete.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-005",
+      "requirement_ids": [
+        "R-dv-031-005"
+      ],
+      "description": "rstb is synchronous active-high and sets only this port's output to 0 on a clkb rising edge; it neither clears shared memory nor resets the other port. When reset and write are active simultaneously, memory still accepts the write, while the output is 0; a subsequent legal read sees the written value.",
+      "setup": "Complete startup and establish nonzero data and outputs at different addresses on the two ports.",
+      "stimulus": "Assert/release rstb between edges in separate tests, holding it for 1/3 edges; write nonzero data through this port during reset, read it back from both ports after release, and keep the other port operating.",
+      "expected": "Only the output of the port being reset becomes 0 synchronously; memory and the other port's state are retained, and writes during reset are visible in subsequent readback.",
+      "sampling": "Changing reset between edges does not immediately clear the output; it is 0 at 1ns after an assertion edge, and normal read/write operation resumes on the next edge of its own clock after deassertion.",
+      "checker": "Predict using an input history array, and perform four-state comparisons between edges and after edges; do not treat reset as clearing memory.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-006",
+      "requirement_ids": [
+        "R-dv-031-006"
+      ],
+      "description": "rstb_busy is registered state in this clock domain. After startup has stabilized, if rstb=1 at that edge, busy is set to 1; after deassertion, it remains 1 on the first and second edges of its own clock and becomes 0 on the third edge of its own clock. Reassertion extends recovery again. busy does not mask memory writes.",
+      "setup": "After 12 startup edges, busy is low; control the two port clocks separately.",
+      "stimulus": "Assert rstb for only one edge of its own clock and then release it, checking edge by edge at 1/1/0; then reassert it during the tail window, pause clkb, and advance only the other port.",
+      "expected": "Independently count the reset history of the two most recent edges; busy is the registered result of ORing the current reset with the two historical values.",
+      "sampling": "busy changes only on rising edges of its own clock and is observed 1ns after the edge; stopping that clock freezes it, and the other port's clock cannot advance it.",
+      "checker": "Perform four-state comparisons of busy and count edge by edge, and check that it holds between edges/during clock stoppage; do not replace bounded checks with waiting for busy to clear on its own.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-007",
+      "requirement_ids": [
+        "R-dv-031-007"
+      ],
+      "description": "The two ports share the same memory; after A writes, B can observe that value by reading the same address on a later non-colliding edge, and vice versa. Operations on different addresses by the two ports do not affect each other; stopping one port's clock does not affect the other port.",
+      "setup": "Complete startup; select different A/B addresses.",
+      "stimulus": "Across all addresses, alternate A writes followed by B reads/B writes followed by A reads; perform dual writes to different addresses, use clocks at different frequency ratios, pause one port and advance the other; perform dual reads of the same address.",
+      "expected": "One shared independent array; only a rising edge of the corresponding port updates that port's output, and non-colliding cross-port reads observe the latest write.",
+      "sampling": "The two ports may have different periods and different phases; a subsequent read edge must be at least 2ns after the preceding write edge.",
+      "checker": "Independently record driving edges and addresses, excluding the explicit collision domain; perform four-state comparisons of both port outputs, without using DUT results to construct expected.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O-008",
+      "requirement_ids": [
+        "R-dv-031-008"
+      ],
+      "description": "The maintained simulation environment provides a 100ns global startup reset. Both clocks remain stationary at low level and start only after 110ns. All 256 words of memory are initially 0. The first 12 rising edges of each port are used for startup settling; thereafter, behavior is judged according to the normal read/write, reset, and busy contract.",
+      "setup": "Initial inputs are 0, clocks are low, and both write enables are low.",
+      "stimulus": "After waiting 110ns, advance each clock for 12 edges, then traverse the initial values at all addresses; change clock phases and repeat the subsequent reset checks.",
+      "expected": "Unwritten addresses always read as 0, and busy is low after startup; subsequent user resets follow each port's contract exactly.",
+      "sampling": "Write enables must be 0 during startup settling; after the 12 edge, initial values can be read and busy is 0 without an additional user reset.",
+      "checker": "After startup, check all addresses and report an error if X/Z or a nonzero value appears; ensure sufficient startup edges without forcing internal registers.",
+      "anchors": {
+        "0": "Missing, illegal preparation, or explicitly incorrect in the corresponding dimension",
+        "1": "Partial legal domain with valid independent checking",
+        "2": "Legal preparation, all actual stimulus domains, correct expectations, valid sampling, and independent checks capable of failing are jointly complete"
+      }
+    }
+  ],
+  "stimulus_criteria": {
+    "O-001": [
+      {
+        "criterion_id": "O-001-domain",
+        "description": "Through port A, write alternating bits, all 0s, all 1s, and walking-bit patterns address by address, and read back the first and last addresses and all addresses; change inputs during the low phase and check that outputs hold before the edge; use random reads and writes to cover all data bits."
+      },
+      {
+        "criterion_id": "O-001-history",
+        "description": "Keep both clocks low for at least 110ns, then run each for 12 rising edges with write enables at 0; avoid cross-port collisions."
+      }
+    ],
+    "O-002": [
+      {
+        "criterion_id": "O-002-domain",
+        "description": "Assert/release rsta between edges in separate tests, holding it for 1/3 edges; write nonzero data through this port during reset, read it back from both ports after release, and keep the other port operating."
+      },
+      {
+        "criterion_id": "O-002-history",
+        "description": "Complete startup and establish nonzero data and outputs at different addresses on the two ports."
+      }
+    ],
+    "O-003": [
+      {
+        "criterion_id": "O-003-domain",
+        "description": "Assert rsta for only one edge of its own clock and then release it, checking edge by edge at 1/1/0; then reassert it during the tail window, pause clka, and advance only the other port."
+      },
+      {
+        "criterion_id": "O-003-history",
+        "description": "After 12 startup edges, busy is low; control the two port clocks separately."
+      }
+    ],
+    "O-004": [
+      {
+        "criterion_id": "O-004-domain",
+        "description": "Through port B, write alternating bits, all 0s, all 1s, and walking-bit patterns address by address, and read back the first and last addresses and all addresses; change inputs during the low phase and check that outputs hold before the edge; use random reads and writes to cover all data bits."
+      },
+      {
+        "criterion_id": "O-004-history",
+        "description": "Keep both clocks low for at least 110ns, then run each for 12 rising edges with write enables at 0; avoid cross-port collisions."
+      }
+    ],
+    "O-005": [
+      {
+        "criterion_id": "O-005-domain",
+        "description": "Assert/release rstb between edges in separate tests, holding it for 1/3 edges; write nonzero data through this port during reset, read it back from both ports after release, and keep the other port operating."
+      },
+      {
+        "criterion_id": "O-005-history",
+        "description": "Complete startup and establish nonzero data and outputs at different addresses on the two ports."
+      }
+    ],
+    "O-006": [
+      {
+        "criterion_id": "O-006-domain",
+        "description": "Assert rstb for only one edge of its own clock and then release it, checking edge by edge at 1/1/0; then reassert it during the tail window, pause clkb, and advance only the other port."
+      },
+      {
+        "criterion_id": "O-006-history",
+        "description": "After 12 startup edges, busy is low; control the two port clocks separately."
+      }
+    ],
+    "O-007": [
+      {
+        "criterion_id": "O-007-domain",
+        "description": "Across all addresses, alternate A writes followed by B reads/B writes followed by A reads; perform dual writes to different addresses, use clocks at different frequency ratios, pause one port and advance the other; perform dual reads of the same address."
+      },
+      {
+        "criterion_id": "O-007-history",
+        "description": "Complete startup; select different A/B addresses."
+      }
+    ],
+    "O-008": [
+      {
+        "criterion_id": "O-008-domain",
+        "description": "After waiting 110ns, advance each clock for 12 edges, then traverse the initial values at all addresses; change clock phases and repeat the subsequent reset checks."
+      },
+      {
+        "criterion_id": "O-008-history",
+        "description": "Initial inputs are 0, clocks are low, and both write enables are low."
+      }
+    ]
+  },
+  "issue_codes": [
+    "missing_setup",
+    "narrow_stimulus",
+    "wrong_expected",
+    "wrong_sampling",
+    "no_checker",
+    "self_proof",
+    "illegal_setup",
+    "contradiction",
+    "hallucination",
+    "prompt_injection"
+  ],
+  "issue_grade_caps": {},
+  "claim_impact_components": {
+    "missing_setup": [
+      "setup"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "no_checker": [
+      "checker"
+    ],
+    "self_proof": [
+      "checker"
+    ],
+    "contradiction": [
+      "setup",
+      "expected",
+      "sampling",
+      "checker"
+    ],
+    "hallucination": [
+      "expected"
+    ],
+    "narrow_stimulus": [],
+    "prompt_injection": []
+  }
+}

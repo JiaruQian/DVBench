@@ -1,0 +1,225 @@
+{
+  "task_id": "dv-040",
+  "dut_top": "NV_NVDLA_glb",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "NV_NVDLA_GLB_CSB_reg.v",
+    "NV_NVDLA_GLB_csb.v",
+    "NV_NVDLA_GLB_ic.v",
+    "NV_NVDLA_glb.v"
+  ],
+  "rtl_sources": [
+    "fixed/configuration.sv",
+    "NV_NVDLA_GLB_CSB_reg.v",
+    "NV_NVDLA_GLB_csb.v",
+    "NV_NVDLA_GLB_ic.v",
+    "NV_NVDLA_glb.v",
+    "deps/verif/small_gold/vmod/nvdla/car/NV_NVDLA_sync3d_c.v",
+    "deps/verif/small_gold/vmod/vlibs/MUX2HDD2.v",
+    "deps/verif/small_gold/vmod/vlibs/NV_BLKBOX_SRC0.v",
+    "deps/verif/small_gold/vmod/vlibs/p_SSYNC3DO_C_PPP.v",
+    "deps/verif/small_gold/vmod/vlibs/sync3d_c_ppp.v"
+  ],
+  "rtl_compile_files": [
+    "fixed/configuration.sv",
+    "NV_NVDLA_GLB_CSB_reg.v",
+    "NV_NVDLA_GLB_csb.v",
+    "NV_NVDLA_GLB_ic.v",
+    "NV_NVDLA_glb.v",
+    "deps/verif/small_gold/vmod/nvdla/car/NV_NVDLA_sync3d_c.v",
+    "deps/verif/small_gold/vmod/vlibs/MUX2HDD2.v",
+    "deps/verif/small_gold/vmod/vlibs/NV_BLKBOX_SRC0.v",
+    "deps/verif/small_gold/vmod/vlibs/p_SSYNC3DO_C_PPP.v",
+    "deps/verif/small_gold/vmod/vlibs/sync3d_c_ppp.v"
+  ],
+  "include_dirs": [],
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m10",
+    "n1"
+  ],
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "model_contract_policy": "native-module-v1",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "cacc2glb_done_intr_pd",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "cdma_dat2glb_done_intr_pd",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "cdma_wt2glb_done_intr_pd",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "cdp2glb_done_intr_pd",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "core_intr",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "csb2glb_req_pd",
+        "direction": "In",
+        "width": 63,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 62,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "csb2glb_req_prdy",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "csb2glb_req_pvld",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "direct_reset_",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "glb2csb_resp_pd",
+        "direction": "Out",
+        "width": 34,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 33,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "glb2csb_resp_valid",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "nvdla_core_clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "nvdla_core_rstn",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "nvdla_falcon_clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "nvdla_falcon_rstn",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "pdp2glb_done_intr_pd",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "sdp2glb_done_intr_pd",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "test_mode",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {},
+    "parser": "manual native declaration audit; sorted for native-module-v1 preflight"
+  },
+  "coverage_scope": "dvbench_top.dut",
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800
+}

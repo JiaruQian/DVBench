@@ -1,0 +1,100 @@
+{
+  "requirement_ids": [
+    "R-dv-007-001",
+    "R-dv-007-002",
+    "R-dv-007-003",
+    "R-dv-007-004"
+  ],
+  "atoms": [
+    {
+      "atom_id": "A-1",
+      "requirement_ids": [
+        "R-dv-007-001"
+      ],
+      "description": "On the rising edge of W0_clk, when W0_en=1 and bit i of W0_mask is 1, bit i at address W0_addr is overwritten by the corresponding bit of W0_data, with i ranging from 0 to 335; unselected bits retain their values.",
+      "anchors": {
+        "0": "Omitted or explicitly contradictory to this entry's object/condition/window; support must not be inferred from names or IDs.",
+        "1": "True local behavior, but missing an important boundary or window of this entry.",
+        "2": "On the rising edge of W0_clk, when W0_en=1 and bit i of W0_mask is 1, bit i at address W0_addr is overwritten by the corresponding bit of W0_data, with i ranging from 0 through 335; unselected bits retain their values. Check after combinational settling following the write edge; for a same-address read, check the new value after the update."
+      },
+      "legal_history": "First write both addresses separately with a full mask to establish independent known mirror values for all bits."
+    },
+    {
+      "atom_id": "A-2",
+      "requirement_ids": [
+        "R-dv-007-002"
+      ],
+      "description": "When W0_en=0 or W0_mask is all zeros, storage is not modified; writing one word does not change the other word.",
+      "anchors": {
+        "0": "Omitted or explicitly contradictory to this entry's object/condition/window; support must not be inferred from names or IDs.",
+        "1": "True local behavior, but missing an important boundary or window of this entry.",
+        "2": "When W0_en=0 or W0_mask is all zeros, storage is not modified; writing one word does not change the other word. After each write edge, read both addresses separately using combinational reads."
+      },
+      "legal_history": "With a full mask, write 0 to address 0 and all ones to address 1."
+    },
+    {
+      "atom_id": "A-3",
+      "requirement_ids": [
+        "R-dv-007-003"
+      ],
+      "description": "When R0_en=1, R0_data combinationally equals the word at the current R0_addr; after the read address changes or a write to the same address completes, it updates without requiring an R0_clk edge. Any change in R0_clk does not alter storage or read semantics.",
+      "anchors": {
+        "0": "Omitted or explicitly contradictory to this entry's object/condition/window; support must not be inferred from names or IDs.",
+        "1": "True local behavior, but missing an important boundary or window of this entry.",
+        "2": "When R0_en=1, R0_data combinationally equals the word at the current R0_addr; after the read address changes or a same-address write completes, it updates without requiring an R0_clk edge. Any change in R0_clk does not alter storage or read semantics. Sample after combinational settling following read-input changes and completion of the write NBA, without waiting for the read clock."
+      },
+      "legal_history": "Initialize the two addresses with different patterns; R0_clk may be stopped at 0 or 1."
+    },
+    {
+      "atom_id": "A-4",
+      "requirement_ids": [
+        "R-dv-007-004"
+      ],
+      "description": "When R0_en=0, all 336 bits of R0_data are X; it neither retains the previous data nor becomes all zeros. After re-enabling, it reads back storage.",
+      "anchors": {
+        "0": "Omitted or explicitly contradictory to this entry's object/condition/window; support must not be inferred from names or IDs.",
+        "1": "True local behavior, but missing an important boundary or window of this entry.",
+        "2": "When R0_en=0, all 336 bits of R0_data are X, neither retaining the previous data nor being all zeros; after re-enabling, read back the stored contents. After combinational settling following each enable change, use bitwise case equality to check for all X while reads are disabled."
+      },
+      "legal_history": "Initialize two words, first reading zero and nonzero patterns, respectively."
+    }
+  ],
+  "required_interfaces": {
+    "R-dv-007-001": [
+      "W0_clk",
+      "W0_en",
+      "W0_addr",
+      "W0_data",
+      "W0_mask",
+      "R0_addr",
+      "R0_en",
+      "R0_data"
+    ],
+    "R-dv-007-002": [
+      "W0_clk",
+      "W0_en",
+      "W0_addr",
+      "W0_mask",
+      "R0_addr",
+      "R0_en",
+      "R0_data"
+    ],
+    "R-dv-007-003": [
+      "R0_addr",
+      "R0_en",
+      "R0_clk",
+      "R0_data",
+      "W0_clk",
+      "W0_addr",
+      "W0_en",
+      "W0_data",
+      "W0_mask"
+    ],
+    "R-dv-007-004": [
+      "R0_en",
+      "R0_addr",
+      "R0_data"
+    ]
+  },
+  "policy": "fixed denominator, semantic union and deduplication; MD/JSON conflict is one local incorrect claim"
+}

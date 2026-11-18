@@ -1,0 +1,53 @@
+{
+  "source": "public/spec.md",
+  "requirements": [
+    {
+      "id": "R-ELEV-001",
+      "title": "Clock division and composition boundaries",
+      "description": "clk_divider is a free-running clock divider: it uses clk_in as the source clock and outputs a divided_clk square wave with a nominal frequency of approximately 50 Hz. The module contains no handshake, datapath, state machine, or memory; it is purely sequential counter-based frequency division. The upstream top_module uses the inverse of rst as its asynchronous reset and uses divided_clk as a 50 Hz clock to drive debouncer and elevator; these out-of-scope connections only explain its use, and their internal behavior is not proven here.",
+      "source": "public/spec.md"
+    },
+    {
+      "id": "R-ELEV-002",
+      "title": "Clock divider interface contract",
+      "description": "The interface consists of three 1-bit ports, with no ready/valid or transaction semantics; the output free-runs solely with the source clock:\n\n- clk_in (input, 1 bit): Divider source clock. All non-reset state updates occur on its rising edge.\n- rst (input, 1 bit): Asynchronous, active-high reset. When rst is high, clearing to zero occurs immediately and asynchronously, without waiting for a clk_in edge.\n- divided_clk (output, reg, 1 bit): Divided square-wave output, with an initial value of 0 after reset.\n\nThere are no “acceptance/completion” anchors: the divider accepts no commands and produces no acknowledgments; the other endpoint can only passively sample divided_clk.",
+      "source": "public/spec.md"
+    },
+    {
+      "id": "R-ELEV-003",
+      "title": "Clock divider reset and normal operation",
+      "description": "Reset: The always block is sensitive to posedge clk_in or posedge rst. When rst is high (asynchronously), cnt and divided_clk are set to 0 in the same cycle, so divided_clk is low after reset.\n\nNormal counting and toggling: When rst is low, each clk_in rising edge samples the pre-edge cnt.\n\n- If cnt is not equal to toggle_value: cnt increments by 1, and divided_clk holds (`divided_clk <= divided_clk` is a no-op that retains its own value).\n- If cnt equals toggle_value: cnt returns to 0, and divided_clk is inverted.\n\nThus, divided_clk toggles once every (toggle_value+1) clk_in cycles: the half-period is (toggle_value+1) source cycles, the full period is 2*(toggle_value+1) source cycles, and the duty cycle is exactly 50%. With the default toggle_value=1000000, the half-period is 1000001 source cycles; with a 100 MHz source clock, the full period is approximately 20.00002 ms and the output is approximately 49.99995 Hz, approximately matching the header comment “divide by 1000000 to obtain 50 Hz”; the implemented division factor is 2*(toggle_value+1), rather than the literal 1000000 in the comment. It takes (toggle_value+1) rising edges from reset release to the first toggle.",
+      "source": "public/spec.md"
+    },
+    {
+      "id": "R-ELEV-004",
+      "title": "Clock divider state and parameter boundaries",
+      "description": "State: The sole state register cnt is reg[24:0] (25-bit unsigned), with a value range of 0..33554431; divided_clk is 1 bit. There are no queues or memory arrays, hence no full/empty, backpressure, read/write conflict, or arbitration mechanisms.\n\nParameter: toggle_value is a 32-bit signed logic parameter with a default value of 1000000; this Job uses the RTL default parameters, with no parameter overrides provided.\n\nBoundaries: cnt==toggle_value compares the 25-bit cnt against the 32-bit parameter. When 0 <= toggle_value <= 33554431, equality is reachable and toggling occurs normally; when toggle_value >= 33554432 (that is, 2^25), cnt reaches at most 33554431 before wrapping to 0 and never equals toggle_value, so divided_clk retains its initial value and stops toggling (constant low after reset). When toggle_value=0, the equality condition holds every source cycle, divided_clk toggles every cycle, and the output is clk_in divided by two. This comparison also triggers a SignCompare static warning (comparison of 25-bit unsigned cnt with a 32-bit signed parameter).",
+      "source": "public/spec.md"
+    },
+    {
+      "id": "R-ELEV-005",
+      "title": "Clock divider issues and risk identification",
+      "description": "- ISS-1 (parameter boundary, non-blocking): If toggle_value is set to >= 2^25, the 25-bit cnt cannot reach that value, and the output stops toggling. The default value 1000000 is within the valid range, so the default instance is unaffected; whether such overrides are permitted needs confirmation.\n- ISS-2 (comment/implementation discrepancy, non-blocking): The header comment states “dividing the clock with 1000000”, while the actual division factor is 2*(toggle_value+1), with an offset introduced by +1 and toggling on both transitions; Section 3 already provides the exact formula based on the implementation. This is a documentation/implementation inconsistency rather than a functional defect.",
+      "source": "public/spec.md"
+    },
+    {
+      "id": "R-ELEV-006",
+      "title": "Top-level ports and reset polarity",
+      "description": "The public DUT is `top_module`, not the standalone `clk_divider`. The top level uses `clk` as the seven-segment scan clock and uses `rst` as an active-low reset: `rst=0` means reset, and `rst=1` means normal operation. Internally, `~rst` is connected to the active-high resets of the clock divider, debouncer, elevator FSM, and seven-segment scanner. The clock divider, debouncer, and elevator FSM reset asynchronously, so a falling edge of the top-level `rst` immediately clears their states; the seven-segment scanner samples reset synchronously on the rising edge of `clk`, with `an=8'b11111111` after reset. Each of the five floors has an external call input `floor_n_p` and a car destination input `floor_n_d`; floors 1 through 3 also have direction inputs `direction_1..3`, while floor 4 is fixed to down and floor 0 is fixed to up. Outputs include five car destination LED bits, five external call LED bits, `led_busy`, eight sets of seven-segment codes, and the eight-bit scan select `an`.\n\nEvidence: `rtl/top_module.v:4-68`, `rtl/elevator.v:3-44`, `solution/reference/tb_top.sv:15-35`.",
+      "source": "public/spec.md"
+    },
+    {
+      "id": "R-ELEV-007",
+      "title": "Elevator states, request acceptance, and movement",
+      "description": "Reset asynchronously clears the internal target floor, current floor, and LEDs and enters the idle state; the current floor starts at 0. Requests are checked in floor-priority order on internal 50 Hz clock edges; requests that can be served in the current direction of travel may be saved as the current target or inserted as a target; requests for the same floor do not cause movement. From the idle state, the elevator enters upward travel when the target floor is greater than the current floor, and downward travel when it is less than the current floor; each floor transition requires `toggleValue=250` internal count cycles. During a stop, `led_busy` is active within the door-count window; when counting ends, the corresponding destination/call LEDs are cleared, and movement or idle resumes. The valid floor range is 0..4; other internal floor encodings fall back to the floor 0 pattern in display decoding.\n\nEvidence: `rtl/elevator.v:47-65`, `rtl/elevator.v:221-238`, `rtl/elevator.v:240-514`, `solution/reference/elev_pkg.sv:199-318`.",
+      "source": "public/spec.md"
+    },
+    {
+      "id": "R-ELEV-008",
+      "title": "Seven-segment scanning and implementation diagnostics",
+      "description": "`ssd` cyclically scans the eight-digit seven-segment display in the `clk` domain; the elevator state and current floor generate segment codes for direction, floor, and idle/busy status, and `top_module` directly forwards the segment codes and `an`. The fixed reference TB uses `force/release` to replace internal clocks and long counters to shorten runtime. This is an implementation diagnostic for the hidden reference and must not be treated as a candidate port contract or a public behavioral requirement; candidates must interact only through the `top_module` ports. Strict cycle-by-cycle differences in the clock divider's default parameters and the seven-segment scan constants are listed separately as implementation-consistency diagnostics.\n\nEvidence: `rtl/top_module.v:48-68`, `rtl/ssd.v`, `solution/reference/tb_top.sv:37-132`.",
+      "source": "public/spec.md"
+    }
+  ]
+}

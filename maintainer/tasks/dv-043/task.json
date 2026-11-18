@@ -1,0 +1,88 @@
+{
+  "task_id": "dv-043",
+  "replay_adapter_id": "dv-043-rvc-decoder",
+  "dut_top": "cv32e40p_compressed_decoder",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "backfill/cv32e40p_pkg.sv",
+    "cv32e40p_compressed_decoder.sv"
+  ],
+  "rtl_compile_files": [
+    "backfill/cv32e40p_pkg.sv",
+    "cv32e40p_compressed_decoder.sv"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m10",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9"
+  ],
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "illegal_instr_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "instr_i",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "instr_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "is_compressed_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {
+      "FPU": "0",
+      "ZFINX": "0"
+    },
+    "parser": "pyslang 11.0.0"
+  },
+  "model_contract_policy": "native-module-v1",
+  "reference_submission": "solution/reference",
+  "rtl_sources": [
+    "backfill/cv32e40p_pkg.sv",
+    "cv32e40p_compressed_decoder.sv"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800
+}

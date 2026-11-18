@@ -1,0 +1,45 @@
+{
+  "source": "public/spec.md",
+  "requirements": [
+    {
+      "requirement_id": "R-VGA-001",
+      "title": "Role and Boundaries",
+      "source": "public/spec.md",
+      "kind": "scope_and_behavior",
+      "formal_scope": "not_modeled",
+      "limits": "diagnostic is maintenance evidence; structural clauses and all histories are not dynamically proved"
+    },
+    {
+      "requirement_id": "R-VGA-002",
+      "title": "Interface Contract",
+      "source": "public/spec.md",
+      "kind": "interface_and_behavior",
+      "formal_scope": "partial_counter_and_phase_fragments",
+      "limits": "diagnostic is maintenance evidence; structural clauses and all histories are not dynamically proved"
+    },
+    {
+      "requirement_id": "R-VGA-003",
+      "title": "Vertical count",
+      "source": "public/spec.md",
+      "kind": "observable_behavior",
+      "formal_scope": "partial_counter_and_phase_fragments",
+      "limits": "diagnostic is maintenance evidence; structural clauses and all histories are not dynamically proved"
+    },
+    {
+      "requirement_id": "R-VGA-004",
+      "title": "Phase boundaries",
+      "source": "public/spec.md",
+      "kind": "observable_behavior",
+      "formal_scope": "partial_counter_and_phase_fragments",
+      "limits": "diagnostic is maintenance evidence; structural clauses and all histories are not dynamically proved"
+    },
+    {
+      "requirement_id": "R-VGA-005",
+      "title": "Valid input histories and observation times",
+      "source": "public/spec.md",
+      "kind": "observable_behavior",
+      "formal_scope": "not_modeled",
+      "limits": "diagnostic is maintenance evidence; structural clauses and all histories are not dynamically proved"
+    }
+  ]
+}

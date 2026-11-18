@@ -1,0 +1,204 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "requirement_ids": [
+    "R-dv-036-001",
+    "R-dv-036-002",
+    "R-dv-036-003",
+    "R-dv-036-004",
+    "R-dv-036-005",
+    "R-dv-036-006",
+    "R-dv-036-007"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "R-dv-036-001-verification",
+      "requirement_ids": [
+        "R-dv-036-001"
+      ],
+      "description": "Active-low resetn asynchronously clears AXI holding state and responses, clears the register configuration to zero, and sets divider=35. AW and W are accepted independently and in either order; an OKAY write response is generated once both have been received, and the response is held under backpressure. An OKAY read response is generated one cycle after AR is accepted, and read data and valid are held until the handshake. The MDIO master resets on a clock edge with resetn low.",
+      "setup": "After reset, send AW first, W first, and both simultaneously in separate cases, holding and then releasing B/R backpressure; after a reset during a partial transaction, confirm that an old address or data is not combined.",
+      "stimulus": "After reset, send AW first, W first, and both simultaneously in separate cases, holding and then releasing B/R backpressure; after a reset during a partial transaction, confirm that an old address or data is not combined.",
+      "expected": "Active-low resetn asynchronously clears AXI holding state and responses, clears the register configuration to zero, and sets divider=35. AW and W are accepted independently and in either order; an OKAY write response is generated once both have been received, and the response is held under backpressure. An OKAY read response is generated one cycle after AR is accepted, and read data and valid are held until the handshake. The MDIO master resets on a clock edge with resetn low.",
+      "sampling": "Respect this item's asynchronous/combinational/pre-handshake-edge and post-output-edge windows respectively; do not skip valid X/Z.",
+      "checker": "Independent input-history oracle or independent relational comparison; must be capable of failing and have a nonzero trigger count.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectations/windows, or vacuous checker",
+        "1": "Correct setup and method, but only partial coverage of the actual domain or boundaries",
+        "2": "After reset, send AW first, W first, and both simultaneously in separate cases, holding and then releasing B/R backpressure; after a reset during a partial transaction, confirm that an old address or data is not combined."
+      }
+    },
+    {
+      "obligation_id": "R-dv-036-002-verification",
+      "requirement_ids": [
+        "R-dv-036-002"
+      ],
+      "description": "0x00 provides read/write access to PHY address[4:0], REG address[12:8], and write_not_read[16], controlled by WSTRB0/1/2 respectively; 0x04 is 16-bit write data, and 0x14 is the 16-bit divider, both written according to the low two byte enables. 0x08 provides read-only MDIO read data, 0x0C reads as zero, and unknown addresses read as zero with no side effects on writes.",
+      "setup": "Write different values to each byte independently, perform zero-strobe writes and reserved-bit writes, and read back immediately; set PHY and REG to different values, and DATA different from divider.",
+      "stimulus": "Write different values to each byte independently, perform zero-strobe writes and reserved-bit writes, and read back immediately; set PHY and REG to different values, and DATA different from divider.",
+      "expected": "0x00 provides read/write access to PHY address[4:0], REG address[12:8], and write_not_read[16], controlled by WSTRB0/1/2 respectively; 0x04 is 16-bit write data, and 0x14 is the 16-bit divider, both written according to the low two byte enables. 0x08 provides read-only MDIO read data, 0x0C reads as zero, and unknown addresses read as zero with no side effects on writes.",
+      "sampling": "Respect this item's asynchronous/combinational/pre-handshake-edge and post-output-edge windows respectively; do not skip valid X/Z.",
+      "checker": "Independent input-history oracle or independent relational comparison; must be capable of failing and have a nonzero trigger count.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectations/windows, or vacuous checker",
+        "1": "Correct setup and method, but only partial coverage of the actual domain or boundaries",
+        "2": "Write different values to each byte independently, perform zero-strobe writes and reserved-bit writes, and read back immediately; set PHY and REG to different values, and DATA different from divider."
+      }
+    },
+    {
+      "obligation_id": "R-dv-036-003-verification",
+      "requirement_ids": [
+        "R-dv-036-003"
+      ],
+      "description": "Writing bit0 in byte 0 of 0x0C starts a CPU transaction when idle. The 64-bit write frame consists, in order, of 32 ones, ST=01, OP=01, 5-bit PHY, 5-bit REG, TA=10, and 16-bit data, MSB first. MDC toggles every divider+1 source clock cycles and is 0 when idle; MDIO is driven throughout the write frame and released upon completion.",
+      "setup": "Set divider to 0/1/nonzero and address/data boundary values, issue write transactions, and use an independently assembled frame vector on MDC rising edges to check the 64 bits, adjacent MDC intervals, and release at completion.",
+      "stimulus": "Set divider to 0/1/nonzero and address/data boundary values, issue write transactions, and use an independently assembled frame vector on MDC rising edges to check the 64 bits, adjacent MDC intervals, and release at completion.",
+      "expected": "Writing bit0 in byte 0 of 0x0C starts a CPU transaction when idle. The 64-bit write frame consists, in order, of 32 ones, ST=01, OP=01, 5-bit PHY, 5-bit REG, TA=10, and 16-bit data, MSB first. MDC toggles every divider+1 source clock cycles and is 0 when idle; MDIO is driven throughout the write frame and released upon completion.",
+      "sampling": "Respect this item's asynchronous/combinational/pre-handshake-edge and post-output-edge windows respectively; do not skip valid X/Z.",
+      "checker": "Independent input-history oracle or independent relational comparison; must be capable of failing and have a nonzero trigger count.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectations/windows, or vacuous checker",
+        "1": "Correct setup and method, but only partial coverage of the actual domain or boundaries",
+        "2": "Set divider to 0/1/nonzero and address/data boundary values, issue write transactions, and use an independently assembled frame vector on MDC rising edges to check the 64 bits, adjacent MDC intervals, and release at completion."
+      }
+    },
+    {
+      "obligation_id": "R-dv-036-004-verification",
+      "requirement_ids": [
+        "R-dv-036-004"
+      ],
+      "description": "The read frame has OP=10, and the master releases MDIO during both TA bits and the 16 data bits; the second TA should be 0, otherwise an error is generated. The 16-bit data is shifted in on MDC rising edges. At 0x10, bit1 is sticky CPU completion and bit2 is sticky CPU error; writing 1 in byte 0 clears the corresponding bit individually, and other bits are not cleared; bit0 is actually busy AND init_active, and this bit remains 0 while the CPU is busy.",
+      "setup": "Have the peripheral drive multiple data values and normal/incorrect TA according to the protocol; wait for all 64 bits to complete, read back data and sticky bits, clear each separately with W1C and check that the other bit is retained; read status bit0 while the CPU is busy.",
+      "stimulus": "Have the peripheral drive multiple data values and normal/incorrect TA according to the protocol; wait for all 64 bits to complete, read back data and sticky bits, clear each separately with W1C and check that the other bit is retained; read status bit0 while the CPU is busy.",
+      "expected": "The read frame has OP=10, and the master releases MDIO during both TA bits and the 16 data bits; the second TA should be 0, otherwise an error is generated. The 16-bit data is shifted in on MDC rising edges. At 0x10, bit1 is sticky CPU completion and bit2 is sticky CPU error; writing 1 in byte 0 clears the corresponding bit individually, and other bits are not cleared; bit0 is actually busy AND init_active, and this bit remains 0 while the CPU is busy.",
+      "sampling": "Respect this item's asynchronous/combinational/pre-handshake-edge and post-output-edge windows respectively; do not skip valid X/Z.",
+      "checker": "Independent input-history oracle or independent relational comparison; must be capable of failing and have a nonzero trigger count.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectations/windows, or vacuous checker",
+        "1": "Correct setup and method, but only partial coverage of the actual domain or boundaries",
+        "2": "Have the peripheral drive multiple data values and normal/incorrect TA according to the protocol; wait for all 64 bits to complete, read back data and sticky bits, clear each separately with W1C and check that the other bit is retained; read status bit0 while the CPU is busy."
+      }
+    },
+    {
+      "obligation_id": "R-dv-036-005-verification",
+      "requirement_ids": [
+        "R-dv-036-005"
+      ],
+      "description": "A new START is ignored while a CPU transaction is busy; a START while initialization/polling owns the master is recorded as one pending request and executed after the master is idle and initialization has released it. Initialization is triggered by a rising edge of init_go_i and is active during configuration; init_go_i low cancels subsequent steps in the wait state.",
+      "setup": "Issue START again during a CPU frame and count complete frames, which should still total one; then request CPU transactions during initialization waiting and operation, and check that there is only one deferred CPU frame.",
+      "stimulus": "Issue START again during a CPU frame and count complete frames, which should still total one; then request CPU transactions during initialization waiting and operation, and check that there is only one deferred CPU frame.",
+      "expected": "A new START is ignored while a CPU transaction is busy; a START while initialization/polling owns the master is recorded as one pending request and executed after the master is idle and initialization has released it. Initialization is triggered by a rising edge of init_go_i and is active during configuration; init_go_i low cancels subsequent steps in the wait state.",
+      "sampling": "Respect this item's asynchronous/combinational/pre-handshake-edge and post-output-edge windows respectively; do not skip valid X/Z.",
+      "checker": "Independent input-history oracle or independent relational comparison; must be capable of failing and have a nonzero trigger count.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectations/windows, or vacuous checker",
+        "1": "Correct setup and method, but only partial coverage of the actual domain or boundaries",
+        "2": "Issue START again during a CPU frame and count complete frames, which should still total one; then request CPU transactions during initialization waiting and operation, and check that there is only one deferred CPU frame."
+      }
+    },
+    {
+      "obligation_id": "R-dv-036-006-verification",
+      "requirement_ids": [
+        "R-dv-036-006"
+      ],
+      "description": "After init_go_i rises, wait the default period, then first read PHY2 register 3 and require the upper 12 bits to be A23, otherwise fail. On success, in order, read MMD 0x1F address 006E and record bit11, read Clause22 register 10, then write that register with (old AND NOT(C400 OR (strap11?0800:0000))) OR 4000; read MMD address 0031 and write back old AND FF7F; read MMD address 0032 and write back (old AND FFFE) OR 0003; finally write MMD address 0086 with 0067, namely RX/TX delay codes 7/6. All numbers are hexadecimal. Each MMD indirect read or write sequentially writes Clause22 registers 0D=001F, 0E=target address, and 0D=401F, then finally reads or writes 0E. An incorrect TA causes initialization to fail.",
+      "setup": "Use a port-level PHY responder to supply correct/incorrect IDs and TA in separate cases, decode all configuration writes and independently verify the read-modify-write relationships and the 0x0067 delay value, without using internal probes.",
+      "stimulus": "Use a port-level PHY responder to supply correct/incorrect IDs and TA in separate cases, decode all configuration writes and independently verify the read-modify-write relationships and the 0x0067 delay value, without using internal probes.",
+      "expected": "After init_go_i rises, wait the default period, then first read PHY2 register 3 and require the upper 12 bits to be A23, otherwise fail. On success, in order, read MMD 0x1F address 006E and record bit11, read Clause22 register 10, then write that register with (old AND NOT(C400 OR (strap11?0800:0000))) OR 4000; read MMD address 0031 and write back old AND FF7F; read MMD address 0032 and write back (old AND FFFE) OR 0003; finally write MMD address 0086 with 0067, namely RX/TX delay codes 7/6. All numbers are hexadecimal. Each MMD indirect read or write sequentially writes Clause22 registers 0D=001F, 0E=target address, and 0D=401F, then finally reads or writes 0E. An incorrect TA causes initialization to fail.",
+      "sampling": "Respect this item's asynchronous/combinational/pre-handshake-edge and post-output-edge windows respectively; do not skip valid X/Z.",
+      "checker": "Independent input-history oracle or independent relational comparison; must be capable of failing and have a nonzero trigger count.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectations/windows, or vacuous checker",
+        "1": "Correct setup and method, but only partial coverage of the actual domain or boundaries",
+        "2": "Use a port-level PHY responder to supply correct/incorrect IDs and TA in separate cases, decode all configuration writes and independently verify the read-modify-write relationships and the 0x0067 delay value, without using internal probes."
+      }
+    },
+    {
+      "obligation_id": "R-dv-036-007-verification",
+      "requirement_ids": [
+        "R-dv-036-007"
+      ],
+      "description": "After successful initialization, done is held; first wait 1000 cycles before reading PHY register 0x11, then poll at intervals of INIT_POLL_CYCLES. On success, take bit10 as link, and map speed 15:14 and duplex 13 to the status register; a link change outputs a single-cycle change pulse. A polling error clears valid/link, and also emits change if the previous link=1. After init_go_i goes low, return to idle and clear link valid.",
+      "setup": "After completing valid initialization, respond with link0/1/1/0 and incorrect TA in sequence; check the change pulse width, done retention, and status bits relative to frame completion and subsequent source clocks.",
+      "stimulus": "After completing valid initialization, respond with link0/1/1/0 and incorrect TA in sequence; check the change pulse width, done retention, and status bits relative to frame completion and subsequent source clocks.",
+      "expected": "After successful initialization, done is held; first wait 1000 cycles before reading PHY register 0x11, then poll at intervals of INIT_POLL_CYCLES. On success, take bit10 as link, and map speed 15:14 and duplex 13 to the status register; a link change outputs a single-cycle change pulse. A polling error clears valid/link, and also emits change if the previous link=1. After init_go_i goes low, return to idle and clear link valid.",
+      "sampling": "Respect this item's asynchronous/combinational/pre-handshake-edge and post-output-edge windows respectively; do not skip valid X/Z.",
+      "checker": "Independent input-history oracle or independent relational comparison; must be capable of failing and have a nonzero trigger count.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectations/windows, or vacuous checker",
+        "1": "Correct setup and method, but only partial coverage of the actual domain or boundaries",
+        "2": "After completing valid initialization, respond with link0/1/1/0 and incorrect TA in sequence; check the change pulse width, done retention, and status bits relative to frame completion and subsequent source clocks."
+      }
+    }
+  ],
+  "stimulus_criteria": {
+    "R-dv-036-001-verification": [
+      {
+        "criterion_id": "R-dv-036-001-verification-domain",
+        "description": "After reset, send AW first, W first, and both simultaneously in separate cases, holding and then releasing B/R backpressure; after a reset during a partial transaction, confirm that an old address or data is not combined."
+      }
+    ],
+    "R-dv-036-002-verification": [
+      {
+        "criterion_id": "R-dv-036-002-verification-domain",
+        "description": "Write different values to each byte independently, perform zero-strobe writes and reserved-bit writes, and read back immediately; set PHY and REG to different values, and DATA different from divider."
+      }
+    ],
+    "R-dv-036-003-verification": [
+      {
+        "criterion_id": "R-dv-036-003-verification-domain",
+        "description": "Set divider to 0/1/nonzero and address/data boundary values, issue write transactions, and use an independently assembled frame vector on MDC rising edges to check the 64 bits, adjacent MDC intervals, and release at completion."
+      }
+    ],
+    "R-dv-036-004-verification": [
+      {
+        "criterion_id": "R-dv-036-004-verification-domain",
+        "description": "Have the peripheral drive multiple data values and normal/incorrect TA according to the protocol; wait for all 64 bits to complete, read back data and sticky bits, clear each separately with W1C and check that the other bit is retained; read status bit0 while the CPU is busy."
+      }
+    ],
+    "R-dv-036-005-verification": [
+      {
+        "criterion_id": "R-dv-036-005-verification-domain",
+        "description": "Issue START again during a CPU frame and count complete frames, which should still total one; then request CPU transactions during initialization waiting and operation, and check that there is only one deferred CPU frame."
+      }
+    ],
+    "R-dv-036-006-verification": [
+      {
+        "criterion_id": "R-dv-036-006-verification-domain",
+        "description": "Use a port-level PHY responder to supply correct/incorrect IDs and TA in separate cases, decode all configuration writes and independently verify the read-modify-write relationships and the 0x0067 delay value, without using internal probes."
+      }
+    ],
+    "R-dv-036-007-verification": [
+      {
+        "criterion_id": "R-dv-036-007-verification-domain",
+        "description": "After completing valid initialization, respond with link0/1/1/0 and incorrect TA in sequence; check the change pulse width, done retention, and status bits relative to frame completion and subsequent source clocks."
+      }
+    ]
+  },
+  "claim_impact_components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "issue_codes": [
+    "missing",
+    "partial",
+    "incorrect",
+    "illegal_setup",
+    "wrong_sampling",
+    "vacuous",
+    "self_oracle",
+    "contradiction",
+    "hallucination"
+  ],
+  "issue_grade_caps": {},
+  "aggregation": "five-component minimum; current semantic deduplicated claim precision"
+}

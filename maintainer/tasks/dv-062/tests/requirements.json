@@ -1,0 +1,133 @@
+{
+  "task_id": "dv-062",
+  "requirements": [
+    {
+      "requirement_id": "R-dv-062-001",
+      "title": "Per-cycle acceptance, order preservation, fixed latency, and bubbles",
+      "text": "An independent FP32 input is accepted on each rising edge when valid_i=1 and both rst_i and clear_i are 0; there is no ready or backpressure. Data advances every cycle, valid preserves order, and bubbles appear only as valid_o=0 in the corresponding output cycles.",
+      "timing": "After an input is accepted on rising edge n, the output is valid after the NBA update on edge n+44; the pre-edge monitor reads it on edge n+45.",
+      "boundary": "Consecutive inputs and valid_i=0 bubbles of arbitrary length are allowed; result_o and invalid_o are constrained only when valid_o=1.",
+      "interface": [
+        "clk_i",
+        "rst_i",
+        "clear_i",
+        "valid_i",
+        "data_i",
+        "invalid_i",
+        "valid_o",
+        "result_o",
+        "invalid_o"
+      ]
+    },
+    {
+      "requirement_id": "R-dv-062-002",
+      "title": "Synchronous reset and clear flush in-flight valid markers",
+      "text": "A rising edge on which rst_i or clear_i is high clears all in-flight valid markers; their logical OR takes priority over valid_i. The data and selection pipelines are not zeroed, so data in invalid cycles cannot be promised as reset values.",
+      "timing": "Assertion between edges imposes no asynchronous clearing obligation; valid_o is immediately 0 after an edge with reset/clear, and resumes with the fixed latency after acceptance restarts.",
+      "boundary": "rst and clear each act independently; even if valid_i is simultaneously high, no input is accepted on that edge. Old data may still change during invalid output cycles.",
+      "interface": [
+        "clk_i",
+        "rst_i",
+        "clear_i",
+        "valid_i",
+        "valid_o",
+        "result_o",
+        "invalid_o"
+      ]
+    },
+    {
+      "requirement_id": "R-dv-062-003",
+      "title": "NaN canonicalization and priority",
+      "text": "An input with either sign, any nonzero payload, and an all-1 exponent is a NaN; the output is the fixed canonical quiet NaN 0x7fc00000, and invalid_o is forced to 1, taking priority over the sign and input invalid.",
+      "timing": "Aligned with the corresponding input valid by the fixed latency; a flush cancels the token.",
+      "boundary": "Cover positive and negative signs, quiet/signaling, and different payloads; the NaN output bit pattern is fixed, and comparing only isNaN is not allowed.",
+      "interface": [
+        "data_i",
+        "invalid_i",
+        "valid_i",
+        "valid_o",
+        "result_o",
+        "invalid_o"
+      ]
+    },
+    {
+      "requirement_id": "R-dv-062-004",
+      "title": "Positive and negative infinity saturation and input invalid preservation",
+      "text": "+Inf outputs 1.0 (3f800000), and -Inf outputs +0 (00000000); infinity itself does not force invalid, and the flag equals invalid_i for that token.",
+      "timing": "The same latency and flushing rules apply as for ordinary tokens.",
+      "boundary": "Only an exponent of ff and a mantissa of 0 constitute Inf; the sign and NaN must be distinguished.",
+      "interface": [
+        "data_i",
+        "invalid_i",
+        "valid_i",
+        "valid_o",
+        "result_o",
+        "invalid_o"
+      ]
+    },
+    {
+      "requirement_id": "R-dv-062-005",
+      "title": "Zeros, subnormals, and quantization of very small magnitudes",
+      "text": "Both ±0 output 0.5 (3f000000). Finite magnitudes are first converted to Q5.16 for exponent fields 111..131; small magnitudes outside this range quantize to 0, so positive and negative subnormals and small normal numbers below the quantization resolution likewise output 0.5, with invalid preserved from the input.",
+      "timing": "Each input is quantized independently and then output after the fixed latency; bubbles do not change the numerical value.",
+      "boundary": "Q5.16 conversion truncates rather than rounds; there is no rule forcing invalid for positive subnormals or directly saturating negative subnormals to 0.",
+      "interface": [
+        "data_i",
+        "invalid_i",
+        "valid_i",
+        "valid_o",
+        "result_o",
+        "invalid_o"
+      ]
+    },
+    {
+      "requirement_id": "R-dv-062-006",
+      "title": "Fixed-point approximation in the finite domain and sign branches",
+      "text": "For 0<|x|<=16, the fixed implementation uses the quantized negative magnitude for the exp approximation, then computes 1+exp and an approximate reciprocal; positive inputs select the reciprocal, and negative inputs select exp times the reciprocal. The numerical contract is governed by the fixed-point/LUT and RNE behavior of the hidden source RTL, without claiming an exact real-valued sigmoid or any unproven ULP bound.",
+      "timing": "The numerical value is aligned with the sign and invalid of that input by the fixed latency; back-to-back sign changes must not cause cross-talk.",
+      "boundary": "The magnitude is truncated to Q5.16; both exp and reciprocal have 16 interpolation segments; normal negative-branch multiplication uses RNE. |x|=16 is still within the domain, and saturation occurs only above 16.",
+      "interface": [
+        "data_i",
+        "invalid_i",
+        "valid_i",
+        "valid_o",
+        "result_o",
+        "invalid_o"
+      ]
+    },
+    {
+      "requirement_id": "R-dv-062-007",
+      "title": "Strict saturation for large finite magnitudes",
+      "text": "For finite |x|>16, exp returns 0, so positive inputs output 1.0 and negative inputs output +0, while the flag still preserves invalid_i.",
+      "timing": "The ordinary fixed latency applies, and valid is determined only by the acceptance history and flushing.",
+      "boundary": "16 is the inclusive endpoint; large-magnitude saturation begins at 41800001/c1800001; the largest finite numbers are also legal inputs.",
+      "interface": [
+        "data_i",
+        "invalid_i",
+        "valid_i",
+        "valid_o",
+        "result_o",
+        "invalid_o"
+      ]
+    },
+    {
+      "requirement_id": "R-dv-062-008",
+      "title": "Per-token invalid propagation and FTZ parameter profiles",
+      "text": "Except that NaN forces invalid=1, legal finite inputs and Inf at the top level propagate invalid_i with the token; both FTZ=0/1 belong to this problem's profiles. FTZ controls only flushing of internal multiplication subnormal results to zero, whereas nonzero finite probabilities at this top level remain normal, so legal native inputs do not produce an expected numerical difference between profiles.",
+      "timing": "The flag must come from the same input token as the result and valid; it is checked only when valid_o=1.",
+      "boundary": "The native ports do not include rounding_i; submodule RUP/RDN or standalone tiny products cannot be treated as obligations for this problem.",
+      "interface": [
+        "clk_i",
+        "rst_i",
+        "clear_i",
+        "valid_i",
+        "data_i",
+        "invalid_i",
+        "valid_o",
+        "result_o",
+        "invalid_o"
+      ]
+    }
+  ],
+  "basis": "immutable input RTL and derived spec audit"
+}

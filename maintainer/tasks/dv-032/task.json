@@ -1,0 +1,219 @@
+{
+  "task_id": "dv-032",
+  "dut_top": "adbg_jsp_apb_module",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "backfill/adbg_jsp_pkg.sv",
+    "verilog/ahb3/adbg_jsp_apb_biu.sv",
+    "verilog/ahb3/adbg_jsp_apb_module.sv",
+    "verilog/core/adbg_jsp_module_core.sv",
+    "verilog/core/bytefifo.v",
+    "verilog/core/syncflop.v",
+    "verilog/core/syncreg.v"
+  ],
+  "rtl_compile_files": [
+    "backfill/adbg_jsp_pkg.sv",
+    "verilog/ahb3/adbg_jsp_apb_biu.sv",
+    "verilog/ahb3/adbg_jsp_apb_module.sv",
+    "verilog/core/adbg_jsp_module_core.sv",
+    "verilog/core/bytefifo.v",
+    "verilog/core/syncflop.v",
+    "verilog/core/syncreg.v"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "n1",
+    "n2",
+    "n3"
+  ],
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "PADDR",
+        "direction": "In",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "PCLK",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "PENABLE",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "PRDATA",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "PREADY",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "PRESETn",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "PSEL",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "PSLVERR",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "PWDATA",
+        "direction": "In",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "PWRITE",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "capture_dr_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "data_register_i",
+        "direction": "In",
+        "width": 64,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 63,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "int_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "module_select_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "module_tdo_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "rst_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "shift_dr_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "tck_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "tdi_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "top_inhibit_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "update_dr_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {},
+    "parser": "pyslang 12.1.0"
+  },
+  "parameter_profiles": [],
+  "reference_submission": "solution/reference",
+  "rtl_sources": [
+    "backfill/adbg_jsp_pkg.sv",
+    "verilog/ahb3/adbg_jsp_apb_biu.sv",
+    "verilog/ahb3/adbg_jsp_apb_module.sv",
+    "verilog/core/adbg_jsp_module_core.sv",
+    "verilog/core/bytefifo.v",
+    "verilog/core/syncflop.v",
+    "verilog/core/syncreg.v"
+  ],
+  "include_dirs": [
+    "backfill",
+    "support"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800
+}

@@ -1,0 +1,7 @@
+{
+  "backend": {
+    "type": "ssh",
+    "alias_env": "DVBENCH_SSH_ALIAS"
+  },
+  "transport_timeout_seconds": 120
+}

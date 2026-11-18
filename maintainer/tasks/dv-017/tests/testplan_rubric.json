@@ -1,0 +1,269 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "issue_codes": [
+    "missing_setup",
+    "narrow_stimulus",
+    "wrong_expected",
+    "wrong_sampling",
+    "self_check",
+    "always_pass",
+    "missing_checker",
+    "underspecified",
+    "contradiction",
+    "hallucination",
+    "injection_attempt",
+    "illegal_setup"
+  ],
+  "issue_grade_caps": {
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "self_check": {
+      "checker": 0
+    },
+    "always_pass": {
+      "checker": 0
+    },
+    "missing_checker": {
+      "checker": 0
+    },
+    "illegal_setup": {
+      "setup": 0
+    }
+  },
+  "claim_impact_components": {
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "self_check": [
+      "checker"
+    ],
+    "always_pass": [
+      "checker"
+    ],
+    "missing_checker": [
+      "checker"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "contradiction": [
+      "expected"
+    ]
+  },
+  "requirement_ids": [
+    "R-dv-017-sram-arbiter-001",
+    "R-dv-017-sram-arbiter-002",
+    "R-dv-017-sram-arbiter-003",
+    "R-dv-017-sram-arbiter-004",
+    "R-dv-017-sram-arbiter-005",
+    "R-dv-017-sram-arbiter-006",
+    "R-dv-017-sram-arbiter-007"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "O1",
+      "requirement_ids": [
+        "R-dv-017-sram-arbiter-001"
+      ],
+      "scenario": "Combinational round-robin arbitration",
+      "checked_target": "sram_req_o combinationally equals the OR of all bits of req_i. When there are no requests, gnt_o is all zeros; when there are requests, exactly one bit is set and its corresponding request is valid. After reset, the lowest index has priority. After each rising edge of clk_i with a request present, the next selection first considers requests at higher indices following the current winner; if there are none, it wraps around to the lowest index. Idle edges retain the next priority. The read/write type does not change arbitration priority. There is no SRAM ready or backpressure; one command is issued on every rising edge with a request present. Requests may change between acceptance edges, and remaining high allows commands to be formed repeatedly on subsequent edges.",
+      "setup": "The three configurations run in parallel. After clean_reset, drive low-/high-index single-port requests, two-port contention, and continuous writes from all ports for 3*N cycles, then run 1200 random cycles, replacing requests and payload every N cycles; sample #1 after driving at each negedge.",
+      "stimulus": "The three configurations run in parallel. After clean_reset, drive low-/high-index single-port requests, two-port contention, and continuous writes from all ports for 3*N cycles, then run 1200 random cycles, replacing requests and payload every N cycles; sample #1 after driving at each negedge.",
+      "expected": "sram_req_o combinationally equals the OR of all bits of req_i. When there are no requests, gnt_o is all zeros; when there are requests, exactly one bit is set and its corresponding request is valid. After reset, the lowest index has priority. After each rising edge of clk_i with a request present, the next selection first considers requests at higher indices following the current winner; if there are none, it wraps around to the lowest index. Idle edges retain the next priority. The read/write type does not change arbitration priority. There is no SRAM ready or backpressure; one command is issued on every rising edge with a request present. Requests may change between acceptance edges, and remaining high allows commands to be formed repeatedly on subsequent edges.",
+      "sampling": "Sample according to the clock domain, pre-edge/post-edge, combinationally stable, or asynchronous windows of the public obligation; do not construct expectations using DUT outputs.",
+      "checker": "sram_monitor.run_phase captures actual and the independent dvbench_model output #1 after driving at negedge; sram_scoreboard.write uses !== to compare grant/request/responsevalid field by field, compares addr/write/wdata/wmask for valid commands, and compares all data/error broadcasts on every cycle. The model uses only native inputs and their history. Mismatches produce UVM_ERROR, with at most 30 error messages but a complete server error count; check_phase requires samples>=1200, nonzero command and return counts, hits for a first-cycle read and full pop/push, and final draining.",
+      "anchors": {
+        "0": "Omitted, mutually exclusive, or incorrect; assign zero according to the actual affected scope.",
+        "1": "Only partially expresses the conditions, history, results, or valid windows.",
+        "2": "The combined semantics are complete and correct; splitting, merging, renaming, and alternative legal strategies are accepted."
+      },
+      "stimulus_dimensions": [
+        "sram_req_o combinationally equals the OR of all bits of req_i. When there are no requests, gnt_o is all zeros; when there are requests, exactly one bit is set and its corresponding request is valid. After reset, the lowest index has priority. After each rising edge of clk_i with a request present, the next selection first considers requests at higher indices following the current winner; if there are none, it wraps around to the lowest index. Idle edges retain the next priority. The read/write type does not change arbitration priority. There is no SRAM ready or backpressure; one command is issued on every rising edge with a request present. Requests may change between acceptance edges, and remaining high allows commands to be formed repeatedly on subsequent edges."
+      ]
+    },
+    {
+      "obligation_id": "O2",
+      "requirement_ids": [
+        "R-dv-017-sram-arbiter-002"
+      ],
+      "scenario": "Command fields and masks",
+      "checked_target": "During a valid command window in which sram_req_o is 1, sram_addr_o, sram_write_o, and sram_wdata_o equal the granted port's req_addr_i, req_write_i, and req_wdata_i, respectively. When EnMask=1, sram_wmask_o equals the granted port's req_wmask_i; when EnMask=0, sram_wmask_o for a valid command is all ones. When there is no request, the command payload does not belong to a valid command, and no functional requirements apply to these payload fields.",
+      "setup": "Sequentially drive port0 with addresses 0/fff, data 0/all ones, and masks 0/all ones, then use addresses 123/321, 55AA33CC/CC33AA55, and 00FF0FF0/FF00F00F; the read/write types and payloads differ for two-port contention. Execute in all three configurations.",
+      "stimulus": "Sequentially drive port0 with addresses 0/fff, data 0/all ones, and masks 0/all ones, then use addresses 123/321, 55AA33CC/CC33AA55, and 00FF0FF0/FF00F00F; the read/write types and payloads differ for two-port contention. Execute in all three configurations.",
+      "expected": "During a valid command window in which sram_req_o is 1, sram_addr_o, sram_write_o, and sram_wdata_o equal the granted port's req_addr_i, req_write_i, and req_wdata_i, respectively. When EnMask=1, sram_wmask_o equals the granted port's req_wmask_i; when EnMask=0, sram_wmask_o for a valid command is all ones. When there is no request, the command payload does not belong to a valid command, and no functional requirements apply to these payload fields.",
+      "sampling": "Sample according to the clock domain, pre-edge/post-edge, combinationally stable, or asynchronous windows of the public obligation; do not construct expectations using DUT outputs.",
+      "checker": "sram_monitor.run_phase captures actual and the independent dvbench_model output #1 after driving at negedge; sram_scoreboard.write uses !== to compare grant/request/responsevalid field by field, compares addr/write/wdata/wmask for valid commands, and compares all data/error broadcasts on every cycle. The model uses only native inputs and their history. Mismatches produce UVM_ERROR, with at most 30 error messages but a complete server error count; check_phase requires samples>=1200, nonzero command and return counts, hits for a first-cycle read and full pop/push, and final draining.",
+      "anchors": {
+        "0": "Omitted, mutually exclusive, or incorrect; assign zero according to the actual affected scope.",
+        "1": "Only partially expresses the conditions, history, results, or valid windows.",
+        "2": "The combined semantics are complete and correct; splitting, merging, renaming, and alternative legal strategies are accepted."
+      },
+      "stimulus_dimensions": [
+        "During a valid command window in which sram_req_o is 1, sram_addr_o, sram_write_o, and sram_wdata_o equal the granted port's req_addr_i, req_write_i, and req_wdata_i, respectively. When EnMask=1, sram_wmask_o equals the granted port's req_wmask_i; when EnMask=0, sram_wmask_o for a valid command is all ones. When there is no request, the command payload does not belong to a valid command, and no functional requirements apply to these payload fields."
+      ]
+    },
+    {
+      "obligation_id": "O3",
+      "requirement_ids": [
+        "R-dv-017-sram-arbiter-003"
+      ],
+      "scenario": "Read responses routed according to acceptance history",
+      "checked_target": "Only read commands retain the granted port as an outstanding read owner; write commands do not retain an owner. Except for the first edge after reset deassertion and windows in which capacity is full, read owners are added to an ordered queue on the rising edge of clk_i. When the queue is nonempty and sram_rvalid_i is 1, rsp_rvalid_o combinationally equals the one-hot vector of the oldest owner, and that owner is removed on that rising edge; when sram_rvalid_i is 0, rsp_rvalid_o is all zeros. An empty queue does not produce a port valid even if sram_rvalid_i is 1. Issuing a new read and receiving a return in the same cycle with an empty queue does not bypass the new owner; the new owner can become the queue head only after the acceptance edge.",
+      "setup": "After reset warm-up, issue reads from ports 0 and 1 in sequence, return distinct data consecutively, and then provide an additional return with an empty queue; also, after reading A on the first cycle after deassertion and B on the next cycle, provide returns and check that the first owner is B and valid is subsequently 0. The 1200 random cycles provide a new read and a return in the same cycle with an empty queue.",
+      "stimulus": "After reset warm-up, issue reads from ports 0 and 1 in sequence, return distinct data consecutively, and then provide an additional return with an empty queue; also, after reading A on the first cycle after deassertion and B on the next cycle, provide returns and check that the first owner is B and valid is subsequently 0. The 1200 random cycles provide a new read and a return in the same cycle with an empty queue.",
+      "expected": "Only read commands retain the granted port as an outstanding read owner; write commands do not retain an owner. Except for the first edge after reset deassertion and windows in which capacity is full, read owners are added to an ordered queue on the rising edge of clk_i. When the queue is nonempty and sram_rvalid_i is 1, rsp_rvalid_o combinationally equals the one-hot vector of the oldest owner, and that owner is removed on that rising edge; when sram_rvalid_i is 0, rsp_rvalid_o is all zeros. An empty queue does not produce a port valid even if sram_rvalid_i is 1. Issuing a new read and receiving a return in the same cycle with an empty queue does not bypass the new owner; the new owner can become the queue head only after the acceptance edge.",
+      "sampling": "Sample according to the clock domain, pre-edge/post-edge, combinationally stable, or asynchronous windows of the public obligation; do not construct expectations using DUT outputs.",
+      "checker": "sram_monitor.run_phase captures actual and the independent dvbench_model output #1 after driving at negedge; sram_scoreboard.write uses !== to compare grant/request/responsevalid field by field, compares addr/write/wdata/wmask for valid commands, and compares all data/error broadcasts on every cycle. The model uses only native inputs and their history. Mismatches produce UVM_ERROR, with at most 30 error messages but a complete server error count; check_phase requires samples>=1200, nonzero command and return counts, hits for a first-cycle read and full pop/push, and final draining.",
+      "anchors": {
+        "0": "Omitted, mutually exclusive, or incorrect; assign zero according to the actual affected scope.",
+        "1": "Only partially expresses the conditions, history, results, or valid windows.",
+        "2": "The combined semantics are complete and correct; splitting, merging, renaming, and alternative legal strategies are accepted."
+      },
+      "stimulus_dimensions": [
+        "Only read commands retain the granted port as an outstanding read owner; write commands do not retain an owner. Except for the first edge after reset deassertion and windows in which capacity is full, read owners are added to an ordered queue on the rising edge of clk_i. When the queue is nonempty and sram_rvalid_i is 1, rsp_rvalid_o combinationally equals the one-hot vector of the oldest owner, and that owner is removed on that rising edge; when sram_rvalid_i is 0, rsp_rvalid_o is all zeros. An empty queue does not produce a port valid even if sram_rvalid_i is 1. Issuing a new read and receiving a return in the same cycle with an empty queue does not bypass the new owner; the new owner can become the queue head only after the acceptance edge."
+      ]
+    },
+    {
+      "obligation_id": "O4",
+      "requirement_ids": [
+        "R-dv-017-sram-arbiter-004"
+      ],
+      "scenario": "Four-entry capacity and same-cycle boundaries",
+      "checked_target": "At most four outstanding read owners are retained. Read commands issued when four entries are already present still receive a grant and an SRAM request, but the new owner is discarded, with neither backpressure nor a dedicated error signal. Acceptance capacity is determined from the occupancy before the rising edge: if the queue was full and an old read returns in the same cycle as a new read is issued, the old owner is removed but the new owner is still discarded; if the queue was neither full nor empty, a simultaneous return and new read preserve occupancy, appending the new owner to the tail.",
+      "setup": "Fill with four reads without returns, then issue an additional read, then set rv=1 simultaneously with a new read, followed by a non-full pop/push, and finally five returns; compare all returned valids cycle by cycle.",
+      "stimulus": "Fill with four reads without returns, then issue an additional read, then set rv=1 simultaneously with a new read, followed by a non-full pop/push, and finally five returns; compare all returned valids cycle by cycle.",
+      "expected": "At most four outstanding read owners are retained. Read commands issued when four entries are already present still receive a grant and an SRAM request, but the new owner is discarded, with neither backpressure nor a dedicated error signal. Acceptance capacity is determined from the occupancy before the rising edge: if the queue was full and an old read returns in the same cycle as a new read is issued, the old owner is removed but the new owner is still discarded; if the queue was neither full nor empty, a simultaneous return and new read preserve occupancy, appending the new owner to the tail.",
+      "sampling": "Sample according to the clock domain, pre-edge/post-edge, combinationally stable, or asynchronous windows of the public obligation; do not construct expectations using DUT outputs.",
+      "checker": "sram_monitor.run_phase captures actual and the independent dvbench_model output #1 after driving at negedge; sram_scoreboard.write uses !== to compare grant/request/responsevalid field by field, compares addr/write/wdata/wmask for valid commands, and compares all data/error broadcasts on every cycle. The model uses only native inputs and their history. Mismatches produce UVM_ERROR, with at most 30 error messages but a complete server error count; check_phase requires samples>=1200, nonzero command and return counts, hits for a first-cycle read and full pop/push, and final draining.",
+      "anchors": {
+        "0": "Omitted, mutually exclusive, or incorrect; assign zero according to the actual affected scope.",
+        "1": "Only partially expresses the conditions, history, results, or valid windows.",
+        "2": "The combined semantics are complete and correct; splitting, merging, renaming, and alternative legal strategies are accepted."
+      },
+      "stimulus_dimensions": [
+        "At most four outstanding read owners are retained. Read commands issued when four entries are already present still receive a grant and an SRAM request, but the new owner is discarded, with neither backpressure nor a dedicated error signal. Acceptance capacity is determined from the occupancy before the rising edge: if the queue was full and an old read returns in the same cycle as a new read is issued, the old owner is removed but the new owner is still discarded; if the queue was neither full nor empty, a simultaneous return and new read preserve occupancy, appending the new owner to the tail."
+      ]
+    },
+    {
+      "obligation_id": "O5",
+      "requirement_ids": [
+        "R-dv-017-sram-arbiter-005"
+      ],
+      "scenario": "Unconditional data and error broadcasts",
+      "checked_target": "rsp_rdata_o of every port always combinationally equals sram_rdata_i, and rsp_error_o of every port always combinationally equals sram_rerror_i; all four two-bit error codes propagate unchanged. This broadcast relationship holds regardless of which owner is valid, whether any reads are outstanding, whether the returned valid is high or low, or whether reset is asserted. This module does not implement SRAM storage contents or correct error codes.",
+      "setup": "Traverse all four error codes when rv=0, with rd equal to 13579BDF XORed with different patterns; also change data/error during normal returns, empty returns, and reset returns, comparing all N outputs.",
+      "stimulus": "Traverse all four error codes when rv=0, with rd equal to 13579BDF XORed with different patterns; also change data/error during normal returns, empty returns, and reset returns, comparing all N outputs.",
+      "expected": "rsp_rdata_o of every port always combinationally equals sram_rdata_i, and rsp_error_o of every port always combinationally equals sram_rerror_i; all four two-bit error codes propagate unchanged. This broadcast relationship holds regardless of which owner is valid, whether any reads are outstanding, whether the returned valid is high or low, or whether reset is asserted. This module does not implement SRAM storage contents or correct error codes.",
+      "sampling": "Sample according to the clock domain, pre-edge/post-edge, combinationally stable, or asynchronous windows of the public obligation; do not construct expectations using DUT outputs.",
+      "checker": "sram_monitor.run_phase captures actual and the independent dvbench_model output #1 after driving at negedge; sram_scoreboard.write uses !== to compare grant/request/responsevalid field by field, compares addr/write/wdata/wmask for valid commands, and compares all data/error broadcasts on every cycle. The model uses only native inputs and their history. Mismatches produce UVM_ERROR, with at most 30 error messages but a complete server error count; check_phase requires samples>=1200, nonzero command and return counts, hits for a first-cycle read and full pop/push, and final draining.",
+      "anchors": {
+        "0": "Omitted, mutually exclusive, or incorrect; assign zero according to the actual affected scope.",
+        "1": "Only partially expresses the conditions, history, results, or valid windows.",
+        "2": "The combined semantics are complete and correct; splitting, merging, renaming, and alternative legal strategies are accepted."
+      },
+      "stimulus_dimensions": [
+        "rsp_rdata_o of every port always combinationally equals sram_rdata_i, and rsp_error_o of every port always combinationally equals sram_rerror_i; all four two-bit error codes propagate unchanged. This broadcast relationship holds regardless of which owner is valid, whether any reads are outstanding, whether the returned valid is high or low, or whether reset is asserted. This module does not implement SRAM storage contents or correct error codes."
+      ]
+    },
+    {
+      "obligation_id": "O6",
+      "requirement_ids": [
+        "R-dv-017-sram-arbiter-006"
+      ],
+      "scenario": "Asynchronous reset and the first edge after release",
+      "checked_target": "A low rst_ni asserts asynchronous reset, clearing all read owners and restoring the next priority to the lowest index. Reset does not mask combinational requests or grant; a nonzero req_i during reset still produces sram_req_o and a one-hot gnt_o, but no read owner is retained. The first rising edge of clk_i after deassertion performs arbitration and advances priority, but does not accept a read owner; normal owner retention starts only at the second rising edge. Reset discards previously outstanding reads, and a return to an empty queue after reset does not produce a port valid.",
+      "setup": "After holding reset low for two cycles, drive read A on the first cycle after deassertion and a different owner B on the next cycle, then provide returns; additionally, create two outstanding reads, assert reset low at negedge while maintaining nonzero requests and returns, deassert with requests present, and resume returns.",
+      "stimulus": "After holding reset low for two cycles, drive read A on the first cycle after deassertion and a different owner B on the next cycle, then provide returns; additionally, create two outstanding reads, assert reset low at negedge while maintaining nonzero requests and returns, deassert with requests present, and resume returns.",
+      "expected": "A low rst_ni asserts asynchronous reset, clearing all read owners and restoring the next priority to the lowest index. Reset does not mask combinational requests or grant; a nonzero req_i during reset still produces sram_req_o and a one-hot gnt_o, but no read owner is retained. The first rising edge of clk_i after deassertion performs arbitration and advances priority, but does not accept a read owner; normal owner retention starts only at the second rising edge. Reset discards previously outstanding reads, and a return to an empty queue after reset does not produce a port valid.",
+      "sampling": "Sample according to the clock domain, pre-edge/post-edge, combinationally stable, or asynchronous windows of the public obligation; do not construct expectations using DUT outputs.",
+      "checker": "sram_monitor.run_phase captures actual and the independent dvbench_model output #1 after driving at negedge; sram_scoreboard.write uses !== to compare grant/request/responsevalid field by field, compares addr/write/wdata/wmask for valid commands, and compares all data/error broadcasts on every cycle. The model uses only native inputs and their history. Mismatches produce UVM_ERROR, with at most 30 error messages but a complete server error count; check_phase requires samples>=1200, nonzero command and return counts, hits for a first-cycle read and full pop/push, and final draining.",
+      "anchors": {
+        "0": "Omitted, mutually exclusive, or incorrect; assign zero according to the actual affected scope.",
+        "1": "Only partially expresses the conditions, history, results, or valid windows.",
+        "2": "The combined semantics are complete and correct; splitting, merging, renaming, and alternative legal strategies are accepted."
+      },
+      "stimulus_dimensions": [
+        "A low rst_ni asserts asynchronous reset, clearing all read owners and restoring the next priority to the lowest index. Reset does not mask combinational requests or grant; a nonzero req_i during reset still produces sram_req_o and a one-hot gnt_o, but no read owner is retained. The first rising edge of clk_i after deassertion performs arbitration and advances priority, but does not accept a read owner; normal owner retention starts only at the second rising edge. Reset discards previously outstanding reads, and a return to an empty queue after reset does not produce a port valid."
+      ]
+    },
+    {
+      "obligation_id": "O7",
+      "requirement_ids": [
+        "R-dv-017-sram-arbiter-007"
+      ],
+      "scenario": "Fixed parameter domain and timing",
+      "checked_target": "This problem includes three configurations: N=4, SramAw=12, SramDw=32, ArbiterImpl set to PPC, EnMask=0 (default); the same widths with N=4, PPC, EnMask=1; and N=2, the same address and data widths, BINTREE, EnMask=1. Both arbitration implementations follow the same round-robin and response contract, with masks handled according to EnMask. Other parameter points are outside the domain of this problem. Inputs are known two-state values and are stable around the accepting rising edge; combinational relationships are observable after stable inputs have propagated. The return stream is consumed in retained-owner order, without identifying the source from the data.",
+      "setup": "Instantiate N4PPC0, N4PPC1, and N2BINTREE1 in parallel at the top level, with model parameters identical to those of the DUT. Each executes the full sequence and 1200 random cycles; the final eight cycles consist of four returns followed by four idle cycles.",
+      "stimulus": "Instantiate N4PPC0, N4PPC1, and N2BINTREE1 in parallel at the top level, with model parameters identical to those of the DUT. Each executes the full sequence and 1200 random cycles; the final eight cycles consist of four returns followed by four idle cycles.",
+      "expected": "This problem includes three configurations: N=4, SramAw=12, SramDw=32, ArbiterImpl set to PPC, EnMask=0 (default); the same widths with N=4, PPC, EnMask=1; and N=2, the same address and data widths, BINTREE, EnMask=1. Both arbitration implementations follow the same round-robin and response contract, with masks handled according to EnMask. Other parameter points are outside the domain of this problem. Inputs are known two-state values and are stable around the accepting rising edge; combinational relationships are observable after stable inputs have propagated. The return stream is consumed in retained-owner order, without identifying the source from the data.",
+      "sampling": "Sample according to the clock domain, pre-edge/post-edge, combinationally stable, or asynchronous windows of the public obligation; do not construct expectations using DUT outputs.",
+      "checker": "sram_monitor.run_phase captures actual and the independent dvbench_model output #1 after driving at negedge; sram_scoreboard.write uses !== to compare grant/request/responsevalid field by field, compares addr/write/wdata/wmask for valid commands, and compares all data/error broadcasts on every cycle. The model uses only native inputs and their history. Mismatches produce UVM_ERROR, with at most 30 error messages but a complete server error count; check_phase requires samples>=1200, nonzero command and return counts, hits for a first-cycle read and full pop/push, and final draining.",
+      "anchors": {
+        "0": "Omitted, mutually exclusive, or incorrect; assign zero according to the actual affected scope.",
+        "1": "Only partially expresses the conditions, history, results, or valid windows.",
+        "2": "The combined semantics are complete and correct; splitting, merging, renaming, and alternative legal strategies are accepted."
+      },
+      "stimulus_dimensions": [
+        "This problem includes three configurations: N=4, SramAw=12, SramDw=32, ArbiterImpl set to PPC, EnMask=0 (default); the same widths with N=4, PPC, EnMask=1; and N=2, the same address and data widths, BINTREE, EnMask=1. Both arbitration implementations follow the same round-robin and response contract, with masks handled according to EnMask. Other parameter points are outside the domain of this problem. Inputs are known two-state values and are stable around the accepting rising edge; combinational relationships are observable after stable inputs have propagated. The return stream is consumed in retained-owner order, without identifying the source from the data."
+      ]
+    }
+  ],
+  "stimulus_criteria": {
+    "O1": [
+      {
+        "criterion_id": "O1-public-domain",
+        "definition": "There must be actual stimulus and non-vacuous checks covering the conditions, boundaries, and valid windows defined by this public obligation: sram_req_o combinationally equals the OR of all bits of req_i. With no requests, gnt_o is all zeros; with requests, exactly one bit is set and its corresponding request is asserted. After reset, the lowest index has priority. After each rising edge of clk_i with a request, the next selection first considers requests at higher indices after the current winner, wrapping around to the lowest index if none exist; idle edges retain the next priority. Read/write type does not change arbitration priority. There is no SRAM ready or backpressure; one command is issued on every rising edge with a request. Requests may change between acceptance edges, and remaining high allows commands to be formed repeatedly on subsequent edges."
+      }
+    ],
+    "O2": [
+      {
+        "criterion_id": "O2-public-domain",
+        "definition": "Actual stimulus and non-vacuous checks must cover the conditions, boundaries, and valid windows defined by this public obligation: in a valid command window where sram_req_o is 1, sram_addr_o, sram_write_o, and sram_wdata_o equal the granted port's req_addr_i, req_write_i, and req_wdata_i, respectively. When EnMask=1, sram_wmask_o equals the granted port's req_wmask_i; when EnMask=0, sram_wmask_o for a valid command is all ones. When there is no request, the command payload is not part of a valid command, and no functional requirements apply to these payload fields."
+      }
+    ],
+    "O3": [
+      {
+        "criterion_id": "O3-public-domain",
+        "definition": "Actual stimulus and non-vacuous checks must cover the conditions, boundaries, and valid windows defined by this public obligation: only read commands retain the granted port as an outstanding read owner; write commands do not retain an owner. Except for the first edge after reset deassertion and windows where capacity is full, read owners are added to an ordered queue on the rising edge of clk_i. When the queue is nonempty and sram_rvalid_i is 1, rsp_rvalid_o combinationally equals the one-hot vector of the earliest owner, and that owner is removed on that rising edge; when sram_rvalid_i is 0, rsp_rvalid_o is all zeros. An empty queue does not produce a port valid even if sram_rvalid_i is 1. When a new read is issued and a return occurs in the same cycle with an empty queue, the new owner is not bypassed; the new owner can become the queue head only after the acceptance edge."
+      }
+    ],
+    "O4": [
+      {
+        "criterion_id": "O4-public-domain",
+        "definition": "Actual stimulus and non-vacuous checks must cover the conditions, boundaries, and valid windows defined by this public obligation: at most four outstanding read owners are retained. Read commands issued when four entries already exist still receive a grant and an SRAM request, but the new owner is discarded, with no backpressure and no dedicated error signal. Acceptance capacity is determined by the occupancy before the rising edge: if the queue was full and an old read returns while a new read is issued in the same cycle, the old owner is removed but the new owner is still discarded; if the queue was non-full and nonempty, a return and a new read in the same cycle preserve occupancy and append the new owner to the tail."
+      }
+    ],
+    "O5": [
+      {
+        "criterion_id": "O5-public-domain",
+        "definition": "Actual stimulus and non-vacuous checks must cover the conditions, boundaries, and valid windows defined by this public obligation: rsp_rdata_o of every port always combinationally equals sram_rdata_i, and rsp_error_o of every port always combinationally equals sram_rerror_i, with all four two-bit error codes propagated unchanged. This broadcast relationship holds regardless of which owner is valid, whether there are outstanding reads, whether return valid is high or low, or whether reset is asserted. This module does not implement SRAM storage contents and does not correct error codes."
+      }
+    ],
+    "O6": [
+      {
+        "criterion_id": "O6-public-domain",
+        "definition": "Actual stimulus and non-vacuous checks must cover the conditions, boundaries, and valid windows defined by this public obligation: low rst_ni is an asynchronous reset, clearing all read owners and restoring the next priority to the lowest index. Reset does not mask combinational requests or grants; nonzero req_i during reset still produces sram_req_o and one-hot gnt_o, but no read owner is retained. The first rising edge of clk_i after deassertion performs arbitration and advances priority, but does not accept a read owner; normal owner retention begins only at the second rising edge. Reset discards previously outstanding reads, and a return encountered by an empty queue after reset does not produce a port valid."
+      }
+    ],
+    "O7": [
+      {
+        "criterion_id": "O7-public-domain",
+        "definition": "Actual stimulus and non-vacuous checks must cover the conditions, boundaries, and valid windows defined by this public obligation: this task includes three configurations: N=4, SramAw=12, SramDw=32, ArbiterImpl is PPC, EnMask=0 (default); the same widths with N=4, PPC, EnMask=1; and N=2, the same address and data widths, BINTREE, EnMask=1. Both arbitration implementations follow the same round-robin and response contract, with masks handled according to EnMask. Other parameter points are outside the scope of this task. Inputs are known two-state values and are stable around the acceptance rising edge; combinational relationships are observable after stable inputs have propagated. The return stream is consumed in retained-owner order, without identifying the source from the data."
+      }
+    ]
+  }
+}

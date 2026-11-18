@@ -1,0 +1,254 @@
+{
+  "requirement_ids": [
+    "R-dv-029-001",
+    "R-dv-029-002",
+    "R-dv-029-003",
+    "R-dv-029-004",
+    "R-dv-029-005",
+    "R-dv-029-006",
+    "R-dv-029-007",
+    "R-dv-029-008",
+    "R-dv-029-009"
+  ],
+  "atoms": [
+    {
+      "atom_id": "A-001",
+      "requirement_ids": [
+        "R-dv-029-001"
+      ],
+      "definition": "i_nRst is synchronous active-low; only source rising edges clear active state, beat count, busy flag, bank/index, write stencil, etc. Colors, addresses, read caches, and masks that are not reset must be established by legal transactions before use. fifoFull/fifoComplete are undriven and constantly Z in functional simulation; they do not indicate the existence of a command FIFO.",
+      "timing": "Bus outputs are combinational functions of the current state/inputs and may be sampled before the edge after inputs have been stable for 1ns; sequential state updates on the gpuClk edge.",
+      "boundary": "Fix all parameters to their defaults only; memory commands, TEX, CLUT, and background transactions are all in scope. Addresses/data have transaction meaning only within the corresponding req/write/completion windows.",
+      "anchors": {
+        "0": "Missing or explicitly contradictory to this object, history, or valid window",
+        "1": "Correctly describes some conditions or subdomains, but still lacks: Fix all parameters at their defaults only; memory commands, TEX, CLUT, and background transactions are all in scope. Addresses/data have transaction meaning only in the corresponding req/write/completion windows.",
+        "2": "The full JSON collectively expresses in full: i_nRst is synchronous active-low; only source rising edges clear the active state, beat count, busy flag, bank/index, write stencil, etc. Unreset colors, addresses, read caches, and masks must be established by legal transactions before use. fifoFull/fifoComplete are undriven and remain Z in functional simulation; they do not indicate the existence of a command FIFO. Bus outputs are combinational functions of the current state/inputs and may be sampled before the edge after inputs have been stable for 1ns; sequential state updates at the gpuClk edge. Fix all parameters at their defaults only; memory commands, TEX, CLUT, and background transactions are all in scope. Addresses/data have transaction meaning only in the corresponding req/write/completion windows."
+      }
+    },
+    {
+      "atom_id": "A-002",
+      "requirement_ids": [
+        "R-dv-029-002"
+      ],
+      "definition": "When idle, initiate a request only when ack_i=0, prioritizing nonzero memoryWriteCommand, then a saveBGBlock transition from 0 to nonzero with a value of 2/3 or 1 with blending, then CLUT, and finally TEX. On the first beat, req=1; the command address is command21:7 shifted left by 5, the CLUT address is shifted left by 5, and TEX selects the L address, otherwise R, shifted left by 3; the first background beat address is 0. On the first beat, wrt_o=0; cnt for command 1 is 0, for other legal commands and BG/CLUT it is 7, and for TEX it is 1.",
+      "timing": "Request selection is the combinational value before the edge; the rising edge latches the active transaction; subsequent cnt defaults to 0.",
+      "boundary": "No request is issued while idle with ack high; simultaneous L/R addresses select L, but the completion side is latched separately according to the R request; holding a nonzero command initiates it again during a later idle period.",
+      "anchors": {
+        "0": "Missing or explicitly contradictory to this object, history, or valid window",
+        "1": "Correctly describes some conditions or subdomains, but still lacks: No request is issued while idle with ack high; simultaneous L/R addresses select L, but the completion side is latched separately according to the R request; holding a nonzero command causes it to be initiated again in a subsequent idle period.",
+        "2": "The full JSON collectively expresses in full: While idle, a request is initiated only when ack_i=0, with priority given to nonzero memoryWriteCommand, then a saveBGBlock transition from 0 to nonzero with a value of 2/3 or a value of 1 with blending, then CLUT, and finally TEX. On the first beat req=1; the command address is command21:7 shifted left by 5, the CLUT address is shifted left by 5, and TEX selects the L address, otherwise R, shifted left by 3; the background first-beat address is 0. On the first beat wrt_o=0; cnt for command 1 is 0, for the other legal commands and BG/CLUT it is 7, and for TEX it is 1. Request selection is a pre-edge combinational value, and the active transaction is latched on the rising edge; subsequent cnt defaults to 0. No request is issued while idle with ack high; simultaneous L/R addresses select L, but the completion side is latched separately according to the R request; holding a nonzero command causes it to be initiated again in a subsequent idle period."
+      }
+    },
+    {
+      "atom_id": "A-003",
+      "requirement_ids": [
+        "R-dv-029-003"
+      ],
+      "definition": "After entering the active state, each edge with ack_i=1 advances the beat index, and req remains 1; when ack_i=0, req is low in that cycle and a return to idle or the subsequent BG phase is scheduled for the next edge. Low ack ends the transaction rather than waiting indefinitely. The low bits of the active address follow beat×4; the low 3 beat bits wrap modulo 8, with no automatic length-based stop.",
+      "timing": "Stabilize ack during the low phase first; check the current beat address before the edge and the advanced outputs after the edge; cnt has length meaning only on the first beat.",
+      "boundary": "ack going low early at any beat, standard 1/2/8 beats, and wraparound beyond 8 beats; do not count external timeouts as error detection.",
+      "anchors": {
+        "0": "Missing or explicitly contradictory to this object, history, or valid window",
+        "1": "Correctly describes some conditions or subdomains, but still lacks: ack going low early at any beat, standard 1/2/8 beats, and wraparound beyond 8 beats; do not count external timeouts as error detection.",
+        "2": "The full JSON collectively expresses in full: After entering the active state, each edge with ack_i=1 advances the beat index, and req remains 1; when ack_i=0, req is low in the current cycle and a return to idle or a subsequent BG phase is scheduled for the next edge. Low ack ends the transaction rather than waiting indefinitely. The active address low bits follow beat×4, the low 3 bits of beat are modulo 8, and there is no automatic length-based stop. ack first stabilizes during the low phase; check the current beat address before the edge and the advanced outputs after the edge; cnt has length meaning only on the first beat. ack going low early at any beat, standard 1/2/8 beats, and wraparound beyond 8 beats; do not count external timeouts as error detection."
+      }
+    },
+    {
+      "atom_id": "A-004",
+      "requirement_ids": [
+        "R-dv-029-004"
+      ],
+      "definition": "A command with low 3 bits equal to 1 is a pixel-pair write: field 55:40 is the low 16-bit color, 39:24 is the high 16-bit color, 23:22 gives the validity of the two halfwords, and 6:4 is the pair index; the active write address is the latched block address plus pair×4, and data is {high color,low color}. Command 2 fills 8 words, replicating color 55:40 into both halfwords, with the mask fully valid and the active address advancing by beat×4. Each halfword mask expands into two sel bits.",
+      "timing": "Colors and masks are latched on the initiation edge; while active with ack high, wrt=1; the first beat still uses the default read-direction value.",
+      "boundary": "Colors all 0/all 1/distinct, masks 00/01/10/11, pair 0/7, first and last blocks; changes to command inputs during activity do not replace the latched colors.",
+      "anchors": {
+        "0": "Missing or explicitly contradictory to this object, history, or valid window",
+        "1": "Correctly describes some conditions or subdomains, but still lacks: Colors all 0/all 1/distinct, mask00/01/10/11, pair0/7, first and last block; changes to command inputs during activity do not replace latched colors.",
+        "2": "The full JSON collectively expresses in full: A command whose low 3 bits are 1 writes a pixel pair; field 55:40 is the low 16-bit color, 39:24 is the high 16-bit color, 23:22 specifies validity of the two halfwords, and 6:4 is the pair index; the active write address is the latched block address plus pair×4, with data {high color,low color}. Command 2 fills 8 words, replicating color 55:40 into both halfwords, with all mask bits valid and active addresses advancing by beat×4. Each halfword mask expands to two sel bits. Colors and masks are latched at the initiating edge; during activity with ack high, wrt=1; the first beat still uses the read-direction default. Colors all 0/all 1/distinct, mask00/01/10/11, pair0/7, first and last block; changes to command inputs during activity do not replace latched colors."
+      }
+    },
+    {
+      "atom_id": "A-005",
+      "requirement_ids": [
+        "R-dv-029-005"
+      ],
+      "definition": "The TEX address prioritizes L, while the completion side latches the R request bit at initiation: when both requests are high, the address may be L while completion is for R. Active beat 0 with ack high latches dat_i as the low 32 bits; beat 1 and subsequent beats with a nonzero low-3-bit index assert the selected completion side. TexCacheWrite is generated in the termination cycle when ack goes low; the high half of the 64-bit value is the current dat_i, and the low half is the value latched on the first beat; adrTexCacheWrite is the initiating byte address shifted right by 3.",
+      "timing": "The completion side and TexCacheWrite occupy different windows; the high data half follows dat_i directly; sample 1ns into the termination cycle.",
+      "boundary": "L only, R only, both requests, different addresses/data, early low ack; check the 64-bit value only in the valid writeback window.",
+      "anchors": {
+        "0": "Missing or explicitly contradictory to this object, history, or valid window",
+        "1": "Correctly describes some conditions or subdomains, but still lacks: L alone, R alone, dual requests, different addresses/data, ack going low early; evaluate the 64-bit value only in the valid writeback window.",
+        "2": "The full JSON collectively expresses in full: The TEX address gives priority to L, and the completion side latches the R request bit at initiation: when both requests are high, the address can be L while completion is R. Active beat 0 with ack high latches dat_i as the low 32 bits; beat 1 and subsequent beats with nonzero low-3-bit indices drive the selected completion side; TexCacheWrite is generated in the terminating cycle when ack goes low, with the high half of the 64-bit value being the current dat_i and the low half being the value latched on the first beat; adrTexCacheWrite is the initiating byte address shifted right by 3. The completion side and TexCacheWrite have different windows; the high half of the data follows dat_i directly, and is sampled after 1ns in the terminating cycle. L alone, R alone, dual requests, different addresses/data, ack going low early; evaluate the 64-bit value only in the valid writeback window."
+      }
+    },
+    {
+      "atom_id": "A-006",
+      "requirement_ids": [
+        "R-dv-029-006"
+      ],
+      "definition": "The CLUT first beat has cnt7; the active address uses the current adrClutCacheUpdate and the low 3 beat bits×4. When ack is high, an internal cache write intent is issued; ClutCacheWrite and ClutWriteIndex are registered on the source edge, while ClutCacheData always passes dat_i through directly; at beat7, the completion output is 1.",
+      "timing": "Check pre-edge address/completion separately from post-edge write flag/index; the data itself has no corresponding register.",
+      "boundary": "beat0/7, 8 consecutive beats and early termination, address changes during activity; ClutCacheData must not be treated as data delayed by one beat.",
+      "anchors": {
+        "0": "Missing or explicitly contradictory to this object, history, or valid window",
+        "1": "Correctly describes some conditions or subdomains, but still lacks: beat0/7, 8 consecutive beats and early termination, address changes during activity; ClutCacheData must not be treated as data delayed by one beat.",
+        "2": "The full JSON collectively expresses in full: CLUT has cnt7 on the first beat; the active address uses the current adrClutCacheUpdate and the low 3 bits of beat ×4. An internal cache write intent is issued when ack is high; ClutCacheWrite and ClutWriteIndex are registered at the source edge, while ClutCacheData always passes dat_i through directly; the completion output is 1 at beat7. Check pre-edge address/completion separately from post-edge write flag/index; the data itself has no corresponding register. beat0/7, 8 consecutive beats and early termination, address changes during activity; ClutCacheData must not be treated as data delayed by one beat."
+      }
+    },
+    {
+      "atom_id": "A-007",
+      "requirement_ids": [
+        "R-dv-029-007"
+      ],
+      "definition": "Only a saveBGBlock transition from 0 to nonzero triggers an operation. 1 reads the background only with blending; 2/3 first write 8 words, taking data and masks directly from the corresponding beat of the current exported block. Write termination generates resetMask; with blending and a value other than 3, issue another read first beat and read loadAdr; otherwise, terminate and generate a pipeline reset pulse. Read termination issues an import pulse and pipeline reset; the imported block is arranged as 8 32-bit dat_i values.",
+      "timing": "The first beat sets busy, and the final termination edge clears busy; the background cache is valid only after a legal read history, and the source keeps save/load/export stable until completion.",
+      "boundary": "saveBlock 0/1/2/3×blending, no retrigger while held, retrigger after 0, read after write, no further read for flush3.",
+      "anchors": {
+        "0": "Missing or explicitly contradictory to this object, history, or valid window",
+        "1": "Correctly describes some conditions or subdomains, but still lacks: saveBlock0/1/2/3×blending, holding the same value does not trigger again, retriggering after 0, read after write, flush3 does not read again.",
+        "2": "The full JSON collectively expresses in full: saveBGBlock triggers only on a transition from 0 to nonzero. 1 reads the background only with blending; 2/3 first write 8 words, taking data and mask directly from the corresponding beat of the current exported block. Write termination generates resetMask; with blending and a value other than 3, another read first beat is issued and loadAdr is read; otherwise it terminates and generates a pipeline reset pulse. Read termination issues an import pulse and pipeline reset, and the imported block is arranged as eight 32-bit dat_i values. The first beat sets busy, and the final terminating edge clears busy; the background cache is valid only after a legal read history, and source-side save/load/export remain stable until completion. saveBlock0/1/2/3×blending, holding the same value does not trigger again, retriggering after 0, read after write, flush3 does not read again."
+      }
+    },
+    {
+      "atom_id": "A-008",
+      "requirement_ids": [
+        "R-dv-029-008"
+      ],
+      "definition": "Command 3 reads 8 words into one of two banks, each containing 8 32-bit words; the bank is command3. The corresponding 16-bit pixel mask comes from 55:40; when command22 is 1, clear the other bank's mask. The cache and masks are not fully reset; both banks must first be legally loaded separately before use.",
+      "timing": "The read-bank cache is written through a pipeline of active beats and their indices; use the writeback command only after termination.",
+      "boundary": "bank0/1, masks all zeros/all ones/alternating, clearing the other bank versus retaining it; do not check data in an uninitialized bank.",
+      "anchors": {
+        "0": "Missing or explicitly contradictory to this object, history, or valid window",
+        "1": "Correctly describes some conditions or subdomains, but still lacks: bank0/1, mask all zero/all 1/alternating, clearing the other bank versus retaining it; do not evaluate data in an uninitialized bank.",
+        "2": "The full JSON collectively expresses in full: Command 3 reads 8 words into one of two banks, each bank containing eight 32-bit words, with bank given by command3. The corresponding 16-bit pixel mask comes from 55:40; when command22 is 1, the other bank's mask is cleared. The caches and masks are not fully reset; both banks must first be legally loaded separately before use. The read-bank cache is written through a pipeline using active beats and their indices; use the writeback command only after termination. bank0/1, mask all zero/all 1/alternating, clearing the other bank versus retaining it; do not evaluate data in an uninitialized bank."
+      }
+    },
+    {
+      "atom_id": "A-009",
+      "requirement_ids": [
+        "R-dv-029-009"
+      ],
+      "definition": "Command 4 writes back 8 words. bank=command3, VVIndex=27:24; the pixel source starting point rotates forward by bank×16+VVIndex 16-bit pixels modulo 32, then advances by 2 pixels per beat; the two halfwords come from this cyclic pixel sequence. command4 forces the most significant bit of each halfword to 1. When command5 is 1, only pixels whose corresponding stencil bit is 0 are written, and the source pixel mask must still be valid. stencil comes from 55:40, with two bits selected according to the current beat. After termination, command23:22 selects clearing the bank0/1 mask.",
+      "timing": "bank, rotation, stencil, force/check, and bank-clear controls are latched on the first beat; observe each active beat with ack high.",
+      "boundary": "VVIndex0..15, including odd-halfword rotations, the cross-bank modulo-32 boundary, all four stencil pairs, force/check combinations, and another writeback after clearing a bank.",
+      "anchors": {
+        "0": "Missing or explicitly contradictory to this object, history, or valid window",
+        "1": "Correctly describes some conditions or subdomains, but still lacks: VVIndex0..15 including odd-halfword rotation, modulo-32 boundaries across banks, all four stencil pairs, force/check combinations, and writeback again after clearing a bank.",
+        "2": "The full JSON collectively expresses in full: Command 4 writes back 8 words. bank=command3, VVIndex=27:24; the pixel source starting point rotates forward by bank×16+VVIndex 16-bit pixels modulo 32, then advances by 2 pixels per beat; the two halfwords come respectively from this cyclic pixel sequence. command4 forces the most significant bit of each halfword to 1; when command5 is 1, only pixels whose corresponding stencil bit is 0 are written, and the source pixel mask must still be valid. stencil comes from 55:40, with two bits selected according to the current beat. After termination, command23:22 selects clearing the bank0/1 mask. bank, rotation, stencil, force/check, and bank-clear controls are latched on the first beat; observe beat by beat during activity with ack high. VVIndex0..15 including odd-halfword rotation, modulo-32 boundaries across banks, all four stencil pairs, force/check combinations, and writeback again after clearing a bank."
+      }
+    }
+  ],
+  "required_interfaces": {
+    "R-dv-029-001": [
+      "gpuClk",
+      "i_nRst",
+      "fifoFull",
+      "fifoComplete",
+      "req_o",
+      "cnt_o",
+      "adr_o",
+      "dat_o",
+      "sel_o",
+      "wrt_o",
+      "saveLoadOnGoing",
+      "importedBGBlock"
+    ],
+    "R-dv-029-002": [
+      "gpuClk",
+      "i_nRst",
+      "memoryWriteCommand",
+      "ack_i",
+      "saveBGBlock",
+      "isBlending",
+      "requClutCacheUpdate",
+      "requTexCacheUpdateL",
+      "requTexCacheUpdateR",
+      "adr_o",
+      "cnt_o",
+      "req_o",
+      "wrt_o"
+    ],
+    "R-dv-029-003": [
+      "gpuClk",
+      "ack_i",
+      "req_o",
+      "cnt_o",
+      "adr_o",
+      "wrt_o",
+      "memoryWriteCommand"
+    ],
+    "R-dv-029-004": [
+      "memoryWriteCommand",
+      "gpuClk",
+      "ack_i",
+      "adr_o",
+      "dat_o",
+      "sel_o",
+      "wrt_o",
+      "req_o"
+    ],
+    "R-dv-029-005": [
+      "requTexCacheUpdateL",
+      "requTexCacheUpdateR",
+      "adrTexCacheUpdateL",
+      "adrTexCacheUpdateR",
+      "gpuClk",
+      "ack_i",
+      "dat_i",
+      "TexCacheData",
+      "TexCacheWrite",
+      "adrTexCacheWrite",
+      "updateTexCacheCompleteL",
+      "updateTexCacheCompleteR"
+    ],
+    "R-dv-029-006": [
+      "requClutCacheUpdate",
+      "adrClutCacheUpdate",
+      "gpuClk",
+      "ack_i",
+      "dat_i",
+      "ClutCacheWrite",
+      "ClutWriteIndex",
+      "ClutCacheData",
+      "updateClutCacheComplete"
+    ],
+    "R-dv-029-007": [
+      "saveBGBlock",
+      "isBlending",
+      "saveAdr",
+      "loadAdr",
+      "exportedBGBlock",
+      "exportedMSKBGBlock",
+      "gpuClk",
+      "ack_i",
+      "adr_o",
+      "dat_o",
+      "sel_o",
+      "wrt_o",
+      "resetMask",
+      "resetPipelinePixelStateSpike",
+      "importBGBlockSingleClock",
+      "importedBGBlock",
+      "saveLoadOnGoing"
+    ],
+    "R-dv-029-008": [
+      "memoryWriteCommand",
+      "gpuClk",
+      "ack_i",
+      "dat_i",
+      "adr_o",
+      "req_o",
+      "saveLoadOnGoing"
+    ],
+    "R-dv-029-009": [
+      "memoryWriteCommand",
+      "gpuClk",
+      "ack_i",
+      "dat_o",
+      "sel_o",
+      "adr_o",
+      "wrt_o"
+    ]
+  },
+  "scoring": "fixed atoms, deduplicated semantic claims, grade/support divided by two; no cross-capability aggregate"
+}

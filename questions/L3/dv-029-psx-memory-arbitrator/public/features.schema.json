@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "features"
+  ],
+  "properties": {
+    "features": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "feature_id",
+          "module",
+          "definition",
+          "timing",
+          "boundary",
+          "requirement_ids",
+          "interface"
+        ],
+        "properties": {
+          "feature_id": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "module": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "definition": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "timing": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "boundary": {
+            "type": "string",
+            "pattern": "\\S"
+          },
+          "requirement_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "interface": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "parent_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "interface_aliases": {}
+        }
+      }
+    }
+  },
+  "$comment": "Unique local IDs, reference membership, hierarchy and filelist rules are checked by the documented runtime validator."
+}

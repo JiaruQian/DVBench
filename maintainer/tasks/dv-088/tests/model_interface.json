@@ -1,0 +1,185 @@
+{
+  "ports": [
+    {
+      "name": "bdma2csb_resp_pd",
+      "direction": "Out",
+      "width": 34,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 33,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "bdma2csb_resp_valid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "bdma2glb_done_intr_pd",
+      "direction": "Out",
+      "width": 2,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 1,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "bdma2mcif_rd_cdt_lat_fifo_pop",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "bdma2mcif_rd_req_pd",
+      "direction": "Out",
+      "width": 79,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 78,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "bdma2mcif_rd_req_ready",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "bdma2mcif_rd_req_valid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "bdma2mcif_wr_req_pd",
+      "direction": "Out",
+      "width": 515,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 514,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "bdma2mcif_wr_req_ready",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "bdma2mcif_wr_req_valid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2bdma_req_pd",
+      "direction": "In",
+      "width": 63,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 62,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "csb2bdma_req_prdy",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2bdma_req_pvld",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "dla_clk_ovr_on_sync",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "global_clk_ovr_on_sync",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "mcif2bdma_rd_rsp_pd",
+      "direction": "In",
+      "width": 514,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 513,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "mcif2bdma_rd_rsp_ready",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "mcif2bdma_rd_rsp_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "mcif2bdma_wr_rsp_complete",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "nvdla_core_clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "nvdla_core_rstn",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "pwrbus_ram_pd",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "tmc2slcg_disable_clock_gating",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {}
+}

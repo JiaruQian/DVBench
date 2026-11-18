@@ -1,0 +1,116 @@
+{
+  "tests": [
+    {
+      "test_id": "T1",
+      "feature_ids": [
+        "F1"
+      ],
+      "requirement_ids": [
+        "R-dv-026-001"
+      ],
+      "stimulus": "Initialize all inputs to known values, generate10ns clock and drive at falling edges. At first reset rising edge write all comparison bytes to allones; keep legal native protocol inputs, aligned sizes0..3, param/corrupt0 and sources0..767. Hold valid/payload while stalled. Exercise reset sampling and legal sizes, byte lanes, sources and read/write opcodes; initialize every comparison byte before numerical comparison checks.",
+      "expected": "This native CLINT has one clock and synchronous active-high reset. State updates only on rising clock edges. Observe combinational outputs after propagation settles. Legal active requests outside reset use opcode 0 (PutFull), 1 (PutPartial), or 4 (Get), param zero, corrupt zero, source 0..767, address[25:16]=0x200, naturally aligned size 0..3 corresponding to 1,2,4,8 bytes, and a byte mask contained within the addressed size/lanes; Get and PutFull use every addressed byte lane. A stalled A request retains valid and payload until accepted. Protocol monitor assertions remain enabled. X/Z numerical behavior is unspecified, except the comparison-register initialization rule below.",
+      "checker": "Sample full actual and independent native-port model outputs2ns after each falling-edge drive; model samples state at rising edges. Use four-state !== across all outputs and require4096 comparisons; flag every mismatch. Exclude numerical unwritten comparison bytes before initialization.",
+      "implementation_id": "aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard",
+      "source": "tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv"
+    },
+    {
+      "test_id": "T2",
+      "feature_ids": [
+        "F2"
+      ],
+      "requirement_ids": [
+        "R-dv-026-002"
+      ],
+      "stimulus": "Initialize all inputs to known values, generate10ns clock and drive at falling edges. At first reset rising edge write all comparison bytes to allones; keep legal native protocol inputs, aligned sizes0..3, param/corrupt0 and sources0..767. Hold valid/payload while stalled. Cross A valid and D ready including stalls, and vary opcode/source/size while invalid; compare immediate coupling and metadata.",
+      "expected": "auto_in_a_ready always equals auto_in_d_ready; auto_in_d_valid always equals auto_in_a_valid. No response buffer or extra cycle exists. Response source and size always copy current A source and size, including when valid is low. Response opcode is 1 precisely when current A opcode is 4 and otherwise 0. Reset does not gate these outputs. A transfer occurs when A valid and D ready are both one.",
+      "checker": "Sample full actual and independent native-port model outputs2ns after each falling-edge drive; model samples state at rising edges. Use four-state !== across all outputs and require4096 comparisons; flag every mismatch. Exclude numerical unwritten comparison bytes before initialization.",
+      "implementation_id": "aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard",
+      "source": "tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv"
+    },
+    {
+      "test_id": "T3",
+      "feature_ids": [
+        "F3"
+      ],
+      "requirement_ids": [
+        "R-dv-026-003"
+      ],
+      "stimulus": "Initialize all inputs to known values, generate10ns clock and drive at falling edges. At first reset rising edge write all comparison bytes to allones; keep legal native protocol inputs, aligned sizes0..3, param/corrupt0 and sources0..767. Hold valid/payload while stalled. Read each register and neighboring unmapped locations including0xc000; vary size and low address bits legally and compare full unshifted data.",
+      "expected": "Decode using only address[15:0] rounded down to an eight-byte boundary. Offsets 0x0000..0x0007 read the software interrupt as a zero-extended bit; 0x4000..0x4007 read the 64-bit comparison register; 0xbff8..0xbfff read the 64-bit timer. All other offsets read zero, including the entire 0xc000..0xffff region. D data reflects this decode unconditionally, even on writes, invalid cycles and reset. It is not shifted or masked according to size or address low bits.",
+      "checker": "Sample full actual and independent native-port model outputs2ns after each falling-edge drive; model samples state at rising edges. Use four-state !== across all outputs and require4096 comparisons; flag every mismatch. Exclude numerical unwritten comparison bytes before initialization.",
+      "implementation_id": "aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard",
+      "source": "tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv"
+    },
+    {
+      "test_id": "T4",
+      "feature_ids": [
+        "F4"
+      ],
+      "requirement_ids": [
+        "R-dv-026-004"
+      ],
+      "stimulus": "Initialize all inputs to known values, generate10ns clock and drive at falling edges. At first reset rising edge write all comparison bytes to allones; keep legal native protocol inputs, aligned sizes0..3, param/corrupt0 and sources0..767. Hold valid/payload while stalled. Write software interrupt values0/1, exercise mask0 selected/unselected and reset/write overlap; observe both interrupt and readback.",
+      "expected": "Reset sets the software interrupt state to zero, overriding writes. Otherwise an accepted non-Get transfer to offsets0x0000..0x0007 updates it from A data bit0 only when A mask bit0 is one. All other input data bits and mask bits have no effect on this state. auto_int_out_0 always equals this state.",
+      "checker": "Sample full actual and independent native-port model outputs2ns after each falling-edge drive; model samples state at rising edges. Use four-state !== across all outputs and require4096 comparisons; flag every mismatch. Exclude numerical unwritten comparison bytes before initialization.",
+      "implementation_id": "aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard",
+      "source": "tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv"
+    },
+    {
+      "test_id": "T5",
+      "feature_ids": [
+        "F5"
+      ],
+      "requirement_ids": [
+        "R-dv-026-005"
+      ],
+      "stimulus": "Initialize all inputs to known values, generate10ns clock and drive at falling edges. At first reset rising edge write all comparison bytes to allones; keep legal native protocol inputs, aligned sizes0..3, param/corrupt0 and sources0..767. Hold valid/payload while stalled. Cross every byte mask with rtcTick, timer write/nonwrite and reset; test low/high bytes, zero mask, carry,64-bit wrap and tick suppression.",
+      "expected": "Reset sets the 64-bit timer to zero and overrides writes and io_rtcTick. Otherwise an accepted non-Get transfer to offsets0xbff8..0xbfff with any asserted mask byte updates each selected byte from the same byte lane of A data, preserving unselected bytes; any such write overrides ticking for the entire timer. If no timer byte is written and io_rtcTick is one, increment by exactly one modulo 2^64. A zero-mask write does not suppress the tick. Other writes and reads do not suppress ticking.",
+      "checker": "Sample full actual and independent native-port model outputs2ns after each falling-edge drive; model samples state at rising edges. Use four-state !== across all outputs and require4096 comparisons; flag every mismatch. Exclude numerical unwritten comparison bytes before initialization.",
+      "implementation_id": "aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard",
+      "source": "tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv"
+    },
+    {
+      "test_id": "T6",
+      "feature_ids": [
+        "F6"
+      ],
+      "requirement_ids": [
+        "R-dv-026-006"
+      ],
+      "stimulus": "Initialize all inputs to known values, generate10ns clock and drive at falling edges. At first reset rising edge write all comparison bytes to allones; keep legal native protocol inputs, aligned sizes0..3, param/corrupt0 and sources0..767. Hold valid/payload while stalled. Initialize comparison in reset, alter single byte lanes, then reset again without writing and verify preservation; initialize all bytes before judging values.",
+      "expected": "The 64-bit comparison register has no reset initialization. An accepted non-Get transfer to offsets0x4000..0x4007 writes selected byte lanes from A data and preserves other lanes, even while reset is high. A reset without such a write leaves its previous contents unchanged. Before initialization its unwritten bytes are unspecified; initialize every byte through legal writes before checking numerical comparison-register read data or timer interrupt. There is no other update source.",
+      "checker": "Sample full actual and independent native-port model outputs2ns after each falling-edge drive; model samples state at rising edges. Use four-state !== across all outputs and require4096 comparisons; flag every mismatch. Exclude numerical unwritten comparison bytes before initialization.",
+      "implementation_id": "aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard",
+      "source": "tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv"
+    },
+    {
+      "test_id": "T7",
+      "feature_ids": [
+        "F7"
+      ],
+      "requirement_ids": [
+        "R-dv-026-007"
+      ],
+      "stimulus": "Initialize all inputs to known values, generate10ns clock and drive at falling edges. At first reset rising edge write all comparison bytes to allones; keep legal native protocol inputs, aligned sizes0..3, param/corrupt0 and sources0..767. Hold valid/payload while stalled. Set timer below/equal/above threshold, maximum and zero, then tick across equality and wrap; compare timer interrupt without bus gating.",
+      "expected": "auto_int_out_1 is the unsigned comparison timer>=comparison_register with equality included. It is combinational, independent of bus valid/ready, and not explicitly gated by reset. After initializing the comparison register, compare it against timer state including byte writes, tick transitions, equality, maximum values and wraparound.",
+      "checker": "Sample full actual and independent native-port model outputs2ns after each falling-edge drive; model samples state at rising edges. Use four-state !== across all outputs and require4096 comparisons; flag every mismatch. Exclude numerical unwritten comparison bytes before initialization.",
+      "implementation_id": "aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard",
+      "source": "tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv"
+    },
+    {
+      "test_id": "T8",
+      "feature_ids": [
+        "F8"
+      ],
+      "requirement_ids": [
+        "R-dv-026-008"
+      ],
+      "stimulus": "Initialize all inputs to known values, generate10ns clock and drive at falling edges. At first reset rising edge write all comparison bytes to allones; keep legal native protocol inputs, aligned sizes0..3, param/corrupt0 and sources0..767. Hold valid/payload while stalled. Hold a legal write under backpressure, tick while stalled, accept later, and exercise invalid and unmapped write cycles without state changes.",
+      "expected": "When A valid=0 or D ready=0, no bus write occurs, even though D valid and data remain combinationally visible. io_rtcTick may still increment the timer. All write decisions use current acceptance and opcode!=4; legal PutFull and PutPartial have the same masked state-update rules. The timer, comparison and software interrupt retain independent state; writes to unmapped addresses change none of them, while ticking remains active.",
+      "checker": "Sample full actual and independent native-port model outputs2ns after each falling-edge drive; model samples state at rising edges. Use four-state !== across all outputs and require4096 comparisons; flag every mismatch. Exclude numerical unwritten comparison bytes before initialization.",
+      "implementation_id": "aluexe_if.prepare+aluexe_sequence+aluexe_scoreboard",
+      "source": "tb/aluexe_if.sv;tb/aluexe_pkg.sv;model/model.sv"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "metrics": [
+    "LINE",
+    "COND",
+    "BRANCH",
+    "TOGGLE"
+  ]
+}

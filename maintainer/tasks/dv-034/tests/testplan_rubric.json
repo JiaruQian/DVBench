@@ -1,0 +1,156 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "requirement_ids": [
+    "R-dv-034-001",
+    "R-dv-034-002",
+    "R-dv-034-003",
+    "R-dv-034-004",
+    "R-dv-034-005"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "R-dv-034-001-verification",
+      "requirement_ids": [
+        "R-dv-034-001"
+      ],
+      "description": "After reset is asserted, without waiting for a rising edge of clock, all four display outputs are ASCII 0 (0x30), and alarm_sound is 1. This remains true while reset is held; deassertion does not advance time.",
+      "setup": "First advance to a nonzero time, then assert reset after a falling edge, and check 00:00 and alarm sounding before the next rising edge and during the hold window; after deassertion, check that timekeeping restarts.",
+      "stimulus": "First advance to a nonzero time, then assert reset after a falling edge, and check 00:00 and alarm sounding before the next rising edge and during the hold window; after deassertion, check that timekeeping restarts.",
+      "expected": "After reset is asserted, without waiting for a rising edge of clock, all four display outputs are ASCII 0 (0x30), and alarm_sound is 1. This remains true while reset is held; deassertion does not advance time.",
+      "sampling": "Respect this item's asynchronous/combinational/pre-handshake-edge and post-output-edge windows respectively; do not skip valid X/Z.",
+      "checker": "Independent input-history oracle or independent relational comparison; must be capable of failing and have a nonzero trigger count.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectations/windows, or vacuous checker",
+        "1": "Correct setup and method, but only partial coverage of the actual domain or boundaries",
+        "2": "First advance to a nonzero time, then assert reset after a falling edge, and check 00:00 and alarm sounding before the next rising edge and during the hold window; after deassertion, check that timekeeping restarts."
+      }
+    },
+    {
+      "obligation_id": "R-dv-034-002-verification",
+      "requirement_ids": [
+        "R-dv-034-002"
+      ],
+      "description": "Rising edges after reset deassertion are counted starting from 1; when fastwatch=0, a minute-advance enable is generated every 15360 cycles, time first increments by one minute on cycle 15361, and then increments by one every 15360 cycles. When fastwatch=1, the first increment occurs on cycle 257, followed by one increment every 256 cycles.",
+      "setup": "After separate resets, hold fastwatch at 0 and 1 respectively, covering the cycle before the first update, the update cycle, the cycle after it, and multiple consecutive periods; predict independently from source-clock cycle counts.",
+      "stimulus": "After separate resets, hold fastwatch at 0 and 1 respectively, covering the cycle before the first update, the update cycle, the cycle after it, and multiple consecutive periods; predict independently from source-clock cycle counts.",
+      "expected": "Rising edges after reset deassertion are counted starting from 1; when fastwatch=0, a minute-advance enable is generated every 15360 cycles, time first increments by one minute on cycle 15361, and then increments by one every 15360 cycles. When fastwatch=1, the first increment occurs on cycle 257, followed by one increment every 256 cycles.",
+      "sampling": "Respect this item's asynchronous/combinational/pre-handshake-edge and post-output-edge windows respectively; do not skip valid X/Z.",
+      "checker": "Independent input-history oracle or independent relational comparison; must be capable of failing and have a nonzero trigger count.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectations/windows, or vacuous checker",
+        "1": "Correct setup and method, but only partial coverage of the actual domain or boundaries",
+        "2": "After separate resets, hold fastwatch at 0 and 1 respectively, covering the cycle before the first update, the update cycle, the cycle after it, and multiple consecutive periods; predict independently from source-clock cycle counts."
+      }
+    },
+    {
+      "obligation_id": "R-dv-034-003-verification",
+      "requirement_ids": [
+        "R-dv-034-003"
+      ],
+      "description": "Each minute advance increments the time by one minute in 24-hour format, from 00:09 to 00:10, from 00:59 to 01:00, from 09:59 to 10:00, and from 23:59 to 00:00; each of the four decimal digits outputs 0x30 plus that digit's value.",
+      "setup": "Starting from reset, traverse the full 1440 minutes using native fast timekeeping, checking every minute and all four types of carry; do not preset the internal time.",
+      "stimulus": "Starting from reset, traverse the full 1440 minutes using native fast timekeeping, checking every minute and all four types of carry; do not preset the internal time.",
+      "expected": "Each minute advance increments the time by one minute in 24-hour format, from 00:09 to 00:10, from 00:59 to 01:00, from 09:59 to 10:00, and from 23:59 to 00:00; each of the four decimal digits outputs 0x30 plus that digit's value.",
+      "sampling": "Respect this item's asynchronous/combinational/pre-handshake-edge and post-output-edge windows respectively; do not skip valid X/Z.",
+      "checker": "Independent input-history oracle or independent relational comparison; must be capable of failing and have a nonzero trigger count.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectations/windows, or vacuous checker",
+        "1": "Correct setup and method, but only partial coverage of the actual domain or boundaries",
+        "2": "Starting from reset, traverse the full 1440 minutes using native fast timekeeping, checking every minute and all four types of carry; do not preset the internal time."
+      }
+    },
+    {
+      "obligation_id": "R-dv-034-004-verification",
+      "requirement_ids": [
+        "R-dv-034-004"
+      ],
+      "description": "In this fixed version, key, time_button, and alarm_button do not set the current time or alarm, nor do they change the display source; under any legal history of these inputs, the display remains the current running time, and the alarm is fixed at 00:00.",
+      "setup": "Throughout fast and normal timekeeping, vary all combinations of the digit keys, no-key value 10, and the two buttons, and compare against an oracle consisting only of reset and clock counts.",
+      "stimulus": "Throughout fast and normal timekeeping, vary all combinations of the digit keys, no-key value 10, and the two buttons, and compare against an oracle consisting only of reset and clock counts.",
+      "expected": "In this fixed version, key, time_button, and alarm_button do not set the current time or alarm, nor do they change the display source; under any legal history of these inputs, the display remains the current running time, and the alarm is fixed at 00:00.",
+      "sampling": "Respect this item's asynchronous/combinational/pre-handshake-edge and post-output-edge windows respectively; do not skip valid X/Z.",
+      "checker": "Independent input-history oracle or independent relational comparison; must be capable of failing and have a nonzero trigger count.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectations/windows, or vacuous checker",
+        "1": "Correct setup and method, but only partial coverage of the actual domain or boundaries",
+        "2": "Throughout fast and normal timekeeping, vary all combinations of the digit keys, no-key value 10, and the two buttons, and compare against an oracle consisting only of reset and clock counts."
+      }
+    },
+    {
+      "obligation_id": "R-dv-034-005-verification",
+      "requirement_ids": [
+        "R-dv-034-005"
+      ],
+      "description": "fastwatch combinationally selects the existing normal or fast enable; switching does not reset the timing phase. alarm_sound is 1 if and only if the current time is 00:00, including reset and full-day wraparound; it is 0 during all other minutes.",
+      "setup": "Maintain the same reset history, switch fastwatch before and after ticks, and independently retain the histories of both enables; cover the first departure from 00:00 and the return to 00:00 after a full day.",
+      "stimulus": "Maintain the same reset history, switch fastwatch before and after ticks, and independently retain the histories of both enables; cover the first departure from 00:00 and the return to 00:00 after a full day.",
+      "expected": "fastwatch combinationally selects the existing normal or fast enable; switching does not reset the timing phase. alarm_sound is 1 if and only if the current time is 00:00, including reset and full-day wraparound; it is 0 during all other minutes.",
+      "sampling": "Respect this item's asynchronous/combinational/pre-handshake-edge and post-output-edge windows respectively; do not skip valid X/Z.",
+      "checker": "Independent input-history oracle or independent relational comparison; must be capable of failing and have a nonzero trigger count.",
+      "anchors": {
+        "0": "Omission, unreachable setup, incorrect expectations/windows, or vacuous checker",
+        "1": "Correct setup and method, but only partial coverage of the actual domain or boundaries",
+        "2": "Maintain the same reset history, switch fastwatch before and after ticks, and independently retain the histories of both enables; cover the first departure from 00:00 and the return to 00:00 after a full day."
+      }
+    }
+  ],
+  "stimulus_criteria": {
+    "R-dv-034-001-verification": [
+      {
+        "criterion_id": "R-dv-034-001-verification-domain",
+        "description": "First advance to a nonzero time, then assert reset after a falling edge, and check 00:00 and alarm sounding before the next rising edge and during the hold window; after deassertion, check that timekeeping restarts."
+      }
+    ],
+    "R-dv-034-002-verification": [
+      {
+        "criterion_id": "R-dv-034-002-verification-domain",
+        "description": "After separate resets, hold fastwatch at 0 and 1 respectively, covering the cycle before the first update, the update cycle, the cycle after it, and multiple consecutive periods; predict independently from source-clock cycle counts."
+      }
+    ],
+    "R-dv-034-003-verification": [
+      {
+        "criterion_id": "R-dv-034-003-verification-domain",
+        "description": "Starting from reset, traverse the full 1440 minutes using native fast timekeeping, checking every minute and all four types of carry; do not preset the internal time."
+      }
+    ],
+    "R-dv-034-004-verification": [
+      {
+        "criterion_id": "R-dv-034-004-verification-domain",
+        "description": "Throughout fast and normal timekeeping, vary all combinations of the digit keys, no-key value 10, and the two buttons, and compare against an oracle consisting only of reset and clock counts."
+      }
+    ],
+    "R-dv-034-005-verification": [
+      {
+        "criterion_id": "R-dv-034-005-verification-domain",
+        "description": "Maintain the same reset history, switch fastwatch before and after ticks, and independently retain the histories of both enables; cover the first departure from 00:00 and the return to 00:00 after a full day."
+      }
+    ]
+  },
+  "claim_impact_components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "issue_codes": [
+    "missing",
+    "partial",
+    "incorrect",
+    "illegal_setup",
+    "wrong_sampling",
+    "vacuous",
+    "self_oracle",
+    "contradiction",
+    "hallucination"
+  ],
+  "issue_grade_caps": {},
+  "aggregation": "five-component minimum; current semantic deduplicated claim precision"
+}

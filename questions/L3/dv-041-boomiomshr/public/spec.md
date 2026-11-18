@@ -1,0 +1,27 @@
+# BoomIOMSHR native behavioral specification
+
+The target is the complete fixed180-port BoomIOMSHR module. There are no parameters, no submodules and no required defines. Normal assertion behavior remains enabled. It accepts a single captured request, translates an access and optionally returns data after an acknowledgment. Numeric behavior below is authoritative. Native ports and widths are in ports.md.
+
+### R-p8-biom-001 — Single transaction and handshakes
+
+The controller has phases IDLE, ACCESS, WAIT_ACK and RESPONSE. io_req_ready is high exactly in IDLE, io_mem_access_valid exactly in ACCESS, and io_resp_valid exactly in RESPONSE for a returning command. At a rising edge, IDLE accepts io_req_valid and enters ACCESS; ACCESS enters WAIT_ACK only when io_mem_access_ready is high; WAIT_ACK enters RESPONSE only when io_mem_ack_valid is high. RESPONSE returns to IDLE on io_resp_ready for returning commands, or unconditionally for nonreturning commands. Otherwise the phase holds. There is no same-edge bypass, second outstanding transaction or pending-request buffer. Request valid and payload while busy do not replace the accepted request. Acknowledgments outside WAIT_ACK have no effect, including an acknowledgment on the ACCESS acceptance edge. Response backpressure preserves a returning response and blocks new requests.
+
+### R-p8-biom-002 — Request capture and uop echo
+
+At every rising edge with pre-edge IDLE and io_req_valid high, capture all io_req_bits_uop fields, io_req_bits_addr, io_req_bits_data and io_req_bits_is_hella. This capture is independent of reset. Every io_resp_bits_uop field equals the corresponding captured request field at all times after capture, including mem_size and mem_cmd. io_resp_bits_is_hella equals its captured request value. Busy changes to any request field do not alter the captured transaction. The captured request registers are not cleared by reset. Before first capture their output-derived values are unspecified.
+
+### R-p8-biom-003 — Command translation
+
+Use the captured five-bit numeric mem_cmd. Returning commands are {0,4,6,7,8,9,10,11,12,13,14,15,16}; all others are nonreturning. Atomic commands are {4,8,9,10,11,12,13,14,15}. The A (opcode,param) translation is: 0/6/7/16 -> (4,0); 4 -> (3,3); 8 -> (2,4); 9/10/11 -> (3,0/1/2); 12/13/14/15 -> (2,0/1/2/3); every other command -> (0,0). A data is the captured64-bit request data replicated into the lower and upper64-bit halves of the128-bit A data output for atomic and nonreturning commands, and zero for returning nonatomics. The numeric command7 translation is specified for captured idle/reset values; normal busy histories with command7 are prohibited by the legal domain.
+
+### R-p8-biom-004 — Access address, size and byte lanes
+
+A source is always decimal9. A size is the captured two-bit mem_size zero extended to four bits. A address is captured request address bits32:0; bits39:33 are discarded. For each of the16 byte lanes, mask bit lane is one exactly when floor(lane/2^size) equals floor(captured_address[3:0]/2^size). Thus the mask selects the aligned size block containing the low address nibble, even for an unaligned address. The current live request cannot alter these captured-field functions. After request capture these access fields are combinationally defined even when A valid is low, and remain stable throughout ACCESS backpressure.
+
+### R-p8-biom-005 — Acknowledgment capture and response data
+
+At a rising edge in WAIT_ACK with ack valid and a returning command, capture the selected64-bit half of the128-bit ack: lower half when captured address bit3 is zero, upper half otherwise. Nonreturning acknowledgments do not update this stored word. From the stored word W select U32 as W bits63:32 when address bit2 is one, otherwise bits31:0; select U16 as U32 bits31:16 when bit1 is one, otherwise bits15:0; select U8 as U16 bits15:8 when bit0 is one, otherwise bits7:0. Response data is sign/zero extended U8 for size0; for size1 it is {48 sign bits,U16[15:8],U8}; for size2 {32 sign bits,U32[31:16],U16[15:8],U8}; for size3 {W[63:32],U32[31:16],U16[15:8],U8}. Sign bits are the selected byte/half/word high bit AND captured mem_signed. These expressions intentionally cover all unaligned low addresses. Before the first returning acknowledgment W-derived bits are unspecified; afterward they remain defined during invalid phases and reset and may be reinterpreted by a later captured request.
+
+### R-p8-biom-006 — Synchronous reset and domain
+
+Known binary inputs are admitted. Apply a rising edge with active-high reset to initialize the phase. Reset has priority over every phase transition and sets IDLE; a short pulse entirely between rising edges does not change phase. Reset does not asynchronously gate outputs or clear captured request/W registers. Capture of an idle valid request still occurs on a reset edge. A returning acknowledgment in pre-edge WAIT_ACK still updates W on a reset edge, while phase resets and the pending response is abandoned. Capturing command7 while reset keeps IDLE is permitted, but replace it with a permitted command before any nonreset edge in a busy phase: a nonreset busy phase carrying command7 terminates simulation. No alignment restriction, external TileLink semantics or command-name assumptions are imposed. All unsigned native fields retain their exact width. Inputs may change while busy, including ack pulses outside WAIT_ACK; their ignored behavior is part of the contract.

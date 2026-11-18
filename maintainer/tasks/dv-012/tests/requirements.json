@@ -1,0 +1,53 @@
+{
+  "source": "public/spec.md",
+  "requirements": [
+    {
+      "requirement_id": "R-D82FE92CBEE6-001",
+      "title": "异步状态复位",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-D82FE92CBEE6-002",
+      "title": "并行状态转移",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-D82FE92CBEE6-003",
+      "title": "直接状态输出",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-D82FE92CBEE6-004",
+      "title": "组合输出第一组",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-D82FE92CBEE6-005",
+      "title": "组合输出第二组",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-D82FE92CBEE6-006",
+      "title": "组合输出第三组",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-D82FE92CBEE6-007",
+      "title": "组合输出第四组",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-D82FE92CBEE6-008",
+      "title": "无握手的二态采样合同",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    }
+  ]
+}

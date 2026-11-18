@@ -1,0 +1,130 @@
+{
+  "tests": [
+    {
+      "test_id": "T-AP-001",
+      "feature_ids": [
+        "F-AP-001"
+      ],
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-001"
+      ],
+      "stimulus": "While sys_clk is running, apply a real high-to-low reset edge and hold reset for 32 system cycles, then release it; do not modify any internal clocks, counts, parameters, or display values.",
+      "expected": "The native outputs during reset have the specified values, and initialization restarts after release; before the first ALS publication, check only SCL/SDA/LED/sel and the reset segment code.",
+      "checker": "ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, reporting differences with uvm_error; at the end, check for at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy.",
+      "implementation_id": "V-AP-001",
+      "source": "ap_pkg.sv: ap_sequence::body; ap_monitor::run_phase; ap_scoreboard::write; sensor_slave.sv: sensor_register"
+    },
+    {
+      "test_id": "T-AP-002",
+      "feature_ids": [
+        "F-AP-002"
+      ],
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-002"
+      ],
+      "stimulus": "Run naturally for 355ms with a 50MHz system clock, using an independent port-level sensor to respond to the master's SCL and SDA, with no internal hierarchical reads.",
+      "expected": "Compare against the independent input-history transaction model 1ns after every native SCL/SDA output change and predicted change, with bit-by-bit MSB-first transmission and four-tick bit timing matching.",
+      "checker": "ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, reporting differences with uvm_error; at the end, check for at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy.",
+      "implementation_id": "V-AP-002",
+      "source": "ap_pkg.sv: ap_sequence::body; ap_monitor::run_phase; ap_scoreboard::write; sensor_slave.sv: sensor_register"
+    },
+    {
+      "test_id": "T-AP-003",
+      "feature_ids": [
+        "F-AP-003"
+      ],
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-003"
+      ],
+      "stimulus": "After real reset release, wait for natural startup and the first configuration write; the external slave decodes the device address, register address, and data, responding separately to the actual bus and the predicted bus.",
+      "expected": "The native waveforms exactly match the independent expectations for the 1E write, 00, and 03; do not backfill expectations using actual device outputs.",
+      "checker": "ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, reporting differences with uvm_error; at the end, check for at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy.",
+      "implementation_id": "V-AP-003",
+      "source": "ap_pkg.sv: ap_sequence::body; ap_monitor::run_phase; ap_scoreboard::write; sensor_slave.sv: sensor_register"
+    },
+    {
+      "test_id": "T-AP-004",
+      "feature_ids": [
+        "F-AP-004"
+      ],
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-004"
+      ],
+      "stimulus": "Retain the default conversion wait and continuously acquire at least three rounds of 0E/0F/0C/0D sensor data, including repeated START, single-byte reads, and STOP; let all waits elapse naturally, without force/defparam.",
+      "expected": "The bit-level SCL/SDA waveforms, intervals, and ordering match the transaction timetable model; require at least 12 data bytes and 13 STOPs to prevent vacuous transaction passes.",
+      "checker": "ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, reporting differences with uvm_error; at the end, check for at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy.",
+      "implementation_id": "V-AP-004",
+      "source": "ap_pkg.sv: ap_sequence::body; ap_monitor::run_phase; ap_scoreboard::write; sensor_slave.sv: sensor_register"
+    },
+    {
+      "test_id": "T-AP-005",
+      "feature_ids": [
+        "F-AP-005"
+      ],
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-005"
+      ],
+      "stimulus": "The port-level slave pulls down for 0 or releases for 1 during ACK and read-data windows; initialization and read polling cover master transmission and reception; actual/expected each use an independent slave with the same seed.",
+      "expected": "The resolved SDA value matches the model, with no illegal driver conflicts; ACK is 0 in this implementation, and the textual obligation that NACK does not terminate has not yet received dedicated NACK stimulus and is separately recorded as uncovered.",
+      "checker": "ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, reporting differences with uvm_error; at the end, check for at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy.",
+      "implementation_id": "V-AP-005",
+      "source": "ap_pkg.sv: ap_sequence::body; ap_monitor::run_phase; ap_scoreboard::write; sensor_slave.sv: sensor_register"
+    },
+    {
+      "test_id": "T-AP-006",
+      "feature_ids": [
+        "F-AP-006"
+      ],
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-006"
+      ],
+      "stimulus": "The slave cyclically provides PS=15, 16, 128 over three rounds; seed1/7/42 select different starting rounds. After the PS high byte, naturally wait for the ALS wait to expire before observing LED.",
+      "expected": "15 corresponds to 0001, 16 to 0011, and 128 to 0111, with update timing matching the input-history model. 512 and the high range at 1023 are defined in the model and contract but have not yet been specifically covered by this three-round reference.",
+      "checker": "ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, reporting differences with uvm_error; at the end, check for at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy.",
+      "implementation_id": "V-AP-006",
+      "source": "ap_pkg.sv: ap_sequence::body; ap_monitor::run_phase; ap_scoreboard::write; sensor_slave.sv: sensor_register"
+    },
+    {
+      "test_id": "T-AP-007",
+      "feature_ids": [
+        "F-AP-007"
+      ],
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-007"
+      ],
+      "stimulus": "The slave's raw ALS values over three rounds are 65535, 10000, and 12345, each returned byte by byte via 0C/0D; wait for the entire high-byte read to complete.",
+      "expected": "The calculation first truncates the product to 16 bits and then divides by 100, holding the value after publication; the minimal bit-width controls for raw 30000/65535 have been independently verified as 14/655; the full top-level comparison for this run remains to be executed.",
+      "checker": "ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, reporting differences with uvm_error; at the end, check for at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy.",
+      "implementation_id": "V-AP-007",
+      "source": "ap_pkg.sv: ap_sequence::body; ap_monitor::run_phase; ap_scoreboard::write; sensor_slave.sv: sensor_register"
+    },
+    {
+      "test_id": "T-AP-008",
+      "feature_ids": [
+        "F-AP-008"
+      ],
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-008"
+      ],
+      "stimulus": "The 355ms run covers three known ALS values and a complete six-digit scan in each round, independently generating expectations using decimal integer decomposition and a code table; non-reset data segment-code comparison is enabled only 16us after the independent expected slave completes the 4th read byte and the 5th STOP.",
+      "expected": "Compare seg_led on each occasion within meaningful display windows; high-order blanking, low-order digits, and absence of a decimal point all match the model. 0 and all individual digit glyphs from 0 to 9 are not all covered item by item in these three rounds.",
+      "checker": "ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, reporting differences with uvm_error; at the end, check for at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy.",
+      "implementation_id": "V-AP-008",
+      "source": "ap_pkg.sv: ap_sequence::body; ap_monitor::run_phase; ap_scoreboard::write; sensor_slave.sv: sensor_register"
+    },
+    {
+      "test_id": "T-AP-009",
+      "feature_ids": [
+        "F-AP-009"
+      ],
+      "requirement_ids": [
+        "R-dv-014-ap3216c-sensor-009"
+      ],
+      "stimulus": "Run naturally with the default divide-by-ten clock division and a display-edge count of 5000, monitoring sel changes and segment changes and covering all six digit selects.",
+      "expected": "sel advances according to the fixed 1ms scan and register pipeline, and segment codes are predicted by the same model using the two-stage display pipeline; compare 1ns after each actual/expected output event, keeping coverage separate from correctness.",
+      "checker": "ap_monitor listens for native actual/independently predicted output events and samples 1ns later; ap_scoreboard compares resolved SCL/SDA, LED, sel, and segment within valid windows, reporting differences with uvm_error; at the end, check for at least 500 points, 12 display points, 12 read bytes, and 13 STOPs; the independent model does not read the DUT hierarchy.",
+      "implementation_id": "V-AP-009",
+      "source": "ap_pkg.sv: ap_sequence::body; ap_monitor::run_phase; ap_scoreboard::write; sensor_slave.sv: sensor_register"
+    }
+  ]
+}

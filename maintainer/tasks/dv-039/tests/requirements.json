@@ -1,0 +1,67 @@
+{
+  "requirements": [
+    {
+      "id": "R-p8-cdp-cq-001",
+      "duty": "nvdla_core_rstn is an asynchronous active-low reset. Assertion immediately discards all queued transactions, clears cq_rd_pvld and makes cq_wr_prdy high, without waiting for a clock edge. Inputs presented while reset is low do not create transactions. Release reset away from the rising edge; the next rising edge resumes normal operation. The data output is not reset and has no defined value while invalid.",
+      "legal_history": "Assert reset between edges at startup, while occupied and while full; keep write-valid and read-ready high for three reset clocks, release on a falling edge, and send fresh data.",
+      "domain_boundary": "Known binary inputs; all native widths; no parameters; reset may interrupt traffic.",
+      "observable": "nvdla_core_clk, nvdla_core_rstn, cq_wr_prdy, cq_rd_pvld",
+      "sampling": "Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.",
+      "oracle": "Independent input-history native-port queue model in solution/reference/model/model.sv"
+    },
+    {
+      "id": "R-p8-cdp-cq-002",
+      "duty": "Transfers use pre-edge values at each rising nvdla_core_clk edge. A write is accepted exactly when cq_wr_pvld and cq_wr_prdy are both high. A read consumes the currently presented word exactly when cq_rd_pvld and cq_rd_prdy are both high. Every accepted seven-bit word is returned once, in acceptance order, unless reset discards it. A write request while ready is low is ignored; it cannot overwrite an accepted word. Changing data while write-valid is low has no queue effect.",
+      "legal_history": "Write distinguishable seven-bit patterns, with invalid writes interspersed, hold writes beyond full, then drain; repeat for multiple full-depth traversals and random backpressure.",
+      "domain_boundary": "Known binary inputs; all native widths; no parameters; reset may interrupt traffic.",
+      "observable": "nvdla_core_clk, cq_wr_prdy, cq_wr_pvld, cq_wr_pd, cq_rd_prdy, cq_rd_pvld, cq_rd_pd",
+      "sampling": "Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.",
+      "oracle": "Independent input-history native-port queue model in solution/reference/model/model.sv"
+    },
+    {
+      "id": "R-p8-cdp-cq-003",
+      "duty": "A newly accepted write first enters the waiting queue and cannot be presented in the output on that same rising edge. If the queue and output were empty before the accepting edge, cq_rd_pvld remains zero immediately after that edge; the word is presented with valid high after the following rising edge. Output presentation does not require cq_rd_prdy to be high. There is no combinational input-to-output bypass.",
+      "legal_history": "From empty after reset and after draining, accept a single word with downstream stalled; inspect the accepting edge and following edge, then consume it.",
+      "domain_boundary": "Known binary inputs; all native widths; no parameters; reset may interrupt traffic.",
+      "observable": "nvdla_core_clk, cq_wr_pvld, cq_wr_prdy, cq_rd_pvld, cq_rd_pd",
+      "sampling": "Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.",
+      "oracle": "Independent input-history native-port queue model in solution/reference/model/model.sv"
+    },
+    {
+      "id": "R-p8-cdp-cq-004",
+      "duty": "When the output is valid and cq_rd_prdy is low, cq_rd_pvld and cq_rd_pd retain their values across rising edges. When a valid output is consumed, the oldest waiting word replaces it after that edge if one existed before the edge. Otherwise valid becomes zero. Data is checked only when valid is high; no new data value is prescribed in an invalid interval.",
+      "legal_history": "Stall a valid output for multiple cycles while continuing legal writes, then consume with and without waiting words. Read repeatedly after empty.",
+      "domain_boundary": "Known binary inputs; all native widths; no parameters; reset may interrupt traffic.",
+      "observable": "nvdla_core_clk, cq_rd_prdy, cq_rd_pvld, cq_rd_pd",
+      "sampling": "Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.",
+      "oracle": "Independent input-history native-port queue model in solution/reference/model/model.sv"
+    },
+    {
+      "id": "R-p8-cdp-cq-005",
+      "duty": "The queue holds 256 waiting words plus one separately presented output word, for a maximum of 257 accepted and unconsumed words. Write-ready is registered. Its precise update uses the number of waiting words before the edge and whether a write is accepted at that edge: ready becomes low when their sum is exactly 256, except that moving a waiting word into the output on the preceding rising edge forces ready high. That preceding-edge move is a returned-credit event; reset clears its history. A move performed on the current edge does not supply that exception until the next edge. These timing rules apply at full, during simultaneous activity, and during recovery from full.",
+      "legal_history": "Starting empty with downstream stalled, offer at least 300 writes, hold full for twenty cycles, then alternate read bursts and stalls with write-valid high and finally drain. Repeat this crossing three times.",
+      "domain_boundary": "Known binary inputs; all native widths; no parameters; reset may interrupt traffic.",
+      "observable": "nvdla_core_clk, cq_wr_pvld, cq_wr_prdy, cq_rd_prdy, cq_rd_pvld",
+      "sampling": "Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.",
+      "oracle": "Independent input-history native-port queue model in solution/reference/model/model.sv"
+    },
+    {
+      "id": "R-p8-cdp-cq-006",
+      "duty": "Writes and output consumption may occur on the same rising edge. Decisions use pre-edge state; the newly accepted word is appended after already waiting words. Once data is available, continuous reads with a nonempty waiting queue replace the output every cycle. Continuous simultaneous writes and reads sustain one word per clock after pipeline startup. Repeated traversal does not alter ordering, capacity, or timing.",
+      "legal_history": "Run simultaneous valid/ready for a sustained stream, mix four input handshake combinations using all seven data bits, and perform three fill/drain traversals.",
+      "domain_boundary": "Known binary inputs; all native widths; no parameters; reset may interrupt traffic.",
+      "observable": "nvdla_core_clk, cq_wr_pvld, cq_wr_prdy, cq_wr_pd, cq_rd_prdy, cq_rd_pvld, cq_rd_pd",
+      "sampling": "Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.",
+      "oracle": "Independent input-history native-port queue model in solution/reference/model/model.sv"
+    },
+    {
+      "id": "R-p8-cdp-cq-007",
+      "duty": "pwrbus_ram_pd is a 32-bit input with no functional effect on the externally visible queue behavior in this configuration. All seven-bit data values and all 32-bit power-input patterns are legal. Drive known binary controls and data, stable around rising clock edges; behavior for X/Z controls or setup/hold violations is outside the contract. There are no configurable parameters.",
+      "legal_history": "Toggle power-input patterns zero, all ones, alternating bits, and random words during empty, active, stalled, and full operation while exercising seven-bit data values.",
+      "domain_boundary": "Known binary inputs; all native widths; no parameters; reset may interrupt traffic.",
+      "observable": "pwrbus_ram_pd, nvdla_core_clk, nvdla_core_rstn, cq_wr_pvld, cq_wr_pd, cq_rd_prdy, cq_wr_prdy, cq_rd_pvld, cq_rd_pd",
+      "sampling": "Compare ready and valid one time unit after every rising edge, using four-state comparisons; compare data when the independent model predicts valid. Also sample one time unit after each reset assertion before the next rising edge.",
+      "oracle": "Independent input-history native-port queue model in solution/reference/model/model.sv"
+    }
+  ]
+}

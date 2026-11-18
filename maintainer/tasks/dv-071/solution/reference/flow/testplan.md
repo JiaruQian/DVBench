@@ -1,0 +1,7 @@
+# Ethernet testplan
+
+Drive the native ports before rising Clk. Start FIFO streams with lengths 1,2,3,31,64,255,512,1024,1025,17; empty termination and the 1023 byte-counter cap apply. Hold or pause clock enable throughout frame phases, including FCS. Reset in Idle, Preamble, SFD, Header, Data, FCS and IFG, then exercise randomized Reset/clk_en/iEmpty/i8Data histories. Sample rising and falling Clk after NBA.
+
+Seven 55 bytes, one D5 and header C8 60 00 98 CC BE 12 34 56 78 9A BC precede big-endian FIFO bytes. Account for the specified registered byte delay. Compute Ethernet CRC independently using reflected polynomial EDB88320, initial FFFFFFFF and final complement; stream four low-to-high FCS bytes with the specified FCS alignment. Diagnostic phases are 0..6, IFG lasts 13 enabled edges, and complete is true only in Idle. Address is byte-index/2, reset clears control/output registers, clk_en pauses rising-edge progress, while oRead toggles at each falling edge regardless of enable/empty/state. Ignore gmii_txd when expected tx_en=0.
+
+The standalone dvbench_model predicts from Reset/Clk/clk_en/iEmpty/i8Data history; it never reads DUT outputs. Compare controls/address/diagnostic at both edges and GMII bytes only in the predicted valid window. Require over 8000 total observations, 5000 valid observations and 4000 falling-edge observations.

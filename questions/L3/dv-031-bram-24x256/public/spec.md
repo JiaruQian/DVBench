@@ -1,0 +1,67 @@
+# BRAM_TDP_24w_256d
+
+This task specifies native port behavior according to a fixed functional simulation implementation. See ports.md for ports and fixed parameters. Use four-state checks within the defined domains below; unspecified domains must not be used to report errors.
+
+### R-dv-031-001 — Port A Synchronous Reads and Writes
+
+Port A accepts the address, write enable, and data on the rising edge of its own clock. When write enable is 1, the entire word is written to the shared 256×24 memory, and douta is the value written in this operation (WRITE_FIRST); when it is 0, douta is the stored content at the address presented on that edge. There is no additional output pipeline stage or read enable.
+
+Data and address are stable before the edge; sample the output at least 1ns after the edge. It holds when there is no new rising edge on that port.
+
+Legal addresses are 0..255, including the first and last addresses, adjacent addresses, and all address bits; data uses all 24 bits, with no byte masking.
+
+### R-dv-031-002 — Port A Reset and Memory Retention
+
+rsta is synchronous active-high and sets only this port's output to 0 on a clka rising edge; it neither clears shared memory nor resets the other port. When reset and write are active simultaneously, memory still accepts the write, while the output is 0; a subsequent legal read sees the written value.
+
+Changing reset between edges does not immediately clear the output; it is 0 at 1ns after an assertion edge, and normal read/write operation resumes on the next edge of its own clock after deassertion.
+
+Single-port/dual-port reset, pulses shorter than one cycle but spanning an active edge, holding for multiple edges, writes during reset, and cross-port readback after reset are all defined.
+
+### R-dv-031-003 — Port A busy Recovery Tail Window
+
+rsta_busy is registered state in this clock domain. After startup settles, if rsta=1 on that edge, busy is set to 1; after deassertion, it remains 1 on the 1st and 2nd edges of its own clock and becomes 0 on the 3rd edge of its own clock. Reassertion extends recovery again. busy does not mask memory writes.
+
+busy changes only on rising edges of its own clock and is observed 1ns after the edge; stopping that clock freezes it, and the other port's clock cannot advance it.
+
+This applies to sustained reset, single-edge reset, the 1st/2/3 edges after deassertion, reset reassertion during recovery, and unequal clock frequencies/stopped clocks.
+
+### R-dv-031-004 — Port B Synchronous Reads and Writes
+
+Port B accepts the address, write enable, and data on the rising edge of its own clock. When write enable is 1, the entire word is written to the shared 256×24 memory, and doutb is the value written in this operation (WRITE_FIRST); when it is 0, doutb is the stored content at the address presented on that edge. There is no additional output pipeline stage or read enable.
+
+Data and address are stable before the edge; sample the output at least 1ns after the edge. It holds when there is no new rising edge on that port.
+
+Legal addresses are 0..255, including the first and last addresses, adjacent addresses, and all address bits; data uses all 24 bits, with no byte masking.
+
+### R-dv-031-005 — Port B Reset and Memory Retention
+
+rstb is synchronous active-high and sets only this port's output to 0 on a clkb rising edge; it neither clears shared memory nor resets the other port. When reset and write are active simultaneously, memory still accepts the write, while the output is 0; a subsequent legal read sees the written value.
+
+Changing reset between edges does not immediately clear the output; it is 0 at 1ns after an assertion edge, and normal read/write operation resumes on the next edge of its own clock after deassertion.
+
+Single-port/dual-port reset, pulses shorter than one cycle but spanning an active edge, holding for multiple edges, writes during reset, and cross-port readback after reset are all defined.
+
+### R-dv-031-006 — Port B busy Recovery Tail Window
+
+rstb_busy is registered state in this clock domain. After startup has stabilized, if rstb=1 at that edge, busy is set to 1; after deassertion, it remains 1 on the first and second edges of its own clock and becomes 0 on the third edge of its own clock. Reassertion extends recovery again. busy does not mask memory writes.
+
+busy changes only on rising edges of its own clock and is observed 1ns after the edge; stopping that clock freezes it, and the other port's clock cannot advance it.
+
+This applies to sustained reset, single-edge reset, the 1st/2/3 edges after deassertion, reset reassertion during recovery, and unequal clock frequencies/stopped clocks.
+
+### R-dv-031-007 — Shared Memory and Independent Clocks
+
+The two ports share the same memory; after A writes, B can observe that value by reading the same address on a later non-colliding edge, and vice versa. Operations on different addresses by the two ports do not affect each other; stopping one port's clock does not affect the other port.
+
+The two ports may have different periods and different phases; a subsequent read edge must be at least 2ns after the preceding write edge.
+
+Cross-port operations less than 2ns apart, at the same address, and with at least one port writing are excluded; simultaneous reads of the same address by both ports are legal. No conflict arbitration or memory result after a collision is specified.
+
+### R-dv-031-008 — Startup and Initial Values
+
+The maintained simulation environment provides a 100ns global startup reset. Both clocks remain stationary at low level and start only after 110ns. All 256 words of memory are initially 0. The first 12 rising edges of each port are used for startup settling; thereafter, behavior is judged according to the normal read/write, reset, and busy contract.
+
+Write enables must be 0 during startup settling; after the 12 edge, initial values can be read and busy is 0 without an additional user reset.
+
+The startup domain does not specify the exact output/busy waveforms for the first 12 edges; this exemption must not be applied to subsequent user resets.

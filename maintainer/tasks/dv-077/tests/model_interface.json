@@ -1,0 +1,424 @@
+{
+  "selected_top": "logic_hash",
+  "parameters": {},
+  "package": "meta_package",
+  "package_compiled_before_candidate_filelist": true,
+  "structs": {
+    "irl_lh_meta_type": {
+      "kind": "unpacked struct",
+      "aggregate_field_width": 82,
+      "fields": [
+        {
+          "name": "traffic_class",
+          "width": 8,
+          "type": "logic",
+          "indices": "[7:0]"
+        },
+        {
+          "name": "hdr_len",
+          "width": 8,
+          "type": "logic",
+          "indices": "[7:0]"
+        },
+        {
+          "name": "buf_ptr",
+          "width": 12,
+          "type": "logic",
+          "indices": "[11:0]"
+        },
+        {
+          "name": "len",
+          "width": 14,
+          "type": "logic",
+          "indices": "[13:0]"
+        },
+        {
+          "name": "port",
+          "width": 3,
+          "type": "logic",
+          "indices": "[2:0]"
+        },
+        {
+          "name": "rci",
+          "width": 12,
+          "type": "logic",
+          "indices": "[11:0]"
+        },
+        {
+          "name": "fid",
+          "width": 12,
+          "type": "logic",
+          "indices": "[11:0]"
+        },
+        {
+          "name": "tid",
+          "width": 10,
+          "type": "logic",
+          "indices": "[9:0]"
+        },
+        {
+          "name": "type1",
+          "width": 1,
+          "type": "logic",
+          "indices": "scalar"
+        },
+        {
+          "name": "type3",
+          "width": 1,
+          "type": "logic",
+          "indices": "scalar"
+        },
+        {
+          "name": "discard",
+          "width": 1,
+          "type": "logic",
+          "indices": "scalar"
+        }
+      ]
+    },
+    "lh_ecdsa_meta_type": {
+      "kind": "unpacked struct",
+      "aggregate_field_width": 82,
+      "fields": [
+        {
+          "name": "traffic_class",
+          "width": 8,
+          "type": "logic",
+          "indices": "[7:0]"
+        },
+        {
+          "name": "hdr_len",
+          "width": 8,
+          "type": "logic",
+          "indices": "[7:0]"
+        },
+        {
+          "name": "buf_ptr",
+          "width": 12,
+          "type": "logic",
+          "indices": "[11:0]"
+        },
+        {
+          "name": "len",
+          "width": 14,
+          "type": "logic",
+          "indices": "[13:0]"
+        },
+        {
+          "name": "port",
+          "width": 3,
+          "type": "logic",
+          "indices": "[2:0]"
+        },
+        {
+          "name": "rci",
+          "width": 12,
+          "type": "logic",
+          "indices": "[11:0]"
+        },
+        {
+          "name": "fid",
+          "width": 12,
+          "type": "logic",
+          "indices": "[11:0]"
+        },
+        {
+          "name": "tid",
+          "width": 10,
+          "type": "logic",
+          "indices": "[9:0]"
+        },
+        {
+          "name": "type1",
+          "width": 1,
+          "type": "logic",
+          "indices": "scalar"
+        },
+        {
+          "name": "type3",
+          "width": 1,
+          "type": "logic",
+          "indices": "scalar"
+        },
+        {
+          "name": "discard",
+          "width": 1,
+          "type": "logic",
+          "indices": "scalar"
+        }
+      ]
+    },
+    "lh_pp_meta_type": {
+      "kind": "unpacked struct",
+      "aggregate_field_width": 74,
+      "fields": [
+        {
+          "name": "hdr_len",
+          "width": 8,
+          "type": "logic",
+          "indices": "[7:0]"
+        },
+        {
+          "name": "buf_ptr",
+          "width": 12,
+          "type": "logic",
+          "indices": "[11:0]"
+        },
+        {
+          "name": "len",
+          "width": 14,
+          "type": "logic",
+          "indices": "[13:0]"
+        },
+        {
+          "name": "port",
+          "width": 3,
+          "type": "logic",
+          "indices": "[2:0]"
+        },
+        {
+          "name": "rci",
+          "width": 12,
+          "type": "logic",
+          "indices": "[11:0]"
+        },
+        {
+          "name": "fid",
+          "width": 12,
+          "type": "logic",
+          "indices": "[11:0]"
+        },
+        {
+          "name": "tid",
+          "width": 10,
+          "type": "logic",
+          "indices": "[9:0]"
+        },
+        {
+          "name": "type1",
+          "width": 1,
+          "type": "logic",
+          "indices": "scalar"
+        },
+        {
+          "name": "type3",
+          "width": 1,
+          "type": "logic",
+          "indices": "scalar"
+        },
+        {
+          "name": "discard",
+          "width": 1,
+          "type": "logic",
+          "indices": "scalar"
+        }
+      ]
+    }
+  },
+  "ports_contract": "public/ports.md",
+  "ports": [
+    {
+      "name": "clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "ecdsa_lh_ppl_wdata",
+      "direction": "In",
+      "width": 6,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 5,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "ecdsa_lh_ready",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "ecdsa_lh_sn_wdata",
+      "direction": "In",
+      "width": 64,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 63,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "ecdsa_lh_waddr",
+      "direction": "In",
+      "width": 12,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 11,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "ecdsa_lh_wdata",
+      "direction": "In",
+      "width": 256,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 255,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "ecdsa_lh_wr",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "irl_lh_eop",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "irl_lh_hdr_data",
+      "direction": "In",
+      "width": 128,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 127,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "irl_lh_meta_data",
+      "direction": "In",
+      "width": 82,
+      "dimensions": []
+    },
+    {
+      "name": "irl_lh_sop",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "irl_lh_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "lh_ecdsa_eop",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "lh_ecdsa_hash_data",
+      "direction": "Out",
+      "width": 256,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 255,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "lh_ecdsa_hash_valid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "lh_ecdsa_hdr_data",
+      "direction": "Out",
+      "width": 128,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 127,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "lh_ecdsa_meta_data",
+      "direction": "Out",
+      "width": 82,
+      "dimensions": []
+    },
+    {
+      "name": "lh_ecdsa_sop",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "lh_ecdsa_valid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "lh_pp_eop",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "lh_pp_hdr_data",
+      "direction": "Out",
+      "width": 128,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 127,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "lh_pp_meta_data",
+      "direction": "Out",
+      "width": 74,
+      "dimensions": []
+    },
+    {
+      "name": "lh_pp_sop",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "lh_pp_valid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "reset_n",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "type_widths": {
+    "irl_lh_meta_type": 82,
+    "lh_ecdsa_meta_type": 82,
+    "lh_pp_meta_type": 74
+  }
+}

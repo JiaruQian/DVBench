@@ -1,0 +1,33 @@
+{
+  "candidates_per_task": 1,
+  "debug_seed": 1,
+  "verification_seeds": [
+    1,
+    7,
+    42
+  ],
+  "feedback_calls": 50,
+  "compile_seconds": 900,
+  "simulation_seconds_per_seed": 600,
+  "turn_limit": 300,
+  "turn_reminder": 250,
+  "task_wall_seconds": null,
+  "cumulative_input_tokens": null,
+  "cumulative_output_tokens": null,
+  "overall": {
+    "reference_model_percent": 100,
+    "compile_pass": true,
+    "golden_all_seeds_pass": true,
+    "mutants_all_required_seeds_detected": 10,
+    "coverage_each_percent": {
+      "LINE": 90,
+      "COND": 90,
+      "BRANCH": 90,
+      "TOGGLE": 90
+    }
+  },
+  "mutant_simulation_seconds_per_seed": 1800,
+  "feedback_transport_seconds": 3660,
+  "request_timeout_seconds": 3600,
+  "max_output_tokens_per_response": 128000
+}

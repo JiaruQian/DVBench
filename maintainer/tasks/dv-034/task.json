@@ -1,0 +1,164 @@
+{
+  "task_id": "dv-034",
+  "dut_top": "alarm_clock_top",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "Alarm_Controller.v",
+    "Timing_Generator.v",
+    "alarm_clock_top.v",
+    "alarm_reg.v",
+    "counter.v",
+    "keyreg.v",
+    "lcd_driver.v",
+    "lcd_driver_4.v"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "alarm_button",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "alarm_sound",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "clock",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "fastwatch",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "key",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ls_hour",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ls_minute",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ms_hour",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ms_minute",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "reset",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "time_button",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {},
+    "parser": "pyslang 12.1.0"
+  },
+  "model_contract_policy": "native-module-v1",
+  "reference_submission": "solution/reference",
+  "mutants": [
+    "m1",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m10"
+  ],
+  "rtl_sources": [
+    "Alarm_Controller.v",
+    "Timing_Generator.v",
+    "alarm_clock_top.v",
+    "alarm_reg.v",
+    "counter.v",
+    "keyreg.v",
+    "lcd_driver.v",
+    "lcd_driver_4.v"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "Alarm_Controller.v",
+    "Timing_Generator.v",
+    "alarm_clock_top.v",
+    "alarm_reg.v",
+    "counter.v",
+    "keyreg.v",
+    "lcd_driver.v",
+    "lcd_driver_4.v"
+  ]
+}

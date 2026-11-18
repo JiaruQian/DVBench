@@ -1,0 +1,131 @@
+# Functional Description
+
+## F01
+
+requirement_ids：R-dv-058-001
+module：video_filter_top
+definition: The complete video_filter_top and all dependencies in this task use fixed DATA_WIDTH=24, IMAGE_WIDTH=384, IMAGE_HEIGHT=64, BLINK_RATE=6, DEBOUNCE_LIMIT=2500000. RGB is R[23:16],G[15:8],B[7:0]. All inputs are stable before the rising edge of clk; there is no ready/backpressure. btn[3:2] has no effect. IMAGE_HEIGHT does not limit the text y count; the top-level DEBOUNCE_LIMIT does not change the fixed sampling limit of 2500000 in each submodule.
+interface：clk、n_rst、sw、btn、i_vid_data、i_vid_hsync、i_vid_vsync、i_vid_VDE、led、o_vid_data、o_vid_hsync、o_vid_vsync、o_vid_VDE
+timing: All sequential state updates only on the rising edge of clk, and outputs settle after the edge. sw/btn may change on every edge, with no frame latching.
+boundary: Only the fixed profile above is covered; all inputs are known two-state values and meet setup and hold times. Unsupported parameter configurations are not required.
+parent_id：None
+
+## F02
+
+requirement_ids：R-dv-058-002
+module：video_filter_top
+definition: Low n_rst clears top-level data/control/LED, filter outputs, window registers and pointers, text coordinates, blink count and enable only on rising edges; the threshold returns to 128, Gaussian mode to 1, Sobel mode to 0, and button counts/prev to 0. RAM contents are retained.
+interface：clk、n_rst、led、o_vid_data、o_vid_hsync、o_vid_vsync、o_vid_VDE
+timing: Driving n_rst low between edges does not immediately change outputs; all outputs are 0 after a reset rising edge; the native pipeline resumes after release.
+boundary: RAM is not initialized by reset; data from the first read of an unwritten slot is unspecified and must not be assumed to be 0.
+parent_id：None
+
+## F03
+
+requirement_ids：R-dv-058-003
+module：video_filter_top
+definition: sw[2:0] selects, in order, 0 original, 1 grayscale, 2 negative, 3 threshold, 4 Gaussian, 5 sharpen, 6 Sobel, and 7 emboss. The seven filters run in parallel; unselected paths still retain and update their state. sw changes do not wait for a frame boundary.
+interface：clk、n_rst、sw、btn、i_vid_data、i_vid_hsync、i_vid_vsync、i_vid_VDE、o_vid_data、o_vid_hsync、o_vid_vsync、o_vid_VDE
+timing: Data and control are selected combinationally; the top level and text have different latencies, and switching uses their respective historical values.
+boundary: Do not misinterpret the 8 paths as paths with uniform latency; do not clear the history of unselected paths.
+parent_id：None
+
+## F04
+
+requirement_ids：R-dv-058-004
+module：video_filter_top
+definition: Y=floor((77R+150G+29B)/256). Grayscale outputs (Y,Y,Y); negative outputs 255-input for each channel; threshold outputs white when Y>=the pre-edge threshold, and black otherwise. Data and input control are registered on every non-reset edge; computation also occurs when VDE is low.
+interface：clk、n_rst、sw、i_vid_data、i_vid_hsync、i_vid_vsync、i_vid_VDE、o_vid_data、o_vid_hsync、o_vid_vsync、o_vid_VDE
+timing: These filter registers update first, then the text and final registers form the output; the old threshold is still used on the edge when the threshold changes.
+boundary: RGB 0/255 and Y equal to threshold produce white; blanking data also participates in computation.
+parent_id：None
+
+## F05
+
+requirement_ids：R-dv-058-005
+module：video_filter_top
+definition: The threshold/Gaussian/Sobel free-running 22-bit counters increment from 0 on every edge, clear to 0 when their pre-edge value is 2500000, and sample the routed buttons, thus sampling once every 2500001 non-reset edges. Only a sampled low-to-high transition triggers an action; holding a button does not repeat. For threshold, btn0 adds 5 and btn1 subtracts 5, clamped to 0..255; if both have new rising transitions simultaneously, increment has priority and both prev values update. Only sw3 routes to threshold, sw4/6 route to their respective btn0, and all other routes are 0.
+interface：clk、n_rst、sw、btn、i_vid_data、o_vid_data
+timing: Counting does not restart based on button level; an unsampled release does not create a new observable low state. Data on the update edge uses the old threshold.
+boundary: Narrow pulses may be missed; the top-level parameter cannot accelerate sampling; btn2/3 and Gaussian/Sobel btn1 have no effect.
+parent_id：None
+
+## F06
+
+requirement_ids：R-dv-058-006
+module：video_filter_top
+definition: For each RGB channel, compute a weighted sum from the old 3x3 window using kc for the four corners, ke for the four edges, and km for the center, then perform integer division by D. Mode 0=(1,1,2,10), 1=(1,2,4,16), 2=(1,3,9,25). Reset mode is 1; sampled btn0 rising transitions cycle through 1→2→0→1.
+interface：clk、n_rst、sw、btn、i_vid_data、i_vid_VDE、o_vid_data
+timing: Use the pre-edge window and mode to compute the filter register value for this edge, then pass through the text and top-level registers.
+boundary: Uninitialized window data is unspecified; VDE gates only the window, while output registers compute on every edge.
+parent_id：None
+
+## F07
+
+requirement_ids：R-dv-058-007
+module：video_filter_top
+definition: For each channel, compute 5*p11-p01-p10-p12-p21 from the old window; clamp results below 0 to 0 and above 255 to 255, otherwise take 8 bits.
+interface：clk、n_rst、sw、i_vid_data、i_vid_VDE、o_vid_data
+timing: Compute from the old window on the rising edge and then register; text and the top level continue to retain their respective register delays.
+boundary: The signed 12-bit range is sufficient to cover legal pixels; do not handle this as unsigned underflow.
+parent_id：None
+
+## F08
+
+requirement_ids：R-dv-058-008
+module：video_filter_top
+definition: First compute Y. From the old grayscale window, Gx=-p00+p02-2p10+2p12-p20+p22, Gy=-p00-2p01-p02+p20+2p21+p22. Mode 0 takes abs(Gx)+abs(Gy), 1 takes abs(Gx), and 2 takes abs(Gy), all clamped to 0..255 and replicated across RGB. Reset mode is 0; newly sampled btn0 rising transitions cycle through 0→1→2→0.
+interface：clk、n_rst、sw、btn、i_vid_data、i_vid_VDE、o_vid_data
+timing: The window advances only when VDE is high; the filter output is computed from the old window/old mode on every edge.
+boundary: Directional signs, absolute values, and total magnitude are independent; the maximum is clipped to 255.
+parent_id：None
+
+## F09
+
+requirement_ids：R-dv-058-009
+module：video_filter_top
+definition: Compute -2*p00-p01-p10+p11+p12+p21+2*p22+128 from the old grayscale window, clamp to 0..255, then replicate across RGB. The coefficient sum is 1; a constant window q yields min(q+128,255).
+interface：clk、n_rst、sw、i_vid_data、i_vid_VDE、o_vid_data
+timing: On every non-reset edge, register the result from the old window, then enter the common text/output path.
+boundary: Do not replace the actual formula with the source-code comment that flat regions are approximately 128.
+parent_id：None
+
+## F10
+
+requirement_ids：R-dv-058-010
+module：video_filter_top
+definition: Each window has two RAMs of W=384 that read old mem[ptr] and write the new input to the same address on edges with VDE high; ptr wraps to 0 at W-1. lb2 writes the old lb1 output; on the same edge, p22 takes the input, p12 takes the old lb1 output, and p02 takes the old lb2 output, with each row shifting horizontally. Valid pixels u[k] correspond to p22=u[k],p21=u[k-1],p20=u[k-2],p12=u[k-W-1],p11=u[k-W-2],p10=u[k-W-3],p02=u[k-2W-2],p01=u[k-2W-3],p00=u[k-2W-4], which holds only after each slot has been written.
+interface：clk、n_rst、i_vid_data、i_vid_hsync、i_vid_vsync、i_vid_VDE、sw、o_vid_data
+timing: When VDE is low, RAM, pointers, windows, and line buffer outputs hold; hsync/vsync do not flush. Filter outputs are computed from the old window on every edge.
+boundary: Reset clears only pointers, lb outputs, and windows; RAM is retained. Initial values in unwritten slots are unspecified. There is no padding, clearing of horizontal shifts at line ends, or frame flush.
+parent_id：None
+
+## F11
+
+requirement_ids：R-dv-058-011
+module：video_filter_top
+definition: Text x increments by 1 on edges with original VDE high, wraps to 0 at 383, and clears to 0 when VDE is low. y clears to 0 on a falling edge of original vsync, taking priority over incrementing by 1 on a falling edge of VDE, and naturally wraps at 11 bits. The box is x∈[16,383],y<48; the nine-character area contains NORMAL, GREYSCALE, NEGATIVE, THRESHOLD, GAUSSIAN, SHARPEN, SOBEL, EMBOSS respectively, padded with spaces as needed. SCALE=5,PAD=4, tx=x-20,ty=y-4, calculated using 11-bit coordinates; in_text additionally requires being inside the box with x/y>=4,tx<360,ty<40; the character index is tx/40, the column within the character is (tx%40)/5, and the row is ty/5, selecting row bitmap[7-col]. Strokes are white, the rest inside the box is black, and outside the box the selected pixel is used. The 8 rows of each character, from top to bottom, are hex bitmaps: A:3C/66/66/7E/66/66/66/00; B:7C/66/66/7C/66/66/7C/00; C:3C/66/60/60/60/66/3C/00; D:78/6C/66/66/66/6C/78/00; E:7E/60/60/7C/60/60/7E/00; G:3C/66/60/6E/66/66/3C/00; H:66/66/66/7E/66/66/66/00; I:3C/18/18/18/18/18/3C/00; L:60/60/60/60/60/60/7E/00; M:42/66/7E/5A/42/42/42/00; N:66/76/7E/6E/66/66/66/00; O:3C/66/66/66/66/66/3C/00; P:7C/66/66/7C/60/60/60/00; R:7C/66/66/7C/6C/66/66/00; S:3C/66/60/3C/06/66/3C/00; T:7E/18/18/18/18/18/18/00; U:66/66/66/66/66/66/3C/00; V:66/66/66/66/66/3C/18/00; Y:66/66/66/3C/18/18/18/00; all other characters are all 0.
+interface：clk、n_rst、sw、i_vid_data、i_vid_hsync、i_vid_vsync、i_vid_VDE、o_vid_data
+timing: Text is registered on every edge, without VDE gating of data; coordinates and selected pixels use pre-edge values. Synchronization control does not pass through the text layer.
+boundary: hsync does not participate in coordinates, and IMAGE_HEIGHT 64 does not limit y either; text is actually in the upper-right corner; low VDE does not prohibit black background box output.
+parent_id：None
+
+## F12
+
+requirement_ids：R-dv-058-012
+module：video_filter_top
+definition: The independent top-level x updates according to original VDE. When sw3=1, pre-edge x∈[191,193] has priority and outputs a white divider; otherwise x>=192 outputs old text data, while the left side outputs the current input; when sw3=0, all output uses old text data. Control always registers pre-edge selected control. In a stable mode outside the box, the original path has data=P[n-1] after edge n while control=H[n]; single-pixel filters have data=F(P[n-2]) while control=H[n-1].
+interface：clk、n_rst、sw、i_vid_data、i_vid_hsync、i_vid_vsync、i_vid_VDE、o_vid_data、o_vid_hsync、o_vid_vsync、o_vid_VDE
+timing: Top-level split-screen x, overlay coordinates, and data use their respective pre-edge states; there is no additional output alignment guarantee.
+boundary: Do not assume that left/right correspond to the same pixel cycle or that VDE and RGB are aligned; window paths are calculated separately according to their recurrences.
+parent_id：None
+
+## F13
+
+requirement_ids：R-dv-058-013
+module：video_filter_top
+definition: When the pre-edge 26-bit blink count is >=6, clear it to 0 and toggle enable; otherwise increment by 1. LED uses old enable on the same edge and reflects the toggle only on the next edge; when on, sw[1:0]=0/1/2/3 corresponds to 0001/0010/0100/1000; when off, it is 0000, with the two filter categories being the same.
+interface：clk、n_rst、sw、led
+timing: The toggle interval is 7 non-reset edges, and a complete on/off period is 14 edges; reset clears the count, enable, and LED.
+boundary: mode changes alter the one-hot selection in real time, but the new enable must not be used early.
+parent_id：None

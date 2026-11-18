@@ -1,0 +1,128 @@
+{
+  "task_id": "dv-014",
+  "dut_top": "ap3216c_top",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "ap3216c.v",
+    "ap3216c_top.v",
+    "i2c_dri.v",
+    "led_disp.v",
+    "seg_led.v"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m10"
+  ],
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "reference_submission": "solution/reference",
+  "model_contract_policy": "native-module-v1",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "ap_scl",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "ap_sda",
+        "direction": "InOut",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "led",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "seg_led",
+        "direction": "Out",
+        "width": 8,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 7,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "sel",
+        "direction": "Out",
+        "width": 6,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 5,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "sys_clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "sys_rst_n",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {
+      "SLAVE_ADDR": "7'b11110",
+      "BIT_CTRL": "1'b0",
+      "CLK_FREQ": "26'd50000000",
+      "I2C_FREQ": "18'd250000"
+    },
+    "parser": "pyslang 12.1.0"
+  },
+  "rtl_sources": [
+    "ap3216c.v",
+    "ap3216c_top.v",
+    "i2c_dri.v",
+    "led_disp.v",
+    "seg_led.v"
+  ],
+  "include_dirs": [
+    "backfill",
+    "support"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "ap3216c.v",
+    "ap3216c_top.v",
+    "i2c_dri.v",
+    "led_disp.v",
+    "seg_led.v"
+  ]
+}

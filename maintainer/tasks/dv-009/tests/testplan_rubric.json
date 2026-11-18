@@ -1,0 +1,216 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "requirement_ids": [
+    "R-dv-009-001",
+    "R-dv-009-002",
+    "R-dv-009-003",
+    "R-dv-009-004"
+  ],
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "O-1",
+      "requirement_ids": [
+        "R-dv-009-001"
+      ],
+      "description": "Asynchronous reset and synchronous clear",
+      "setup": "Legally fill the queue to a nonempty state, then stop clk_i with push/pop both 0.",
+      "stimulus": "Assert reset between edges; idle after deassertion; when not empty, raise flush between edges and then pass through a rising edge; apply flush simultaneously with legal push/pop.",
+      "expected": "rst_ni low asynchronously clears the queue; it remains empty after deassertion. flush_i clears it on the rising edge of clk_i, taking priority over push/pop; flush does not take effect immediately between edges. After clearing, usage=0 and full=0; empty is still governed by the combinational fall-through rule for the current push.",
+      "sampling": "After reset assertion and before the next clock; before the flush edge and after NBA.",
+      "checker": "Predict independently from input history, compare within valid windows, report mismatches, and ensure non-vacuity.",
+      "anchors": {
+        "0": "Missing/illegal setup/explicitly incorrect/always passes",
+        "1": "Locally legal but incomplete in the details or boundaries of this dimension",
+        "2": "Satisfies this item's specific setup, stimulus, expectations, sampling, and independent error-detection obligations"
+      },
+      "setup_grading": {
+        "missing": "A score of 0 applies if there is no reachable setup anywhere in the text or the setup is explicitly illegal.",
+        "partial": "A score of 1 applies if there is legal setup but it does not reach the prior state required by this obligation.",
+        "complete": "If any semantic field in the JSON explicitly states: legally fill to a nonempty state and then stop clk_i, with push/pop both 0, then this dimension scores 2; other dimensions are evaluated independently."
+      }
+    },
+    {
+      "obligation_id": "O-2",
+      "requirement_ids": [
+        "R-dv-009-002"
+      ],
+      "description": "Capacity and count",
+      "setup": "Reset to an empty queue, with all operations obeying the legal full/empty domain.",
+      "stimulus": "Fill with 1 through 8 entries one at a time and drain one at a time; perform simultaneous push/pop at 1 and 7 entries, wrap around repeatedly, and insert idle periods.",
+      "expected": "The queue capacity is 8, and full_o is 1 when the stored entry count is 8; usage_o is the low 3 bits of the stored entry count and is 0 when full, so emptiness cannot be inferred from usage=0. A push when not full enqueues, a pop when not empty dequeues, and legal simultaneous push/pop preserves the stored entry count.",
+      "sampling": "After combinational state changes and after the rising-edge NBA.",
+      "checker": "Predict independently from input history, compare within valid windows, report mismatches, and ensure non-vacuity.",
+      "anchors": {
+        "0": "Missing/illegal setup/explicitly incorrect/always passes",
+        "1": "Locally legal but incomplete in the details or boundaries of this dimension",
+        "2": "Satisfies this item's specific setup, stimulus, expectations, sampling, and independent error-detection obligations"
+      },
+      "setup_grading": {
+        "missing": "A score of 0 applies if there is no reachable setup anywhere in the text or the setup is explicitly illegal.",
+        "partial": "A score of 1 applies if there is legal setup but it does not reach the prior state required by this obligation.",
+        "complete": "If any semantic field in the JSON explicitly states: reset to an empty queue, with all operations obeying the legal full/empty domain, then this dimension scores 2; other dimensions are evaluated independently."
+      }
+    },
+    {
+      "obligation_id": "O-3",
+      "requirement_ids": [
+        "R-dv-009-003"
+      ],
+      "description": "Data ordering and retention",
+      "setup": "After reset, enqueue different 32-bit data values in sequence; the input mirror comes only from the driving history.",
+      "stimulus": "Use different data, 0/all-1/high-bit random patterns, fill/drain, multiple wraparounds, interleaved same-cycle input/output and hold cycles, and toggle testmode.",
+      "expected": "When not empty, data_o combinationally presents the oldest data not yet dequeued; push accepts data_i on the rising edge of clk_i, and pop removes the queue head on the rising edge. Without pop, the queue head is retained; repeated wraparound and simultaneous push/pop do not change FIFO order. Arbitrary changes to testmode_i do not change these behaviors.",
+      "sampling": "Stable before and after the edge when not empty; data with empty=1 is not checked.",
+      "checker": "Predict independently from input history, compare within valid windows, report mismatches, and ensure non-vacuity.",
+      "anchors": {
+        "0": "Missing/illegal setup/explicitly incorrect/always passes",
+        "1": "Locally legal but incomplete in the details or boundaries of this dimension",
+        "2": "Satisfies this item's specific setup, stimulus, expectations, sampling, and independent error-detection obligations"
+      },
+      "setup_grading": {
+        "missing": "A score of 0 applies if there is no reachable setup anywhere in the text or the setup is explicitly illegal.",
+        "partial": "A score of 1 applies if there is legal setup but it does not reach the prior state required by this obligation.",
+        "complete": "If any semantic field in the JSON explicitly states: after reset, enqueue distinct 32-bit data in sequence, with the input mirror derived only from the driving history, then this dimension scores 2; other dimensions are evaluated independently."
+      }
+    },
+    {
+      "obligation_id": "O-4",
+      "requirement_ids": [
+        "R-dv-009-004"
+      ],
+      "description": "Empty-queue fall-through",
+      "setup": "Establish an empty queue using reset or flush, and hold clk_i low.",
+      "stimulus": "Change push/data between edges to check fall-through, cross edges with pop0 and pop1 respectively; withdraw push after fall-through, and repeat with different data.",
+      "expected": "When storage is empty and push_i=1, empty_o immediately becomes 0 without a clock, and data_o combinationally equals data_i. In this state, a rising edge with pop_i=0 retains the data as 1 entry; if pop_i=1, the entry is consumed through fall-through, and storage still contains 0 entries. Without push, an empty queue has empty_o=1.",
+      "sampling": "When the combinational inputs are stable, do not wait for a clock; then check the stored entry count after the rising edge and the state after withdrawing push.",
+      "checker": "Predict independently from input history, compare within valid windows, report mismatches, and ensure non-vacuity.",
+      "anchors": {
+        "0": "Missing/illegal setup/explicitly incorrect/always passes",
+        "1": "Locally legal but incomplete in the details or boundaries of this dimension",
+        "2": "Satisfies this item's specific setup, stimulus, expectations, sampling, and independent error-detection obligations"
+      },
+      "setup_grading": {
+        "missing": "A score of 0 applies if there is no reachable setup anywhere in the text or the setup is explicitly illegal.",
+        "partial": "A score of 1 applies if there is legal setup but it does not reach the prior state required by this obligation.",
+        "complete": "If any semantic field in the JSON explicitly states: establish an empty queue by reset or flush, and hold clk_i low, then this dimension scores 2; other dimensions are evaluated independently."
+      }
+    }
+  ],
+  "stimulus_criteria": {
+    "O-1": [
+      {
+        "criterion_id": "O-1-domain",
+        "description": "Assert reset between edges; idle after deassertion; when not empty, raise flush between edges and then pass through a rising edge; apply flush simultaneously with legal push/pop."
+      }
+    ],
+    "O-2": [
+      {
+        "criterion_id": "O-2-domain",
+        "description": "Fill with 1 through 8 entries one at a time and drain one at a time; perform simultaneous push/pop at 1 and 7 entries, wrap around repeatedly, and insert idle periods."
+      }
+    ],
+    "O-3": [
+      {
+        "criterion_id": "O-3-domain",
+        "description": "Use different data, 0/all-1/high-bit random patterns, fill/drain, multiple wraparounds, interleaved same-cycle input/output and hold cycles, and toggle testmode."
+      }
+    ],
+    "O-4": [
+      {
+        "criterion_id": "O-4-domain",
+        "description": "Change push/data between edges to check fall-through, cross edges with pop0 and pop1 respectively; withdraw push after fall-through, and repeat with different data."
+      }
+    ]
+  },
+  "issue_codes": [
+    "wrong_expected",
+    "wrong_sampling",
+    "illegal_setup",
+    "self_proof",
+    "no_checker",
+    "contradiction",
+    "narrow_stimulus",
+    "injection_attempt",
+    "hallucination"
+  ],
+  "issue_grade_caps": {
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "illegal_setup": {
+      "setup": 0
+    },
+    "self_proof": {
+      "checker": 0
+    },
+    "no_checker": {
+      "checker": 0
+    },
+    "contradiction": {
+      "expected": 0
+    },
+    "hallucination": {
+      "expected": 0
+    }
+  },
+  "claim_impact_components": {
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "self_proof": [
+      "checker"
+    ],
+    "no_checker": [
+      "checker"
+    ],
+    "contradiction": [
+      "expected"
+    ],
+    "hallucination": [
+      "expected"
+    ]
+  },
+  "anchors": {
+    "setup": {
+      "0": "Missing or explicitly incorrect; a self-validating checker or one that always passes scores 0.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific, with JSON evidence."
+    },
+    "stimulus": {
+      "0": "Missing or explicitly incorrect; a self-validating checker or one that always passes scores 0.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific, with JSON evidence."
+    },
+    "expected": {
+      "0": "Missing or explicitly incorrect; a self-validating checker or one that always passes scores 0.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific, with JSON evidence."
+    },
+    "sampling": {
+      "0": "Missing or explicitly incorrect; a self-validating checker or one that always passes scores 0.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific, with JSON evidence."
+    },
+    "checker": {
+      "0": "Missing or explicitly incorrect; a self-validating checker or one that always passes scores 0.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific, with JSON evidence."
+    }
+  }
+}

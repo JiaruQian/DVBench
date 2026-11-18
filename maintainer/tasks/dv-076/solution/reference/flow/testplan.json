@@ -1,0 +1,116 @@
+{
+  "tests": [
+    {
+      "test_id": "T-1",
+      "feature_ids": [
+        "F-1"
+      ],
+      "requirement_ids": [
+        "R-dv-076-001"
+      ],
+      "stimulus": "First drive reset low on a falling edge to establish a known state, then release it on a clock falling edge. Run the complete system from reset to the end of the firmware, keeping the external input variable.",
+      "expected": "The top level for this task is the complete five-stage pipelined pipelined_riscv_core, with fixed WIDTH=32 and PROGRAM_FILE=\"program3.hex\"; replacing the program is not allowed. ROM and RAM each contain 256 32-bit words, and unlisted portions of ROM are NOPs. The public program table defines the software domain for this task; support for arbitrary RV32I programs need not be guaranteed. Use only known two-state inputs.",
+      "checker": "Edge numbering starts at edge 1 after reset release; the input is stable before the rising edge, and comparison occurs 1ns after the edge; after the reset falling edge, also compare before the next clock. Independently predict valid/data from the reset and input history, perform four-state comparisons of all outputs after every clock edge, and report UVM_ERROR on a mismatch; also compare between reset edges. Count complete result events, cancellations, and comparisons; passing with no activity is prohibited.",
+      "implementation_id": "V-1",
+      "source": "firmware_reference.sv:firmware_driver.run_phase/firmware_scoreboard.write"
+    },
+    {
+      "test_id": "T-2",
+      "feature_ids": [
+        "F-2"
+      ],
+      "requirement_ids": [
+        "R-dv-076-002"
+      ],
+      "stimulus": "First drive reset low on a falling edge to establish a known state, then release it on a clock falling edge. Apply reset separately at power-up, before and after sampling, before and after output, and during prolonged idle periods, including short pulses that do not span a rising edge and low levels spanning multiple clocks.",
+      "expected": "i_rstn is an active-low asynchronous reset; its falling edge immediately clears result_valid and result_data, and clears the pipeline, PC, registers, and RAM. Generate at least one actual falling reset edge; all outputs are 0 during reset. Release reset away from a rising clock edge; the next rising edge counts as edge 1.",
+      "checker": "Edge numbering starts at edge 1 after reset release; the input is stable before the rising edge, and comparison occurs 1ns after the edge; after the reset falling edge, also compare before the next clock. Independently predict valid/data from the reset and input history, perform four-state comparisons of all outputs after every clock edge, and report UVM_ERROR on a mismatch; also compare between reset edges. Count complete result events, cancellations, and comparisons; passing with no activity is prohibited.",
+      "implementation_id": "V-2",
+      "source": "firmware_reference.sv:firmware_driver.run_phase/firmware_scoreboard.write"
+    },
+    {
+      "test_id": "T-3",
+      "feature_ids": [
+        "F-3"
+      ],
+      "requirement_ids": [
+        "R-dv-076-003"
+      ],
+      "stimulus": "First drive reset low on a falling edge to establish a known state, then release it on a clock falling edge. Each legal run starts with a fresh reset; change the input before and after the sampling window, and use multiple resets to check that old RAM and register state does not leak.",
+      "expected": "Byte address fffffff8 is read-only input_data, and fffffffc is the result register; neither writes ordinary RAM. The datapath uses 32-bit whole-word reads and writes, and the ordinary RAM word index is the byte address shifted right by 2. The fixed firmware accesses only RAM word 0, writing before reading; there is no externally modifiable code or memory port.",
+      "checker": "Edge numbering starts at edge 1 after reset release; the input is stable before the rising edge, and comparison occurs 1ns after the edge; after the reset falling edge, also compare before the next clock. Independently predict valid/data from the reset and input history, perform four-state comparisons of all outputs after every clock edge, and report UVM_ERROR on a mismatch; also compare between reset edges. Count complete result events, cancellations, and comparisons; passing with no activity is prohibited.",
+      "implementation_id": "V-3",
+      "source": "firmware_reference.sv:firmware_driver.run_phase/firmware_scoreboard.write"
+    },
+    {
+      "test_id": "T-4",
+      "feature_ids": [
+        "F-4"
+      ],
+      "requirement_ids": [
+        "R-dv-076-004"
+      ],
+      "stimulus": "First drive reset low on a falling edge to establish a known state, then release it on a clock falling edge. Use distinct patterns on edges 20, 21, and 22, and keep changing the input on other edges; cover constant input and input that changes every cycle.",
+      "expected": "On the 21st rising edge of i_clk after each reset release, sample input_data as the 32-bit unsigned bit vector for this transaction; it must be stable before the edge and held through that edge. Inputs at other times do not affect this result. A run canceled by reset before sampling produces no result; each run samples only once.",
+      "checker": "Edge numbering starts at edge 1 after reset release; the input is stable before the rising edge, and comparison occurs 1ns after the edge; after the reset falling edge, also compare before the next clock. Independently predict valid/data from the reset and input history, perform four-state comparisons of all outputs after every clock edge, and report UVM_ERROR on a mismatch; also compare between reset edges. Count complete result events, cancellations, and comparisons; passing with no activity is prohibited.",
+      "implementation_id": "V-4",
+      "source": "firmware_reference.sv:firmware_driver.run_phase/firmware_scoreboard.write"
+    },
+    {
+      "test_id": "T-5",
+      "feature_ids": [
+        "F-5"
+      ],
+      "requirement_ids": [
+        "R-dv-076-005"
+      ],
+      "stimulus": "First drive reset low on a falling edge to establish a known state, then release it on a clock falling edge. Inputs cover 0, fffffffb, fffffffc, ffffffff, 7fffffff, 80000000, alternating bits, single-set-bit patterns, and random 32-bit values.",
+      "expected": "The firmware sets x8=-8, reads input_data into x9, computes x10=x9+7, writes RAM word 0 and reads it back into x11, computes x11=x11-3, and writes the result address; all operations are truncated to 32 bits modulo 2^32. Thus, the result is the input at edge 21 plus 4 modulo 2^32; saturation or signed truncation must not be used.",
+      "checker": "Edge numbering starts at edge 1 after reset release; the input is stable before the rising edge, and comparison occurs 1ns after the edge; after the reset falling edge, also compare before the next clock. Independently predict valid/data from the reset and input history, perform four-state comparisons of all outputs after every clock edge, and report UVM_ERROR on a mismatch; also compare between reset edges. Count complete result events, cancellations, and comparisons; passing with no activity is prohibited.",
+      "implementation_id": "V-5",
+      "source": "firmware_reference.sv:firmware_driver.run_phase/firmware_scoreboard.write"
+    },
+    {
+      "test_id": "T-6",
+      "feature_ids": [
+        "F-6"
+      ],
+      "requirement_ids": [
+        "R-dv-076-006"
+      ],
+      "stimulus": "First drive reset low on a falling edge to establish a known state, then release it on a clock falling edge. In a complete run, observe edges 65, 66, and 67 and at least several hundred later cycles; also reset after edge 65 to verify that no late output occurs.",
+      "expected": "If reset does not interrupt the run, after the 66th rising edge result_valid is 1 and result_data updates to this run's result; result_valid is 0 at edges 1 through 65, and is 0 at edge 67 and thereafter. Only one single-cycle pulse is produced even if the input remains unchanged. After the rising edge, wait for nonblocking assignments to settle before observing.",
+      "checker": "Edge numbering starts at edge 1 after reset release; the input is stable before the rising edge, and comparison occurs 1ns after the edge; after the reset falling edge, also compare before the next clock. Independently predict valid/data from the reset and input history, perform four-state comparisons of all outputs after every clock edge, and report UVM_ERROR on a mismatch; also compare between reset edges. Count complete result events, cancellations, and comparisons; passing with no activity is prohibited.",
+      "implementation_id": "V-6",
+      "source": "firmware_reference.sv:firmware_driver.run_phase/firmware_scoreboard.write"
+    },
+    {
+      "test_id": "T-7",
+      "feature_ids": [
+        "F-7"
+      ],
+      "requirement_ids": [
+        "R-dv-076-007"
+      ],
+      "stimulus": "First drive reset low on a falling edge to establish a known state, then release it on a clock falling edge. After the result, continue changing the input and run for hundreds of cycles, checking on every cycle that data is held and valid is 0; then reset and rerun with a different input.",
+      "expected": "result_data remains 0 after reset until the first result, and continuously holds the result after updating at edge 66, including all edges where result_valid is 0; only the next reset clears it to zero. The JAL self-loop at the end of the firmware does not write the result again and does not repeat the output in response to subsequent input_data changes. Both result_valid and result_data are public state valid on every cycle.",
+      "checker": "Edge numbering starts at edge 1 after reset release; the input is stable before the rising edge, and comparison occurs 1ns after the edge; after the reset falling edge, also compare before the next clock. Independently predict valid/data from the reset and input history, perform four-state comparisons of all outputs after every clock edge, and report UVM_ERROR on a mismatch; also compare between reset edges. Count complete result events, cancellations, and comparisons; passing with no activity is prohibited.",
+      "implementation_id": "V-7",
+      "source": "firmware_reference.sv:firmware_driver.run_phase/firmware_scoreboard.write"
+    },
+    {
+      "test_id": "T-8",
+      "feature_ids": [
+        "F-8"
+      ],
+      "requirement_ids": [
+        "R-dv-076-008"
+      ],
+      "stimulus": "First drive reset low on a falling edge to establish a known state, then release it on a clock falling edge. Cancel after edges 20, 21, 65, 66, and 67 respectively, alternate short/long resets, and restart with distinct inputs to confirm that old samples are not reused across runs.",
+      "expected": "An effective reset at any time cancels the old run, without queuing or reissuing the old result; after release, timing restarts from edge 1. This includes reset after sampling but before output, immediately after edge 66, and during a prolonged trailing loop. The new result comes only from the input at edge 21 of the new run.",
+      "checker": "Edge numbering starts at edge 1 after reset release; the input is stable before the rising edge, and comparison occurs 1ns after the edge; after the reset falling edge, also compare before the next clock. Independently predict valid/data from the reset and input history, perform four-state comparisons of all outputs after every clock edge, and report UVM_ERROR on a mismatch; also compare between reset edges. Count complete result events, cancellations, and comparisons; passing with no activity is prohibited.",
+      "implementation_id": "V-8",
+      "source": "firmware_reference.sv:firmware_driver.run_phase/firmware_scoreboard.write"
+    }
+  ]
+}

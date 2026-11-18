@@ -1,0 +1,64 @@
+# Ethernet MII Receive Stream Processor
+
+The top level is eth_rxethmac, with no parameters. All native ports and the observable behavior implemented by the four dependency modules are in scope. This contract is governed by fixed RTL behavior and defines cycle behavior for known 0/1 inputs; industry protocol certification is not required. Assert Reset first, then release it and drive the history. All configuration inputs cover their full native bit widths; do not assume a minimum MaxFL or that configuration changes only between frames. Abstract history quantities describe input-to-output timing relationships and do not provide internal access; initial values, update priorities, and current/old values are as specified below. Drive signals so that they are stable after the falling edge, and sample at least 1ns after the rising edge; a 10ns clock period may be used.
+
+## R-ETH7FBC-001 — Clock, Reset, and Initial State
+
+Behavior advances on MRxClk rising edges, and Reset is active-high and asynchronous. Reset immediately clears RxData, RxValid, RxStartFrm, RxEndFrm, internal byte count n, IFG count g, delay count d, byte and flag pipelines, broadcast/multicast candidates, unicast/multicast acceptance, RxAbort, and AddressMiss to 0; the CRC state is set to ffffffff. Reception is in Drop, so StateIdle/StatePreamble/StateSFD/StateData are all 0. Only the hash index h is cleared to 0 on a rising edge when Reset or Idle is asserted; the hash-valid memory takes the pre-edge condition Data0 and n=6 on every rising edge and is not directly cleared by asynchronous Reset.
+
+All synchronous formulas read pre-edge values and update simultaneously after the edge; asynchronous outputs are observed after Reset propagation has settled. ByteCnt is still offset by the live DlyCrcEn during reset, MaxFrame is still affected by the MaxFL/HugEn combination, and the reset value of CrcError is 1; not all outputs can be generalized as 0.
+
+## R-ETH7FBC-002 — Receive States and Transmit Conflicts
+
+The abstract states are Drop, Idle, Preamble, SFD, Data0, and Data1. Drop enters Idle when DV is low and otherwise remains unchanged; Idle remains unchanged when DV is low, enters Drop when DV is high and Transmitting=1, and otherwise enters SFD if MRxD=5 or Preamble for other values. Preamble returns to Idle when DV is low, enters SFD when DV is high and the data is 5, and otherwise remains unchanged; SFD returns to Idle when DV is low, enters Data0 or Drop according to IFG qualification when DV is high and the data is d, and otherwise remains unchanged. Data0 returns to Idle when DV is low; otherwise it enters Drop if the limit is reached, or Data1 if the limit is not reached. Data1 returns to Idle when DV is low and otherwise enters Data0. StateData[0]/[1] correspond to Data0/Data1; other exported states correspond to their names.
+
+IFG and limit-reached decisions use values from before the same rising edge; Transmitting determines Drop only when starting from Idle. No fixed number of preamble 5s is required; continuously high DV cannot leave Drop; Abort and CRC errors do not trigger a state transition to Drop, and changes in Transmitting after entering Data do not cancel the frame.
+
+## R-ETH7FBC-003 — IFG Count and Bypass
+
+g is a 5-bit counter, reset to 0. An edge in Drop, or in SFD with DV high and MRxD=d, clears g to 0; otherwise, g increments by 1 when in Idle/Preamble/SFD and IFG is not qualified; otherwise it holds. IFG is qualified when g=24 or r_IFG=1. Setting bypass to 1 also stops incrementing without changing the existing g.
+
+When SFD recognizes d, acceptance is determined using g before it is cleared. Compare short intervals, exactly 24, and long intervals; bypass switching takes effect in real time. The counting unit is clock edges, not a fixed physical time.
+
+## R-ETH7FBC-004 — Byte Count, Upper Limit, and 16-bit Boundary
+
+n is a 16-bit unsigned counter. Clearing to 0 takes priority when DV is high and either the state is SFD and d is received, or the state is Data0 and the limit is reached. Otherwise, increment by 1 when DV is high and in Preamble/SFD/non-transmitting Idle; or increment by 1 when DV is high and in Data1, n is not ffff, and DlyCrcEn and nonzero d do not both hold; otherwise hold. Addition on the preamble path is modulo 65536, and Data1 saturates at ffff. Limit reached is defined as n=MaxFL and HugEn=0. ByteCnt is n when DlyCrcEn=0, or (n+4) modulo 65536 when it is 1; ByteCntEq0 indicates n=0, ByteCntGreat2 indicates n>2, and ByteCntMaxFrame indicates limit reached.
+
+Counter state updates after the edge, and exported comparisons use current values; the count is cleared only when Data0 at the limit and high DV both hold. MaxFL may be 0, 1, 2, through ffff; HugEn only masks the upper-limit comparison and does not remove saturation at ffff. The count holds when leaving Data with DV low.
+
+## R-ETH7FBC-005 — Delayed CRC Count and Live Configuration
+
+d is a 4-bit counter, reset to 0; on every edge, old d=9 takes priority and returns it to 0; otherwise DlyCrcEn and SFD set it to 1; otherwise DlyCrcEn and nonzero d increment it by 1; otherwise it holds. Idle does not directly clear d; nonzero d suspends increments of n in delayed-mode Data1 and affects valid/Start, CRC initialization, and the ByteCnt offset. All configuration inputs are live, with no latching at frame start.
+
+Configuration is stable before the sampling edge; DlyCrcEn and filtering configuration may be updated in different cycles, and each edge evaluates their values at that time. Disabling DlyCrcEn may leave d nonzero; old d=9 still takes priority in clearing it to 0. X/Z inputs and values before reset are undefined.
+
+## R-ETH7FBC-006 — Byte Pipeline and Valid/Start
+
+Use input-history memory L: on every edge, regardless of DV, it takes {current MRxD, old upper 4 bits of L}. When pre-edge Data0 and (n is nonzero or d>=3) hold, generate a byte event and store old L into pending output byte P; otherwise, if the previous cycle was not Data0, clear P to 0; otherwise hold. RxData takes old P on every edge. A byte event passes through pending output-valid memory and becomes RxValid on the next edge. A Start event is Data0 and (n=1 in normal mode, or d=3 in delayed mode), and likewise becomes RxStartFrm on the next edge.
+
+When the event conditions hold before edge E, the pending output is saved at edge E and appears at the output after edge E+1; when comparing valid output, it must be paired with RxData from the same cycle. There is no ready/backpressure; events are not directly gated by DV, Abort, or CRC, and the exit edge that deasserts DV in Data0 can still produce pipeline output; when RxData is invalid, it still changes according to the clearing/holding pipeline rules above.
+
+## R-ETH7FBC-007 — End, dribble, and Short Frames
+
+A normal End event is Data0 and ((DV is low and n>2) or limit reached); it passes through pending output-End memory and becomes RxEndFrm on the next edge. A dribble event is Data1 and DV low and n>2; it is directly ORed into RxEndFrm after the current edge, and old pending output End is also ORed in.
+
+A normal event triggers at E and outputs at E+1; dribble outputs at E. DV termination for short frames with n<=2 does not generate a new End, but the Data0 limit-reached branch has no such restriction and does not require DV low; the old End pipeline can still output. In Data0 at the limit, high DV causes a transition to Drop and clears n; low DV causes a transition to Idle and holds n.
+
+## R-ETH7FBC-008 — CRC Recurrence and Error Indication
+
+CRC is a 32-bit history value c. Asynchronous reset, being in SFD at a rising edge, or DlyCrcEn and 1<=d<9 initialize it to ffffffff, with initialization taking priority. On every other edge, process MRxD bit0, bit1, bit2, and bit3 sequentially in four steps: each step shifts left by 1 bit, filling the low bit with 0; only when DV is high, in any Data phase, and the limit is not reached, XOR the pre-shift highest bit with that input bit to obtain feedback, and XOR with 04c11db7 if feedback is 1. When not enabled, feedback is fixed at 0, and it still shifts left by a total of 4 bits, rather than holding. CrcError continuously equals the condition c not equal to c704dd7b.
+
+Observe after combinational logic has settled following each edge, including during reception, on the ending edge, and in subsequent idle cycles; the frame-end result is not latched. CRC errors do not suppress Valid/Start/End; the error state may continue to change after the end.
+
+## R-ETH7FBC-009 — Broadcast/Multicast Classification and hash Acceptance
+
+The broadcast candidate is cleared to 0 with priority when Data0 and n<7 and old L is not ff; otherwise it is set to 1 when Data0 and n=1 and old L=ff; otherwise it is cleared to 0 on old RxAbort or old RxEndFrm; otherwise it holds. Broadcast acceptance is the candidate and r_Bro=0. The multicast candidate is set to 1 with priority when Data0 and n=1 and the lowest bit of old L is 1; otherwise old Abort/End clears it to 0; otherwise it holds. When Data0 and n=6, h latches old CRC[31:26], and hash-valid memory is simultaneously set to 1; on other edges, valid memory is 0. Multicast acceptance is cleared to 0 with priority on old End/Abort; otherwise, when old hash-valid and old multicast candidate hold, it takes bit old h of the 64-bit {r_HASH1,r_HASH0}; otherwise it holds.
+
+Classification, hash, and acceptance all read pre-edge history; the hash index is cleared to 0 with priority on a rising edge with Reset or Idle. Idle does not uniformly clear classification/acceptance, so they may remain for short frames without End; r_Bro=1 disables broadcast acceptance, and hash bits cover 0..63.
+
+## R-ETH7FBC-010 — Byte-by-byte Unicast Comparison and Rejection Lifetime
+
+In any Data phase with n=2, unicast acceptance takes the equality of old RxData and MAC[47:40]; for n=3..7, it is ANDed with old acceptance while sequentially comparing MAC[39:32] through [7:0]; these comparisons take priority over clearing to 0 on old End/Abort; otherwise it holds. On every edge, RxAbort takes (pre-edge n=7 and any Data phase and no unicast/broadcast/multicast acceptance and r_Pro=0), and is 0 if this does not hold. AddressMiss is cleared to 0 with priority when n=0; otherwise, when n=7 and in Data, it takes no acceptance of any of the three classes and not (PassAll and ControlFrmAddressOK); otherwise it holds.
+
+Rejection uses old acceptance, so the first evaluation at n=7 may reflect only the first five unicast comparisons, and subsequent edges may evaluate it again; it does not read the final-byte result just completed on this edge. r_Pro exempts Abort but not Miss; PassAll and ControlFrmAddressOK exempt only Miss. Abort may last multiple cycles and does not automatically truncate output; comparisons do not require RxValid and are associated according to the actual count/phase and pipeline.
+

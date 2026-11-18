@@ -1,0 +1,35 @@
+`timescale 1ns/1ps
+interface ss_if(input logic clk);
+logic [3:0] branch_ctl_mask_init_i;
+logic branch_ctl_opcode_i;
+logic [31:0] branch_ctl_pc_branch_i;
+logic [31:0] branch_ctl_pc_execute_i;
+logic branch_ctl_valid_i;
+logic [2:0] branch_ctl_wid_i;
+logic fetch_ctl_ready_i;
+logic [3:0] if_mask_mask_i;
+logic if_mask_valid_i;
+logic [2:0] if_mask_wid_i;
+logic [2:0] input_wid_i;
+logic [31:0] pc_reconv_i;
+logic pc_reconv_valid_i;
+logic rst_n;
+logic branch_ctl_ready_o;
+logic complete_valid_o;
+logic [2:0] complete_wid_o;
+logic fetch_ctl_jump_o;
+logic [31:0] fetch_ctl_new_pc_o;
+logic fetch_ctl_valid_o;
+logic [2:0] fetch_ctl_wid_o;
+logic if_mask_ready_o;
+logic [3:0] out_mask_o;
+logic expected_branch_ctl_ready_o;
+logic expected_complete_valid_o;
+logic [2:0] expected_complete_wid_o;
+logic expected_fetch_ctl_jump_o;
+logic [31:0] expected_fetch_ctl_new_pc_o;
+logic expected_fetch_ctl_valid_o;
+logic [2:0] expected_fetch_ctl_wid_o;
+logic expected_if_mask_ready_o;
+logic [3:0] expected_out_mask_o;
+endinterface

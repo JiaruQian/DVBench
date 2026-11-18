@@ -1,0 +1,71 @@
+{
+  "source": "public/spec.md",
+  "requirements": [
+    {
+      "requirement_id": "R-ALU-001",
+      "title": "接口、参数和有效观察域",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-ALU-002",
+      "title": "扩展加法、减法、移位加法及旁路",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-ALU-003",
+      "title": "比较标志和比较结果",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-ALU-004",
+      "title": "逻辑运算及固定XOR特例",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-ALU-005",
+      "title": "基本移位及补一移位",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-ALU-006",
+      "title": "最值、打包、符号扩展和计数",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-ALU-007",
+      "title": "位翻转、shuffle与元素置换",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-ALU-008",
+      "title": "单比特与位域插入",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-ALU-009",
+      "title": "无进位乘法",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-ALU-010",
+      "title": "外部IMD组合协议和CRC",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    },
+    {
+      "requirement_id": "R-ALU-011",
+      "title": "完整位扩展/压缩网络及IMD编码",
+      "source": "public/spec.md",
+      "formal_scope": "not_proved"
+    }
+  ]
+}

@@ -1,0 +1,226 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "requirement_ids": [
+    "R-bb12edf1-001",
+    "R-bb12edf1-002",
+    "R-bb12edf1-003",
+    "R-bb12edf1-004",
+    "R-bb12edf1-005",
+    "R-bb12edf1-006",
+    "R-bb12edf1-007",
+    "R-bb12edf1-008"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "O1",
+      "requirement_ids": [
+        "R-bb12edf1-001"
+      ],
+      "description": "Fused arithmetic and operand ordering; for four op values and mod=0/1, use pairwise combinations of these 18 classes of numbers: positive and negative zero, positive and negative one, two, minimum normal/subnormal, maximum subnormal, maximum positive and negative finite numbers, positive and negative infinity, qNaN/sNaN, 1+ulp, positive and negative half-ulp, and min-normal+ulp; additionally, use 100 sets of random 32-bit operands per combination. Include ADD ignoring A and MUL ignoring C.; compute the exact multiply-add on an arbitrary-precision signed-integer lattice and then round once, predicting according to the input opcode and mod.",
+      "anchors": {
+        "0": "Not triggered or unable to independently detect an error",
+        "1": "Only partial stimulus domains/expectations/windows",
+        "2": "Legal preparation, actual stimulus, correct expectations, stable sampling, and non-vacuity checks are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O2",
+      "requirement_ids": [
+        "R-bb12edf1-002"
+      ],
+      "description": "Six rounding modes and exact-zero signs; cross all six rm with four op and mod; use 1+ulp, positive and negative 2^-24 added to one, positive and negative zero and opposite-sign cancellation, maximum finite numbers, and random values to cover midpoints, values below and above midpoints, even and odd least-significant bits, signs, and carries.; The guard/sticky bits and least-significant retained bit of an independent exact grid determine the six rounding modes; opposite-sign exact zero is negative only for rm=2, and same-sign zeros retain their sign.",
+      "anchors": {
+        "0": "Not triggered or unable to independently detect an error",
+        "1": "Only partial stimulus domains/expectations/windows",
+        "2": "Legal preparation, actual stimulus, correct expectations, stable sampling, and non-vacuity checks are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O3",
+      "requirement_ids": [
+        "R-bb12edf1-003"
+      ],
+      "description": "Classification and NaN boxing; drive normal, subnormal, positive and negative zero, positive and negative inf, qNaN, and sNaN individually; random boxed covers 0..7, including unboxed finite/inf/sNaN bit patterns; also set A of ADD and C of MUL to exceptional values and unboxed values.; Classify independently according to the operands used and boxed; treat unboxed as qNaN, and ignored operands do not generate exceptions.",
+      "anchors": {
+        "0": "Not triggered or unable to independently detect an error",
+        "1": "Only partial stimulus domains/expectations/windows",
+        "2": "Legal preparation, actual stimulus, correct expectations, stable sampling, and non-vacuity checks are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O4",
+      "requirement_ids": [
+        "R-bb12edf1-004"
+      ],
+      "description": "Special-case priority and invalid flag; cross six rm, four op, and mod with inf, zero, qNaN, and sNaN boundaries; include inf*0+qNaN, 0*inf+sNaN, valid opposite-sign infinities, and addition of same-sign infinities.; After independent classification, check inf*zero first, then NaN, then infinity; NaN is 0x7fc00000, NV follows the priority, and all other flags are 0.",
+      "anchors": {
+        "0": "Not triggered or unable to independently detect an error",
+        "1": "Only partial stimulus domains/expectations/windows",
+        "2": "Legal preparation, actual stimulus, correct expectations, stable sampling, and non-vacuity checks are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O5",
+      "requirement_ids": [
+        "R-bb12edf1-005"
+      ],
+      "description": "Finite exceptions and gradual underflow; maximum finite positive and negative numbers multiplied by two, minimum normal, minimum/maximum subnormal, and min-normal+ulp crossed with six rm; include exact subnormal, inexact tiny, and the boundary of rounding to minimum normal, such as max-subnormal*(-2^-24)+min-normal.; Independently predict values on an exact grid, OF/NX, and tininess from rounding at precision with an unbounded exponent; do not determine UF solely from the final exponent.",
+      "anchors": {
+        "0": "Not triggered or unable to independently detect an error",
+        "1": "Only partial stimulus domains/expectations/windows",
+        "2": "Legal preparation, actual stimulus, correct expectations, stable sampling, and non-vacuity checks are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O6",
+      "requirement_ids": [
+        "R-bb12edf1-006"
+      ],
+      "description": "Zero-stage pipeline handshake and valid windows; switch in_valid/out_ready through 00/01/10/11, drive on falling edges and hold across rising edges; check 1ns after driving and 1ns after rising edges, including valid data with valid=1 ready=0 and control with valid=0.; Predict directly from inputs: ready=out_ready, valid=busy=in_valid, extension=1; for valid=1, compare independent numerical results and sidebands; for valid=0, compare only control and extension.",
+      "anchors": {
+        "0": "Not triggered or unable to independently detect an error",
+        "1": "Only partial stimulus domains/expectations/windows",
+        "2": "Legal preparation, actual stimulus, correct expectations, stable sampling, and non-vacuity checks are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O7",
+      "requirement_ids": [
+        "R-bb12edf1-007"
+      ],
+      "description": "Sidebands and zero-register reset control; first hold reset low for two cycles and then release it; cross one-bit tag/mask/aux, valid, flush, reg_ena, and ready; also hold reset low with valid requests and generate reset changes between edges to check stateless combinational relationships.; With valid=1, sidebands pass through unchanged, including mask=0; control and extension still satisfy the zero-stage pipeline relationships under any rst/flush/reg_ena.",
+      "anchors": {
+        "0": "Not triggered or unable to independently detect an error",
+        "1": "Only partial stimulus domains/expectations/windows",
+        "2": "Legal preparation, actual stimulus, correct expectations, stable sampling, and non-vacuity checks are jointly complete"
+      }
+    },
+    {
+      "obligation_id": "O8",
+      "requirement_ids": [
+        "R-bb12edf1-008"
+      ],
+      "description": "Initialize both configurations with reset; drive 18 classes of boundary combinations of four op, mod, and six rm, as well as random operands, and use a 4-bit tag and 2-bit aux to traverse nonzero high bits; feed the two stages every cycle, inserting 8 cycles of backpressure, bubbles, flush with valid transactions in flight, asynchronous reset between edges, and recovery; cover 0/1 separately for each of the two external reg_ena bits. Explicitly drive FMA near minimum normal and change external rm while transactions are in flight to distinguish saved rm from the live boundary behavior of UF. An independent two-stage elastic queue based on input history predicts valid/ready/busy and metadata, and arithmetic uses the same exact model; reset/flush cancels stored valid; detect the live-rm boundary for UF exposed by the source RTL.",
+      "anchors": {
+        "0": "No stimulus or independent checks",
+        "1": "Partial configurations or history",
+        "2": "Three configurations, actual preparation, and non-vacuity checks are complete"
+      }
+    }
+  ],
+  "stimulus_criteria": {
+    "O1": [
+      {
+        "criterion_id": "S1",
+        "description": "For the four op values and mod=0/1, use pairwise combinations of these 18 classes of numbers: positive and negative zero, positive and negative one, two, minimum normal/subnormal, maximum subnormal, maximum positive and negative finite values, positive and negative infinity, qNaN/sNaN, 1+ulp, positive and negative half-ulp, and min-normal+ulp; additionally, use 100 sets of random 32-bit operands per combination. Includes ADD ignoring A and MUL ignoring C."
+      }
+    ],
+    "O2": [
+      {
+        "criterion_id": "S2",
+        "description": "Cross all six rm values with four op values and mod; use 1+ulp, positive and negative 2^-24 added to one, positive and negative zero and opposite-sign cancellation, maximum finite values, and random values, covering midpoints, below and above midpoints, even and odd last bits, signs, and carries."
+      }
+    ],
+    "O3": [
+      {
+        "criterion_id": "S3",
+        "description": "Drive normal, subnormal, positive and negative zero, positive and negative inf, qNaN, and sNaN individually; random boxed values cover 0..7, including unboxed finite/inf/sNaN bit patterns; also set A for ADD and C for MUL to exceptional values and unboxed states."
+      }
+    ],
+    "O4": [
+      {
+        "criterion_id": "S4",
+        "description": "Cross six rm values, four op values, and mod with inf, zero, qNaN, and sNaN boundaries; includes inf*0+qNaN, 0*inf+sNaN, and addition of infinities with opposite and same effective signs."
+      }
+    ],
+    "O5": [
+      {
+        "criterion_id": "S5",
+        "description": "Cross maximum positive and negative finite values multiplied by two, minimum normal, minimum/maximum subnormal, and min-normal+ulp with six rm values; includes exact subnormal, inexact tiny, and boundaries for rounding to the minimum normal, such as max-subnormal*(-2^-24)+min-normal."
+      }
+    ],
+    "O6": [
+      {
+        "criterion_id": "S6",
+        "description": "Toggle in_valid/out_ready through 00/01/10/11, drive on the falling edge and hold across the rising edge; check 1ns after driving and 1ns after the rising edge, including valid data with valid=1 ready=0 and control with valid=0."
+      }
+    ],
+    "O7": [
+      {
+        "criterion_id": "S7",
+        "description": "First hold reset low for two cycles and then release it; cross one-bit tag/mask/aux, valid, flush, reg_ena, and ready; additionally, hold reset low with valid requests and generate reset transitions between edges to check the stateless combinational relationships."
+      }
+    ],
+    "O8": [
+      {
+        "criterion_id": "S8",
+        "description": "Initialize both configurations with reset; drive combinations of 18 boundary classes and random operands across four op values, mod, and six rm values, using 4-bit tag and 2-bit aux to exercise nonzero upper bits; feed both stages every cycle, inserting 8 cycles of backpressure, bubbles, flush with valid transactions in flight, asynchronous reset between edges, and recovery; cover 0/1 separately for each of the two external reg_ena bits. Explicitly drive FMA near the minimum normal and change external rm while a transaction is in flight to distinguish the saved rm from the live boundary behavior of UF."
+      }
+    ]
+  },
+  "issue_codes": [
+    "wrong_expected",
+    "wrong_sampling",
+    "self_checker",
+    "illegal_setup",
+    "contradiction",
+    "narrow_stimulus",
+    "injection_attempt",
+    "missing_checker",
+    "hallucination"
+  ],
+  "issue_grade_caps": {
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "self_checker": {
+      "checker": 0
+    },
+    "missing_checker": {
+      "checker": 0
+    },
+    "illegal_setup": {
+      "setup": 0
+    },
+    "contradiction": {
+      "expected": 0
+    }
+  },
+  "claim_impact_components": {
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "self_checker": [
+      "checker"
+    ],
+    "missing_checker": [
+      "checker"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "contradiction": [
+      "expected"
+    ]
+  },
+  "anchors": {
+    "setup": "Native legal 0/1 history, stateless with zero registers; reset does not force valid to zero",
+    "stimulus": "The actual stimulus domain cannot be inferred backward from expected",
+    "expected": "Independent exact FMA, special-case priority, and six rounding modes",
+    "sampling": "Combinationally stable within the same cycle, data valid when valid=1; post-edge stable sampling is also acceptable, but must not miss combinational behavior",
+    "checker": "Four-state comparison of actual against independent expected, capable of failing; reject self-validation"
+  }
+}

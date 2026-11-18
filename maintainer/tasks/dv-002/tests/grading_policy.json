@@ -1,0 +1,23 @@
+{
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "transport_timeout_seconds": 3600,
+  "wall_seconds": null,
+  "deadline_unix": null,
+  "mutation_policy": "mutant-all-seed-nonkill-fails-v2",
+  "judge": {
+    "provider": "mirror",
+    "model": "gpt-6-astra",
+    "max_output_tokens": 128000,
+    "transport_retries": 2,
+    "protocol_repairs": 2,
+    "semantic_revisions": 2,
+    "concurrency": 1
+  }
+}

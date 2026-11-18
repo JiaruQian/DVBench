@@ -1,0 +1,179 @@
+{
+  "top": "dvbench_model",
+  "file": "solution/s4_model/model.sv",
+  "ports": [
+    {
+      "direction": "input",
+      "name": "clk",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "reset",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "a_tdata",
+      "width": "WIDTH_A"
+    },
+    {
+      "direction": "input",
+      "name": "a_tlast",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "a_tvalid",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "a_tready",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "b_tdata",
+      "width": "WIDTH_B"
+    },
+    {
+      "direction": "input",
+      "name": "b_tlast",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "b_tvalid",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "b_tready",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "p_tdata",
+      "width": "WIDTH_P"
+    },
+    {
+      "direction": "output",
+      "name": "p_tlast",
+      "width": 1
+    },
+    {
+      "direction": "output",
+      "name": "p_tvalid",
+      "width": 1
+    },
+    {
+      "direction": "input",
+      "name": "p_tready",
+      "width": 1
+    }
+  ],
+  "variants": [
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 31,
+      "DROP_TOP_P": 1,
+      "LATENCY": 3,
+      "EN_SATURATE": 0,
+      "EN_ROUND": 0,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 31,
+      "DROP_TOP_P": 1,
+      "LATENCY": 0,
+      "EN_SATURATE": 0,
+      "EN_ROUND": 0,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 31,
+      "DROP_TOP_P": 1,
+      "LATENCY": 4,
+      "EN_SATURATE": 0,
+      "EN_ROUND": 0,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 16,
+      "DROP_TOP_P": 1,
+      "LATENCY": 3,
+      "EN_SATURATE": 0,
+      "EN_ROUND": 1,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 16,
+      "DROP_TOP_P": 1,
+      "LATENCY": 3,
+      "EN_SATURATE": 1,
+      "EN_ROUND": 0,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 16,
+      "DROP_TOP_P": 1,
+      "LATENCY": 1,
+      "EN_SATURATE": 1,
+      "EN_ROUND": 1,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 32,
+      "DROP_TOP_P": 0,
+      "LATENCY": 2,
+      "EN_SATURATE": 0,
+      "EN_ROUND": 0,
+      "SIGNED": 0
+    },
+    {
+      "WIDTH_A": 8,
+      "WIDTH_B": 12,
+      "WIDTH_P": 20,
+      "DROP_TOP_P": 0,
+      "LATENCY": 1,
+      "EN_SATURATE": 0,
+      "EN_ROUND": 0,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 31,
+      "DROP_TOP_P": 1,
+      "LATENCY": 3,
+      "EN_SATURATE": 0,
+      "EN_ROUND": 1,
+      "SIGNED": 1
+    },
+    {
+      "WIDTH_A": 16,
+      "WIDTH_B": 16,
+      "WIDTH_P": 31,
+      "DROP_TOP_P": 1,
+      "LATENCY": 3,
+      "EN_SATURATE": 1,
+      "EN_ROUND": 1,
+      "SIGNED": 1
+    }
+  ],
+  "independence": "input history only; separate replay process contains no golden RTL or output"
+}

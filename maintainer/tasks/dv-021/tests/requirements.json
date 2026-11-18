@@ -1,0 +1,36 @@
+{
+  "requirements": [
+    {
+      "requirement_id": "R-dv-021-001",
+      "definition": "rst is an active-high asynchronous reset that clears button sampling history, control state, mode, both timers, and divider remainders; both timer values become zero, and the scan index becomes zero. During reset, LED bits directly driven by switches still follow sw."
+    },
+    {
+      "requirement_id": "R-dv-021-002",
+      "definition": "The four buttons are sampled once every 100000 source clock rising edges; each button must be 1 for 8 consecutive samples to generate one event. Holding a button does not repeat the event; at least one low sample followed by another 8 high samples is required to retrigger."
+    },
+    {
+      "requirement_id": "R-dv-021-003",
+      "definition": "The initial state enters stopwatch stopped when sw[1]=0; it enters clock running when sw[1]=1 and sw[2]=0, and waits if both are 1. In stopwatch stopped, sw[1] has priority to enter clock mode, followed by R to enter running, then L to enter a single-cycle clear-to-zero state, then D to enter a single-cycle direction-toggle state. Stopwatch running accepts only sw[1] to switch to clock mode or R to stop; L/D have no effect. The clear-to-zero and direction states return to stopped after one cycle."
+    },
+    {
+      "requirement_id": "R-dv-021-004",
+      "definition": "While the stopwatch is running, one registered tick is generated every 1000000 enabled source edges, and the next source edge advances the time by one hundredth of a second. Time spans 24 hours × 60 minutes × 60 seconds × 100 hundredths of a second, with incrementing carrying through successive fields; in reverse, borrowing propagates from 0 through successive fields to 23:59:59.99. Stopping freezes the divider remainder, and clearing clears the remainder; for each digit, tick takes priority over clear on the same edge."
+    },
+    {
+      "requirement_id": "R-dv-021-005",
+      "definition": "The clock runs autonomously in all non-editing control states, generating a registered tick every 1000000 enabled edges and counting hundredths of a second on the following edge. In W_RUN, sw[1]=0 is handled first to return to stopwatch stopped; otherwise, sw[2]=1 enters editing of the seconds units digit. In an editing state, sw[2]=0 returns to W_RUN; sw[1] does not directly cause an exit during editing. Editing freezes the clock divider remainder."
+    },
+    {
+      "requirement_id": "R-dv-021-006",
+      "definition": "The editing cursor order is seconds units, seconds tens, minutes units, minutes tens, and hours; L moves forward and R backward, with wraparound, and L takes priority over R. U increments the current digit by 1, and D decrements it by 1, with U taking priority over D; seconds/minutes units are modulo 10, tens are modulo 6, and hours are modulo 24, with no carry or borrow between digits during editing. For a digit that actually receives tick, tick takes priority over editing."
+    },
+    {
+      "requirement_id": "R-dv-021-007",
+      "definition": "led[0]=sw[0], led[1]=sw[1], led[2]=sw[1]&!sw[2], led[3]=sw[1]&sw[2]; led4 corresponds to minutes units, led5 to minutes tens, led6 to seconds units or hours, and led7 to seconds tens; the cursor LEDs are off in other control states."
+    },
+    {
+      "requirement_id": "R-dv-021-008",
+      "definition": "The display combinationally selects the stopwatch or clock corresponding to sw[1]. The scan index resets to 0, reaches 1 after the first 50000 source edges, and then increments by 1 modulo 8 every 100000 edges. fnd_com follows the sequence 1110/1101/1011/0111 based only on the low 2 bits of the index. Indices 0/1 display hundredths-of-a-second units/tens (sw0=0) or minutes units/tens (sw0=1); 2/3 display seconds units/tens or hours units/tens; 4/5/7 are blank, and 6 displays a dot when hundredths of a second <=50 and is blank when >50."
+    }
+  ]
+}

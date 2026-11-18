@@ -1,0 +1,65 @@
+# testplan
+
+## T-FRAME-VALUES
+
+feature_ids: F-INPUT-WRITE, F-FFT-DATA, F-OUTPUT-READ
+
+requirement_ids: R-dv-055-001, R-dv-055-002, R-dv-055-003, R-dv-055-004
+
+stimulus: Assert the active-high reset, release it, then write all 32 addresses once. Use zero, an impulse at address zero, a seeded full-range random frame, and alternating signed rail values. Shuffle the address order for the impulse and rail frames. Deassert m_we after the final write and hold all write inputs stable for at least 20 clk rising edges. Include a negative full-scale impulse at index17 and reset while reads are disabled, then rewrite a complete seeded frame and wait20 rising edges. Run clk continuously at 10 ns period, drive all inputs at the falling edge, use profile DIVISOR=5,N=16,Q=8,ADDR_WIDTH=5,DATA_WIDTH=16,DEPTH=32; no start/ready/done is used. For random frames each of the 32 words independently ranges over 0..65535 under the fixed simulator seed.
+
+expected: After the settling interval, the 32 output words equal the fixed-point transform in R-dv-055-004 in natural frequency order. Each output word is {real[15:0],imag[15:0]}.
+
+checker: At each s_re read, compare the DUT s_data with the independently instantiated dvbench_model output after the same rising edge. Reject unknown data and any 32-bit mismatch. Read all addresses once in ascending or descending order. The same self-contained model computes the bit-reversal, five radix-2 stages, coefficient lookup, magnitude-product truncation by256, signed restoration and 16-bit modular addition from enabled input writes only; sample 1 ns after the rising edge.
+
+implementation_id: fft_sequence.frame + fft_scoreboard.write
+
+source: tb/dvbench_test_pkg.sv
+
+## T-WRITE-GATING
+
+feature_ids: F-INPUT-WRITE, F-FFT-DATA
+
+requirement_ids: R-dv-055-001, R-dv-055-004
+
+stimulus: After a complete settled frame, hold m_we low while changing m_addr and m_data across every address. Wait at least 20 clk rising edges without an enabled write, then read the full output frame.
+
+expected: The disabled writes do not change the stored input frame; all output words remain equal to the prior frame's independent model values.
+
+checker: Read each output address with s_re asserted and compare the DUT output against the model output. Fail on unknown data or a bitwise mismatch.
+
+implementation_id: fft_sequence.frame disabled-write phase + fft_scoreboard.write
+
+source: tb/dvbench_test_pkg.sv
+
+## T-READ-HOLD
+
+feature_ids: F-OUTPUT-READ
+
+requirement_ids: R-dv-055-002
+
+stimulus: After a complete settled frame, request output address zero for one rising edge. On the following falling edge, deassert s_re and change s_addr to 17.
+
+expected: The first request returns address zero after the sampling edge. During the next cycle with s_re low, s_data holds the value captured for address zero despite the address change.
+
+checker: After each rising edge plus 1 ns compare s_data with independently driven dvbench_model, which retains its previous output when s_re=0; reject unknown or unequal values. The model never consumes DUT outputs.
+
+implementation_id: fft_sequence.frame disabled-read phase + fft_scoreboard.write
+
+source: tb/dvbench_test_pkg.sv
+
+## T-RESET-HELD-OUTPUT
+
+feature_ids: F-FFT-DATA
+
+requirement_ids: R-dv-055-002, R-dv-055-003
+
+stimulus: After a known complete stable frame has been read, drive rst=1 with s_re=0 for two rising edges while changing s_addr, then deassert reset; no writes or reads during this reset history.
+
+expected: The registered s_data holds the prior read word throughout this disabled-read reset history. For subsequent numeric checks rewrite all32 words and wait20 rising edges.
+
+checker: fft_monitor captures four-state actual and model outputs after the rising edge; fft_scoreboard compares to the same independent dvbench_model output and emits UVM_ERROR for unknown or unequal words.
+
+implementation_id: fft_sequence.body + fft_scoreboard.write
+
+source: tb/dvbench_test_pkg.sv

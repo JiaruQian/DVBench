@@ -1,0 +1,237 @@
+{
+  "task_id": "dv-091",
+  "dut_top": "shared_mem",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "sharemem.v",
+    "bankconflict_arb.v"
+  ],
+  "rtl_sources": [
+    "bankconflict_arb.v",
+    "sharemem.v",
+    "deps/common_cell/bin2one.v",
+    "deps/common_cell/dualportSRAM.v",
+    "deps/common_cell/fifo_with_count.v",
+    "deps/common_cell/fixed_pri_arb.v",
+    "deps/common_cell/one2bin.v",
+    "deps/common_cell/pop_cnt.v",
+    "deps/common_cell/stream_fifo_pipe_true_with_count.v",
+    "deps/cache_common/sram_template.v"
+  ],
+  "rtl_compile_files": [
+    "bankconflict_arb.v",
+    "sharemem.v",
+    "deps/common_cell/bin2one.v",
+    "deps/common_cell/dualportSRAM.v",
+    "deps/common_cell/fifo_with_count.v",
+    "deps/common_cell/fixed_pri_arb.v",
+    "deps/common_cell/one2bin.v",
+    "deps/common_cell/pop_cnt.v",
+    "deps/common_cell/stream_fifo_pipe_true_with_count.v",
+    "deps/cache_common/sram_template.v"
+  ],
+  "include_dirs": [
+    "deps/define"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m10",
+    "n1",
+    "n2",
+    "n3"
+  ],
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "model_contract_policy": "native-module-v1",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "core_req_activemask_i",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "core_req_blockoffset_i",
+        "direction": "In",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "core_req_data_i",
+        "direction": "In",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 127,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "core_req_instrid_i",
+        "direction": "In",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "core_req_iswrite_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "core_req_ready_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "core_req_setidx_i",
+        "direction": "In",
+        "width": 5,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 4,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "core_req_tag_i",
+        "direction": "In",
+        "width": 24,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 23,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "core_req_valid_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "core_req_wordoffset1h_i",
+        "direction": "In",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "core_rsp_activemask_o",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "core_rsp_data_o",
+        "direction": "Out",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 127,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "core_rsp_instrid_o",
+        "direction": "Out",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "core_rsp_iswrite_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "core_rsp_ready_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "core_rsp_valid_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "rst_n",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {},
+    "parser": "Native top declarations manually audited against fixed supplied define.v"
+  },
+  "coverage_scope": "dvbench_top.dut",
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800
+}

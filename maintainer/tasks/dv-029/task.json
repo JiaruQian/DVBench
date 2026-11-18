@@ -1,0 +1,394 @@
+{
+  "task_id": "dv-029",
+  "dut_top": "MemoryArbitrator",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "hdlGPU/rtl/MemoryArbitrator.v"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "model_contract_policy": "native-module-v1",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "ClutCacheData",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "ClutCacheWrite",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "ClutWriteIndex",
+        "direction": "Out",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "TexCacheData",
+        "direction": "Out",
+        "width": 64,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 63,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "TexCacheWrite",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "ack_i",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "adrClutCacheUpdate",
+        "direction": "In",
+        "width": 15,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 14,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "adrTexCacheUpdateL",
+        "direction": "In",
+        "width": 17,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 16,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "adrTexCacheUpdateR",
+        "direction": "In",
+        "width": 17,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 16,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "adrTexCacheWrite",
+        "direction": "Out",
+        "width": 17,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 16,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "adr_o",
+        "direction": "Out",
+        "width": 20,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 19,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "cnt_o",
+        "direction": "Out",
+        "width": 3,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 2,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "dat_i",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "dat_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "exportedBGBlock",
+        "direction": "In",
+        "width": 256,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 255,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "exportedMSKBGBlock",
+        "direction": "In",
+        "width": 16,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 15,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "fifoComplete",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "fifoFull",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "gpuClk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "i_nRst",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "importBGBlockSingleClock",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "importedBGBlock",
+        "direction": "Out",
+        "width": 256,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 255,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "isBlending",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "loadAdr",
+        "direction": "In",
+        "width": 15,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 14,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "memoryWriteCommand",
+        "direction": "In",
+        "width": 56,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 55,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "req_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "requClutCacheUpdate",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "requTexCacheUpdateL",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "requTexCacheUpdateR",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "resetMask",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "resetPipelinePixelStateSpike",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "saveAdr",
+        "direction": "In",
+        "width": 15,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 14,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "saveBGBlock",
+        "direction": "In",
+        "width": 2,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "saveLoadOnGoing",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "sel_o",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "updateClutCacheComplete",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "updateTexCacheCompleteL",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "updateTexCacheCompleteR",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "wrt_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {}
+  },
+  "reference_submission": "solution/reference",
+  "mutants": [
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "n1",
+    "n2",
+    "n3",
+    "n4"
+  ],
+  "rtl_sources": [
+    "hdlGPU/rtl/MemoryArbitrator.v"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "hdlGPU/rtl/MemoryArbitrator.v"
+  ]
+}

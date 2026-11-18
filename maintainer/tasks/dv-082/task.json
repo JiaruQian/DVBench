@@ -1,0 +1,161 @@
+{
+  "task_id": "dv-082",
+  "dut_top": "rv32i_single_cycle_core",
+  "submission_top": "dvbench_top",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "alu.sv",
+    "backfill/rv32i_pkg.sv",
+    "branch_unit.sv",
+    "decoder.sv",
+    "imm_gen.sv",
+    "load_store_unit.sv",
+    "regfile_v1.sv",
+    "rv32i_single_cycle_core.sv"
+  ],
+  "rtl_sources": [
+    "backfill/rv32i_pkg.sv",
+    "alu.sv",
+    "branch_unit.sv",
+    "decoder.sv",
+    "imm_gen.sv",
+    "load_store_unit.sv",
+    "regfile_v1.sv",
+    "rv32i_single_cycle_core.sv"
+  ],
+  "model_interface": {
+    "ports": [
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "dmem_addr_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "dmem_be_o",
+        "direction": "Out",
+        "width": 4,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 3,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "dmem_rdata_i",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "dmem_re_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "dmem_wdata_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "dmem_we_o",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "imem_addr_o",
+        "direction": "Out",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "imem_rdata_i",
+        "direction": "In",
+        "width": 32,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 31,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "rst_n",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {},
+    "parser": "pyslang 11.0.0"
+  },
+  "model_contract_policy": "native-module-v1",
+  "reference_submission": "solution/reference",
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m10",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "backfill/rv32i_pkg.sv",
+    "alu.sv",
+    "branch_unit.sv",
+    "decoder.sv",
+    "imm_gen.sv",
+    "load_store_unit.sv",
+    "regfile_v1.sv",
+    "rv32i_single_cycle_core.sv"
+  ]
+}

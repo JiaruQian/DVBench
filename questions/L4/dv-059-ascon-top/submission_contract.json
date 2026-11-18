@@ -1,0 +1,140 @@
+{
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "model_module": "dvbench_model",
+  "dut_top": "ascon_top",
+  "top": "dvbench_top",
+  "submission_format": "public/submission_format.md",
+  "json_is_complete_fact_carrier": true,
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "self_contained": true,
+    "interface": {
+      "ports": [
+        {
+          "name": "cipher_o",
+          "direction": "Out",
+          "width": 64,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 63,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "cipher_valid_o",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "clock_i",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "data_i",
+          "direction": "In",
+          "width": 64,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 63,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "data_valid_i",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "end_o",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "key_i",
+          "direction": "In",
+          "width": 128,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 127,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "resetb_i",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "start_i",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "state_i",
+          "direction": "In",
+          "width": 320,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 0,
+              "right": 4
+            },
+            {
+              "kind": "packed",
+              "left": 63,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "tag_o",
+          "direction": "Out",
+          "width": 128,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 127,
+              "right": 0
+            }
+          ]
+        }
+      ],
+      "parameters": {},
+      "parser": "pyslang 11.0.0"
+    }
+  },
+  "task_id": "dv-059",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

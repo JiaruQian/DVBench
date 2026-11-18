@@ -1,0 +1,238 @@
+{
+  "task_id": "dv-056",
+  "dut_top": "decoder_top",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "dec_ht_payload.v",
+    "dec_ht_trigger.v",
+    "decoder_top.v",
+    "dequantization.v",
+    "huffman_decoder.v",
+    "idct_1d.v",
+    "idct_2d.v",
+    "inverse_zigzag.v",
+    "level_restore.v",
+    "rle_decoder.v",
+    "ycbcr_to_rgb_converter.v"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m10"
+  ],
+  "reference_top": "dvbench_top",
+  "reference_test": "dvbench_test",
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "model_interface": {
+    "ports": [
+      {
+        "name": "B_out",
+        "direction": "Out",
+        "width": 512,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 511,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "G_out",
+        "direction": "Out",
+        "width": 512,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 511,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "R_out",
+        "direction": "Out",
+        "width": 512,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 511,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "block_num",
+        "direction": "In",
+        "width": 13,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 12,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "bs_Cb",
+        "direction": "In",
+        "width": 1024,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1023,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "bs_Cr",
+        "direction": "In",
+        "width": 1024,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1023,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "bs_Y",
+        "direction": "In",
+        "width": 1024,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 1023,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "bs_len_Cb",
+        "direction": "In",
+        "width": 11,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 10,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "bs_len_Cr",
+        "direction": "In",
+        "width": 11,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 10,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "bs_len_Y",
+        "direction": "In",
+        "width": 11,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 10,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "dec_done",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "dec_start",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "rst_n",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "total_bits_consumed",
+        "direction": "Out",
+        "width": 11,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 10,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "trigger_dec",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {},
+    "parser": "pyslang 11.0.0"
+  },
+  "model_contract_policy": "native-module-v1",
+  "rtl_sources": [
+    "dec_ht_payload.v",
+    "dec_ht_trigger.v",
+    "decoder_top.v",
+    "dequantization.v",
+    "huffman_decoder.v",
+    "idct_1d.v",
+    "idct_2d.v",
+    "inverse_zigzag.v",
+    "level_restore.v",
+    "rle_decoder.v",
+    "ycbcr_to_rgb_converter.v"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "dec_ht_payload.v",
+    "dec_ht_trigger.v",
+    "decoder_top.v",
+    "dequantization.v",
+    "huffman_decoder.v",
+    "idct_1d.v",
+    "idct_2d.v",
+    "inverse_zigzag.v",
+    "level_restore.v",
+    "rle_decoder.v",
+    "ycbcr_to_rgb_converter.v"
+  ]
+}

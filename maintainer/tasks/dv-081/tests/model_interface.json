@@ -1,0 +1,58 @@
+{
+  "top": "dvbench_model",
+  "file": "model/model.sv",
+  "ports": [
+    {
+      "name": "clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "input_data",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "result_data",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "result_valid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "rst",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {
+    "PROGRAM_FILE": "88'h70726f6772616d2e6d656d"
+  },
+  "parser": "pyslang 12.1.0",
+  "sampling": {
+    "clock": "clk",
+    "edge": "posedge",
+    "offset_ns": 1
+  },
+  "independence": "Input history only; same single file in D and scoreboard"
+}

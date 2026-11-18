@@ -1,0 +1,18 @@
+{
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "transfer_timeout_seconds": 3600,
+  "wall_seconds": null,
+  "deadline_unix": null,
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "judge": "glm-5.3",
+  "internal_concurrency": 1,
+  "transport_retries": 2,
+  "protocol_repairs_per_pass": 2,
+  "runtime_debug": "DEFERRED_RUNTIME_DEPLOYMENT"
+}

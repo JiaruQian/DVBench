@@ -1,0 +1,153 @@
+{
+  "task_id": "dv-013",
+  "dut_top": "timer",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "main_comp.v",
+    "timer.v"
+  ],
+  "submission_top": "dvbench_top",
+  "rtl_sources": [
+    "main_comp.v",
+    "timer.v"
+  ],
+  "rtl_compile_files": [
+    "main_comp.v",
+    "timer.v"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m10"
+  ],
+  "include_dirs": [],
+  "parameter_matrix": [
+    {
+      "PRESCALER_WIDTH": 8,
+      "Dw": 32,
+      "Aw": 3,
+      "SELw": 4,
+      "TAGw": 3,
+      "CNTw": 32
+    },
+    {
+      "PRESCALER_WIDTH": 4,
+      "Dw": 32,
+      "Aw": 3,
+      "SELw": 4,
+      "TAGw": 3,
+      "CNTw": 8
+    }
+  ],
+  "model_interface": {
+    "top": "dvbench_model",
+    "file": "solution/s4_model/model.sv",
+    "ports": [
+      {
+        "direction": "In",
+        "name": "clk",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "reset",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "sa_dat_i",
+        "width": "Dw"
+      },
+      {
+        "direction": "In",
+        "name": "sa_sel_i",
+        "width": "SELw"
+      },
+      {
+        "direction": "In",
+        "name": "sa_addr_i",
+        "width": "Aw"
+      },
+      {
+        "direction": "In",
+        "name": "sa_tag_i",
+        "width": "TAGw"
+      },
+      {
+        "direction": "In",
+        "name": "sa_stb_i",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "sa_cyc_i",
+        "width": 1
+      },
+      {
+        "direction": "In",
+        "name": "sa_we_i",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "sa_dat_o",
+        "width": "Dw"
+      },
+      {
+        "direction": "Out",
+        "name": "sa_ack_o",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "sa_err_o",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "sa_rty_o",
+        "width": 1
+      },
+      {
+        "direction": "Out",
+        "name": "irq",
+        "width": 1
+      }
+    ],
+    "variants": [
+      {
+        "PRESCALER_WIDTH": 8,
+        "Dw": 32,
+        "Aw": 3,
+        "SELw": 4,
+        "TAGw": 3,
+        "CNTw": 32
+      },
+      {
+        "PRESCALER_WIDTH": 4,
+        "Dw": 32,
+        "Aw": 3,
+        "SELw": 4,
+        "TAGw": 3,
+        "CNTw": 8
+      }
+    ],
+    "independence": "Only driven inputs and their history; separate model replay has no DUT or golden output. s1196 uses reduced Shannon functions rather than copied gate assignments."
+  },
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800
+}

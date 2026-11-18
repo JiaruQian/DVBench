@@ -1,0 +1,295 @@
+{
+  "requirement_ids": [
+    "R-ETH7FBC-001",
+    "R-ETH7FBC-002",
+    "R-ETH7FBC-003",
+    "R-ETH7FBC-004",
+    "R-ETH7FBC-005",
+    "R-ETH7FBC-006",
+    "R-ETH7FBC-007",
+    "R-ETH7FBC-008",
+    "R-ETH7FBC-009",
+    "R-ETH7FBC-010"
+  ],
+  "atoms": [
+    {
+      "atom_id": "reset",
+      "requirement_ids": [
+        "R-ETH7FBC-001"
+      ],
+      "title": "Clock, reset, and initial state values",
+      "definition": "MRxClk rising edges advance behavior; Reset is active-high and asynchronous. Reset immediately clears RxData, RxValid, RxStartFrm, RxEndFrm, internal byte count n, IFG count g, delay count d, byte and flag pipelines, broadcast/multicast candidates, unicast/multicast acceptance, RxAbort, and AddressMiss to zero; the CRC state is set to ffffffff. Reception is in Drop, so StateIdle/StatePreamble/StateSFD/StateData are all 0. Only hash index h is cleared to 0 on a rising edge with Reset or Idle; on every rising edge, the hash-valid memory takes pre-edge Data0 and n=6, and is not directly cleared by asynchronous Reset. All synchronous formulas read pre-edge values and update simultaneously after the edge; asynchronous outputs are observed after Reset propagation settles. During reset, ByteCnt is still subject to the live DlyCrcEn offset, MaxFrame is still affected by the MaxFL/HugEn combination, and the reset value of CrcError is 1; not all outputs can be generalized as 0.",
+      "anchors": {
+        "0": "Omitted or explicitly incorrect/contradictory",
+        "1": "Correct but covers only some conditions/results",
+        "2": "The many-to-many semantic union of the candidate's complete content is complete and correct; reference grouping or naming is not required"
+      }
+    },
+    {
+      "atom_id": "state",
+      "requirement_ids": [
+        "R-ETH7FBC-002"
+      ],
+      "title": "Receive states and transmit conflicts",
+      "definition": "The abstract states are Drop, Idle, Preamble, SFD, Data0, and Data1. Drop enters Idle on DV low, otherwise it holds; Idle holds on DV low, enters Drop on DV high and Transmitting=1, otherwise enters SFD if MRxD=5 and Preamble otherwise. Preamble returns to Idle on DV low, enters SFD on DV high and data 5, and otherwise holds; SFD returns to Idle on DV low, enters Data0 or Drop according to IFG qualification on DV high and data d, and otherwise holds. Data0 returns to Idle on DV low, otherwise enters Drop if the limit is reached or Data1 if it is not; Data1 returns to Idle on DV low and otherwise enters Data0. StateData[0]/[1] correspond to Data0/Data1, and other derived states correspond to their names. IFG and limit-reached decisions use values before the same rising edge; Transmitting determines Drop only at the start in Idle. No fixed number of 5 preamble symbols is required; continuously high DV cannot leave Drop; Abort and CRC errors do not trigger a transition to the discard state, and changes to Transmitting do not cancel the frame once in Data.",
+      "anchors": {
+        "0": "Omitted or explicitly incorrect/contradictory",
+        "1": "Correct but covers only some conditions/results",
+        "2": "The many-to-many semantic union of the candidate's complete content is complete and correct; reference grouping or naming is not required"
+      }
+    },
+    {
+      "atom_id": "gap",
+      "requirement_ids": [
+        "R-ETH7FBC-003"
+      ],
+      "title": "IFG count and bypass",
+      "definition": "g is a 5-bit counter, reset to 0. An edge in Drop or in SFD with DV high and MRxD=d clears g to 0; otherwise g increments by 1 when in Idle/Preamble/SFD and IFG is not qualified; otherwise it holds. IFG is qualified when g=24 or r_IFG=1. Setting bypass to 1 also stops growth without changing the existing g. SFD recognition of d uses g before clearing to determine acceptance. Compare short intervals, exactly 24, and long intervals; bypass switching takes effect live, and the counting unit is clock edges rather than a fixed physical time.",
+      "anchors": {
+        "0": "Omitted or explicitly incorrect/contradictory",
+        "1": "Correct but covers only some conditions/results",
+        "2": "The many-to-many semantic union of the candidate's complete content is complete and correct; reference grouping or naming is not required"
+      }
+    },
+    {
+      "atom_id": "count",
+      "requirement_ids": [
+        "R-ETH7FBC-004"
+      ],
+      "title": "Byte count, upper limit, and 16-bit boundaries",
+      "definition": "n is a 16-bit unsigned counter. It is cleared to 0 with priority when DV is high and in SFD receiving d, or in Data0 with the limit reached. Otherwise, it increments by 1 when DV is high and in Preamble/SFD/non-transmitting Idle; it also increments by 1 when DV is high and Data1, n is not ffff, and DlyCrcEn and nonzero d are not both true; otherwise it holds. Preamble-path addition is modulo 65536, while Data1 saturates at ffff. Limit reached is defined as n=MaxFL and HugEn=0. ByteCnt is n when DlyCrcEn=0, or (n+4) modulo 65536 when it is 1; ByteCntEq0 means n=0, ByteCntGreat2 means n>2, and ByteCntMaxFrame means the limit is reached. The counter state updates after the edge, and derived comparisons use the current value; reaching the limit in Data0 clears the count only in conjunction with DV high. MaxFL may be 0, 1, 2 through ffff; HugEn only masks the upper-limit comparison and does not remove ffff saturation. The count is retained when DV low exits Data.",
+      "anchors": {
+        "0": "Omitted or explicitly incorrect/contradictory",
+        "1": "Correct but covers only some conditions/results",
+        "2": "The many-to-many semantic union of the candidate's complete content is complete and correct; reference grouping or naming is not required"
+      }
+    },
+    {
+      "atom_id": "delay",
+      "requirement_ids": [
+        "R-ETH7FBC-005"
+      ],
+      "title": "Delayed CRC count and live configuration",
+      "definition": "d is a 4-bit counter, reset to 0; on each edge, old d=9 returns it to 0 with priority, otherwise DlyCrcEn and SFD sets it to 1, otherwise DlyCrcEn and nonzero d increments it by 1, otherwise it holds. Idle does not directly clear d to zero; nonzero d pauses n increments in delayed-mode Data1; it affects valid/Start, CRC initialization, and the ByteCnt offset. All configurations are live inputs, with no start-of-frame latching. Configuration is stable before the sampling edge; DlyCrcEn and filtering configuration may be updated in different cycles, with each edge deciding according to their values at that time. Turning off DlyCrcEn may leave d held nonzero, while old d=9 still clears it to zero with priority; X/Z inputs and pre-reset values are undefined.",
+      "anchors": {
+        "0": "Omitted or explicitly incorrect/contradictory",
+        "1": "Correct but covers only some conditions/results",
+        "2": "The many-to-many semantic union of the candidate's complete content is complete and correct; reference grouping or naming is not required"
+      }
+    },
+    {
+      "atom_id": "data",
+      "requirement_ids": [
+        "R-ETH7FBC-006"
+      ],
+      "title": "Byte pipeline and Valid/Start",
+      "definition": "Use input-history memory L: on every edge, regardless of DV, it takes {current MRxD, old L high 4 bits}. When pre-edge Data0 and (n nonzero or d>=3), generate a byte event and store old L into pending-output byte P; otherwise, if the previous cycle was not Data0, clear P to 0; otherwise hold. RxData takes old P on every edge. The byte event becomes RxValid on the next edge through pending-output valid memory. A Start event is Data0 and (n=1 in ordinary mode, or d=3 in delayed mode), and likewise becomes RxStartFrm on the next edge. The event conditions are satisfied before edge E, the pending output is stored at edge E, and it appears at the output after edge E+1; when comparing valid, it must be paired with RxData from the same cycle. There is no ready/backpressure; events are not directly gated by DV, Abort, or CRC, and the exit edge that deasserts DV in Data0 can still generate pipeline output; when RxData is invalid, it still changes through the clearing/holding pipeline described above.",
+      "anchors": {
+        "0": "Omitted or explicitly incorrect/contradictory",
+        "1": "Correct but covers only some conditions/results",
+        "2": "The many-to-many semantic union of the candidate's complete content is complete and correct; reference grouping or naming is not required"
+      }
+    },
+    {
+      "atom_id": "end",
+      "requirement_ids": [
+        "R-ETH7FBC-007"
+      ],
+      "title": "End, dribble, and short frames",
+      "definition": "An ordinary End event is Data0 and ((DV low and n>2) or the limit reached), and becomes RxEndFrm on the next edge through pending-output End memory. A dribble event is Data1 and DV low and n>2, and is directly ORed into RxEndFrm after the current edge; old pending-output End is still also ORed in. An ordinary event triggers at E and outputs at E+1; dribble outputs at E. DV termination for short frames with n<=2 does not generate a new End, but the Data0 limit-reached branch has no such restriction and does not require DV low, and the old End pipeline can still output. At the limit in Data0, DV high transitions to Drop and clears n; DV low transitions to Idle and retains n.",
+      "anchors": {
+        "0": "Omitted or explicitly incorrect/contradictory",
+        "1": "Correct but covers only some conditions/results",
+        "2": "The many-to-many semantic union of the candidate's complete content is complete and correct; reference grouping or naming is not required"
+      }
+    },
+    {
+      "atom_id": "crc",
+      "requirement_ids": [
+        "R-ETH7FBC-008"
+      ],
+      "title": "CRC recurrence and error indication",
+      "definition": "CRC is a 32-bit historical value c. Initialize to ffffffff on asynchronous reset, or on a rising edge when in SFD or when DlyCrcEn and 1<=d<9; initialization has priority. On every other edge, process MRxD bit0, bit1, bit2, and bit3 in four successive steps: each step shifts left by 1 bit, filling the low bit with 0; only when DV is high, in either Data state, and the limit has not been reached, obtain feedback by XORing the highest bit before the shift with that input bit, and additionally XOR with 04c11db7 when feedback is 1. When not enabled, feedback is fixed at 0 and a total left shift of 4 bits still occurs; it is never a hold. CrcError continuously equals c not equal to c704dd7b. Observe after combinational logic settles following each edge, including during reception, the ending edge, and subsequent idle; do not latch the end-of-frame result. CRC errors do not suppress Valid/Start/End; the error status may continue changing after the end.",
+      "anchors": {
+        "0": "Omitted or explicitly incorrect/contradictory",
+        "1": "Correct but covers only some conditions/results",
+        "2": "The many-to-many semantic union of the candidate's complete content is complete and correct; reference grouping or naming is not required"
+      }
+    },
+    {
+      "atom_id": "classify",
+      "requirement_ids": [
+        "R-ETH7FBC-009"
+      ],
+      "title": "Broadcast and multicast classification and hash acceptance",
+      "definition": "The broadcast candidate is cleared to 0 with priority when Data0 and n<7 and old L is not ff; otherwise it is set to 1 when Data0 and n=1 and old L=ff; otherwise it is cleared to 0 on old RxAbort or old RxEndFrm; otherwise it holds. Broadcast acceptance is the candidate and r_Bro=0. The multicast candidate is set to 1 with priority when Data0 and n=1 and the least significant bit of old L is 1; otherwise old Abort/End clears it to 0; otherwise it holds. When Data0 and n=6, h latches old CRC[31:26], and the hash-valid memory is simultaneously set to 1; on other edges the valid memory is 0. Multicast acceptance is cleared to 0 with priority on old End/Abort; otherwise, when old hash-valid and old multicast candidate are true, it takes the bit at old h of the 64-bit {r_HASH1,r_HASH0}; otherwise it holds. Classification, hash, and acceptance all read pre-edge history; the hash index is cleared to 0 with priority on a rising edge with Reset or Idle. Idle does not uniformly clear classification/acceptance, which may remain for short frames without End; r_Bro=1 disables broadcast acceptance, and hash bits cover 0..63.",
+      "anchors": {
+        "0": "Omitted or explicitly incorrect/contradictory",
+        "1": "Correct but covers only some conditions/results",
+        "2": "The many-to-many semantic union of the candidate's complete content is complete and correct; reference grouping or naming is not required"
+      }
+    },
+    {
+      "atom_id": "address",
+      "requirement_ids": [
+        "R-ETH7FBC-010"
+      ],
+      "title": "Unicast byte-by-byte comparison and rejection lifetime",
+      "definition": "Unicast acceptance, in any Data phase with n=2, takes the result of comparing old RxData with MAC[47:40] for equality; at n=3..7, it is ANDed with the old acceptance while sequentially comparing MAC[39:32] through [7:0]; these comparisons take priority over clearing to 0 due to old End/Abort; otherwise it holds. At every edge, RxAbort takes (pre-edge n=7 and any Data and no unicast/broadcast/multicast acceptance and r_Pro=0), and is 0 if this does not hold. AddressMiss is cleared to 0 with priority when n=0; otherwise, when n=7 and Data, it takes no acceptance of any of the three classes and not (PassAll and ControlFrmAddressOK); otherwise it holds. Rejection uses old acceptance, so the first decision at n=7 may reflect only the first five unicast comparisons, and subsequent edges may evaluate it again; it does not read the final-byte result just completed at this edge. r_Pro exempts Abort but not Miss; PassAll and ControlFrmAddressOK exempts only Miss. Abort may last multiple cycles and does not automatically truncate output; comparisons do not require RxValid and follow the actual count/phase and pipeline association.",
+      "anchors": {
+        "0": "Omitted or explicitly incorrect/contradictory",
+        "1": "Correct but covers only some conditions/results",
+        "2": "The many-to-many semantic union of the candidate's complete content is complete and correct; reference grouping or naming is not required"
+      }
+    }
+  ],
+  "required_interfaces": {
+    "R-ETH7FBC-001": [
+      "MRxClk",
+      "Reset",
+      "DlyCrcEn",
+      "MaxFL",
+      "HugEn",
+      "RxData",
+      "RxValid",
+      "RxStartFrm",
+      "RxEndFrm",
+      "ByteCnt",
+      "ByteCntEq0",
+      "ByteCntGreat2",
+      "ByteCntMaxFrame",
+      "CrcError",
+      "StateIdle",
+      "StatePreamble",
+      "StateSFD",
+      "StateData",
+      "RxAbort",
+      "AddressMiss"
+    ],
+    "R-ETH7FBC-002": [
+      "MRxClk",
+      "Reset",
+      "MRxDV",
+      "MRxD",
+      "Transmitting",
+      "StateIdle",
+      "StatePreamble",
+      "StateSFD",
+      "StateData",
+      "RxAbort",
+      "CrcError"
+    ],
+    "R-ETH7FBC-003": [
+      "MRxClk",
+      "Reset",
+      "MRxDV",
+      "MRxD",
+      "r_IFG",
+      "StateIdle",
+      "StatePreamble",
+      "StateSFD",
+      "StateData"
+    ],
+    "R-ETH7FBC-004": [
+      "MRxClk",
+      "Reset",
+      "MRxDV",
+      "MRxD",
+      "Transmitting",
+      "MaxFL",
+      "HugEn",
+      "DlyCrcEn",
+      "ByteCnt",
+      "ByteCntEq0",
+      "ByteCntGreat2",
+      "ByteCntMaxFrame",
+      "StateData"
+    ],
+    "R-ETH7FBC-005": [
+      "MRxClk",
+      "Reset",
+      "DlyCrcEn",
+      "ByteCnt",
+      "RxValid",
+      "RxStartFrm",
+      "CrcError",
+      "MAC",
+      "r_HASH0",
+      "r_HASH1",
+      "r_Pro",
+      "r_Bro",
+      "PassAll",
+      "ControlFrmAddressOK"
+    ],
+    "R-ETH7FBC-006": [
+      "MRxClk",
+      "Reset",
+      "MRxDV",
+      "MRxD",
+      "DlyCrcEn",
+      "RxData",
+      "RxValid",
+      "RxStartFrm",
+      "StateData",
+      "RxAbort",
+      "CrcError"
+    ],
+    "R-ETH7FBC-007": [
+      "MRxClk",
+      "Reset",
+      "MRxDV",
+      "MaxFL",
+      "HugEn",
+      "RxEndFrm",
+      "ByteCnt",
+      "ByteCntGreat2",
+      "ByteCntMaxFrame",
+      "StateData"
+    ],
+    "R-ETH7FBC-008": [
+      "MRxClk",
+      "Reset",
+      "MRxDV",
+      "MRxD",
+      "DlyCrcEn",
+      "MaxFL",
+      "HugEn",
+      "StateData",
+      "StateSFD",
+      "CrcError",
+      "RxValid",
+      "RxEndFrm"
+    ],
+    "R-ETH7FBC-009": [
+      "MRxClk",
+      "Reset",
+      "MRxDV",
+      "MRxD",
+      "r_Bro",
+      "r_HASH0",
+      "r_HASH1",
+      "RxAbort",
+      "RxEndFrm",
+      "StateData",
+      "StateIdle"
+    ],
+    "R-ETH7FBC-010": [
+      "MRxClk",
+      "Reset",
+      "MAC",
+      "r_Pro",
+      "r_Bro",
+      "r_HASH0",
+      "r_HASH1",
+      "PassAll",
+      "ControlFrmAddressOK",
+      "RxData",
+      "RxValid",
+      "RxAbort",
+      "AddressMiss",
+      "RxEndFrm",
+      "StateData"
+    ]
+  },
+  "scope": "Full native selected_top, fixed 10 behavior obligations; reference finite histories do not narrow denominator"
+}

@@ -1,0 +1,102 @@
+{
+  "dut_top": "ap3216c_top",
+  "top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "model": {
+    "file": "model/model.sv",
+    "top": "dvbench_model",
+    "self_contained": true,
+    "interface": {
+      "ports": [
+        {
+          "name": "ap_scl",
+          "direction": "Out",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "ap_sda",
+          "direction": "InOut",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "led",
+          "direction": "Out",
+          "width": 4,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 3,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "seg_led",
+          "direction": "Out",
+          "width": 8,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 7,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "sel",
+          "direction": "Out",
+          "width": 6,
+          "dimensions": [
+            {
+              "kind": "packed",
+              "left": 5,
+              "right": 0
+            }
+          ]
+        },
+        {
+          "name": "sys_clk",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        },
+        {
+          "name": "sys_rst_n",
+          "direction": "In",
+          "width": 1,
+          "dimensions": []
+        }
+      ],
+      "parameters": {
+        "SLAVE_ADDR": "7'b11110",
+        "BIT_CTRL": "1'b0",
+        "CLK_FREQ": "26'd50000000",
+        "I2C_FREQ": "18'd250000"
+      },
+      "parser": "pyslang 12.1.0"
+    }
+  },
+  "submission_format": "public/submission_format.md",
+  "json_is_complete_fact_carrier": true,
+  "task_id": "dv-014",
+  "node": "A",
+  "visibility": "blackbox",
+  "required_files": [
+    "flow/features.md",
+    "flow/features.json",
+    "flow/testplan.md",
+    "flow/testplan.json",
+    "model/model.sv",
+    "sources.f"
+  ],
+  "debug": {
+    "feedback_calls": 50,
+    "seed": 1,
+    "compile_seconds": 900,
+    "simulation_seconds": 600,
+    "transport_timeout_seconds": 3660
+  },
+  "execution_budget": "public/deployment_budget.json"
+}

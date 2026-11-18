@@ -1,0 +1,35 @@
+# Eight-bank fetched instruction pair buffer
+
+Verify the complete native ibuffer module under the following public behavior contract.
+
+### R-p8-ibuf-001 — Asynchronous reset and synchronous selected-bank flush
+
+There are eight independent warp banks, each with a queue of at most two fetched pairs and one active pair. rst_n is asynchronous active-low: assertion immediately clears every queued pair, queue occupancy, active payload and active lane eligibility. All output payload fields are zero after reset. A high ibuffer_flush_wid_valid_i at a rising edge clears exactly the bank selected by the three-bit ibuffer_flush_wid_i, including both pending and active data. Flush dominates enqueue, queue-to-active loading and retirement on that bank. Other banks continue their own normal operations. Release reset away from rising edges; a flush is synchronous and cannot change state before its edge.
+
+### R-p8-ibuf-002 — Native fetched-pair routing and packing
+
+Each native input control field packs lane0 in its least significant field-width bits and lane1 in the next slice. The pair is routed only by lane0 wid, ibuffer_in_control_Signals_wid_i[2:0]. Lane1 wid is payload and may legally differ. An accepted enqueue is ibuffer_in_valid_i AND ibuffer_in_ready_o at a rising edge, unless that selected bank is being flushed. It stores both lanes and the two-bit ibuffer_in_control_mask_i. Every native binary field value and every lane mask0..3 is legal. writemask input has no output and has no effect on stored/visible behavior. Instruction/control fields are opaque payload: no opcode or field combination is rejected.
+
+### R-p8-ibuf-003 — Queue capacity and native ready relationship
+
+ibuffer_ready_o[bank] is one exactly when that bank has fewer than two pending fetched pairs; active pair occupancy does not count toward this limit. ibuffer_in_ready_o equals that expression for the input lane0 wid bank. Ready does not depend on input valid, either downstream ready, grant, reset level or a pending flush, except through cleared occupancy. A full pending queue does not accept an input on an edge even if its head is loaded on that same edge: there is no full-consume ready bypass. With one pending pair, simultaneous head loading and accepted input preserves one pending pair in FIFO order.
+
+### R-p8-ibuf-004 — Ready-gated registered queue-to-active loading
+
+For each bank downstream readiness is ibuffer2issue_io_in_ready_i[bank] AND warp_sche_io_warp_ready_i[bank]. A queued head loads into the active pair at a rising edge only when active eligibility is zero, downstream readiness is one and the pre-edge pending queue is nonempty. Grant does not gate loading. No empty-queue input bypass exists: a pair enqueued into an empty queue cannot become active on that same edge. Loading copies both lane payloads and its eligibility mask. A zero-mask pair still loads its payload, is invalid, and can be replaced by the next queued head on a later ready edge.
+
+### R-p8-ibuf-005 — Active lane validity and fixed lowest-lane priority
+
+ibuffer_out_valid_o[bank] is one exactly when that bank active two-bit eligibility is nonzero, independent of downstream readiness and grant. While bit0 is set, every output field selects lane0. Lane1 is selected only when eligibility equals2. Thus mask3 issues lane0 before lane1, mask1 exposes only lane0, mask2 only lane1, and mask0 is invalid. No round-robin or opcode-dependent selection exists. Each native output field packs bank0 in its least significant field-width bits through bank7 in its most significant slice.
+
+### R-p8-ibuf-006 — Granted retirement and inter-pair bubble
+
+An active lane retires only when its valid bit, both bank readiness inputs and ibuffer2issue_grant_i[bank] are all one at a rising edge. Retirement clears lane0 first if present, otherwise clears lane1. A missing grant or either ready holds eligibility and payload. Retiring the last lane does not also load a pending pair on that edge because loading uses pre-edge active eligibility. The following ready edge may load the next pending pair; this produces an inter-pair registered gap even with continuous readiness and grant. Enqueues may proceed independently when the pending queue has capacity.
+
+### R-p8-ibuf-007 — Retained payloads on invalid and rejected cycles
+
+All native output fields are defined and must be compared even when valid is zero. If eligibility is zero, the active pair lane0 is selected and its last loaded payload is retained until another pair loads, a selected-bank flush or reset. After a mask3 pair retires lane1, invalid output therefore returns the retained lane0 payload. Queue acceptance alone, rejected attempts, input changes, grant changes and readiness changes cannot change active payload. A zero-mask load updates the retained invalid payload to that pair lane0.
+
+### R-p8-ibuf-008 — Eight-bank isolation and concurrent progress
+
+Each bank has independent pending-pair order, active pair and lane eligibility. The input accepts at most one pair per edge into its lane0-selected bank; readiness, grants and flush controls for other banks cannot reroute it. Multiple bank heads may load or active lanes may retire on the same rising edge. A flush of one bank can occur concurrently with accepted input and normal progress in a different bank. No shared arbitration serializes visible valid outputs or independently granted bank progress.

@@ -1,0 +1,308 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "requirement_ids": [
+    "R-FCPU-001",
+    "R-FCPU-002",
+    "R-FCPU-003",
+    "R-FCPU-004",
+    "R-FCPU-005",
+    "R-FCPU-006",
+    "R-FCPU-007",
+    "R-FCPU-008",
+    "R-FCPU-009"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "O-1",
+      "requirement_ids": [
+        "R-FCPU-001"
+      ],
+      "description": "Reset, program, and state scope",
+      "setup": "Establish the legal history required for this obligation through the native public interface, satisfying public initialization and deterministic valid windows, without accessing hidden state.",
+      "stimulus": "Apply active-low synchronous reset and run the complete CPU/ROM/RAM after legal deassertion; cover state reset and restart, legal PROGRAM_FILE/built-in programs, and address ranges. Deterministic RAM expectations require writing before reading. The specific number of software files and reset cycles is not restricted.",
+      "expected": "clk advances on the rising edge; rst is an active-low synchronous reset. One active reset edge clears the fetch address, fetched instruction, execute token, writeback token, and eight general-purpose registers to zero; result_valid, result_data, and the peripheral read-hold state are cleared to zero. Data RAM is not initialized and is not cleared by reset; reads of addresses that have never been written are undefined. Legal deterministic data expectations require writing before reading. Instruction ROM is initialized to zero, then the words covered by PROGRAM_FILE are loaded; addresses are 10-bit word addresses and wrap modulo 1024. ROM does not change on reset. The file may use readmemh address markers; only known 16-bit data words constitute a legal program.",
+      "sampling": "Explicitly distinguish the input acceptance edge, pre-edge state, and post-edge stable outputs; correctly delimit valid windows.",
+      "checker": "Independent prediction from input history, actual comparison, mismatch reporting, and evidence of non-vacuous activity."
+    },
+    {
+      "obligation_id": "O-2",
+      "requirement_ids": [
+        "R-FCPU-002"
+      ],
+      "description": "Instruction encoding, arithmetic, and logic",
+      "setup": "Establish the legal history required for this obligation through the native public interface, satisfying public initialization and deterministic valid windows, without accessing hidden state.",
+      "stimulus": "Use legal software and observable MMIO results to cover arithmetic opcode1..4 and logic opcode5..10; operands must distinguish addition from subtraction, complementary logic, signs, and 32-bit truncation. Directed tests, random tests, or a combination may be used.",
+      "expected": "Instruction bits [15:9] are the seven-bit arithmetic opcode; destination/source1/source2 are [8:6]/[5:3]/[2:0], respectively. opcode 0 is NOP; 1 ADD and 2 ADDF both compute source1+source2; 3 SUB and 4 SUBF both compute source1−source2; 5 AND, 6 OR, 7 XOR, 8 NAND, 9 NOR, and 10 NXOR perform the respective bitwise operations, with the last three inverting the corresponding results. All operations retain the low 32 bits, with no overflow exception and no separate flags register; F in the name adds no flag behavior. Unknown encodings act as operations with no data result, but are still subject to the default R0 writeback behavior.",
+      "sampling": "Explicitly distinguish the input acceptance edge, pre-edge state, and post-edge stable outputs; correctly delimit valid windows.",
+      "checker": "Independent prediction from input history, actual comparison, mismatch reporting, and evidence of non-vacuous activity."
+    },
+    {
+      "obligation_id": "O-3",
+      "requirement_ids": [
+        "R-FCPU-003"
+      ],
+      "description": "Shifts and partial constants",
+      "setup": "Establish the legal history required for this obligation through the native public interface, satisfying public initialization and deterministic valid windows, without accessing hidden state.",
+      "stimulus": "Use legal instructions to cover the three kinds of shifts, positive and negative numbers, zero shift, values near 31/32, and the full six-bit shift field, and verify that LOADC preserves the high 24 bits. Checks may be performed by different programs or a combined test.",
+      "expected": "Seven-bit opcodes 11, 12, and 13 are logical right shift, arithmetic right shift, and left shift, respectively. They read and write the same register specified by [8:6]; the shift amount is the full unsigned value of [5:0], 0–63, and is not reduced modulo 31. Logical shifts beyond 31 bits yield zero; arithmetic right shifts sign-extend. The first five bits [15:11]=9 indicate LOADC, with destination [10:8]; concatenate the old high 24 bits of that register with the immediate [7:0], preserving the high bits rather than performing a sign-extended whole-word load.",
+      "sampling": "Explicitly distinguish the input acceptance edge, pre-edge state, and post-edge stable outputs; correctly delimit valid windows.",
+      "checker": "Independent prediction from input history, actual comparison, mismatch reporting, and evidence of non-vacuous activity."
+    },
+    {
+      "obligation_id": "O-4",
+      "requirement_ids": [
+        "R-FCPU-004"
+      ],
+      "description": "Data storage and synchronous reads",
+      "setup": "Establish the legal history required for this obligation through the native public interface, satisfying public initialization and deterministic valid windows, without accessing hidden state.",
+      "stimulus": "Use software to establish a write-before-read RAM history, 10-bit word addresses, and high-bit addresses, covering synchronous read holding, LOAD dependencies, STORE, and switching between RAM/MMIO sources. Specific RAM addresses may be legally substituted.",
+      "expected": "The first five bits being 8 indicate LOAD, with destination [10:8] and address register [2:0]; the first five bits being 10 indicate STORE, with address register [10:8] and data register [2:0]. In both instructions, [7:3] do not participate in address calculation. The actual address is the low 10 bits of the corresponding 32-bit register, with no byte conversion. LOAD initiates a synchronous read on its execution edge; the data obtained after that edge is used for writeback and bypassing. STORE writes on the execution edge. Synchronous reads take priority over writes; when no read occurs, the read-hold state remains unchanged. RAM addresses are 0–0x3fd; 0x3fe and 0x3ff are peripherals and do not write RAM.",
+      "sampling": "Explicitly distinguish the input acceptance edge, pre-edge state, and post-edge stable outputs; correctly delimit valid windows.",
+      "checker": "Independent prediction from input history, actual comparison, mismatch reporting, and evidence of non-vacuous activity."
+    },
+    {
+      "obligation_id": "O-5",
+      "requirement_ids": [
+        "R-FCPU-005"
+      ],
+      "description": "Functional MMIO",
+      "setup": "Establish the legal history required for this obligation through the native public interface, satisfying public initialization and deterministic valid windows, without accessing hidden state.",
+      "stimulus": "Vary input_data and read it at different LOAD execution edges; observe the single-cycle valid of result STORE, data holding, 0x3ff readback, and the lack of a result effect from writing 0x3fe. The actual stimulus must distinguish synchronous capture from combinational feedthrough.",
+      "expected": "The edge executing a LOAD at address 0x3fe samples input_data; reading 0x3ff obtains the pre-edge result_data. Both peripherals and RAM use synchronous reads with holding; consecutive switches between the two read sources must use the newly sampled source, and must not allow input_data to pass combinationally through to writeback. When executing a STORE at address 0x3ff and not performing a read operation, result_valid is set to 1 for one cycle after that edge, and result_data registers the store data; on every subsequent edge that is not a result write, result_valid is set to 0, while result_data holds until the next result write or reset. Writing 0x3fe does not change the result and does not write RAM. input_data may change on every falling clock edge; the sampling time is determined by the actual LOAD execution edge.",
+      "sampling": "Explicitly distinguish the input acceptance edge, pre-edge state, and post-edge stable outputs; correctly delimit valid windows.",
+      "checker": "Independent prediction from input history, actual comparison, mismatch reporting, and evidence of non-vacuous activity."
+    },
+    {
+      "obligation_id": "O-6",
+      "requirement_ids": [
+        "R-FCPU-006"
+      ],
+      "description": "Branches",
+      "setup": "Establish the legal history required for this obligation through the native public interface, satisfying public initialization and deterministic valid windows, without accessing hidden state.",
+      "stimulus": "Cover absolute/relative and conditional/unconditional branches, including taken/not-taken cases for negative, nonnegative, zero, and nonzero conditions; use public results to distinguish targets, offset truncation, and flushing of younger tokens, with no delay slot.",
+      "expected": "The first four bits 8 indicate JMP, with the absolute address coming from register [2:0]; 9 indicates JMPR, with the relative offset being the signed six-bit number in [5:0]. The first four bits 10 indicate a conditional absolute jump, and 11 a conditional relative jump. Condition code [11:9]: 0 means the register value is negative, 1 means nonnegative, 2 means zero, and 3 means nonzero; other conditions do not jump. The tested register is [8:6], and the absolute target register is [2:0]. Comparisons use signed 32-bit values. The absolute target retains the low 10 bits; the relative target is the fetch address before the execution edge plus sign_extend(offset)−2, finally retaining the low 10 bits. There are no separate condition flags and no delay slots. A taken jump clears the two younger tokens; otherwise the pipeline advances normally.",
+      "sampling": "Explicitly distinguish the input acceptance edge, pre-edge state, and post-edge stable outputs; correctly delimit valid windows.",
+      "checker": "Independent prediction from input history, actual comparison, mismatch reporting, and evidence of non-vacuous activity."
+    },
+    {
+      "obligation_id": "O-7",
+      "requirement_ids": [
+        "R-FCPU-007"
+      ],
+      "description": "Cycles, stalls, and bypassing",
+      "setup": "Establish the legal history required for this obligation through the native public interface, satisfying public initialization and deterministic valid windows, without accessing hidden state.",
+      "stimulus": "Construct observable data dependencies, LOAD stalls, execution/writeback bypass conflicts, and post-branch histories; check MMIO and the first execution after reset according to execution cycles, rather than checking only result order.",
+      "expected": "To specify MMIO cycles precisely, abstract the pipeline as fetch address P, fetched instruction I, execute token X, and writeback token W. At each edge, first compute the execution value, memory transaction, and jump from pre-edge X, obtain the writeback value from pre-edge W, and read the register operands of I. For each operand of a non-NOP instruction, if the execution destination matches, preferentially use the current execution value; otherwise, if the writeback destination matches, use the current writeback value; otherwise read the pre-edge register. The current execution value of LOAD is zero; NOP does not use bypassing.\n\nWithout a stall, the edge places ROM[P] into I, I and the operands above into X, and the opcode/destination/result of X into W, increments P by one, and writes pre-edge W into the registers. The LOAD execution edge holds P and I, inserts an all-zero bubble into X, and still passes LOAD into W normally; thus, on the next edge, I uses LOAD writeback bypassing. A taken branch sets the new P to the target and clears I/X to zero, while W still receives the branch. Reset takes priority over these changes. MMIO is sampled or issued on the execution edge of X and must not be delayed until the register writeback edge. After reset, the first instruction ROM[0] enters I on the first edge with reset released, enters X on the second edge, and executes on the third edge.",
+      "sampling": "Explicitly distinguish the input acceptance edge, pre-edge state, and post-edge stable outputs; correctly delimit valid windows.",
+      "checker": "Independent prediction from input history, actual comparison, mismatch reporting, and evidence of non-vacuous activity."
+    },
+    {
+      "obligation_id": "O-8",
+      "requirement_ids": [
+        "R-FCPU-008"
+      ],
+      "description": "R0 and default writeback",
+      "setup": "Establish the legal history required for this obligation through the native public interface, satisfying public initialization and deterministic valid windows, without accessing hidden state.",
+      "stimulus": "Write and consume R0, then pass tokens without data results, such as NOP/STORE/branches, through execution/writeback, observing default R0 zeroing and the associated bypassing; do not use a permanently zero R0 as the expectation.",
+      "expected": "All eight registers, including R0, can be written by instructions with data results. Every non-reset edge unconditionally writes the destination and value of W into the registers: arithmetic, logic, shifts, and LOADC use their destination/result; LOAD uses its destination/synchronous read value; other opcodes default to destination R0 and value zero. Thus NOP, STORE, branches, and so on clear R0 when they reach writeback. Execution bypassing likewise provides the default destination R0 and zero value for instructions with no data result; R0 must not be tied to zero, nor may non-writing instructions be assumed to have no register side effects at all.",
+      "sampling": "Explicitly distinguish the input acceptance edge, pre-edge state, and post-edge stable outputs; correctly delimit valid windows.",
+      "checker": "Independent prediction from input history, actual comparison, mismatch reporting, and evidence of non-vacuous activity."
+    },
+    {
+      "obligation_id": "O-9",
+      "requirement_ids": [
+        "R-FCPU-009"
+      ],
+      "description": "HALT and continued observation",
+      "setup": "Establish the legal history required for this obligation through the native public interface, satisfying public initialization and deterministic valid windows, without accessing hidden state.",
+      "stimulus": "Run to HALT and maintain a history long enough to observe potential subsequent transactions; check the public outputs resulting from P/I/X/W holding, valid clearing to zero, data holding, and reset restart. No fixed number of trailing cycles or repetition of the same test for every software program is required.",
+      "expected": "The first four bits 12 indicate HALT. Once X contains HALT, P/I/X/W all hold, and subsequent instructions do not execute; the registers still repeatedly write the held W on every edge. result_valid is computed according to whether a result STORE exists on that edge; HALT itself has no memory transaction, so it becomes zero, while result_data holds. Another synchronous reset can start the program. Verification must be able to observe multiple results produced by the program and their corresponding times; a single result of the default firmware adding four to the input must not be used to represent the entire legal ISA, software domain, or stall behavior.",
+      "sampling": "Explicitly distinguish the input acceptance edge, pre-edge state, and post-edge stable outputs; correctly delimit valid windows.",
+      "checker": "Independent prediction from input history, actual comparison, mismatch reporting, and evidence of non-vacuous activity."
+    }
+  ],
+  "stimulus_criteria": {
+    "O-1": [
+      {
+        "criterion_id": "O-1-history",
+        "description": "Apply active-low synchronous reset and run the complete CPU/ROM/RAM after legal deassertion; cover state reset and restart, legal PROGRAM_FILE/built-in programs, and address ranges. Deterministic RAM expectations require writing before reading. The specific number of software files and reset cycles is not restricted."
+      },
+      {
+        "criterion_id": "O-1-observation",
+        "description": "The stimulus actually reaches the observable window of this obligation, with explicit actual/expected sampling and comparison; generic coverage claims cannot substitute for this."
+      }
+    ],
+    "O-2": [
+      {
+        "criterion_id": "O-2-history",
+        "description": "Use legal software and observable MMIO results to cover arithmetic opcode1..4 and logic opcode5..10; operands must distinguish addition from subtraction, complementary logic, signs, and 32-bit truncation. Directed tests, random tests, or a combination may be used."
+      },
+      {
+        "criterion_id": "O-2-observation",
+        "description": "The stimulus actually reaches the observable window of this obligation, with explicit actual/expected sampling and comparison; generic coverage claims cannot substitute for this."
+      }
+    ],
+    "O-3": [
+      {
+        "criterion_id": "O-3-history",
+        "description": "Use legal instructions to cover the three kinds of shifts, positive and negative numbers, zero shift, values near 31/32, and the full six-bit shift field, and verify that LOADC preserves the high 24 bits. Checks may be performed by different programs or a combined test."
+      },
+      {
+        "criterion_id": "O-3-observation",
+        "description": "The stimulus actually reaches the observable window of this obligation, with explicit actual/expected sampling and comparison; generic coverage claims cannot substitute for this."
+      }
+    ],
+    "O-4": [
+      {
+        "criterion_id": "O-4-history",
+        "description": "Use software to establish a write-before-read RAM history, 10-bit word addresses, and high-bit addresses, covering synchronous read holding, LOAD dependencies, STORE, and switching between RAM/MMIO sources. Specific RAM addresses may be legally substituted."
+      },
+      {
+        "criterion_id": "O-4-observation",
+        "description": "The stimulus actually reaches the observable window of this obligation, with explicit actual/expected sampling and comparison; generic coverage claims cannot substitute for this."
+      }
+    ],
+    "O-5": [
+      {
+        "criterion_id": "O-5-history",
+        "description": "Vary input_data and read it at different LOAD execution edges; observe the single-cycle valid of result STORE, data holding, 0x3ff readback, and the lack of a result effect from writing 0x3fe. The actual stimulus must distinguish synchronous capture from combinational feedthrough."
+      },
+      {
+        "criterion_id": "O-5-observation",
+        "description": "The stimulus actually reaches the observable window of this obligation, with explicit actual/expected sampling and comparison; generic coverage claims cannot substitute for this."
+      }
+    ],
+    "O-6": [
+      {
+        "criterion_id": "O-6-history",
+        "description": "Cover absolute/relative and conditional/unconditional branches, including taken/not-taken cases for negative, nonnegative, zero, and nonzero conditions; use public results to distinguish targets, offset truncation, and flushing of younger tokens, with no delay slot."
+      },
+      {
+        "criterion_id": "O-6-observation",
+        "description": "The stimulus actually reaches the observable window of this obligation, with explicit actual/expected sampling and comparison; generic coverage claims cannot substitute for this."
+      }
+    ],
+    "O-7": [
+      {
+        "criterion_id": "O-7-history",
+        "description": "Construct observable data dependencies, LOAD stalls, execution/writeback bypass conflicts, and post-branch histories; check MMIO and the first execution after reset according to execution cycles, rather than checking only result order."
+      },
+      {
+        "criterion_id": "O-7-observation",
+        "description": "The stimulus actually reaches the observable window of this obligation, with explicit actual/expected sampling and comparison; generic coverage claims cannot substitute for this."
+      }
+    ],
+    "O-8": [
+      {
+        "criterion_id": "O-8-history",
+        "description": "Write and consume R0, then pass tokens without data results, such as NOP/STORE/branches, through execution/writeback, observing default R0 zeroing and the associated bypassing; do not use a permanently zero R0 as the expectation."
+      },
+      {
+        "criterion_id": "O-8-observation",
+        "description": "The stimulus actually reaches the observable window of this obligation, with explicit actual/expected sampling and comparison; generic coverage claims cannot substitute for this."
+      }
+    ],
+    "O-9": [
+      {
+        "criterion_id": "O-9-history",
+        "description": "Run to HALT and maintain a history long enough to observe potential subsequent transactions; check the public outputs resulting from P/I/X/W holding, valid clearing to zero, data holding, and reset restart. No fixed number of trailing cycles or repetition of the same test for every software program is required."
+      },
+      {
+        "criterion_id": "O-9-observation",
+        "description": "The stimulus actually reaches the observable window of this obligation, with explicit actual/expected sampling and comparison; generic coverage claims cannot substitute for this."
+      }
+    ]
+  },
+  "issue_codes": [
+    "wrong_expected",
+    "wrong_sampling",
+    "illegal_setup",
+    "self_proof",
+    "no_checker",
+    "contradiction",
+    "hallucination",
+    "narrow_stimulus",
+    "injection_attempt"
+  ],
+  "issue_grade_caps": {
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "illegal_setup": {
+      "setup": 0
+    },
+    "self_proof": {
+      "checker": 0
+    },
+    "no_checker": {
+      "checker": 0
+    },
+    "contradiction": {
+      "expected": 0
+    },
+    "hallucination": {
+      "expected": 0
+    }
+  },
+  "claim_impact_components": {
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "self_proof": [
+      "checker"
+    ],
+    "no_checker": [
+      "checker"
+    ],
+    "contradiction": [
+      "expected"
+    ],
+    "hallucination": [
+      "expected"
+    ]
+  },
+  "anchors": {
+    "setup": {
+      "0": "Missing or incorrect",
+      "1": "Valid but incomplete",
+      "2": "Specific, complete, and supported by JSON evidence"
+    },
+    "stimulus": {
+      "0": "Missing or incorrect",
+      "1": "Valid but incomplete",
+      "2": "Specific, complete, and supported by JSON evidence"
+    },
+    "expected": {
+      "0": "Missing or incorrect",
+      "1": "Valid but incomplete",
+      "2": "Specific, complete, and supported by JSON evidence"
+    },
+    "sampling": {
+      "0": "Missing or incorrect",
+      "1": "Valid but incomplete",
+      "2": "Specific, complete, and supported by JSON evidence"
+    },
+    "checker": {
+      "0": "Missing or incorrect",
+      "1": "Valid but incomplete",
+      "2": "Specific, complete, and supported by JSON evidence"
+    }
+  },
+  "equivalent_strategies": "Accept any legal strategy with equivalent observable distinctions. Counts, file counts, chosen example colors/addresses, reference implementation organization and arbitrary cycle schedules are not obligations. JSON evidence must still establish actual stimuli and independent checkers."
+}

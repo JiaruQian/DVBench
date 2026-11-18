@@ -1,0 +1,36 @@
+# xgmii_pcs_10g_tx Black-box behavioral specification
+
+This task fixes the XGMII input width at 64 bits and verifies the observable behavior of the implementation described below. All state descriptions are port-timing definitions; hexadecimal bytes have no prefix. Combinational responses may be sampled after settling following input changes, and sequential responses are sampled after nonblocking updates at rising edges have completed.
+
+### R-2dbefb593c6f-001 — Synchronous reset
+
+nreset is an active-low synchronous reset. Only when it is 0 at a rising edge of clk are all 58 scrambler-history bits set to 1 and phase p set to 0; assertion between edges does not immediately reset them. The fragment register contents are not cleared by reset, and fragments are still captured on every rising edge (including reset edges) according to the pre-edge phase and scrambled value. The initial state is defined only after at least one rising edge with reset asserted.
+
+### R-2dbefb593c6f-002 — Control-byte selection
+
+Byte j is xgmii_txd_i[8j+7:8j], with j=0 being the least significant byte. Let c be the 8-bit xgmii_txc_i and m=(-c) modulo 256; if m=0, the selected byte b is 0; otherwise, b is the input byte corresponding to the index of the highest set bit in m. The idle condition is c[7]=1 and b=07, and the term condition is c[7]=1 and b=fd. All 256 values of c and the full 64-bit input data are within the fixed interface scope; this is not an interpretation of the standard Ethernet protocol.
+
+### R-2dbefb593c6f-003 — Start byte and truncation
+
+The valid start0 condition is c[7]=0, byte 0=fb, and byte 4 not equal to fb. Byte 4=fb suppresses start0; the byte-4 start indication is truncated in the top-level connection and cannot generate block type 33. Even when c[0]=0, the start0 condition is still determined only by the data described above and c[7].
+
+### R-2dbefb593c6f-004 — Encoded payload and header
+
+Let k be the low 6 bits of c zero-extended to 8 bits, and q=k+1; for q=1/2/4/8/16/32/64, the termination codes are respectively 87/99/aa/b4/cc/d2/e1, and termination codes for other q values are unknown; q=128 is unreachable under the fixed connections. The block type is the bitwise OR of the idle contribution 1e, the term contribution of the termination code, and the start0 contribution 78 (an inactive contribution is 0); err does not contribute to the block type. When c is nonzero, the low 8 bits of the encoded word are the block type; when c=0, the original low 8 bits are retained. The high 56 bits of the encoded word are 0 during idle; otherwise, the high 56 input bits are retained. The synchronization header is 01 when c=0 and 10 when c is nonzero; the header is not scrambled.
+
+### R-2dbefb593c6f-005 — Serial self-synchronous scrambling
+
+Process each encoded word from bit 0 through bit 63, with current output bit = current encoded bit XOR the 39th preceding scrambled bit XOR the 58th preceding scrambled bit. The 58-bit history is initially all ones. After each bit is computed, that output bit is shifted into the temporary history for computing subsequent bits of this word; the history after the entire word is committed only at rising edges where the pre-edge phase p is not 32 and nreset=1. When p=32, the history is held, but the combinational scrambled result still changes with the current input.
+
+### R-2dbefb593c6f-006 — Phase and backpressure
+
+The phase after reset is p=0. Each rising edge of clk with nreset=1 advances p cyclically through 0,1,...,32,0. ready_o is 0 when p=32 and 1 otherwise, independently of the input word and control value. Reset changes the phase only at rising edges; ready_o is not combinationally gated by nreset. Inputs may change while ready_o is low, but the scrambler history is not committed; the upstream logic may choose to hold the inputs, and data_o is not required to remain unchanged during a backpressure cycle.
+
+### R-2dbefb593c6f-007 — Output fragments and combinational response
+
+Let s be the 64-bit scrambled word computed from the current input and the pre-edge history. Every rising edge, without gating by ready or reset, captures the highest L bits of s into the low L bits of the fragment register, with the remaining high bits unknown, where L=2*((pre-edge p) modulo 32)+2. When the current p=0, data_o combinationally outputs {s[61:0],synchronization header[1:0]}; when p=1..32, it outputs the entire captured fragment register. This is whole-word selection; the current data must not be spliced bitwise with the old fragment. When p=0, an input change within the same cycle can combinationally change data_o; when p is nonzero, it changes only at the next capture edge.
+
+### R-2dbefb593c6f-008 — Valid comparison and unknown propagation
+
+Inputs are required to be known 0/1, with fixed XGMII_DATA_W=64; the output contains explicitly unknown bits: the unfilled high bits of the fragment and bits propagated through the scrambler history from illegal termination codes. Only data_o bits whose independent expected values are known 0/1 are constrained; bits with unknown expected values have no prescribed value. A known expected value must not be skipped because actual is X. ready_o must have a known, exact value after the first effective reset. Unknown termination codes may contaminate subsequent scrambler history, and reset restores the all-ones history; do not narrow the input control-word or byte ranges to avoid this situation.
+

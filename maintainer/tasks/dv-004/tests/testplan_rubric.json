@@ -1,0 +1,261 @@
+{
+  "method": "natural_language_testplan_semantic_judge",
+  "components": [
+    "setup",
+    "stimulus",
+    "expected",
+    "sampling",
+    "checker"
+  ],
+  "requirement_ids": [
+    "R-p8-tlff-001",
+    "R-p8-tlff-002",
+    "R-p8-tlff-003",
+    "R-p8-tlff-004",
+    "R-p8-tlff-005"
+  ],
+  "obligations": [
+    {
+      "obligation_id": "R-p8-tlff-001",
+      "requirement_ids": [
+        "R-p8-tlff-001"
+      ],
+      "description": "For pair 0 A, auto_out_0_a_valid and every auto_out_0_a_bits field equal the corresponding auto_in_0_a input. auto_in_0_a_ready equals auto_out_0_a_ready independently of valid. Every native opcode, param, size, source, address, mask, data and corrupt bit is preserved.",
+      "setup": "Apply a rising edge with reset high before normal protocol traffic. Arbitrary binary values are legal for data-path comparisons during reset. Normal stimuli establish legal source/sink history before responses.",
+      "stimulus": "On pair 0 A vary all native fields and both valid/ready bits independently during reset, including zero, all ones and seeded full-width patterns. Then after a reset edge issue legal PutFull, PutPartial, Arithmetic, Logical, Get and Hint requests over sizes 0 through 5, respecting masks, operation limits and multibeat histories; exercise every pair-zero source with a matched Get response.",
+      "expected": "For pair 0 A, auto_out_0_a_valid and every auto_out_0_a_bits field equal the corresponding auto_in_0_a input. auto_in_0_a_ready equals auto_out_0_a_ready independently of valid. Every native opcode, param, size, source, address, mask, data and corrupt bit is preserved.",
+      "sampling": "Observe settled current-input combinational values before a rising edge and after that edge; include reset, invalid and stalled phases.",
+      "checker": "Independently predict from input signals alone and compare every specified actual native output with an explicit failure on mismatch. Do not mask by valid or copy actual outputs into expected.",
+      "anchors": {
+        "0": "Absent or incorrect.",
+        "1": "Correct but incomplete.",
+        "2": "Specific complete evidence in candidate JSON."
+      },
+      "scenario": "Apply a rising edge with reset high before normal protocol traffic. Arbitrary binary values are legal for data-path comparisons during reset. Normal stimuli establish legal source/sink history before responses. On pair 0 A vary all native fields and both valid/ready bits independently during reset, including zero, all ones and seeded full-width patterns. Then after a reset edge issue legal PutFull, PutPartial, Arithmetic, Logical, Get and Hint requests over sizes 0 through 5, respecting masks, operation limits and multibeat histories; exercise every pair-zero source with a matched Get response.",
+      "checked_target": "For pair 0 A, auto_out_0_a_valid and every auto_out_0_a_bits field equal the corresponding auto_in_0_a input. auto_in_0_a_ready equals auto_out_0_a_ready independently of valid. Every native opcode, param, size, source, address, mask, data and corrupt bit is preserved."
+    },
+    {
+      "obligation_id": "R-p8-tlff-002",
+      "requirement_ids": [
+        "R-p8-tlff-002"
+      ],
+      "description": "For pair 0 D, auto_in_0_d_valid and every auto_in_0_d_bits field equal the corresponding auto_out_0_d input. auto_out_0_d_ready equals auto_in_0_d_ready independently of valid. Every native opcode, param, size, source, sink, denied, data and corrupt bit is preserved.",
+      "setup": "Apply a rising edge with reset high before normal protocol traffic. Arbitrary binary values are legal for data-path comparisons during reset. Normal stimuli establish legal source/sink history before responses.",
+      "stimulus": "On pair 0 D vary every native response field and valid/ready independently during reset. After a reset edge, issue legal requests then matching AccessAck, AccessAckData and HintAck responses with the correct source, size and beat count, including every source. Never introduce a first response without an outstanding request.",
+      "expected": "For pair 0 D, auto_in_0_d_valid and every auto_in_0_d_bits field equal the corresponding auto_out_0_d input. auto_out_0_d_ready equals auto_in_0_d_ready independently of valid. Every native opcode, param, size, source, sink, denied, data and corrupt bit is preserved.",
+      "sampling": "Observe settled current-input combinational values before a rising edge and after that edge; include reset, invalid and stalled phases.",
+      "checker": "Independently predict from input signals alone and compare every specified actual native output with an explicit failure on mismatch. Do not mask by valid or copy actual outputs into expected.",
+      "anchors": {
+        "0": "Absent or incorrect.",
+        "1": "Correct but incomplete.",
+        "2": "Specific complete evidence in candidate JSON."
+      },
+      "scenario": "Apply a rising edge with reset high before normal protocol traffic. Arbitrary binary values are legal for data-path comparisons during reset. Normal stimuli establish legal source/sink history before responses. On pair 0 D vary every native response field and valid/ready independently during reset. After a reset edge, issue legal requests then matching AccessAck, AccessAckData and HintAck responses with the correct source, size and beat count, including every source. Never introduce a first response without an outstanding request.",
+      "checked_target": "For pair 0 D, auto_in_0_d_valid and every auto_in_0_d_bits field equal the corresponding auto_out_0_d input. auto_out_0_d_ready equals auto_in_0_d_ready independently of valid. Every native opcode, param, size, source, sink, denied, data and corrupt bit is preserved."
+    },
+    {
+      "obligation_id": "R-p8-tlff-003",
+      "requirement_ids": [
+        "R-p8-tlff-003"
+      ],
+      "description": "Pair 1 independently forwards A valid and all A fields from auto_in_1 to auto_out_1, and A ready in the reverse direction. It forwards D valid and all D fields from auto_out_1 to auto_in_1, and D ready in the reverse direction. The preserved fields are opcode, param, size, source, address, mask, data and corrupt for A, and opcode, param, size, source, sink, denied, data and corrupt for D.",
+      "setup": "Apply a rising edge with reset high before normal protocol traffic. Arbitrary binary values are legal for data-path comparisons during reset. Normal stimuli establish legal source/sink history before responses.",
+      "stimulus": "On pair 1 A and D vary each full-width field and both valid/ready controls independently during reset. After a reset edge execute legal operations 0 through 5 at sizes 0 through 5 subject to operation limits, all legal pair-one sources, and AcquireBlock size 6 at address 0x80000000 followed by Grant and E acknowledgement at every sink. Keep multibeat headers stable and separate request and response first beats.",
+      "expected": "Pair 1 independently forwards A valid and all A fields from auto_in_1 to auto_out_1, and A ready in the reverse direction. It forwards D valid and all D fields from auto_out_1 to auto_in_1, and D ready in the reverse direction. The preserved fields are opcode, param, size, source, address, mask, data and corrupt for A, and opcode, param, size, source, sink, denied, data and corrupt for D.",
+      "sampling": "Observe settled current-input combinational values before a rising edge and after that edge; include reset, invalid and stalled phases.",
+      "checker": "Independently predict from input signals alone and compare every specified actual native output with an explicit failure on mismatch. Do not mask by valid or copy actual outputs into expected.",
+      "anchors": {
+        "0": "Absent or incorrect.",
+        "1": "Correct but incomplete.",
+        "2": "Specific complete evidence in candidate JSON."
+      },
+      "scenario": "Apply a rising edge with reset high before normal protocol traffic. Arbitrary binary values are legal for data-path comparisons during reset. Normal stimuli establish legal source/sink history before responses. On pair 1 A and D vary each full-width field and both valid/ready controls independently during reset. After a reset edge execute legal operations 0 through 5 at sizes 0 through 5 subject to operation limits, all legal pair-one sources, and AcquireBlock size 6 at address 0x80000000 followed by Grant and E acknowledgement at every sink. Keep multibeat headers stable and separate request and response first beats.",
+      "checked_target": "Pair 1 independently forwards A valid and all A fields from auto_in_1 to auto_out_1, and A ready in the reverse direction. It forwards D valid and all D fields from auto_out_1 to auto_in_1, and D ready in the reverse direction. The preserved fields are opcode, param, size, source, address, mask, data and corrupt for A, and opcode, param, size, source, sink, denied, data and corrupt for D."
+    },
+    {
+      "obligation_id": "R-p8-tlff-004",
+      "requirement_ids": [
+        "R-p8-tlff-004"
+      ],
+      "description": "Pair 1 forwards B valid, param and address from auto_out_1 to auto_in_1, and B ready in the reverse direction. It forwards C valid, opcode, param, size, source, address, data and corrupt from auto_in_1 to auto_out_1, and C ready in the reverse direction. It forwards E valid and sink from auto_in_1 to auto_out_1. E has no ready signal. Every field is preserved independently of other channels.",
+      "setup": "Apply a rising edge with reset high before normal protocol traffic. Arbitrary binary values are legal for data-path comparisons during reset. Normal stimuli establish legal source/sink history before responses.",
+      "stimulus": "During reset vary all B, C and E fields and controls independently, including corrupt, all source and sink bits, contrasting data and address values. After a reset edge present B with params 0,1,2 at aligned address zero; exercise C ProbeAck and ProbeAckData at size 3 and Release and ReleaseData at size 6, with matched ReleaseAck responses after release first acceptance. Execute valid Grant/E histories for all four sinks.",
+      "expected": "Pair 1 forwards B valid, param and address from auto_out_1 to auto_in_1, and B ready in the reverse direction. It forwards C valid, opcode, param, size, source, address, data and corrupt from auto_in_1 to auto_out_1, and C ready in the reverse direction. It forwards E valid and sink from auto_in_1 to auto_out_1. E has no ready signal. Every field is preserved independently of other channels.",
+      "sampling": "Observe settled current-input combinational values before a rising edge and after that edge; include reset, invalid and stalled phases.",
+      "checker": "Independently predict from input signals alone and compare every specified actual native output with an explicit failure on mismatch. Do not mask by valid or copy actual outputs into expected.",
+      "anchors": {
+        "0": "Absent or incorrect.",
+        "1": "Correct but incomplete.",
+        "2": "Specific complete evidence in candidate JSON."
+      },
+      "scenario": "Apply a rising edge with reset high before normal protocol traffic. Arbitrary binary values are legal for data-path comparisons during reset. Normal stimuli establish legal source/sink history before responses. During reset vary all B, C and E fields and controls independently, including corrupt, all source and sink bits, contrasting data and address values. After a reset edge present B with params 0,1,2 at aligned address zero; exercise C ProbeAck and ProbeAckData at size 3 and Release and ReleaseData at size 6, with matched ReleaseAck responses after release first acceptance. Execute valid Grant/E histories for all four sinks.",
+      "checked_target": "Pair 1 forwards B valid, param and address from auto_out_1 to auto_in_1, and B ready in the reverse direction. It forwards C valid, opcode, param, size, source, address, data and corrupt from auto_in_1 to auto_out_1, and C ready in the reverse direction. It forwards E valid and sink from auto_in_1 to auto_out_1. E has no ready signal. Every field is preserved independently of other channels."
+    },
+    {
+      "obligation_id": "R-p8-tlff-005",
+      "requirement_ids": [
+        "R-p8-tlff-005"
+      ],
+      "description": "All 55 native outputs follow their corresponding current inputs combinationally, without a clock edge, queue, buffering, reordering or stored output. The same equalities hold for invalid and stalled channels and while reset is asserted. Reset does not gate valid, ready or payload. The two port pairs and all channels are independent. clock has no direct output-latency effect; active-high synchronous reset initializes and aborts only the legal-history checking described in the input domain.",
+      "setup": "Apply a rising edge with reset high before normal protocol traffic. Arbitrary binary values are legal for data-path comparisons during reset. Normal stimuli establish legal source/sink history before responses.",
+      "stimulus": "Drive 300 cycles of independently randomized full-width binary inputs with reset asserted, including every valid and ready combination in seeded random traffic. Observe outputs both before and after rising edges. Deassert reset after its rising edge and run legal normal traffic on each pair/channel. Change unrelated pair and channel fields independently, including invalid cycles and reset cycles, and compare every output without valid guarding.",
+      "expected": "All 55 native outputs follow their corresponding current inputs combinationally, without a clock edge, queue, buffering, reordering or stored output. The same equalities hold for invalid and stalled channels and while reset is asserted. Reset does not gate valid, ready or payload. The two port pairs and all channels are independent. clock has no direct output-latency effect; active-high synchronous reset initializes and aborts only the legal-history checking described in the input domain.",
+      "sampling": "Observe settled current-input combinational values before a rising edge and after that edge; include reset, invalid and stalled phases.",
+      "checker": "Independently predict from input signals alone and compare every specified actual native output with an explicit failure on mismatch. Do not mask by valid or copy actual outputs into expected.",
+      "anchors": {
+        "0": "Absent or incorrect.",
+        "1": "Correct but incomplete.",
+        "2": "Specific complete evidence in candidate JSON."
+      },
+      "scenario": "Apply a rising edge with reset high before normal protocol traffic. Arbitrary binary values are legal for data-path comparisons during reset. Normal stimuli establish legal source/sink history before responses. Drive 300 cycles of independently randomized full-width binary inputs with reset asserted, including every valid and ready combination in seeded random traffic. Observe outputs both before and after rising edges. Deassert reset after its rising edge and run legal normal traffic on each pair/channel. Change unrelated pair and channel fields independently, including invalid cycles and reset cycles, and compare every output without valid guarding.",
+      "checked_target": "All 55 native outputs follow their corresponding current inputs combinationally, without a clock edge, queue, buffering, reordering or stored output. The same equalities hold for invalid and stalled channels and while reset is asserted. Reset does not gate valid, ready or payload. The two port pairs and all channels are independent. clock has no direct output-latency effect; active-high synchronous reset initializes and aborts only the legal-history checking described in the input domain."
+    }
+  ],
+  "issue_codes": [
+    "missing_detail",
+    "narrow_stimulus",
+    "wrong_reset",
+    "wrong_expected",
+    "wrong_sampling",
+    "illegal_setup",
+    "vacuous_checker",
+    "self_oracle",
+    "contradiction",
+    "hallucination",
+    "injection_attempt",
+    "document_conflict",
+    "explicit_exclusion",
+    "negative_override"
+  ],
+  "stimulus_criteria": {
+    "R-p8-tlff-001": [
+      {
+        "criterion_id": "R-p8-tlff-001-S1",
+        "definition": "On pair 0 A vary all native fields and both valid/ready bits independently during reset, including zero, all ones and seeded full-width patterns. Then after a reset edge issue legal PutFull, PutPartial, Arithmetic, Logical, Get and Hint requests over sizes 0 through 5, respecting masks, operation limits and multibeat histories; exercise every pair-zero source with a matched Get response."
+      }
+    ],
+    "R-p8-tlff-002": [
+      {
+        "criterion_id": "R-p8-tlff-002-S1",
+        "definition": "On pair 0 D vary every native response field and valid/ready independently during reset. After a reset edge, issue legal requests then matching AccessAck, AccessAckData and HintAck responses with the correct source, size and beat count, including every source. Never introduce a first response without an outstanding request."
+      }
+    ],
+    "R-p8-tlff-003": [
+      {
+        "criterion_id": "R-p8-tlff-003-S1",
+        "definition": "On pair 1 A and D vary each full-width field and both valid/ready controls independently during reset. After a reset edge execute legal operations 0 through 5 at sizes 0 through 5 subject to operation limits, all legal pair-one sources, and AcquireBlock size 6 at address 0x80000000 followed by Grant and E acknowledgement at every sink. Keep multibeat headers stable and separate request and response first beats."
+      }
+    ],
+    "R-p8-tlff-004": [
+      {
+        "criterion_id": "R-p8-tlff-004-S1",
+        "definition": "During reset vary all B, C and E fields and controls independently, including corrupt, all source and sink bits, contrasting data and address values. After a reset edge present B with params 0,1,2 at aligned address zero; exercise C ProbeAck and ProbeAckData at size 3 and Release and ReleaseData at size 6, with matched ReleaseAck responses after release first acceptance. Execute valid Grant/E histories for all four sinks."
+      }
+    ],
+    "R-p8-tlff-005": [
+      {
+        "criterion_id": "R-p8-tlff-005-S1",
+        "definition": "Drive 300 cycles of independently randomized full-width binary inputs with reset asserted, including every valid and ready combination in seeded random traffic. Observe outputs both before and after rising edges. Deassert reset after its rising edge and run legal normal traffic on each pair/channel. Change unrelated pair and channel fields independently, including invalid cycles and reset cycles, and compare every output without valid guarding."
+      }
+    ]
+  },
+  "claim_impact_components": {
+    "wrong_expected": [
+      "expected"
+    ],
+    "wrong_reset": [
+      "expected",
+      "sampling"
+    ],
+    "wrong_sampling": [
+      "sampling"
+    ],
+    "illegal_setup": [
+      "setup"
+    ],
+    "vacuous_checker": [
+      "checker"
+    ],
+    "self_oracle": [
+      "checker"
+    ],
+    "contradiction": [
+      "expected"
+    ],
+    "hallucination": [
+      "expected"
+    ],
+    "document_conflict": [
+      "expected"
+    ],
+    "explicit_exclusion": [
+      "expected"
+    ],
+    "negative_override": [
+      "expected"
+    ]
+  },
+  "issue_grade_caps": {
+    "wrong_expected": {
+      "expected": 0
+    },
+    "wrong_reset": {
+      "expected": 0,
+      "sampling": 0
+    },
+    "wrong_sampling": {
+      "sampling": 0
+    },
+    "illegal_setup": {
+      "setup": 0
+    },
+    "vacuous_checker": {
+      "checker": 0
+    },
+    "self_oracle": {
+      "checker": 0
+    },
+    "contradiction": {
+      "expected": 0
+    },
+    "hallucination": {
+      "expected": 0
+    },
+    "document_conflict": {
+      "expected": 0
+    },
+    "explicit_exclusion": {
+      "expected": 0
+    },
+    "negative_override": {
+      "expected": 0
+    }
+  },
+  "anchors": {
+    "setup": {
+      "0": "Missing or incorrect; independent non-vacuous evidence absent.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific with JSON evidence."
+    },
+    "stimulus": {
+      "0": "Missing or incorrect; independent non-vacuous evidence absent.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific with JSON evidence."
+    },
+    "expected": {
+      "0": "Missing or incorrect; independent non-vacuous evidence absent.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific with JSON evidence."
+    },
+    "sampling": {
+      "0": "Missing or incorrect; independent non-vacuous evidence absent.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific with JSON evidence."
+    },
+    "checker": {
+      "0": "Missing or incorrect; independent non-vacuous evidence absent.",
+      "1": "Legal but incomplete in this dimension.",
+      "2": "Complete and specific with JSON evidence."
+    }
+  }
+}

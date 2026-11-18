@@ -1,0 +1,31 @@
+# TageTable fixed native specification
+
+The complete selected root is TageTable with its original two usefulness memories and table memory. It has no parameters or required defines. Use known binary inputs and apply synchronous reset before relying on initialized contents. The exact behavioral-array read/write timing below is part of the contract. Native ports are in ports.md. No external branch-predictor convention is required.
+
+### R-p8-tage-001 — Index and tag hashing
+
+There are128 rows and4 independent ways. Read index is {request_pc[10:6],request_pc[5:4] XOR request_ghist[1:0]}; read tag is {request_pc[17:13],request_pc[12:11] XOR request_ghist[1:0]}. Update index/tag use the identical functions of update_pc/update_hist. Only these PC slices and history bits1:0 affect addressing. Every field is unsigned; all other PC/history bits are ignored. There are no parameters, ready signals or external protocol restrictions.
+
+### R-p8-tage-002 — Read pipeline and invalid boundaries
+
+At a rising edge E, latch read enable, index and tag unconditionally from current f1 inputs. At edge E+1 register each way response from the row selected by the latched index, using row state immediately before E+1 writes. Thus a row write at E is visible to that read, while a write at E+1 is not. With the latched read enable high, response valid is stored entry valid AND matching7-bit tag AND not sweeping at E+1; counter is the row3-bit counter and usefulness is {high,low}, even on a tag miss or invalid entry. With latched enable low, counter/usefulness are unknown and valid is unknown unless sweeping forces it low; do not assume zero or held response. Response registers and read pipeline are not synchronously cleared by reset itself. Every cycle can launch a new read.
+
+### R-p8-tage-003 — Counter writes and allocation
+
+Each normal clock independently writes every way whose update_mask is high at the hashed update row; it sets entry valid1, shared new tag and computed3-bit counter. Unmasked ways preserve entry fields. For each way allocation overrides the old counter and initializes4 if taken,3 if not taken. Otherwise saturating increment/decrement uses a matching bypass counter if available, or that way external update_old_ctr if no match. Taken increments up to7; not-taken decrements down to0. Current table storage is not an implicit substitute for external old_ctr on a bypass miss. Normal writes occur every masked edge without a global update-valid signal.
+
+### R-p8-tage-004 — Two-entry write bypass
+
+Maintain two recency slots with row index, tag and4 counters. A slot matches only outside the reset sweep, by both index and tag; slot0 wins if both match. Any nonzero update_mask updates all4 computed bypass counters in the chosen slot, including ways whose table mask is zero. On a hit update its counters without changing replacement selection. On a miss put index/tag and all4 computed counters into the replacement slot, then alternate replacement for the next miss. Replacement initializes to slot0 on reset. Slot indices,tags and counters are not cleared by reset. Sweep disables matches but masked updates may still modify bypass data; the reset branch independently controls replacement. Before slots have known records, uninitialized comparisons/data are unspecified; initialize with allocated writes to two distinct index/tag pairs when relying on deterministic nonallocation behavior.
+
+### R-p8-tage-005 — Independent usefulness writes
+
+Each way has two useful bits in independent high/low arrays. A normal update_u_mask writes both bits from update_u at the hashed update row, independently of table update_mask, allocation and entry validity. Table writes alone do not alter usefulness. If a periodic clear affects one array on that edge, it overrides that entire array write address, all4 way masks and data with its aging clear; the other array still accepts its ordinary masked update. Sweep has priority over both arrays and clears all4 ways at its current row.
+
+### R-p8-tage-006 — Reset sweep and edge priority
+
+Reset is synchronous active high. At a reset edge set sweeping1, sweep_index0,19-bit age0 and replacement slot0. It does not immediately clear memory, read pipeline, response registers or bypass data. Every edge with pre-edge sweeping1 clears all4 table entries and both useful arrays at sweep_index, overriding normal table/useful writes. With reset low advance sweep_index modulo128, keep sweeping until the row127 write, then stop; while sweeping set age1 each edge. Holding reset high repeatedly writes row0 once sweeping is active and holds its index0. A full reset followed by128 deasserted edges completes all row clears. Response-valid suppression uses pre-edge sweeping, so the row127-clearing edge remains suppressed. Bypass updates and pipeline sampling remain governed by their separate input conditions, including reset edges. Memory and other unreset registers start unspecified. At a reset edge, memory writes still use pre-edge sweeping/age and native masks, so an ordinary or aging write may occur before the newly reset sweep state takes effect.
+
+### R-p8-tage-007 — Periodic usefulness aging
+
+After sweep, increment the unsigned19-bit age each clock modulo2^19. When pre-edge age bits10:0 are zero, clear all4 ways of one usefulness array at row age[17:11]. Clear low when age[18]=0 and high when age[18]=1. This happens once per2048 normal clocks, alternates arrays every2^18 age increments, and wraps after2^19. Aging never alters table valid/tag/counter. Sweep has higher priority; normal masked usefulness writes to the array being cleared lose that edge, while the other array may still update.

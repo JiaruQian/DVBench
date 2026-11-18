@@ -1,0 +1,204 @@
+{
+  "features": [
+    {
+      "feature_id": "F-001",
+      "requirement_ids": [
+        "R-dv-029-001"
+      ],
+      "module": "MemoryArbitrator",
+      "definition": "i_nRst is synchronous active-low; only source rising edges clear active state, beat count, busy flag, bank/index, write stencil, etc. Colors, addresses, read caches, and masks that are not reset must be established by legal transactions before use. fifoFull/fifoComplete are undriven and constantly Z in functional simulation; they do not indicate the existence of a command FIFO.",
+      "interface": [
+        "gpuClk",
+        "i_nRst",
+        "fifoFull",
+        "fifoComplete",
+        "req_o",
+        "cnt_o",
+        "adr_o",
+        "dat_o",
+        "sel_o",
+        "wrt_o",
+        "saveLoadOnGoing",
+        "importedBGBlock"
+      ],
+      "timing": "Bus outputs are combinational functions of the current state/inputs and may be sampled before the edge after inputs have been stable for 1ns; sequential state updates on the gpuClk edge.",
+      "boundary": "Fix all parameters to their defaults only; memory commands, TEX, CLUT, and background transactions are all in scope. Addresses/data have transaction meaning only within the corresponding req/write/completion windows."
+    },
+    {
+      "feature_id": "F-002",
+      "requirement_ids": [
+        "R-dv-029-002"
+      ],
+      "module": "MemoryArbitrator",
+      "definition": "When idle, initiate a request only when ack_i=0, prioritizing nonzero memoryWriteCommand, then a saveBGBlock transition from 0 to nonzero with a value of 2/3 or 1 with blending, then CLUT, and finally TEX. On the first beat, req=1; the command address is command21:7 shifted left by 5, the CLUT address is shifted left by 5, and TEX selects the L address, otherwise R, shifted left by 3; the first background beat address is 0. On the first beat, wrt_o=0; cnt for command 1 is 0, for other legal commands and BG/CLUT it is 7, and for TEX it is 1.",
+      "interface": [
+        "gpuClk",
+        "i_nRst",
+        "memoryWriteCommand",
+        "ack_i",
+        "saveBGBlock",
+        "isBlending",
+        "requClutCacheUpdate",
+        "requTexCacheUpdateL",
+        "requTexCacheUpdateR",
+        "adr_o",
+        "cnt_o",
+        "req_o",
+        "wrt_o"
+      ],
+      "timing": "Request selection is the combinational value before the edge; the rising edge latches the active transaction; subsequent cnt defaults to 0.",
+      "boundary": "No request is issued while idle with ack high; simultaneous L/R addresses select L, but the completion side is latched separately according to the R request; holding a nonzero command initiates it again during a later idle period."
+    },
+    {
+      "feature_id": "F-003",
+      "requirement_ids": [
+        "R-dv-029-003"
+      ],
+      "module": "MemoryArbitrator",
+      "definition": "After entering the active state, each edge with ack_i=1 advances the beat index, and req remains 1; when ack_i=0, req is low in that cycle and a return to idle or the subsequent BG phase is scheduled for the next edge. Low ack ends the transaction rather than waiting indefinitely. The low bits of the active address follow beat×4; the low 3 beat bits wrap modulo 8, with no automatic length-based stop.",
+      "interface": [
+        "gpuClk",
+        "ack_i",
+        "req_o",
+        "cnt_o",
+        "adr_o",
+        "wrt_o",
+        "memoryWriteCommand"
+      ],
+      "timing": "Stabilize ack during the low phase first; check the current beat address before the edge and the advanced outputs after the edge; cnt has length meaning only on the first beat.",
+      "boundary": "ack going low early at any beat, standard 1/2/8 beats, and wraparound beyond 8 beats; do not count external timeouts as error detection."
+    },
+    {
+      "feature_id": "F-004",
+      "requirement_ids": [
+        "R-dv-029-004"
+      ],
+      "module": "MemoryArbitrator",
+      "definition": "A command with low 3 bits equal to 1 is a pixel-pair write: field 55:40 is the low 16-bit color, 39:24 is the high 16-bit color, 23:22 gives the validity of the two halfwords, and 6:4 is the pair index; the active write address is the latched block address plus pair×4, and data is {high color,low color}. Command 2 fills 8 words, replicating color 55:40 into both halfwords, with the mask fully valid and the active address advancing by beat×4. Each halfword mask expands into two sel bits.",
+      "interface": [
+        "memoryWriteCommand",
+        "gpuClk",
+        "ack_i",
+        "adr_o",
+        "dat_o",
+        "sel_o",
+        "wrt_o",
+        "req_o"
+      ],
+      "timing": "Colors and masks are latched on the initiation edge; while active with ack high, wrt=1; the first beat still uses the default read-direction value.",
+      "boundary": "Colors all 0/all 1/distinct, masks 00/01/10/11, pair 0/7, first and last blocks; changes to command inputs during activity do not replace the latched colors."
+    },
+    {
+      "feature_id": "F-005",
+      "requirement_ids": [
+        "R-dv-029-005"
+      ],
+      "module": "MemoryArbitrator",
+      "definition": "The TEX address prioritizes L, while the completion side latches the R request bit at initiation: when both requests are high, the address may be L while completion is for R. Active beat 0 with ack high latches dat_i as the low 32 bits; beat 1 and subsequent beats with a nonzero low-3-bit index assert the selected completion side. TexCacheWrite is generated in the termination cycle when ack goes low; the high half of the 64-bit value is the current dat_i, and the low half is the value latched on the first beat; adrTexCacheWrite is the initiating byte address shifted right by 3.",
+      "interface": [
+        "requTexCacheUpdateL",
+        "requTexCacheUpdateR",
+        "adrTexCacheUpdateL",
+        "adrTexCacheUpdateR",
+        "gpuClk",
+        "ack_i",
+        "dat_i",
+        "TexCacheData",
+        "TexCacheWrite",
+        "adrTexCacheWrite",
+        "updateTexCacheCompleteL",
+        "updateTexCacheCompleteR"
+      ],
+      "timing": "The completion side and TexCacheWrite occupy different windows; the high data half follows dat_i directly; sample 1ns into the termination cycle.",
+      "boundary": "L only, R only, both requests, different addresses/data, early low ack; check the 64-bit value only in the valid writeback window."
+    },
+    {
+      "feature_id": "F-006",
+      "requirement_ids": [
+        "R-dv-029-006"
+      ],
+      "module": "MemoryArbitrator",
+      "definition": "The CLUT first beat has cnt7; the active address uses the current adrClutCacheUpdate and the low 3 beat bits×4. When ack is high, an internal cache write intent is issued; ClutCacheWrite and ClutWriteIndex are registered on the source edge, while ClutCacheData always passes dat_i through directly; at beat7, the completion output is 1.",
+      "interface": [
+        "requClutCacheUpdate",
+        "adrClutCacheUpdate",
+        "gpuClk",
+        "ack_i",
+        "dat_i",
+        "ClutCacheWrite",
+        "ClutWriteIndex",
+        "ClutCacheData",
+        "updateClutCacheComplete"
+      ],
+      "timing": "Check pre-edge address/completion separately from post-edge write flag/index; the data itself has no corresponding register.",
+      "boundary": "beat0/7, 8 consecutive beats and early termination, address changes during activity; ClutCacheData must not be treated as data delayed by one beat."
+    },
+    {
+      "feature_id": "F-007",
+      "requirement_ids": [
+        "R-dv-029-007"
+      ],
+      "module": "MemoryArbitrator",
+      "definition": "Only a saveBGBlock transition from 0 to nonzero triggers an operation. 1 reads the background only with blending; 2/3 first write 8 words, taking data and masks directly from the corresponding beat of the current exported block. Write termination generates resetMask; with blending and a value other than 3, issue another read first beat and read loadAdr; otherwise, terminate and generate a pipeline reset pulse. Read termination issues an import pulse and pipeline reset; the imported block is arranged as 8 32-bit dat_i values.",
+      "interface": [
+        "saveBGBlock",
+        "isBlending",
+        "saveAdr",
+        "loadAdr",
+        "exportedBGBlock",
+        "exportedMSKBGBlock",
+        "gpuClk",
+        "ack_i",
+        "adr_o",
+        "dat_o",
+        "sel_o",
+        "wrt_o",
+        "resetMask",
+        "resetPipelinePixelStateSpike",
+        "importBGBlockSingleClock",
+        "importedBGBlock",
+        "saveLoadOnGoing"
+      ],
+      "timing": "The first beat sets busy, and the final termination edge clears busy; the background cache is valid only after a legal read history, and the source keeps save/load/export stable until completion.",
+      "boundary": "saveBlock 0/1/2/3×blending, no retrigger while held, retrigger after 0, read after write, no further read for flush3."
+    },
+    {
+      "feature_id": "F-008",
+      "requirement_ids": [
+        "R-dv-029-008"
+      ],
+      "module": "MemoryArbitrator",
+      "definition": "Command 3 reads 8 words into one of two banks, each containing 8 32-bit words; the bank is command3. The corresponding 16-bit pixel mask comes from 55:40; when command22 is 1, clear the other bank's mask. The cache and masks are not fully reset; both banks must first be legally loaded separately before use.",
+      "interface": [
+        "memoryWriteCommand",
+        "gpuClk",
+        "ack_i",
+        "dat_i",
+        "adr_o",
+        "req_o",
+        "saveLoadOnGoing"
+      ],
+      "timing": "The read-bank cache is written through a pipeline of active beats and their indices; use the writeback command only after termination.",
+      "boundary": "bank0/1, masks all zeros/all ones/alternating, clearing the other bank versus retaining it; do not check data in an uninitialized bank."
+    },
+    {
+      "feature_id": "F-009",
+      "requirement_ids": [
+        "R-dv-029-009"
+      ],
+      "module": "MemoryArbitrator",
+      "definition": "Command 4 writes back 8 words. bank=command3, VVIndex=27:24; the pixel source starting point rotates forward by bank×16+VVIndex 16-bit pixels modulo 32, then advances by 2 pixels per beat; the two halfwords come from this cyclic pixel sequence. command4 forces the most significant bit of each halfword to 1. When command5 is 1, only pixels whose corresponding stencil bit is 0 are written, and the source pixel mask must still be valid. stencil comes from 55:40, with two bits selected according to the current beat. After termination, command23:22 selects clearing the bank0/1 mask.",
+      "interface": [
+        "memoryWriteCommand",
+        "gpuClk",
+        "ack_i",
+        "dat_o",
+        "sel_o",
+        "adr_o",
+        "wrt_o"
+      ],
+      "timing": "bank, rotation, stencil, force/check, and bank-clear controls are latched on the first beat; observe each active beat with ack high.",
+      "boundary": "VVIndex0..15, including odd-halfword rotations, the cross-bank modulo-32 boundary, all four stencil pairs, force/check combinations, and another writeback after clearing a bank."
+    }
+  ]
+}

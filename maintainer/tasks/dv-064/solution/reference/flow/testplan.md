@@ -1,0 +1,161 @@
+# Reference testplan
+
+## T-01
+
+feature_ids: F-01
+
+requirement_ids: R-p8-timer-001
+
+stimulus: Use APB_ADDR_WIDTH12, known binary inputs stable before rising HCLK, and an independently asserted/released reset. Establish state through valid APB accesses and native event history only. Assert reset asynchronously at startup and during active counting, pending compare pulses and bus accesses; observe immediate counter/IRQ/busy state and combinational bus outputs, then release and restart.
+
+expected: All registered logical state clears asynchronously and reset-time writes cannot survive. Bus ready/error/read behavior still reflects current access pins during reset; counting resumes only from later valid configuration/event history.
+
+checker: A self-contained native model independently predicts abstract elapsed/divider histories, sampled reference events and APB transactions from inputs only. DUT and expected outputs have separate wires. The monitor compares every output with four-state inequality1ns after every rising HCLK and asynchronous reset assertion, emits UVM_ERROR on any mismatch, and enforces finite nonvacuous comparison/reset counts.
+
+implementation_id: timer_sequence/timer_monitor/timer_scoreboard
+
+source: tb/timer_pkg.sv
+
+## T-02
+
+feature_ids: F-02
+
+requirement_ids: R-p8-timer-002
+
+stimulus: Use APB_ADDR_WIDTH12, known binary inputs stable before rising HCLK, and an independently asserted/released reset. Establish state through valid APB accesses and native event history only. Exercise setup-only,inactive,read,write and repeated-access histories at every legal offset, misaligned/default offsets and wrong upper address regions; check ready/data/error before and after active edges.
+
+expected: Ready follows selected-and-enabled exactly. Legal accesses have no error, illegal accesses return the exact error word, and no inactive/setup phase changes stored registers.
+
+checker: A self-contained native model independently predicts abstract elapsed/divider histories, sampled reference events and APB transactions from inputs only. DUT and expected outputs have separate wires. The monitor compares every output with four-state inequality1ns after every rising HCLK and asynchronous reset assertion, emits UVM_ERROR on any mismatch, and enforces finite nonvacuous comparison/reset counts.
+
+implementation_id: timer_sequence/timer_monitor/timer_scoreboard
+
+source: tb/timer_pkg.sv
+
+## T-03
+
+feature_ids: F-03
+
+requirement_ids: R-p8-timer-003
+
+stimulus: Use APB_ADDR_WIDTH12, known binary inputs stable before rising HCLK, and an independently asserted/released reset. Establish state through valid APB accesses and native event history only. Write and read full configuration/compare words, reserved bits and each functional bit; test all command registers with zero/nonzero data and show reset-request write, later action and automatic clear.
+
+expected: Readback preserves all ordinary stored bits and compare values; commands read zero; config reset bit is not treated as an immediate counter write and clears only through the stated reset condition.
+
+checker: A self-contained native model independently predicts abstract elapsed/divider histories, sampled reference events and APB transactions from inputs only. DUT and expected outputs have separate wires. The monitor compares every output with four-state inequality1ns after every rising HCLK and asynchronous reset assertion, emits UVM_ERROR on any mismatch, and enforces finite nonvacuous comparison/reset counts.
+
+implementation_id: timer_sequence/timer_monitor/timer_scoreboard
+
+source: tb/timer_pkg.sv
+
+## T-04
+
+feature_ids: F-04
+
+requirement_ids: R-p8-timer-004
+
+stimulus: Use APB_ADDR_WIDTH12, known binary inputs stable before rising HCLK, and an independently asserted/released reset. Establish state through valid APB accesses and native event history only. Write elapsed values around target,zero and0xffffffff; run through and beyond compare points, examine the one-tick repeat, overlap writes/reset with enabled count ticks and pause state, and compare both independent channels.
+
+expected: Counter value follows priority/wrap rules, a matching qualifying tick produces the registered reached event and one eligible hold tick, and explicit reset/write overrides held count values without inventing an extra increment.
+
+checker: A self-contained native model independently predicts abstract elapsed/divider histories, sampled reference events and APB transactions from inputs only. DUT and expected outputs have separate wires. The monitor compares every output with four-state inequality1ns after every rising HCLK and asynchronous reset assertion, emits UVM_ERROR on any mismatch, and enforces finite nonvacuous comparison/reset counts.
+
+implementation_id: timer_sequence/timer_monitor/timer_scoreboard
+
+source: tb/timer_pkg.sv
+
+## T-05
+
+feature_ids: F-05
+
+requirement_ids: R-p8-timer-005
+
+stimulus: Use APB_ADDR_WIDTH12, known binary inputs stable before rising HCLK, and an independently asserted/released reset. Establish state through valid APB accesses and native event history only. Run independent channels with unequal targets and enable/IRQ selections, disable/restart separately, stall reference input, and observe busy alongside both IRQs over exact HCLK edges.
+
+expected: Only the individually selected tick source advances each counter; IRQ requires both enable bits and the registered match, and busy reflects enable state rather than whether an increment happened.
+
+checker: A self-contained native model independently predicts abstract elapsed/divider histories, sampled reference events and APB transactions from inputs only. DUT and expected outputs have separate wires. The monitor compares every output with four-state inequality1ns after every rising HCLK and asynchronous reset assertion, emits UVM_ERROR on any mismatch, and enforces finite nonvacuous comparison/reset counts.
+
+implementation_id: timer_sequence/timer_monitor/timer_scoreboard
+
+source: tb/timer_pkg.sv
+
+## T-06
+
+feature_ids: F-06
+
+requirement_ids: R-p8-timer-006
+
+stimulus: Use APB_ADDR_WIDTH12, known binary inputs stable before rising HCLK, and an independently asserted/released reset. Establish state through valid APB accesses and native event history only. Sweep small and boundary divider thresholds in both HCLK/reference modes, pulse reference input with different spacing, pause/restart enabled channels, and overlap prescaler reaches with reset commands and configuration changes.
+
+expected: Reference history yields the exact delayed rising-edge pulses; divider completion and elapsed increments use old registered pulses, reset/automatic clearing follows the stated priority, and threshold/reference off-by-one cases are exact.
+
+checker: A self-contained native model independently predicts abstract elapsed/divider histories, sampled reference events and APB transactions from inputs only. DUT and expected outputs have separate wires. The monitor compares every output with four-state inequality1ns after every rising HCLK and asynchronous reset assertion, emits UVM_ERROR on any mismatch, and enforces finite nonvacuous comparison/reset counts.
+
+implementation_id: timer_sequence/timer_monitor/timer_scoreboard
+
+source: tb/timer_pkg.sv
+
+## T-07
+
+feature_ids: F-07
+
+requirement_ids: R-p8-timer-007
+
+stimulus: Use APB_ADDR_WIDTH12, known binary inputs stable before rising HCLK, and an independently asserted/released reset. Establish state through valid APB accesses and native event history only. Combine event inputs,start commands,config writes,one-shot target histories and reset requests; test event enable freshly set by the same configuration write and low/high mode-bit differences.
+
+expected: Event/start priority and candidate-word semantics are exact, one-shot uses the previous registered reached pulses and stated mode tests, start preserves elapsed values, and reset-bit clearing occurs last.
+
+checker: A self-contained native model independently predicts abstract elapsed/divider histories, sampled reference events and APB transactions from inputs only. DUT and expected outputs have separate wires. The monitor compares every output with four-state inequality1ns after every rising HCLK and asynchronous reset assertion, emits UVM_ERROR on any mismatch, and enforces finite nonvacuous comparison/reset counts.
+
+implementation_id: timer_sequence/timer_monitor/timer_scoreboard
+
+source: tb/timer_pkg.sv
+
+## T-08
+
+feature_ids: F-08
+
+requirement_ids: R-p8-timer-008
+
+stimulus: Use APB_ADDR_WIDTH12, known binary inputs stable before rising HCLK, and an independently asserted/released reset. Establish state through valid APB accesses and native event history only. Reset either channel through command and config bit while counting, combine command with elapsed writes, compare-clear in32/64-bit modes, and read back preserved configuration/compare state.
+
+expected: Counter reset wins data writes, explicit resets also request divider reset subject to the prescaler priority rule, compare-clear acts on old reached values and preserves divider progress, and reset commands preserve enables/compare words.
+
+checker: A self-contained native model independently predicts abstract elapsed/divider histories, sampled reference events and APB transactions from inputs only. DUT and expected outputs have separate wires. The monitor compares every output with four-state inequality1ns after every rising HCLK and asynchronous reset assertion, emits UVM_ERROR on any mismatch, and enforces finite nonvacuous comparison/reset counts.
+
+implementation_id: timer_sequence/timer_monitor/timer_scoreboard
+
+source: tb/timer_pkg.sv
+
+## T-09
+
+feature_ids: F-09
+
+requirement_ids: R-p8-timer-009
+
+stimulus: Use APB_ADDR_WIDTH12, known binary inputs stable before rising HCLK, and an independently asserted/released reset. Establish state through valid APB accesses and native event history only. Seed low elapsed near overflow and high near its target, then run all four low prescaler/reference combinations, high-enable0/1 and low-disable histories; inspect high through APB and both IRQs.
+
+expected: High tick occurs at the exact old-low boundary with the stated registered pulse gates, both counters wrap independently, and combined IRQ/mode behavior follows registered reached pulses rather than an assumed monolithic64-bit adder.
+
+checker: A self-contained native model independently predicts abstract elapsed/divider histories, sampled reference events and APB transactions from inputs only. DUT and expected outputs have separate wires. The monitor compares every output with four-state inequality1ns after every rising HCLK and asynchronous reset assertion, emits UVM_ERROR on any mismatch, and enforces finite nonvacuous comparison/reset counts.
+
+implementation_id: timer_sequence/timer_monitor/timer_scoreboard
+
+source: tb/timer_pkg.sv
+
+## T-10
+
+feature_ids: F-10
+
+requirement_ids: R-p8-timer-010
+
+stimulus: Use APB_ADDR_WIDTH12, known binary inputs stable before rising HCLK, and an independently asserted/released reset. Establish state through valid APB accesses and native event history only. Pause channels with gates closed after nonempty counting/compare histories, vary ordinary bus/reference activity, then enable DFT clock force and restart; separately write elapsed/reset commands to disabled channels.
+
+expected: Only gated channel histories freeze; config/compare/reference histories continue, writes/reset open the necessary gate, DFT forces normal per-edge transitions, and timer_val_lo/IRQ/busy remain exact functions of retained state.
+
+checker: A self-contained native model independently predicts abstract elapsed/divider histories, sampled reference events and APB transactions from inputs only. DUT and expected outputs have separate wires. The monitor compares every output with four-state inequality1ns after every rising HCLK and asynchronous reset assertion, emits UVM_ERROR on any mismatch, and enforces finite nonvacuous comparison/reset counts.
+
+implementation_id: timer_sequence/timer_monitor/timer_scoreboard
+
+source: tb/timer_pkg.sv

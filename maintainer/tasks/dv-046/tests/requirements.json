@@ -1,0 +1,44 @@
+{
+  "requirements": [
+    {
+      "requirement_id": "R-bb12edf1-001",
+      "text": "A=operands_i[0], B=operands_i[1], C=operands_i[2], all binary32. op_i=0(FMADD) computes A*B+C, 1(FNMSUB) computes -A*B+C, 2(ADD) computes B+C, and 3(MUL) computes A*B; op_mod_i reverses the sign of C in the first three operations, and MUL ignores it. ADD completely ignores A and its boxed state, and MUL completely ignores C and its boxed state. Finite multiply-add first performs exact multiplication and addition, then rounds only once. Legal op values are 0..3; arithmetic results for other encodings are unspecified. This applies to positive and negative values and cancellation; rounding the intermediate product first is not allowed.",
+      "source": "public/spec.md"
+    },
+    {
+      "requirement_id": "R-bb12edf1-002",
+      "text": "rnd_mode_i=0 is round to nearest, ties to even RNE, 1 is round toward zero RTZ, 2 is round toward negative infinity RDN, 3 is round toward positive infinity RUP, 4 is round to nearest, ties away from zero RMM, and 5 is ROD, which truncates and then sets the least significant bit of an inexact result to make it odd. Exact results do not change with the rounding mode. When effective opposite-sign addition cancels exactly to zero, RDN returns -0 and other modes return +0; same-sign zeros retain their sign. The zero addend for MUL is +0 under RDN and -0 under other modes; the rules above are then used to determine the sign of zero. Numerical values for modes 6/7 are unspecified. Include both sides of midpoints, even and odd retained bits, signs, and rounding carries.",
+      "source": "public/spec.md"
+    },
+    {
+      "requirement_id": "R-bb12edf1-003",
+      "text": "Operands used are classified by sign, the 8-bit exponent, and the 23-bit fraction as normal, subnormal, zero, infinity, quiet NaN, or signalling NaN. When the corresponding bit of is_boxed_i is 0, treat the operand as quiet NaN, not its bit pattern as sNaN or infinity. Operands ignored by ADD/MUL do not affect classification results. An all-ones exponent and a nonzero fraction indicate NaN; a most significant fraction bit of 0 indicates sNaN, and 1 indicates qNaN; an exponent of 0 and a nonzero fraction indicate subnormal, with gradual underflow and no flushing to zero.",
+      "source": "public/spec.md"
+    },
+    {
+      "requirement_id": "R-bb12edf1-004",
+      "text": "When the A/B operands used form infinity*zero or zero*infinity, return canonical qNaN 0x7fc00000 with NV=1, even if the addend is qNaN. Otherwise, if any operand used is NaN, return this canonical qNaN, with NV determined only by the sNaNs used. Otherwise, adding an infinite product to an effectively opposite-sign infinite addend returns canonical qNaN with NV=1; other infinite results use the effective sign of the product or addend with NV=0. DZ/OF/UF/NX are all 0 on the special path. Classification and signs are based on the effective operation after adjustment by op and mod; NaNs do not propagate payloads and always use the positive canonical encoding.",
+      "source": "public/spec.md"
+    },
+    {
+      "requirement_id": "R-bb12edf1-005",
+      "text": "status_o[4:0]={NV,DZ,OF,UF,NX}. On the ordinary finite path, NV=DZ=0; discarding nonzero precision or overflow makes NX=1. Exceeding the finite exponent range or a rounding carry to infinity makes OF=1, and OF must be accompanied by NX; the result is selected as the maximum finite value or infinity according to the rounding direction. UF is 1 only when NX=1 and the result is tiny; exact subnormal results do not set UF. tiny is determined by whether the exact result, rounded to 24-bit significand precision with an unbounded exponent, is below the minimum normal; the final encoding can be the minimum normal while UF is still 1. Minimum normal=2^-126, subnormal step=2^-149. Near the minimum normal, the tiny boundary distance for RNE/RMM is 1/4 subnormal steps, and only a distance greater than this value is tiny; when directed rounding yields the minimum normal, the distance must reach 1/2 steps to be tiny. Do not look only at the final exponent.",
+      "source": "public/spec.md"
+    },
+    {
+      "requirement_id": "R-bb12edf1-006",
+      "text": "Fixed NumPipeRegs=0: in_ready_o combinationally equals out_ready_i, and out_valid_o and busy_o combinationally equal in_valid_i. There is no clock-cycle latency; observe in the combinational settling window in the same cycle after inputs stabilize. When out_valid_o=1, result/status/tag/mask/aux are valid regardless of out_ready_i; a transfer occurs only when valid and ready are both 1. When out_valid_o=0, numerical data is not required. extension_bit_o is always 1. This configuration does not store transactions; ready=0 does not buffer the output, and the output still changes combinationally when inputs change. A normal upstream source holds the valid request and data stable across sampling edges during backpressure.",
+      "source": "public/spec.md"
+    },
+    {
+      "requirement_id": "R-bb12edf1-007",
+      "text": "tag_o=tag_i, mask_o=mask_i, and aux_o=aux_i, all one bit. mask_i=0 does not suppress arithmetic or valid. The zero-register configuration has no resettable state; rst_ni, flush_i, and reg_ena_i do not change combinational computation, handshaking, or sidebands; do not assume that reset or flush forces out_valid_o=0. The clock introduces no state. For initialization, first hold reset low and then release it. rst_ni is the native active-low asynchronous register reset control, but the fixed configuration does not instantiate pipeline registers. For invalid data, compare only handshaking and extension.",
+      "source": "public/spec.md"
+    },
+    {
+      "requirement_id": "R-bb12edf1-008",
+      "text": "This task verifies both the native zero-stage and two-stage distributed pipeline configurations of the complete fpnew_fma. original_comb: FP32, NumPipeRegs=0, BEFORE, TagType=logic[3:0], AuxType=logic[1:0]; original_pipe2: FP32, NumPipeRegs=2, DISTRIBUTED, the same 4-bit tag and 2-bit aux. default_logic is the native default zero-stage configuration with one-bit sidebands. The combinational control conclusions in zero-stage R6/R7 apply only to the zero-stage configuration; input data in the two-stage configuration is accepted on the rising edge and appears at the output after two advances, allowing throughput of one item per cycle. In the two-stage configuration, a stage can advance when valid indicates a bubble, and holds when valid and downstream is not ready; in_ready is derived recursively from each stage being empty or downstream being ready. busy equals input valid or any stored-stage valid; extension is always 1. The two-stage configuration has one input register stage and one intermediate register stage. A falling edge of rst_ni asynchronously clears all stored valid bits and data; flush_i has priority on the rising edge and clears all stored valid bits but not data, and does not cancel the contribution of combinational input valid to busy. Data registers update when ready and source valid are asserted; reg_ena_i[0]/[1] additionally force the corresponding stage's data to update without changing valid handshaking. tag/mask/aux propagate with the corresponding data under the same enables, and mask does not suppress computation. Under backpressure without an external override, the final stage holds valid data. Compare data only when valid is asserted; items canceled after reset/flush must not be treated as new transactions. The two-stage configuration has one source-RTL-specific boundary: when the final finite result is inexact and encodes exactly as the minimum normal, if the distance by which the exact absolute value is below the minimum normal is strictly between 1/4 and 1/2 subnormal steps, UF depends on whether the current external rnd_mode_i is RNE or RMM, rather than on the transaction's saved rm; when the distance reaches 1/2 steps, UF=1, and when the distance does not exceed 1/4 steps, UF=0. Other results still determine values and flags according to the transaction's rm. Observe this boundary in the settling window of the intermediate computation output; this two-stage configuration has no output register.",
+      "source": "public/spec.md"
+    }
+  ]
+}

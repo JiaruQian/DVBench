@@ -1,0 +1,158 @@
+{
+  "tests": [
+    {
+      "test_id": "T-001",
+      "feature_ids": [
+        "F-001"
+      ],
+      "requirement_ids": [
+        "R-ALU-001"
+      ],
+      "stimulus": "全部输入为确定二态；组合模块无状态或复位准备。在RV32B=0、1、2、3四个独立实例，遍历opcode 0..127，输入全零/全一、最高位、交替位、随机32/33/64位值，first和旁路开关均取0/1；所有实例实际观察全部七个输出。",
+      "expected": "顶层 ibex_alu_mut 是无时钟、无内部状态的组合接口。operator_i[6:0]、operand_a_i/operand_b_i[31:0]、instr_first_cycle_i、multdiv_operand_a_i/multdiv_operand_b_i[32:0]、multdiv_sel_i、imd_val_q_i[63:0] 为输入。输出 imd_val_d_o[63:0]、imd_val_we_o[1:0]、adder_result_o[31:0]、adder_result_ext_o[33:0]、result_o[31:0]、comparison_result_o、is_equal_result_o。分别验证 RV32B=0、1、2、3，默认值0；每个实例参数编译时固定。所有输入使用确定的二态值，任意 opcode 0..127 均允许；未知或禁用的功能其 result_o 为0，但其它输出仍遵循各自规则。instr_first_cycle_i 和 imd_val_q_i 是外部提供的组合输入，不代表模块内部寄存器，也不强制它们来自先前 DUT 输出。 观察时刻：驱动输入后等待组合传播稳定，逐次比较全部七个输出；没有复位、时钟沿或 ready/valid 握手。",
+      "checker": "从输入计算期望，逐次与实际原生输出比较；全部七个输出有效。失配通过UVM_ERROR报告，不能只计覆盖或用actual自证。",
+      "implementation_id": "dvbench_scenario.observe",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-002",
+      "feature_ids": [
+        "F-002"
+      ],
+      "requirement_ids": [
+        "R-ALU-002"
+      ],
+      "stimulus": "全部输入为确定二态；组合模块无状态或复位准备。每个加减/比较/移位加opcode施加0、1、ffffffff、80000000、7fffffff与随机配对；遍历first和multdiv_sel，33位旁路随机且包含全宽进位。",
+      "expected": "构造33位加数A={operand_a_i,1}、B={operand_b_i,0}。opcode为1、25..34、43、44时逐位取反整个33位B。RV32B非0且opcode22/23/24时，A先将32位operand_a_i左移1/2/3位截断为32位，再追加低位1。multdiv_sel_i=1优先把两加数替换为相应33位multdiv输入。adder_result_ext_o是两个33位无符号数相加的34位全结果，adder_result_o取该结果[32:1]；opcode0、1、22、23、24的result_o等于adder_result_o。 观察时刻：上述加法侧输出对所有opcode持续有效，与result_o选择独立；旁路改变后在组合稳定时比较。",
+      "checker": "从输入计算期望，逐次与实际原生输出比较；全部七个输出有效。失配通过UVM_ERROR报告，不能只计覆盖或用actual自证。",
+      "implementation_id": "dvbench_scenario.observe",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-003",
+      "feature_ids": [
+        "F-003"
+      ],
+      "requirement_ids": [
+        "R-ALU-003"
+      ],
+      "stimulus": "全部输入为确定二态；组合模块无状态或复位准备。遍历比较opcode及其它opcode，施加同值、不同值、符号相反及极值操作数，并切换33位旁路；比较所有标志。",
+      "expected": "is_equal_result_o始终表示adder_result_o为0，不在所有opcode下都表示两原始操作数相等。opcode25、27、31、33、43采用有符号比较控制。两操作数符号相同时，GE取adder_result_o最高位的反；符号不同时，GE取operand_a_i最高位异或有符号控制。opcode29比较标志为equal、30为非equal；27/28/33/34为GE；25/26/31/32/43/44为非GE，其它opcode比较标志为equal。opcode25..30及43/44的result_o为该标志零扩展至32位。旁路可以改变加法器和相等/同符号比较标志。 观察时刻：在同一个稳定窗口比较比较侧输出与result_o；即使opcode不是比较指令也核对两侧标志。",
+      "checker": "从输入计算期望，逐次与实际原生输出比较；全部七个输出有效。失配通过UVM_ERROR报告，不能只计覆盖或用actual自证。",
+      "implementation_id": "dvbench_scenario.observe",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-004",
+      "feature_ids": [
+        "F-004"
+      ],
+      "requirement_ids": [
+        "R-ALU-004"
+      ],
+      "stimulus": "全部输入为确定二态；组合模块无状态或复位准备。在opcode2..7及四种RV32B中交叉cafef00d/cafef00c/普通值、随机B和first两个取值，实际比较result_o。",
+      "expected": "opcode3/6执行OR，4/7执行AND，2/5执行XOR。RV32B非0时5/6/7先取反32位B；RV32B=0则不取反。对opcode2和5，operand_a_i恰为十六进制cafef00d时，正常XOR结果再翻转最低位；cafef00c不触发。此特例是本题固定的可观察行为，不推断其设计意图。 观察时刻：组合稳定后比较result_o，first对这六个逻辑opcode无影响。",
+      "checker": "从输入计算期望，逐次与实际原生输出比较；全部七个输出有效。失配通过UVM_ERROR报告，不能只计覆盖或用actual自证。",
+      "implementation_id": "dvbench_scenario.observe",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-005",
+      "feature_ids": [
+        "F-005"
+      ],
+      "requirement_ids": [
+        "R-ALU-005"
+      ],
+      "stimulus": "全部输入为确定二态；组合模块无状态或复位准备。opcode8..12遍历B低5位0..31和first两值，施加符号边界、单个置位、全一、随机A；四参数实际比较。",
+      "expected": "基本移位量在first=1时为B低5位，first=0时为(32-B低5位)模32；这条规则同样适用于RV32B=0。opcode10左移、9逻辑右移、8算术右移；opcode11/12在RV32B=2或3时分别为补一右移/补一左移。RV32B=0或1时11、12都退化为逻辑右移。移出位丢弃，算术右移按A符号位扩展。 观察时刻：first是当前组合输入，翻转它后应重新计算移位量，没有隐含周期状态。",
+      "checker": "从输入计算期望，逐次与实际原生输出比较；全部七个输出有效。失配通过UVM_ERROR报告，不能只计覆盖或用actual自证。",
+      "implementation_id": "dvbench_scenario.observe",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-006",
+      "feature_ids": [
+        "F-006"
+      ],
+      "requirement_ids": [
+        "R-ALU-006"
+      ],
+      "stimulus": "全部输入为确定二态；组合模块无状态或复位准备。opcode31..42在四参数实例施加0/全一/符号位/交替位/随机值，minmax同时切换旁路；覆盖单个置位及打包非对称字节。",
+      "expected": "RV32B非0时opcode31/32为有符号/无符号min，33/34为max，具体选择按comparison_result_o为1选A否则B。35输出{B低16,A低16}，36输出{B高16,A高16}，37输出{16位零,B低8,A低8}；38/39将A低8/16位符号扩展。40/41计算A的前导零/尾随零数，A=0时为32；42计算A置位数。RV32B=0时这些result_o均为0。 观察时刻：均为组合函数；最值选择仍受比较器旁路行为影响。",
+      "checker": "从输入计算期望，逐次与实际原生输出比较；全部七个输出有效。失配通过UVM_ERROR报告，不能只计覆盖或用actual自证。",
+      "implementation_id": "dvbench_scenario.observe",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-007",
+      "feature_ids": [
+        "F-007"
+      ],
+      "requirement_ids": [
+        "R-ALU-007"
+      ],
+      "stimulus": "全部输入为确定二态；组合模块无状态或复位准备。opcode15..21遍历低5位移位控制和first，输入交替位、非对称字节、随机值；元素索引含合法与高位越界；四参数实际比较。",
+      "expected": "RV32B非0时15为GREv、16为GORC：从A开始，对距离1/2/4/8/16的位对按有效移位量对应控制位交换；GORC在交换结果上按位OR交换前值。RV32B=1时控制低3位均复制移位量bit0，高2位均复制bit3；GORC的距离8/16只交换不OR。RV32B=2/3才支持17/18的shuffle/unshuffle及19/20/21的4/8/16位元素置换，其余参数这些结果为0。shuffle按距离8/4/2/1的顺序，在每个4d位块内交换中间两组d位，分别受移位量bit3/2/1/0控制。unshuffle先把每一位的五位索引反序，再以控制位0/1/2/3做同样四阶段，最后再次反序索引。元素置换把B每个4/8/16位元素看作索引，选A中相同宽度的对应元素；超出元素数的索引输出0。 观察时刻：移位量遵循first补量规则；元素置换使用完整B元素而非该移位量。",
+      "checker": "从输入计算期望，逐次与实际原生输出比较；全部七个输出有效。失配通过UVM_ERROR报告，不能只计覆盖或用actual自证。",
+      "implementation_id": "dvbench_scenario.observe",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-008",
+      "feature_ids": [
+        "F-008"
+      ],
+      "requirement_ids": [
+        "R-ALU-008"
+      ],
+      "stimulus": "全部输入为确定二态；组合模块无状态或复位准备。opcode49..52遍历位位置与first；55遍历16种长度编码和32种偏移的代表组合、随机低位数据与A，实际比较。",
+      "expected": "RV32B非0时49/50/51在A上置位/清位/翻转有效移位量指定的bit，52提取该bit至bit0并将其余位清零。55为位域插入：长度取B[27:24]，该4位全0表示16；偏移为B[20:16]，不随first变化。将A对应的长度位窗口清零，再把B低length位移到偏移处OR入；超出bit31部分丢弃。RV32B=0时这些result_o为0。 观察时刻：单比特使用first补量规则，位域偏移独立于first。",
+      "checker": "从输入计算期望，逐次与实际原生输出比较；全部七个输出有效。失配通过UVM_ERROR报告，不能只计覆盖或用actual自证。",
+      "implementation_id": "dvbench_scenario.observe",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-009",
+      "feature_ids": [
+        "F-009"
+      ],
+      "requirement_ids": [
+        "R-ALU-009"
+      ],
+      "stimulus": "全部输入为确定二态；组合模块无状态或复位准备。opcode56..58施加稀疏和稠密位模式、极值及随机A/B，四参数比较三个结果切片。",
+      "expected": "RV32B=2/3时，将A、B视为GF(2)多项式，按按位AND和异或相加得到64位乘积，不产生普通整数进位。opcode56输出乘积[31:0]，57输出[62:31]，58输出[63:32]。RV32B=0/1输出0。 观察时刻：组合稳定后核对result_o，与first无关。",
+      "checker": "从输入计算期望，逐次与实际原生输出比较；全部七个输出有效。失配通过UVM_ERROR报告，不能只计覆盖或用actual自证。",
+      "implementation_id": "dvbench_scenario.observe",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-010",
+      "feature_ids": [
+        "F-010"
+      ],
+      "requirement_ids": [
+        "R-ALU-010"
+      ],
+      "stimulus": "全部输入为确定二态；组合模块无状态或复位准备。opcode13/14/45..48/59..64交叉first、B低6位、零与非零B及随机IMD；比较result、完整64位IMD写数据和2位写使能，四参数均运行。",
+      "expected": "RV32B非0时，通常imd_val_d_o={A,32位零}且we=0。45的result在B为0时选A，否则选IMD高32位，写数据为{A,0}；46以A AND (first时B、非first时非B)得到part，result=IMD高半OR part，写数据={part,0}。13/14分别为双步右/左旋转组成片段，47/48为双步funnel左/右片段；低移位量按first及Bbit5决定：funnel且Bbit5为1时，first用补量、非first用原低5位，否则相反。13的first右移/非first左移，14相反；47的Bbit5=0时first左移，bit5=1时first右移，48相反。低移位量为0时result取funnel且Bbit5为1时的A，否则IMD高半；非0时result=IMD高半OR移位片段，写数据={片段,0}。这些操作we仅在first=1时为01。RV32B=2/3的59..64为两步CRC片段：59/60输入低8位左移24，61/62低16位左移16，63/64完整A；first选该输入，否则选IMD高半。奇数opcode多项式为04c11db7、倒数常量f7011641，偶数为1edc6f41和dea713f1。first与倒数常量、否则与多项式做无进位乘法，取低32位后逐位反序为part；result在59/60额外异或A右移8、61/62额外异或A右移16，63/64直接part。写数据={part,0}，first时we=01否则0。RV32B=0所有IMD输出和上述result为0；RV32B=1不支持CRC，CRC result=0且IMD保持通常值。 观察时刻：IMD由外部输入任意确定值，模块不保存片段；每次改变first/B/IMD都在组合稳定后检查。we位编号按端口比特给出，不推测外部存储银行命名。",
+      "checker": "从输入计算期望，逐次与实际原生输出比较；全部七个输出有效。失配通过UVM_ERROR报告，不能只计覆盖或用actual自证。",
+      "implementation_id": "dvbench_scenario.observe",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-011",
+      "feature_ids": [
+        "F-011"
+      ],
+      "requirement_ids": [
+        "R-ALU-011"
+      ],
+      "stimulus": "全部输入为确定二态；组合模块无状态或复位准备。opcode53/54施加稀疏、稠密、随机A/B及任意64位IMD，比较结果、打包计数和we；RV32B=0..2检查禁用结果。",
+      "expected": "仅RV32B=3支持53/54。令C[i]为B[0..i]的置位数。IMD写数据高半第i位保存C[i]bit0；低半bit0..15保存C[2j+1]bit1，bit16..23保存C[4j+3]bit2，bit24..27保存C[8j+7]bit3，bit28..29保存C[16j+15]bit4，bit30保存C[31]bit5，bit31为0。first时we=11，否则0。结果的控制计数从输入IMD按上述布局解码，未在某索引保存的位视为0。对半块宽d=16、8、4、2、1及每个2d位块，取块内低半结束位置的解码计数低log2(d)+1位c；把d个1左移c形成2d位字，取其高d位逐位取反作为交换掩码，按掩码交换块内相距d位的位对。54从A开始按d降序交换，最终AND B；53先A AND B，再按d升序交换。其它RV32B的53/54 result=0，IMD为通常值且we=0。 观察时刻：first仅控制写使能；结果始终使用当前输入IMD控制计数，而不是本次生成的写数据。",
+      "checker": "从输入计算期望，逐次与实际原生输出比较；全部七个输出有效。失配通过UVM_ERROR报告，不能只计覆盖或用actual自证。",
+      "implementation_id": "dvbench_scenario.observe",
+      "source": "uvm_tb.sv"
+    }
+  ]
+}

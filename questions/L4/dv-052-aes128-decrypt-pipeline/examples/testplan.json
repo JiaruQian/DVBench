@@ -1,0 +1,16 @@
+{
+  "tests": [
+    {
+      "test_id": "Z",
+      "feature_ids": [
+        "X"
+      ],
+      "requirement_ids": [
+        "fiction-R1"
+      ],
+      "stimulus": "Drive p/q sequentially to 00/01/10/11.",
+      "expected": "0/1/1/0, respectively.",
+      "checker": "After 2ns of stabilization each time, compare using !== and report an error on any mismatch; the check count is 4."
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "tests": [
+    {
+      "test_id": "T-001",
+      "feature_ids": [
+        "F-001"
+      ],
+      "requirement_ids": [
+        "R-D82FE92CBEE6-001"
+      ],
+      "stimulus": "先施加高有效异步blif_reset_net后释放，所有驱动输入为确定二态。先运行使状态变化，再施加不跨有效沿的reset高脉冲及跨沿reset；以函数表q=0计算全部输出，在脉冲期间与释放后比较。",
+      "expected": "抽象状态q0..q17在blif_reset_net=1时全部为0；复位高有效且异步，优先于时钟更新。 沿间reset高脉冲立即清状态；释放本身不产生状态更新。 复位并不保证所有输出0，复位期间组合输出仍按函数表以q=0和当前输入计算。",
+      "checker": "使用仅由已驱动输入及其历史计算的独立SystemVerilog模型预测G546, G539, G550, G551, G552, G547, G548, G549, G530, G45, G542, G532, G535, G537；每次输入稳定后、上升沿NBA稳定后、下降沿后和沿间复位脉冲期间比较所有相关输出，未知期望或任一失配用UVM_ERROR报告。绝不读取DUT内部状态或以实际输出回灌期望。",
+      "implementation_id": "dvbench_scoreboard.write",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-002",
+      "feature_ids": [
+        "F-002"
+      ],
+      "requirement_ids": [
+        "R-D82FE92CBEE6-002"
+      ],
+      "stimulus": "先施加高有效异步blif_reset_net后释放，所有驱动输入为确定二态。复位后施加全16384输入向量的一步转移，再施加至少50000拍固定seed随机及walking/complement序列；每拍独立保存旧q，批量求全部新q，比较沿前、上升沿后和下降沿后输出。",
+      "expected": "非复位的blif_clk_net上升沿，q0..q17各自同时更新为函数表“下一状态”根函数，所有函数使用沿前同一份q和G0..G13。 仅上升沿更新；下降沿与无沿输入变化保持状态。 18位并行更新，不允许按q编号级联使用同拍新值；不存在事务valid或busy。",
+      "checker": "使用仅由已驱动输入及其历史计算的独立SystemVerilog模型预测G546, G539, G550, G551, G552, G547, G548, G549, G530, G45, G542, G532, G535, G537；每次输入稳定后、上升沿NBA稳定后、下降沿后和沿间复位脉冲期间比较所有相关输出，未知期望或任一失配用UVM_ERROR报告。绝不读取DUT内部状态或以实际输出回灌期望。",
+      "implementation_id": "dvbench_scoreboard.write",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-003",
+      "feature_ids": [
+        "F-003"
+      ],
+      "requirement_ids": [
+        "R-D82FE92CBEE6-003"
+      ],
+      "stimulus": "先施加高有效异步blif_reset_net后释放，所有驱动输入为确定二态。通过函数表搜索并驱动让q16及q12先后取0/1的可达输入历史，复位前后、有效沿前后分别比较G45和G546。",
+      "expected": "G45=q16，G546=NOT q12，均依当前抽象状态。 这两个输出在状态更新或异步复位后组合稳定时有效。 复位后G45=0而G546=1；不能把反相状态输出也清0。",
+      "checker": "使用仅由已驱动输入及其历史计算的独立SystemVerilog模型预测G45, G546；每次输入稳定后、上升沿NBA稳定后、下降沿后和沿间复位脉冲期间比较所有相关输出，未知期望或任一失配用UVM_ERROR报告。绝不读取DUT内部状态或以实际输出回灌期望。",
+      "implementation_id": "dvbench_scoreboard.write",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-004",
+      "feature_ids": [
+        "F-004"
+      ],
+      "requirement_ids": [
+        "R-D82FE92CBEE6-004"
+      ],
+      "stimulus": "先施加高有效异步blif_reset_net后释放，所有驱动输入为确定二态。复位q=0下遍历全部14位输入；在至少50000拍随机可达历史及单bit/互补输入下，沿前及沿后独立求四个根函数并比较对应输出。",
+      "expected": "G539、G550、G551、G552分别等于完整布尔函数合同“输出”表中同名根函数；F0=0、F1=1，非终端F由对应v取低或高分支递归求值。 v0..v13为当前G0..G13，v14..v31为当前q0..q17；输入稳定后组合输出立即有效，不等待时钟。 二态输入域，所有表行语义均有效，不能只检查reset输入或少数常量。",
+      "checker": "使用仅由已驱动输入及其历史计算的独立SystemVerilog模型预测G539, G550, G551, G552；每次输入稳定后、上升沿NBA稳定后、下降沿后和沿间复位脉冲期间比较所有相关输出，未知期望或任一失配用UVM_ERROR报告。绝不读取DUT内部状态或以实际输出回灌期望。",
+      "implementation_id": "dvbench_scoreboard.write",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-005",
+      "feature_ids": [
+        "F-005"
+      ],
+      "requirement_ids": [
+        "R-D82FE92CBEE6-005"
+      ],
+      "stimulus": "先施加高有效异步blif_reset_net后释放，所有驱动输入为确定二态。复位q=0下遍历全部14位输入，再以固定seed长随机和walking/complement输入获得可达状态，独立求三个函数，每次驱动后及状态更新后逐个比较。",
+      "expected": "G547、G548、G549分别等于完整布尔函数合同“输出”表同名根函数，条件节点v=0走低分支、v=1走高分支。 使用当前输入与当前状态，组合稳定后有效。 不能把它们当作每拍寄存一遍的输出。",
+      "checker": "使用仅由已驱动输入及其历史计算的独立SystemVerilog模型预测G547, G548, G549；每次输入稳定后、上升沿NBA稳定后、下降沿后和沿间复位脉冲期间比较所有相关输出，未知期望或任一失配用UVM_ERROR报告。绝不读取DUT内部状态或以实际输出回灌期望。",
+      "implementation_id": "dvbench_scoreboard.write",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-006",
+      "feature_ids": [
+        "F-006"
+      ],
+      "requirement_ids": [
+        "R-D82FE92CBEE6-006"
+      ],
+      "stimulus": "先施加高有效异步blif_reset_net后释放，所有驱动输入为确定二态。q=0时遍历全输入向量；运行固定seed至少50000拍并交替单bit和互补输入，沿前、后逐个比较三个根函数，保留端口级失配信息。",
+      "expected": "G530、G542、G532分别等于完整布尔函数合同“输出”表同名根函数，函数解释使用本拍当前状态及输入。 输出连续组合，沿间也有效。 共享布尔条件可能影响多个输出，仍应逐个核对。",
+      "checker": "使用仅由已驱动输入及其历史计算的独立SystemVerilog模型预测G530, G542, G532；每次输入稳定后、上升沿NBA稳定后、下降沿后和沿间复位脉冲期间比较所有相关输出，未知期望或任一失配用UVM_ERROR报告。绝不读取DUT内部状态或以实际输出回灌期望。",
+      "implementation_id": "dvbench_scoreboard.write",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-007",
+      "feature_ids": [
+        "F-007"
+      ],
+      "requirement_ids": [
+        "R-D82FE92CBEE6-007"
+      ],
+      "stimulus": "先施加高有效异步blif_reset_net后释放，所有驱动输入为确定二态。零状态全输入遍历，随后至少50000拍seed随机和walking/complement序列，含运行中复位；在各稳定相位分别比较两个根函数。",
+      "expected": "G535、G537分别等于完整布尔函数合同“输出”表同名根函数。F条件选择语义与其它根函数一致，不引入额外模式。 组合稳定后有效，复位高时仍使用当前输入和q=0。 输入全0、全1、单比特、单比特取反以及随机序列均在合同范围。",
+      "checker": "使用仅由已驱动输入及其历史计算的独立SystemVerilog模型预测G535, G537；每次输入稳定后、上升沿NBA稳定后、下降沿后和沿间复位脉冲期间比较所有相关输出，未知期望或任一失配用UVM_ERROR报告。绝不读取DUT内部状态或以实际输出回灌期望。",
+      "implementation_id": "dvbench_scoreboard.write",
+      "source": "uvm_tb.sv"
+    },
+    {
+      "test_id": "T-008",
+      "feature_ids": [
+        "F-008"
+      ],
+      "requirement_ids": [
+        "R-D82FE92CBEE6-008"
+      ],
+      "stimulus": "先施加高有效异步blif_reset_net后释放，所有驱动输入为确定二态。在三seed长输入历史中每次比较全部14输出；使输入在clock低时改变并在下个上升沿前观察，插入沿间异步复位；不使用DUT输出回灌模型。",
+      "expected": "本设计只接收时钟、复位及14个二态数据输入；没有参数、ready、valid、enable或隐含交易门控。14个输出在全部稳定观察窗口都必须按当前输入历史预测。 每次输入改变后、上升沿NBA更新稳定后、下降沿后和沿间复位脉冲期间均可比较；首个复位前未知状态不评分。 无需观测DUT内部状态；参考状态完全由初始复位和已驱动输入推导。",
+      "checker": "使用仅由已驱动输入及其历史计算的独立SystemVerilog模型预测G546, G539, G550, G551, G552, G547, G548, G549, G530, G45, G542, G532, G535, G537；每次输入稳定后、上升沿NBA稳定后、下降沿后和沿间复位脉冲期间比较所有相关输出，未知期望或任一失配用UVM_ERROR报告。绝不读取DUT内部状态或以实际输出回灌期望。",
+      "implementation_id": "dvbench_scoreboard.write",
+      "source": "uvm_tb.sv"
+    }
+  ]
+}

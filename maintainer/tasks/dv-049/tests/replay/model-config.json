@@ -1,0 +1,35 @@
+{
+  "task_id": "dv-049",
+  "source_id": "Essenceia__ethernet_hardware_libs__xgmii_pcs_10g_tx",
+  "level": "L4",
+  "dut_top": "xgmii_pcs_10g_tx",
+  "rtl_root": "rtl",
+  "rtl_files": [],
+  "parameters": {
+    "XGMII_DATA_W": 64
+  },
+  "mutant_root": "tests/mutants/{variant}",
+  "mutants": [
+    "m1",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "m10"
+  ],
+  "visibility": "blackbox",
+  "maturity": "PARTIAL",
+  "candidate_rollout_started": false,
+  "reference_top": "replay_top",
+  "reference_test": "unused",
+  "submission_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "dut_hierarchy": "replay_top.oracle",
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800
+}

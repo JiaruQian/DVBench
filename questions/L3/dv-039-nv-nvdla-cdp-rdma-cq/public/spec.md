@@ -1,0 +1,31 @@
+# Seven-bit command queue
+
+Implement verification of the native synchronous ready/valid queue described below. All behavior refers to the external module ports. The active clock edge is the rising edge.
+
+### R-p8-cdp-cq-001 — Reset and recovery
+
+nvdla_core_rstn is an asynchronous active-low reset. Assertion immediately discards all queued transactions, clears cq_rd_pvld and makes cq_wr_prdy high, without waiting for a clock edge. Inputs presented while reset is low do not create transactions. Release reset away from the rising edge; the next rising edge resumes normal operation. The data output is not reset and has no defined value while invalid.
+
+### R-p8-cdp-cq-002 — Native transfer and ordering
+
+Transfers use pre-edge values at each rising nvdla_core_clk edge. A write is accepted exactly when cq_wr_pvld and cq_wr_prdy are both high. A read consumes the currently presented word exactly when cq_rd_pvld and cq_rd_prdy are both high. Every accepted seven-bit word is returned once, in acceptance order, unless reset discards it. A write request while ready is low is ignored; it cannot overwrite an accepted word. Changing data while write-valid is low has no queue effect.
+
+### R-p8-cdp-cq-003 — Registered first-word latency
+
+A newly accepted write first enters the waiting queue and cannot be presented in the output on that same rising edge. If the queue and output were empty before the accepting edge, cq_rd_pvld remains zero immediately after that edge; the word is presented with valid high after the following rising edge. Output presentation does not require cq_rd_prdy to be high. There is no combinational input-to-output bypass.
+
+### R-p8-cdp-cq-004 — Output stall and drain
+
+When the output is valid and cq_rd_prdy is low, cq_rd_pvld and cq_rd_pd retain their values across rising edges. When a valid output is consumed, the oldest waiting word replaces it after that edge if one existed before the edge. Otherwise valid becomes zero. Data is checked only when valid is high; no new data value is prescribed in an invalid interval.
+
+### R-p8-cdp-cq-005 — Capacity and delayed credit
+
+The queue holds 256 waiting words plus one separately presented output word, for a maximum of 257 accepted and unconsumed words. Write-ready is registered. Its precise update uses the number of waiting words before the edge and whether a write is accepted at that edge: ready becomes low when their sum is exactly 256, except that moving a waiting word into the output on the preceding rising edge forces ready high. That preceding-edge move is a returned-credit event; reset clears its history. A move performed on the current edge does not supply that exception until the next edge. These timing rules apply at full, during simultaneous activity, and during recovery from full.
+
+### R-p8-cdp-cq-006 — Concurrent throughput and repeated traversal
+
+Writes and output consumption may occur on the same rising edge. Decisions use pre-edge state; the newly accepted word is appended after already waiting words. Once data is available, continuous reads with a nonempty waiting queue replace the output every cycle. Continuous simultaneous writes and reads sustain one word per clock after pipeline startup. Repeated traversal does not alter ordering, capacity, or timing.
+
+### R-p8-cdp-cq-007 — Power input neutrality and legal domain
+
+pwrbus_ram_pd is a 32-bit input with no functional effect on the externally visible queue behavior in this configuration. All seven-bit data values and all 32-bit power-input patterns are legal. Drive known binary controls and data, stable around rising clock edges; behavior for X/Z controls or setup/hold violations is outside the contract. There are no configurable parameters.

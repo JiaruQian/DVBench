@@ -1,0 +1,91 @@
+# Feature analysis
+
+## F-01
+
+The complete native module has eight byte lanes and no parameters. nvdla_core_clk,nvdla_hls_clk and nvdla_core_ng_clk are tied to the same free-running clock in this benchmark. Active-low nvdla_core_rstn asynchronously clears configuration,operation history,metadata pipelines,clock-enable history,flush counter and registered native outputs. Reset during traffic restarts the entire8192-address flush. Raw operand and arithmetic storage need not reset; their contents cannot establish a valid converted result before its input history. Release reset away from rising edges. All native outputs,including invalid address/data,are checked with exact four-state semantics.
+
+Interfaces: nvdla_core_clk, nvdla_core_rstn, dc2cvt_dat_wr_en, dc2cvt_dat_wr_addr, dc2cvt_dat_wr_data, dc2cvt_dat_wr_info_pd, img2cvt_dat_wr_en, img2cvt_dat_wr_addr, img2cvt_dat_wr_data, img2cvt_mn_wr_data, img2cvt_dat_wr_pad_mask, img2cvt_dat_wr_info_pd, nvdla_hls_clk, nvdla_core_ng_clk, reg2dp_op_en, reg2dp_in_precision, reg2dp_proc_precision, reg2dp_cvt_en, reg2dp_cvt_truncate, reg2dp_cvt_offset, reg2dp_cvt_scale, reg2dp_nan_to_zero, reg2dp_pad_value, dp2reg_done, cdma2buf_dat_wr_en, cdma2buf_dat_wr_addr, cdma2buf_dat_wr_data, slcg_hls_en, dp2reg_nan_data_num, dp2reg_inf_data_num, dp2reg_dat_flush_done
+
+Timing: Three clocks tied in phase; asynchronous active-low reset; nonblocking updates use pre-edge history.
+
+Domain: Eight byte lanes,no parameters,full native widths,exclusive sources and low transaction mask0001; fixed-clock benchmark domain.
+
+## F-02
+
+Define active_next=reg2dp_op_en AND NOT dp2reg_done. At each rising edge active stores active_next. Only active_next1 with old active0 captures cvt_en,proc_precision,truncate,offset,scale and pad_value. Continuing active cycles retain configuration. done1 clears active even when op_en remains1,so a later done0 edge with op_en1 captures a new operation. Input precision and nan_to_zero have no functional data effect in this fixed integer-byte implementation. Keep configuration stable while that operation input/arithmetic pipeline is in flight,and drain at least12clocks before reconfiguration.
+
+Interfaces: nvdla_core_clk, nvdla_core_rstn, dc2cvt_dat_wr_en, dc2cvt_dat_wr_addr, dc2cvt_dat_wr_data, dc2cvt_dat_wr_info_pd, img2cvt_dat_wr_en, img2cvt_dat_wr_addr, img2cvt_dat_wr_data, img2cvt_mn_wr_data, img2cvt_dat_wr_pad_mask, img2cvt_dat_wr_info_pd, nvdla_hls_clk, nvdla_core_ng_clk, reg2dp_op_en, reg2dp_in_precision, reg2dp_proc_precision, reg2dp_cvt_en, reg2dp_cvt_truncate, reg2dp_cvt_offset, reg2dp_cvt_scale, reg2dp_nan_to_zero, reg2dp_pad_value, dp2reg_done, cdma2buf_dat_wr_en, cdma2buf_dat_wr_addr, cdma2buf_dat_wr_data, slcg_hls_en, dp2reg_nan_data_num, dp2reg_inf_data_num, dp2reg_dat_flush_done
+
+Timing: Three clocks tied in phase; asynchronous active-low reset; nonblocking updates use pre-edge history.
+
+Domain: Eight byte lanes,no parameters,full native widths,exclusive sources and low transaction mask0001; fixed-clock benchmark domain.
+
+## F-03
+
+slcg_hls_en is reg2dp_op_en AND reg2dp_cvt_en delayed through three rising-edge registers. This uses current register pins rather than captured configuration and is independent of dp2reg_done. dp2reg_nan_data_num and dp2reg_inf_data_num are constantly32-bit zero for all binary inputs and throughout reset. The three clocks remain tied and running regardless of slcg_hls_en.
+
+Interfaces: nvdla_core_clk, nvdla_core_rstn, dc2cvt_dat_wr_en, dc2cvt_dat_wr_addr, dc2cvt_dat_wr_data, dc2cvt_dat_wr_info_pd, img2cvt_dat_wr_en, img2cvt_dat_wr_addr, img2cvt_dat_wr_data, img2cvt_mn_wr_data, img2cvt_dat_wr_pad_mask, img2cvt_dat_wr_info_pd, nvdla_hls_clk, nvdla_core_ng_clk, reg2dp_op_en, reg2dp_in_precision, reg2dp_proc_precision, reg2dp_cvt_en, reg2dp_cvt_truncate, reg2dp_cvt_offset, reg2dp_cvt_scale, reg2dp_nan_to_zero, reg2dp_pad_value, dp2reg_done, cdma2buf_dat_wr_en, cdma2buf_dat_wr_addr, cdma2buf_dat_wr_data, slcg_hls_en, dp2reg_nan_data_num, dp2reg_inf_data_num, dp2reg_dat_flush_done
+
+Timing: Three clocks tied in phase; asynchronous active-low reset; nonblocking updates use pre-edge history.
+
+Domain: Eight byte lanes,no parameters,full native widths,exclusive sources and low transaction mask0001; fixed-clock benchmark domain.
+
+## F-04
+
+There is no ready input: every dc2cvt_dat_wr_en or img2cvt_dat_wr_en assertion accepts that64-bit payload and17-bit address. Legal functional transactions assert at most one source enable and set info[3:0]=4'b0001. info[7] chooses per-lane mean subtraction and info[8] chooses unsigned byte input; bits11:9 and6:4 are neutral. Consecutive input transactions,source alternation and idle gaps are legal. Image padding uses its eight-bit mask; direct-source transactions have no padding. The bypass path produces registered output data and normal transaction enable/address one clock after acceptance; conversion produces them five clocks after acceptance. During startup flush the normal address/enable is overridden by the flush obligation.
+
+Interfaces: nvdla_core_clk, nvdla_core_rstn, dc2cvt_dat_wr_en, dc2cvt_dat_wr_addr, dc2cvt_dat_wr_data, dc2cvt_dat_wr_info_pd, img2cvt_dat_wr_en, img2cvt_dat_wr_addr, img2cvt_dat_wr_data, img2cvt_mn_wr_data, img2cvt_dat_wr_pad_mask, img2cvt_dat_wr_info_pd, nvdla_hls_clk, nvdla_core_ng_clk, reg2dp_op_en, reg2dp_in_precision, reg2dp_proc_precision, reg2dp_cvt_en, reg2dp_cvt_truncate, reg2dp_cvt_offset, reg2dp_cvt_scale, reg2dp_nan_to_zero, reg2dp_pad_value, dp2reg_done, cdma2buf_dat_wr_en, cdma2buf_dat_wr_addr, cdma2buf_dat_wr_data, slcg_hls_en, dp2reg_nan_data_num, dp2reg_inf_data_num, dp2reg_dat_flush_done
+
+Timing: Three clocks tied in phase; asynchronous active-low reset; nonblocking updates use pre-edge history.
+
+Domain: Eight byte lanes,no parameters,full native widths,exclusive sources and low transaction mask0001; fixed-clock benchmark domain.
+
+## F-05
+
+For each accepted converted byte lane,interpret the byte as signed8-bit when info[8]=0 and as unsigned0..255 when info[8]=1. Subtract signed16-bit captured offset when info[7]=0,or that lane signed16-bit img2cvt_mn_wr_data slice when info[7]=1. Form the exact signed18-bit difference and multiply by signed16-bit captured scale to a signed34-bit product. All eight lanes are independent and enabled by legal low mask bit0=1. Mean data is captured for mean transactions from the native image-mean input even for a direct-source transaction.
+
+Interfaces: nvdla_core_clk, nvdla_core_rstn, dc2cvt_dat_wr_en, dc2cvt_dat_wr_addr, dc2cvt_dat_wr_data, dc2cvt_dat_wr_info_pd, img2cvt_dat_wr_en, img2cvt_dat_wr_addr, img2cvt_dat_wr_data, img2cvt_mn_wr_data, img2cvt_dat_wr_pad_mask, img2cvt_dat_wr_info_pd, nvdla_hls_clk, nvdla_core_ng_clk, reg2dp_op_en, reg2dp_in_precision, reg2dp_proc_precision, reg2dp_cvt_en, reg2dp_cvt_truncate, reg2dp_cvt_offset, reg2dp_cvt_scale, reg2dp_nan_to_zero, reg2dp_pad_value, dp2reg_done, cdma2buf_dat_wr_en, cdma2buf_dat_wr_addr, cdma2buf_dat_wr_data, slcg_hls_en, dp2reg_nan_data_num, dp2reg_inf_data_num, dp2reg_dat_flush_done
+
+Timing: Three clocks tied in phase; asynchronous active-low reset; nonblocking updates use pre-edge history.
+
+Domain: Eight byte lanes,no parameters,full native widths,exclusive sources and low transaction mask0001; fixed-clock benchmark domain.
+
+## F-06
+
+Apply captured six-bit truncate to each signed34-bit product: shift0 preserves it; shifts1..33 divide by2^shift with rounding to nearest integer and exact half ties away from zero; shifts34..63 yield zero. Saturate this result to signed17-bit range[-65536,65535]. Then captured proc_precision1 saturates to signed16-bit range[-32768,32767]; every other two-bit code saturates to signed8-bit range[-128,127]. The top-level packed byte is the low8bits of that final signed value,including precision1 results. Arithmetic is evaluated before image padding.
+
+Interfaces: nvdla_core_clk, nvdla_core_rstn, dc2cvt_dat_wr_en, dc2cvt_dat_wr_addr, dc2cvt_dat_wr_data, dc2cvt_dat_wr_info_pd, img2cvt_dat_wr_en, img2cvt_dat_wr_addr, img2cvt_dat_wr_data, img2cvt_mn_wr_data, img2cvt_dat_wr_pad_mask, img2cvt_dat_wr_info_pd, nvdla_hls_clk, nvdla_core_ng_clk, reg2dp_op_en, reg2dp_in_precision, reg2dp_proc_precision, reg2dp_cvt_en, reg2dp_cvt_truncate, reg2dp_cvt_offset, reg2dp_cvt_scale, reg2dp_nan_to_zero, reg2dp_pad_value, dp2reg_done, cdma2buf_dat_wr_en, cdma2buf_dat_wr_addr, cdma2buf_dat_wr_data, slcg_hls_en, dp2reg_nan_data_num, dp2reg_inf_data_num, dp2reg_dat_flush_done
+
+Timing: Three clocks tied in phase; asynchronous active-low reset; nonblocking updates use pre-edge history.
+
+Domain: Eight byte lanes,no parameters,full native widths,exclusive sources and low transaction mask0001; fixed-clock benchmark domain.
+
+## F-07
+
+For an image transaction,each pad-mask bit replaces its corresponding output byte with captured pad_value[7:0],after either bypass or conversion. Other lanes use their own arithmetic/raw byte. Direct transactions ignore image pad-mask. The native data output is registered every clock,including when write enable is0: bypass uses retained last accepted raw bytes and retained matching mask/metadata; conversion uses retained arithmetic result and the selected five-stage metadata. Address retains its last normal transaction after flush when no matching delayed-valid is present. An input pipeline bubble does not make these payloads unspecified.
+
+Interfaces: nvdla_core_clk, nvdla_core_rstn, dc2cvt_dat_wr_en, dc2cvt_dat_wr_addr, dc2cvt_dat_wr_data, dc2cvt_dat_wr_info_pd, img2cvt_dat_wr_en, img2cvt_dat_wr_addr, img2cvt_dat_wr_data, img2cvt_mn_wr_data, img2cvt_dat_wr_pad_mask, img2cvt_dat_wr_info_pd, nvdla_hls_clk, nvdla_core_ng_clk, reg2dp_op_en, reg2dp_in_precision, reg2dp_proc_precision, reg2dp_cvt_en, reg2dp_cvt_truncate, reg2dp_cvt_offset, reg2dp_cvt_scale, reg2dp_nan_to_zero, reg2dp_pad_value, dp2reg_done, cdma2buf_dat_wr_en, cdma2buf_dat_wr_addr, cdma2buf_dat_wr_data, slcg_hls_en, dp2reg_nan_data_num, dp2reg_inf_data_num, dp2reg_dat_flush_done
+
+Timing: Three clocks tied in phase; asynchronous active-low reset; nonblocking updates use pre-edge history.
+
+Domain: Eight byte lanes,no parameters,full native widths,exclusive sources and low transaction mask0001; fixed-clock benchmark domain.
+
+## F-08
+
+A14-bit flush counter starts0 on reset and increments each released edge until bit13 becomes1 at8192,then holds. While its pre-edge bit13=0,the registered write enable is1 and address is that pre-edge counter value0..8191. The edge writing address8191 also makes dp2reg_dat_flush_done1. On later edges normal delayed transaction-valid controls enable and updates address only when valid; otherwise address holds. Flush has unconditional address/enable priority over input traffic. Flush does not force data to zero: data continues the documented retained bypass/conversion/padding path. The done output stays1 until reset.
+
+Interfaces: nvdla_core_clk, nvdla_core_rstn, dc2cvt_dat_wr_en, dc2cvt_dat_wr_addr, dc2cvt_dat_wr_data, dc2cvt_dat_wr_info_pd, img2cvt_dat_wr_en, img2cvt_dat_wr_addr, img2cvt_dat_wr_data, img2cvt_mn_wr_data, img2cvt_dat_wr_pad_mask, img2cvt_dat_wr_info_pd, nvdla_hls_clk, nvdla_core_ng_clk, reg2dp_op_en, reg2dp_in_precision, reg2dp_proc_precision, reg2dp_cvt_en, reg2dp_cvt_truncate, reg2dp_cvt_offset, reg2dp_cvt_scale, reg2dp_nan_to_zero, reg2dp_pad_value, dp2reg_done, cdma2buf_dat_wr_en, cdma2buf_dat_wr_addr, cdma2buf_dat_wr_data, slcg_hls_en, dp2reg_nan_data_num, dp2reg_inf_data_num, dp2reg_dat_flush_done
+
+Timing: Three clocks tied in phase; asynchronous active-low reset; nonblocking updates use pre-edge history.
+
+Domain: Eight byte lanes,no parameters,full native widths,exclusive sources and low transaction mask0001; fixed-clock benchmark domain.
+
+## F-09
+
+The full native interface remains exercised at original widths. No legal source transaction is truncated or rerouted: all17address bits,all64data bits,all128mean bits,eight pad bits and six shift bits participate in their defined domains. Input precision,nan_to_zero,info[11:9] and info[6:4] do not alter fixed integer-byte behavior. Current configuration pins only affect new operation capture and the separate clock-enable history. Statistics remain zero; changing invalid source address/data/info cannot create an accepted transaction.
+
+Interfaces: nvdla_core_clk, nvdla_core_rstn, dc2cvt_dat_wr_en, dc2cvt_dat_wr_addr, dc2cvt_dat_wr_data, dc2cvt_dat_wr_info_pd, img2cvt_dat_wr_en, img2cvt_dat_wr_addr, img2cvt_dat_wr_data, img2cvt_mn_wr_data, img2cvt_dat_wr_pad_mask, img2cvt_dat_wr_info_pd, nvdla_hls_clk, nvdla_core_ng_clk, reg2dp_op_en, reg2dp_in_precision, reg2dp_proc_precision, reg2dp_cvt_en, reg2dp_cvt_truncate, reg2dp_cvt_offset, reg2dp_cvt_scale, reg2dp_nan_to_zero, reg2dp_pad_value, dp2reg_done, cdma2buf_dat_wr_en, cdma2buf_dat_wr_addr, cdma2buf_dat_wr_data, slcg_hls_en, dp2reg_nan_data_num, dp2reg_inf_data_num, dp2reg_dat_flush_done
+
+Timing: Three clocks tied in phase; asynchronous active-low reset; nonblocking updates use pre-edge history.
+
+Domain: Eight byte lanes,no parameters,full native widths,exclusive sources and low transaction mask0001; fixed-clock benchmark domain.

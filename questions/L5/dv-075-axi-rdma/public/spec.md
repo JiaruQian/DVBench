@@ -1,0 +1,43 @@
+# axi_rdma Behavioral specification
+
+The target is a complete bridge from an AXI read master to a 32-bit stream. See ports.md for ports and parameters; this specification is governed by the observable behavior of the fixed source. Every byte lane index k denotes data[8k+:8]. Externally, handshakes are obeyed when not in reset, and operation resumes only after old transactions have been canceled.
+
+### R-RDMA-001 — Reset and valid window
+
+Operation advances on rising edges of aclk; aresetn is asynchronous and active low. Reset sets cmd_ready=1, axi_m_arvalid=0, axi_m_arid=0, and dout_tvalid=0, and clears in-flight commands and buffered data. arsize is always 2, and arburst is always 1. No numerical values are guaranteed for araddr/arlen during reset or for invalid stream payloads; for valid outputs, compare only bytes with tkeep=1. Deassert reset away from clock edges; new commands can be accepted afterward.
+
+### R-RDMA-002 — Command handshake and serialization
+
+Sample cmd_address/cmd_bytes on a rising edge when cmd_valid and cmd_ready are both 1. After acceptance, cmd_ready goes low, and the payload no longer needs to be held. No other command is accepted while one is in flight; readiness is restored only after the final output beat is accepted. If the upstream has not yet handshaken, it must hold valid and the payload; pulses while busy cannot be used to queue commands. See the length clause for the zero-byte command exception.
+
+### R-RDMA-003 — Length and zero bytes
+
+The word width is fixed at 32 bits. Let o=cmd_address mod 4; when cmd_bytes=0, the number of words read is D=0; otherwise, first calculate L=cmd_bytes+o as a LENGTH_BITS-bit unsigned number (wrapping on overflow), and D=ceil(L/4). This task uses 32-bit addresses and lengths. After a zero-byte command is accepted, no AR is issued and no data is output, and readiness is subsequently restored. Addresses are aligned down to 4-byte boundaries and wrap according to the bit width when crossing the 32-bit address boundary; no read is issued either if a nonzero length plus offset wraps to 0.
+
+### R-RDMA-004 — Bursts and addresses
+
+Each AR has ID=0, SIZE=2 (4 bytes), and BURST=1 (INCR). Segment according to the remaining number of words to read, with each segment f=min(remaining,MAX_BURST), ARLEN=f-1. The first segment address is the aligned command address, and subsequent addresses increment by 4f. There is no additional splitting at 4KiB boundaries. ARVALID is a registered output; once valid while ARREADY=0, the address, length, and valid are held. No AR is issued on the first rising edge after command acceptance; the first ARVALID is visible on the next rising edge. It is deasserted after the handshake, and the next segment is scheduled using one computation interval.
+
+### R-RDMA-005 — Input byte selection mask
+
+In this clause, mask bit k corresponds to rdata[8k+:8], independently of memory endianness. For the first input word, if D>1, the mask selects k=o..3; if D=1, it selects k=o..min(o+n,4)-1, where n=cmd_bytes mod 4, and selects through 3 when n=0. For the last word that is not also the first, the mask selects k=0..m-1, where m=(o+cmd_bytes) mod 4, and selects all when m=0. Intermediate words select all. The first-word condition takes priority, so a single word is not additionally combined with the last-word mask.
+
+### R-RDMA-006 — Endianness and packed output
+
+Select bytes in the order of accepted R words. When MEM_BIG_ENDIAN=TRUE, scan each word from the high byte of rdata to the low byte, retaining only lanes whose input mask bits are set; when FALSE, scan from low to high. Concatenate the selected bytes without gaps, outputting one beat for every 4 bytes. When STREAM_BIG_ENDIAN=TRUE, the first byte is in the high bits and tkeep is contiguous at the high end; when FALSE, the first byte is in the low bits and tkeep is contiguous at the low end. If the final beat has fewer than 4 bytes, only the corresponding lanes are valid. Big-endian unaligned/short byte selection is jointly determined by this clause and the preceding clause and must not be replaced with an ideal address-range copy; for example, when o=0,B=1, select rdata[7:0] and then shift it to the high output byte.
+
+### R-RDMA-007 — Backpressure and buffering
+
+R input is accepted only on a rising edge when RVALID and RREADY are both 1. RREADY is constrained by the space in the reorderer and the 16-entry output buffer and cannot be treated as a simple wire connection to DOUT_TREADY; there is at least one startup wait edge after the first RVALID appears. The R producer must hold the payload during stalls. When DOUT_TVALID=1 and DOUT_TREADY=0, the valid payload and markers are held; after resumption, output proceeds in order, without loss or duplication. Output latency includes reordering and buffering; same-cycle pass-through on an R handshake must not be required.
+
+### R-RDMA-008 — Final beat and completion
+
+The output of a nonzero command asserts dout_tlast only on the final valid beat, and the output beat count is the total number of selected bytes divided by 4, rounded up. The final input R word is determined by the local D count, not by RLAST; cmd_ready remains 0 until valid/ready are both 1 on the final output beat. A command must not end early when the completion marker is backpressured.
+
+### R-RDMA-009 — Ignored response fields
+
+axi_m_rid, axi_m_rresp, and axi_m_rlast do not participate in data selection, counting, error handling, or completion determination. This module has no error response or cancellation port. Supply exactly the required R data in the order of the AR segments already issued; do not send an isolated RVALID when no command is in flight, and do not send extra or missing beats. Changing these sideband fields does not change the output for the same data and timing.
+
+### R-RDMA-010 — Parameters and reset interruption
+
+The native default parameters of the top-level axi_rdma are ADDRESS_BITS=32, LENGTH_BITS=32, MAX_BURST=256, MEM_BIG_ENDIAN=TRUE, and STREAM_BIG_ENDIAN=TRUE. This task fixes addresses and lengths at 32 bits; the same submission must verify two complete top-level instances, BE16 (big-endian at both ends, MAX_BURST=16) and LE256 (little-endian at both ends, MAX_BURST=256), and the model supports the corresponding parameters. Asynchronous reset aborts all in-flight operations, and new commands after recovery are independent; there is no need to wait for old R responses or output to complete, and the external environment must also stop the canceled R responses.

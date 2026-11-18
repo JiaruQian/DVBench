@@ -1,0 +1,701 @@
+{
+  "ports": [
+    {
+      "name": "cacc2csb_resp_pd",
+      "direction": "In",
+      "width": 34,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 33,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "cacc2csb_resp_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "cdma2csb_resp_pd",
+      "direction": "In",
+      "width": 34,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 33,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "cdma2csb_resp_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "cdp2csb_resp_pd",
+      "direction": "In",
+      "width": 34,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 33,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "cdp2csb_resp_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "cdp_rdma2csb_resp_pd",
+      "direction": "In",
+      "width": 34,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 33,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "cdp_rdma2csb_resp_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "cfgrom2csb_resp_pd",
+      "direction": "In",
+      "width": 34,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 33,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "cfgrom2csb_resp_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "cmac_a2csb_resp_pd",
+      "direction": "In",
+      "width": 34,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 33,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "cmac_a2csb_resp_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "cmac_b2csb_resp_pd",
+      "direction": "In",
+      "width": 34,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 33,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "cmac_b2csb_resp_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2cacc_req_pd",
+      "direction": "Out",
+      "width": 63,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 62,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "csb2cacc_req_prdy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2cacc_req_pvld",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2cdma_req_pd",
+      "direction": "Out",
+      "width": 63,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 62,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "csb2cdma_req_prdy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2cdma_req_pvld",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2cdp_rdma_req_pd",
+      "direction": "Out",
+      "width": 63,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 62,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "csb2cdp_rdma_req_prdy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2cdp_rdma_req_pvld",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2cdp_req_pd",
+      "direction": "Out",
+      "width": 63,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 62,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "csb2cdp_req_prdy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2cdp_req_pvld",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2cfgrom_req_pd",
+      "direction": "Out",
+      "width": 63,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 62,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "csb2cfgrom_req_prdy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2cfgrom_req_pvld",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2cmac_a_req_pd",
+      "direction": "Out",
+      "width": 63,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 62,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "csb2cmac_a_req_prdy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2cmac_a_req_pvld",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2cmac_b_req_pd",
+      "direction": "Out",
+      "width": 63,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 62,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "csb2cmac_b_req_prdy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2cmac_b_req_pvld",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2csc_req_pd",
+      "direction": "Out",
+      "width": 63,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 62,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "csb2csc_req_prdy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2csc_req_pvld",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2glb_req_pd",
+      "direction": "Out",
+      "width": 63,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 62,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "csb2glb_req_prdy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2glb_req_pvld",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2mcif_req_pd",
+      "direction": "Out",
+      "width": 63,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 62,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "csb2mcif_req_prdy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2mcif_req_pvld",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2nvdla_addr",
+      "direction": "In",
+      "width": 16,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 15,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "csb2nvdla_nposted",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2nvdla_ready",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2nvdla_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2nvdla_wdat",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "csb2nvdla_write",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2pdp_rdma_req_pd",
+      "direction": "Out",
+      "width": 63,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 62,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "csb2pdp_rdma_req_prdy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2pdp_rdma_req_pvld",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2pdp_req_pd",
+      "direction": "Out",
+      "width": 63,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 62,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "csb2pdp_req_prdy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2pdp_req_pvld",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2sdp_rdma_req_pd",
+      "direction": "Out",
+      "width": 63,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 62,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "csb2sdp_rdma_req_prdy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2sdp_rdma_req_pvld",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2sdp_req_pd",
+      "direction": "Out",
+      "width": 63,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 62,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "csb2sdp_req_prdy",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csb2sdp_req_pvld",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "csc2csb_resp_pd",
+      "direction": "In",
+      "width": 34,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 33,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "csc2csb_resp_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "glb2csb_resp_pd",
+      "direction": "In",
+      "width": 34,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 33,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "glb2csb_resp_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "mcif2csb_resp_pd",
+      "direction": "In",
+      "width": 34,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 33,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "mcif2csb_resp_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "nvdla2csb_data",
+      "direction": "Out",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "nvdla2csb_valid",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "nvdla2csb_wr_complete",
+      "direction": "Out",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "nvdla_core_clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "nvdla_core_rstn",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "nvdla_falcon_clk",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "nvdla_falcon_rstn",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "pdp2csb_resp_pd",
+      "direction": "In",
+      "width": 34,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 33,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "pdp2csb_resp_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "pdp_rdma2csb_resp_pd",
+      "direction": "In",
+      "width": 34,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 33,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "pdp_rdma2csb_resp_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "pwrbus_ram_pd",
+      "direction": "In",
+      "width": 32,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 31,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "sdp2csb_resp_pd",
+      "direction": "In",
+      "width": 34,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 33,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "sdp2csb_resp_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    },
+    {
+      "name": "sdp_rdma2csb_resp_pd",
+      "direction": "In",
+      "width": 34,
+      "dimensions": [
+        {
+          "kind": "packed",
+          "left": 33,
+          "right": 0
+        }
+      ]
+    },
+    {
+      "name": "sdp_rdma2csb_resp_valid",
+      "direction": "In",
+      "width": 1,
+      "dimensions": []
+    }
+  ],
+  "parameters": {}
+}

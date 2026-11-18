@@ -1,0 +1,178 @@
+{
+  "task_id": "dv-063",
+  "task_mode": "A",
+  "dut_top": "AesCTR",
+  "rtl_root": "rtl",
+  "rtl_files": [
+    "AddRoundKey.sv",
+    "AesCTR.sv",
+    "AesCore.sv",
+    "Cipher.sv",
+    "InvCipher.sv",
+    "InvMixColumns.sv",
+    "InvSBox.sv",
+    "InvShiftRows.sv",
+    "InvSubBytes.sv",
+    "KeyExpansion.sv",
+    "MixColumns.sv",
+    "Rcon.sv",
+    "SBox.sv",
+    "ShiftRows.sv",
+    "SubBytes.sv"
+  ],
+  "mutant_root": "mutants/{variant}",
+  "submission_top": "dvbench_top",
+  "reference_top": "dvbench_top",
+  "uvm_test": "dvbench_test",
+  "reference_test": "dvbench_test",
+  "model_interface": {
+    "top": "dvbench_model",
+    "ports": [
+      {
+        "name": "clk",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "iBlock",
+        "direction": "In",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 127,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "idle",
+        "direction": "Out",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "iv",
+        "direction": "In",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 127,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "key",
+        "direction": "In",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 127,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "load",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "oBlock",
+        "direction": "Out",
+        "width": 128,
+        "dimensions": [
+          {
+            "kind": "packed",
+            "left": 127,
+            "right": 0
+          }
+        ]
+      },
+      {
+        "name": "rst",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      },
+      {
+        "name": "start",
+        "direction": "In",
+        "width": 1,
+        "dimensions": []
+      }
+    ],
+    "parameters": {}
+  },
+  "model_contract_policy": "native-module-v1",
+  "fixed_parameters": {},
+  "coverage": {
+    "scope": "dvbench_top.dut",
+    "metrics": [
+      "line",
+      "cond",
+      "branch",
+      "tgl"
+    ],
+    "line_contassign": true
+  },
+  "rtl_sources": [
+    "AddRoundKey.sv",
+    "AesCTR.sv",
+    "AesCore.sv",
+    "Cipher.sv",
+    "InvCipher.sv",
+    "InvMixColumns.sv",
+    "InvSBox.sv",
+    "InvShiftRows.sv",
+    "InvSubBytes.sv",
+    "KeyExpansion.sv",
+    "MixColumns.sv",
+    "Rcon.sv",
+    "SBox.sv",
+    "ShiftRows.sv",
+    "SubBytes.sv"
+  ],
+  "mutants": [
+    "m10",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8",
+    "m9",
+    "n1",
+    "n2"
+  ],
+  "seeds": [
+    1,
+    7,
+    42
+  ],
+  "compile_timeout_seconds": 900,
+  "simulation_timeout_seconds": 600,
+  "mutant_simulation_timeout_seconds": 1800,
+  "rtl_compile_files": [
+    "AddRoundKey.sv",
+    "AesCTR.sv",
+    "AesCore.sv",
+    "Cipher.sv",
+    "InvCipher.sv",
+    "InvMixColumns.sv",
+    "InvSBox.sv",
+    "InvShiftRows.sv",
+    "InvSubBytes.sv",
+    "KeyExpansion.sv",
+    "MixColumns.sv",
+    "Rcon.sv",
+    "SBox.sv",
+    "ShiftRows.sv",
+    "SubBytes.sv"
+  ]
+}

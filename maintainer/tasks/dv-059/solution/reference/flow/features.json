@@ -1,0 +1,142 @@
+{
+  "features": [
+    {
+      "feature_id": "F1",
+      "requirement_ids": [
+        "R-bba53466-001"
+      ],
+      "module": "ascon_top",
+      "definition": "Rising edges of clock_i advance computation; resetb_i is active-low and asynchronously returns to idle and clears the logical round number and block count to zero. When computation is enabled, state clearing by reset is overwritten by the computation write in the same event; the state is guaranteed to be zero only when the enable is off during idle or waiting. Reset does not clear defined end_o, cipher_valid_o, or the external-state selection history. start_i=1 starts only when idle; start_i is ignored when busy; state_i, key_i, and data_i are not latched in their entirety at start, but use current port values in the computation windows described below.",
+      "interface": [
+        "state_i",
+        "key_i",
+        "data_i",
+        "resetb_i",
+        "start_i",
+        "clock_i",
+        "data_valid_i",
+        "end_o",
+        "cipher_valid_o",
+        "cipher_o",
+        "tag_o"
+      ],
+      "timing": "Synchronous controls such as start/data_valid are sampled on rising edges of clock_i; state/key/data use current values according to the public computation windows, combinational outputs are observed after settling following the edge, and falling edges of resetb_i are observed separately.",
+      "boundary": "Reset-related outputs are observed at the combinationally settled time after the corresponding event; initially undefined flags are not required to be cleared to zero. reset aborts control but must not forcibly clear all outputs to zero."
+    },
+    {
+      "feature_id": "F2",
+      "requirement_ids": [
+        "R-bba53466-002"
+      ],
+      "module": "ascon_top",
+      "definition": "The state consists of five 64-bit words, with state_i[0] being the most significant packed word. Initialization executes rounds 0 through 11; after the last round, the upper 64 bits of key_i are XORed into word 3 and the lower 64 bits into word 4; the first round uses state_i at computation time, and subsequent rounds use the preceding mathematical state. Each round consists of constant injection, a 5-bit S-box, and per-word rotate-right XOR operations. All words are 64 bits, and bitwise XOR, AND, and NOT are limited to 64 bits; ROTR denotes 64-bit rotate right. For round number r=0..11, zero-extend the 8-bit constant ((15-r)<<4)|r and XOR it into word 2. Then apply the S-box in parallel to the 64 bit columns: form a 5-bit integer from the same bit of the five words, with word 0 as the most significant bit. The outputs for inputs 0..31 are, in order, hexadecimal\n04,0b,1f,14,1a,15,09,02,1b,05,08,12,1d,03,06,1c,1e,13,07,0e,00,0d,11,18,10,0c,01,19,16,0a,0f,17.\nAfter splitting the S-box output back into five words, update each word x to x xor ROTR(x,a) xor ROTR(x,b); the (a,b) pairs for words 0..4 are respectively (19,28), (61,39), (1,6), (10,17), and (7,41). The data/key pre-XOR required by a stage occurs before the constant, and the last-round key/domain-separation XOR occurs after the linear layer. 12..15 are not valid mathematical round numbers; no determinate value is guaranteed for temporary out-of-range results. Normal flow from power-up reset without intervening reset: denote acceptance of start as E0, E1 is preparation, E2 commits initialization round 0, and E13 commits round 11 and enters associated-data waiting; reentry after an abort is handled according to the public history-retention rules.",
+      "interface": [
+        "state_i",
+        "key_i",
+        "data_i",
+        "resetb_i",
+        "start_i",
+        "clock_i",
+        "data_valid_i",
+        "end_o",
+        "cipher_valid_o",
+        "cipher_o",
+        "tag_o"
+      ],
+      "timing": "Synchronous controls such as start/data_valid are sampled on rising edges of clock_i; state/key/data use current values according to the public computation windows, combinational outputs are observed after settling following the edge, and falling edges of resetb_i are observed separately.",
+      "boundary": "Update the five words mathematically using an independent Boolean S-box and rotate-right operations; reading DUT outputs as chaining values is prohibited; after initialization, continue comparing all valid cipher/tag outputs to observe all rounds."
+    },
+    {
+      "feature_id": "F3",
+      "requirement_ids": [
+        "R-bba53466-003"
+      ],
+      "module": "ascon_top",
+      "definition": "After initialization, wait for data_valid_i=1, then enter the associated-data window. This window XORs current data_i into word 0 and executes rounds 6 through 11; the last round only inverts the least significant bit of word 4 for domain separation, without XORing the key. The mathematical state is held while waiting, and data_valid_i outside waiting windows does not start a new block.",
+      "interface": [
+        "state_i",
+        "key_i",
+        "data_i",
+        "resetb_i",
+        "start_i",
+        "clock_i",
+        "data_valid_i",
+        "end_o",
+        "cipher_valid_o",
+        "cipher_o",
+        "tag_o"
+      ],
+      "timing": "Synchronous controls such as start/data_valid are sampled on rising edges of clock_i; state/key/data use current values according to the public computation windows, combinational outputs are observed after settling following the edge, and falling edges of resetb_i are observed separately.",
+      "boundary": "Absorb current data_i only in the first associated-data round, with domain separation in the last round; do not latch data early at the valid acceptance edge, and do not produce an associated-data cipher_valid pulse."
+    },
+    {
+      "feature_id": "F4",
+      "requirement_ids": [
+        "R-bba53466-004"
+      ],
+      "module": "ascon_top",
+      "definition": "After associated data, enter plaintext waiting with the block count at 0. Every rising edge in plaintext waiting increments the 2-bit block count by one, wrapping modulo 4, including the edge that accepts data_valid_i. During the one cycle after acceptance in which cipher_valid_o is 1, cipher_o is current mathematical state word 0 xor current data_i; rounds 6 through 11 are then executed, and cipher_valid_o returns to 0. Finalization waiting is entered only if the block count equals 3 when the last round completes; otherwise, return to plaintext waiting. The number of waiting cycles affects exit, so a fixed total of 3 plaintext blocks cannot be assumed.",
+      "interface": [
+        "state_i",
+        "key_i",
+        "data_i",
+        "resetb_i",
+        "start_i",
+        "clock_i",
+        "data_valid_i",
+        "end_o",
+        "cipher_valid_o",
+        "cipher_o",
+        "tag_o"
+      ],
+      "timing": "Synchronous controls such as start/data_valid are sampled on rising edges of clock_i; state/key/data use current values according to the public computation windows, combinational outputs are observed after settling following the edge, and falling edges of resetb_i are observed separately.",
+      "boundary": "Compare all 64 bits of cipher and valid in every valid window; accumulate waiting cycles from input history to determine whether to enter finalization. Do not determine expectations from actual end/cipher_valid or treat valid=0 as a reason to stop checking."
+    },
+    {
+      "feature_id": "F5",
+      "requirement_ids": [
+        "R-bba53466-005"
+      ],
+      "module": "ascon_top",
+      "definition": "Finalization waiting enters the first finalization round only after data_valid_i=1; the first round XORs data_i into word 0 and the upper and lower halves of key_i into words 1 and 2, while cipher_valid_o is 1 and cipher_o is word 0 xor data_i. Rounds 0 through 11 are then executed; valid is 0 starting with the second round, and the last round XORs the current upper and lower halves of key_i into words 3 and 4. On completion, end_o is set to 1 and tag_o is {mathematical state word 3,mathematical state word 4}; the next cycle returns to idle.",
+      "interface": [
+        "state_i",
+        "key_i",
+        "data_i",
+        "resetb_i",
+        "start_i",
+        "clock_i",
+        "data_valid_i",
+        "end_o",
+        "cipher_valid_o",
+        "cipher_o",
+        "tag_o"
+      ],
+      "timing": "Synchronous controls such as start/data_valid are sampled on rising edges of clock_i; state/key/data use current values according to the public computation windows, combinational outputs are observed after settling following the edge, and falling edges of resetb_i are observed separately.",
+      "boundary": "Check cipher validity in the first finalization round and its deassertion in the next cycle, the word order of the complete 128-bit tag, and the timing of end first going high; continue observing after end is defined as 1."
+    },
+    {
+      "feature_id": "F6",
+      "requirement_ids": [
+        "R-bba53466-006"
+      ],
+      "module": "ascon_top",
+      "definition": "end_o is undefined before the first completion and remains 1 after completion; neither subsequent starts nor reset clear it. cipher_valid_o is undefined before the first plaintext window; afterward, it is set to 1 only in plaintext or the first finalization round, cleared to 0 in the next round, and held during all other stages. After end_o=1, tag_o continuously reflects current mathematical state words 3 and 4, so it may change during a new session; it does not permanently latch the first tag. A numerical value is required for cipher_o only when predicted cipher_valid_o=1, and for tag_o only when predicted end_o=1 and the mathematical bits are defined. The round number during idle may reach 12 through 15; out-of-range constants and mathematical bits not yet overwritten by new initialization are undefined. No particular X pattern is required, and masks must not be determined from actual values.",
+      "interface": [
+        "state_i",
+        "key_i",
+        "data_i",
+        "resetb_i",
+        "start_i",
+        "clock_i",
+        "data_valid_i",
+        "end_o",
+        "cipher_valid_o",
+        "cipher_o",
+        "tag_o"
+      ],
+      "timing": "Synchronous controls such as start/data_valid are sampled on rising edges of clock_i; state/key/data use current values according to the public computation windows, combinational outputs are observed after settling following the edge, and falling edges of resetb_i are observed separately.",
+      "boundary": "Validity and the per-bit defined domain come only from input history and an independent model; an X produced by the DUT in a window that should be defined must also be a mismatch. Do not fabricate zeros for undefined values or check invalid cipher values."
+    }
+  ]
+}
