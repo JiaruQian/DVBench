@@ -16,7 +16,6 @@
   ],
   "mutants": [
     "m1",
-    "m10",
     "m2",
     "m3",
     "m4",
@@ -24,7 +23,8 @@
     "m6",
     "m7",
     "m8",
-    "m9"
+    "m9",
+    "m10"
   ],
   "coverage": {
     "vcs_compile": "-cm line+cond+tgl+branch+fsm -cm_dir build/simv.vdb",

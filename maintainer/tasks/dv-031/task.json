@@ -165,10 +165,10 @@
     "m4",
     "m5",
     "m6",
-    "n1",
-    "n2",
-    "n3",
-    "n4"
+    "m7",
+    "m8",
+    "m9",
+    "m10"
   ],
   "rtl_sources": [
     "BRAM_TDP_24w_256d_sim_netlist.v",

@@ -117,16 +117,16 @@
   },
   "reference_submission": "solution/reference",
   "mutants": [
+    "m1",
+    "m2",
     "m3",
+    "m4",
     "m5",
+    "m6",
     "m7",
-    "s11",
-    "s12",
-    "s13",
-    "s14",
-    "s15",
-    "s16",
-    "s17"
+    "m8",
+    "m9",
+    "m10"
   ],
   "rtl_sources": [
     "4_bit_subs.v",

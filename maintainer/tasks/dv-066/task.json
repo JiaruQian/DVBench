@@ -244,16 +244,16 @@
   "uvm_test": "dvbench_test",
   "mutant_root": "mutants/{variant}",
   "mutants": [
+    "m1",
     "m2",
     "m3",
     "m4",
     "m5",
-    "m6_ptr5",
+    "m6",
     "m7",
     "m8",
     "m9",
-    "m10",
-    "n1"
+    "m10"
   ],
   "reference_top": "dvbench_top",
   "reference_test": "dvbench_test",

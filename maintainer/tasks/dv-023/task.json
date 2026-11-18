@@ -15,8 +15,8 @@
     "m6",
     "m7",
     "m8",
-    "s1",
-    "s2"
+    "m9",
+    "m10"
   ],
   "submission_top": "dvbench_top",
   "uvm_test": "dvbench_test",

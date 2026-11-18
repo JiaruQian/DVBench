@@ -1,0 +1,57 @@
+{
+  "schema": "dvbench-mutant-names-v1",
+  "task_id": "dv-060",
+  "policy": "Preserve existing m1..m10 IDs; assign remaining mutants in prior manifest order to vacant numeric IDs. RTL bytes are unchanged.",
+  "variants": [
+    {
+      "id": "m1",
+      "previous_id": "m1",
+      "tree_sha256": "0e935f9cca977f176c64037d67375621431632ead3f71f7bda3985a9c74006d0"
+    },
+    {
+      "id": "m2",
+      "previous_id": "m2",
+      "tree_sha256": "238640083cd06846bbae10cec65ccbab945732563ea7d22d258fbc18d0f10160"
+    },
+    {
+      "id": "m3",
+      "previous_id": "m3",
+      "tree_sha256": "bd6034cc563d491f746a4e9aff404d718df0f9219d4f12a42d15e0210e3ea40a"
+    },
+    {
+      "id": "m4",
+      "previous_id": "m4",
+      "tree_sha256": "f7d7de5a62f41792f13d6ffab51e3d39f0ccd77f1ecd5ccabe780c1e364ca071"
+    },
+    {
+      "id": "m5",
+      "previous_id": "m5",
+      "tree_sha256": "9c51a44b047f3c2a5c8895f74cd53ac4025b237f47fe7d1a13d18b1c4095049b"
+    },
+    {
+      "id": "m6",
+      "previous_id": "m6",
+      "tree_sha256": "78697d6e73dc82318d5e2663e830032aaa6dcbfb646a7b8c394d6279b08130c4"
+    },
+    {
+      "id": "m7",
+      "previous_id": "m7",
+      "tree_sha256": "3c8ccd89437aee95d90ed47e3b02925ba2a915fe217717242b0ec2375c6fddf0"
+    },
+    {
+      "id": "m8",
+      "previous_id": "m8",
+      "tree_sha256": "dcf92b740a56a8334b0d0403a589ee28407c635c8a5d32e0813e4f92ff5332fc"
+    },
+    {
+      "id": "m9",
+      "previous_id": "m11",
+      "tree_sha256": "5eb0407ea44bfbe5db38d9bf33c76c027284adaec359b37e0b2cc62fa094b9e0"
+    },
+    {
+      "id": "m10",
+      "previous_id": "m10",
+      "tree_sha256": "f37d5012624fc3517f66027cb75904d2d5bcd39523562b0fda2c317948689d40"
+    }
+  ]
+}

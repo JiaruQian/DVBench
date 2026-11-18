@@ -198,16 +198,16 @@
   },
   "reference_submission": "solution/reference",
   "mutants": [
-    "m10",
+    "m1",
+    "m2",
+    "m3",
+    "m4",
     "m5",
     "m6",
     "m7",
     "m8",
     "m9",
-    "n1",
-    "n2",
-    "n3",
-    "n4"
+    "m10"
   ],
   "rtl_sources": [
     "cross_clock_enable.v",

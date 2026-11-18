@@ -11,7 +11,6 @@
   "mutant_root": "mutants/{variant}",
   "mutants": [
     "m1",
-    "m10",
     "m2",
     "m3",
     "m4",
@@ -19,7 +18,8 @@
     "m6",
     "m7",
     "m8",
-    "m9"
+    "m9",
+    "m10"
   ],
   "compile_files": [
     "dpc_core/delta_3x3.v",

@@ -26,6 +26,7 @@
   "include_dirs": [],
   "mutant_root": "mutants/{variant}",
   "mutants": [
+    "m1",
     "m2",
     "m3",
     "m4",
@@ -34,8 +35,7 @@
     "m7",
     "m8",
     "m9",
-    "m10",
-    "n1"
+    "m10"
   ],
   "submission_top": "dvbench_top",
   "uvm_test": "dvbench_test",

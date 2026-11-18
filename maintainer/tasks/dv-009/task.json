@@ -112,16 +112,16 @@
   },
   "reference_submission": "solution/reference",
   "mutants": [
+    "m1",
     "m2",
+    "m3",
     "m4",
     "m5",
     "m6",
     "m7",
     "m8",
     "m9",
-    "n1",
-    "n2",
-    "n3"
+    "m10"
   ],
   "rtl_sources": [
     "cva6_fifo_v3.sv"

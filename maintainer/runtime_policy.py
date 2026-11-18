@@ -1,4 +1,5 @@
 import hashlib
+import json
 from pathlib import Path
 import math
 import re
@@ -10,6 +11,29 @@ SCOPE_PATTERN = r'[A-Za-z_]\w*(?:\[\d+\])?(?:\.[A-Za-z_]\w*(?:\[\d+\])?)*'
 LICENSE_PATTERN = re.compile(
     r'failed to checkout|cannot checkout|unable to checkout|cannot connect to license server|'
     r'failed to obtain license|server node is down or not responding|license server does not support', re.I)
+MUTANT_IDS = tuple(f'm{index}' for index in range(1, 11))
+
+
+def mutant_variants(task):
+    task = Path(task)
+    config = json.loads((task / 'task.json').read_text())
+    runtime = json.loads((task / 'runtime-evaluation.json').read_text())
+    expected = list(MUTANT_IDS)
+    if config.get('mutants') != expected or runtime.get('fixed_mutants') != expected or runtime.get('fixed_N') != 10:
+        raise ValueError('Task and runtime must select m1 through m10 in numeric order')
+    directories = {variant: task / config['mutant_root'].format(variant=variant) for variant in expected}
+    parents = {directory.resolve().parent for directory in directories.values()}
+    if len(parents) != 1:
+        raise ValueError('Mutants must share one directory')
+    parent = parents.pop()
+    if {path.name for path in parent.iterdir()} != set(expected):
+        raise ValueError('Mutant directory contains missing or unexpected variants')
+    for directory in directories.values():
+        if directory.is_symlink() or not directory.is_dir():
+            raise ValueError('Mutant must be an ordinary directory')
+        if any(not (directory / name).is_file() for name in config['rtl_files']):
+            raise ValueError('Mutant is missing declared RTL files')
+    return expected
 
 
 def ordered_sources(task, config):
@@ -85,7 +109,7 @@ def overall_success(result):
         for kind in ('LINE', 'COND', 'BRANCH', 'TOGGLE'))
     mutants = result.get('mutants', [])
     seeds = [1, 7, 42]
-    if len(mutants) != 10 or len({entry.get('id') for entry in mutants}) != 10:
+    if len(mutants) != 10 or {entry.get('id') for entry in mutants} != set(MUTANT_IDS):
         return False
     golden = result.get('golden', {})
     return (result.get('compile_pass') is True
